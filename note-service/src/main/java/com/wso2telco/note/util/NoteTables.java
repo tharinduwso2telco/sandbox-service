@@ -1,4 +1,4 @@
-package com.wso2telco.note.service.util;
+package com.wso2telco.note.util;
 
 public enum NoteTables {
 
@@ -7,6 +7,7 @@ public enum NoteTables {
 	private String tableName;
 
 	NoteTables(String tableName) {
+		
 		this.tableName = tableName;
 	}
 

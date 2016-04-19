@@ -3,12 +3,14 @@ package com.wso2telco.note.dao;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import com.wso2telco.note.dao.model.NoteDTO;
 import com.wso2telco.note.exception.NoteException;
-import com.wso2telco.note.service.util.DBUtils;
-import com.wso2telco.note.service.util.NoteTables;
+import com.wso2telco.note.util.NoteDBUtils;
+import com.wso2telco.note.util.ErrorCodes;
+import com.wso2telco.note.util.NoteTables;
 
 public class NoteServiceDAO {
 
@@ -20,8 +22,7 @@ public class NoteServiceDAO {
 		PreparedStatement ps = null;
 
 		try {
-
-			con = DBUtils.getNoteDBConnection();
+			con = NoteDBUtils.getNoteDBConnection();
 
 			StringBuilder str = new StringBuilder("INSERT INTO ");
 			str.append(NoteTables.NSNOTES.getTableName());
@@ -40,13 +41,22 @@ public class NoteServiceDAO {
 			log.debug("NoteServiceDAO add note -> query : " + ps);
 
 			ps.execute();
-		} catch (Exception e) {
+		} catch (SQLException e) {
 
-			e.printStackTrace();
-			throw new NoteException("Err001", "Failed to create note", e.getMessage());
+			log.error("Error in NoteServiceDAO addNote -> failed to insert note : " + e.getMessage());
+			throw new NoteException(ErrorCodes.ERROR_DATABASE_OPERATION, e);
+		} catch (NoteException e) {
+
+			throw e;
 		} finally {
 
-			DBUtils.closeAllConnections(con, ps);
+			try {
+
+				NoteDBUtils.closeAllConnections(con, ps);
+			} catch (NoteException e) {
+
+				throw e;
+			}
 		}
 
 		return true;
@@ -62,7 +72,7 @@ public class NoteServiceDAO {
 
 		try {
 
-			con = DBUtils.getNoteDBConnection();
+			con = NoteDBUtils.getNoteDBConnection();
 
 			StringBuilder str = new StringBuilder("SELECT * FROM ");
 			str.append(NoteTables.NSNOTES.getTableName());
@@ -73,7 +83,7 @@ public class NoteServiceDAO {
 
 			ps.setString(1, clientRef);
 			ps.setInt(2, noteTypeDid);
-			
+
 			log.debug("NoteServiceDAO get note -> query : " + ps);
 
 			rs = ps.executeQuery();
@@ -88,13 +98,22 @@ public class NoteServiceDAO {
 				noteDTO.setDescription(rs.getString("description"));
 				noteDTO.setNoteTypeDid(Integer.toString(rs.getInt("notetypedid")));
 			}
-		} catch (Exception e) {
+		} catch (SQLException e) {
 
-			e.printStackTrace();
-			throw new NoteException("Err002", "Failed to retrieve note", e.getMessage());
+			log.error("Error in NoteServiceDAO getNote -> failed to retrieve note : " + e.getMessage());
+			throw new NoteException(ErrorCodes.ERROR_DATABASE_OPERATION, e);
+		} catch (NoteException e) {
+
+			throw e;
 		} finally {
 
-			DBUtils.closeAllConnections(con, ps, rs);
+			try {
+
+				NoteDBUtils.closeAllConnections(con, ps, rs);
+			} catch (NoteException e) {
+
+				throw e;
+			}
 		}
 
 		return noteDTO;

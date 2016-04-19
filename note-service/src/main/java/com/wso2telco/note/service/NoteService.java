@@ -30,9 +30,10 @@ import org.apache.commons.logging.LogFactory;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.wso2telco.note.dao.NoteServiceDAO;
+import com.wso2telco.note.dao.model.ErrorDTO;
 import com.wso2telco.note.dao.model.NoteDTO;
 import com.wso2telco.note.exception.NoteException;
-import com.wso2telco.note.service.util.YAMLReader;
+import com.wso2telco.note.util.ErrorCodes;
 
 /**
  * This is the Microservice resource class. See
@@ -65,10 +66,14 @@ public class NoteService {
 			responseString = gson.toJson(note);
 		} catch (NoteException e) {
 
+			ErrorDTO errorDTO = new ErrorDTO();
+			ErrorDTO.ServiceException serviceException = new ErrorDTO.ServiceException();
+			serviceException.setMessageId(e.getError().getErrorCode());
+			serviceException.setText(e.getError().getErrorDescription());
+			errorDTO.setServiceException(serviceException);
+
 			responseCode = Response.Status.BAD_REQUEST;
-			responseString = "{" + "\"errorCode\":\"" + e.getErrorCode() + "\"," + "\"errorMessage\":\""
-					+ e.getErrorVariable() + "\"" + "}";
-			log.error("Error in NoteService addNote : " + e.getMessage());
+			responseString = gson.toJson(errorDTO);
 		}
 
 		log.debug("NoteService addNote -> response code : " + responseCode);
@@ -85,19 +90,39 @@ public class NoteService {
 		NoteServiceDAO noteServiceDAO = new NoteServiceDAO();
 		NoteDTO note = null;
 		Status responseCode = null;
-		String responseString = null;
+		Object responseString = null;
 
 		try {
 
 			note = noteServiceDAO.getNote(clientRef, noteTypeDid);
 			responseCode = Response.Status.OK;
-			responseString = gson.toJson(note);
+
+			if (note != null) {
+
+				responseString = note;
+			} else {
+
+				log.error("Error in NoteService getNote : requested note not found in database ");
+
+				ErrorDTO errorDTO = new ErrorDTO();
+				ErrorDTO.ServiceException serviceException = new ErrorDTO.ServiceException();
+				serviceException.setMessageId(ErrorCodes.ERROR_DATABASE_REQUESTED_RESOURCE_NOT_FOUND.getErrorCode());
+				serviceException.setText(ErrorCodes.ERROR_DATABASE_REQUESTED_RESOURCE_NOT_FOUND.getErrorDescription());
+				errorDTO.setServiceException(serviceException);
+
+				responseCode = Response.Status.NOT_FOUND;
+				responseString = errorDTO;
+			}
 		} catch (NoteException e) {
 
+			ErrorDTO errorDTO = new ErrorDTO();
+			ErrorDTO.ServiceException serviceException = new ErrorDTO.ServiceException();
+			serviceException.setMessageId(e.getError().getErrorCode());
+			serviceException.setText(e.getError().getErrorDescription());
+			errorDTO.setServiceException(serviceException);
+
 			responseCode = Response.Status.BAD_REQUEST;
-			responseString = "{" + "\"errorCode\":\"" + e.getErrorCode() + "\"," + "\"errorMessage\":\""
-					+ e.getErrorVariable() + "\"" + "}";
-			log.error("Error in NoteService getNote : " + e.getMessage());
+			responseString = errorDTO;
 		}
 
 		log.debug("NoteService getNote -> response code : " + responseCode);

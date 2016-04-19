@@ -1,27 +1,31 @@
 package com.wso2telco.note.exception;
 
+import com.wso2telco.note.util.ErrorCodes;
+
 public class NoteException extends Exception {
 
 	private static final long serialVersionUID = 7101686903987680125L;
-	private String errorCode;
-    private String errorMessage;
-    private String errorVariable;
-    
-    public NoteException(String errorCode, String errorMessage, String errorVariable) {
-        this.errorCode = errorCode;
-        this.errorMessage = errorMessage;
-        this.errorVariable = errorVariable;
-    }
+	private ErrorCodes error = null;
 
-	public String getErrorCode() {
-		return errorCode;
+	public NoteException(ErrorCodes error) {
+
+		this.error = error;
 	}
 
-	public String getErrorMessage() {
-		return errorMessage;
+	public NoteException(ErrorCodes error, Exception e) {
+		super(e);
+
+		this.error = error;
 	}
 
-	public String getErrorVariable() {
-		return errorVariable;
+	public ErrorCodes getError() {
+
+		return error;
+	}
+
+	@Override
+	public String toString() {
+		
+		return "NoteException [error=" + error + "]" + super.toString();
 	}
 }

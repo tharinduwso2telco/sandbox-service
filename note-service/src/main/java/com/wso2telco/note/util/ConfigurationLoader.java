@@ -1,4 +1,4 @@
-package com.wso2telco.note.service.util;
+package com.wso2telco.note.util;
 
 import java.util.Map;
 import org.apache.commons.logging.Log;
@@ -6,6 +6,7 @@ import org.apache.commons.logging.LogFactory;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import com.wso2telco.note.exception.NoteException;
 
 public class ConfigurationLoader {
 
@@ -22,7 +23,7 @@ public class ConfigurationLoader {
 	private static String dbUsername = null;
 	private static String dbPassword = null;
 
-	public static void loadAllConfigurations() {
+	public static void loadAllConfigurations() throws NoteException {
 
 		log.debug("Loading all configurations........");
 		try {
@@ -30,13 +31,13 @@ public class ConfigurationLoader {
 			setHttpPort();
 			setHttpsPort();
 			setDBConfigurations();
-		} catch (Exception e) {
+		} catch (NoteException e) {
 
-			e.printStackTrace();
+			throw e;
 		}
 	}
 
-	private static void setHttpPort() {
+	private static void setHttpPort() throws NoteException {
 
 		log.debug("Initilazing http port........");
 		Map yamlMap = null;
@@ -61,10 +62,12 @@ public class ConfigurationLoader {
 					if (!id.equals("msf4j-http")) {
 
 						log.error("Error in ConfigurationLoader setHttpPort : throw invalid http port id exception");
+						throw new NoteException(ErrorCodes.ERROR_INVALID_HTTP_PORT_ID);
 					}
 				} else {
 
 					log.error("Error in ConfigurationLoader setHttpPort : throw http port id found exception");
+					throw new NoteException(ErrorCodes.ERROR_HTTP_PORT_ID_NOT_FOUND);
 				}
 
 				if (!msf4jHTTP.isNull("port")) {
@@ -74,23 +77,30 @@ public class ConfigurationLoader {
 				} else {
 
 					log.error("Error in ConfigurationLoader setHttpPort : throw http port not found exception");
+					throw new NoteException(ErrorCodes.ERROR_HTTP_PORT_NOT_FOUND);
 				}
 			} else {
 
 				log.error("Error in ConfigurationLoader setHttpPort : throw invalid file format exception");
+				throw new NoteException(ErrorCodes.ERROR_INVALID_NETTY_TRANSPORTS_YAML_FORMAT);
 			}
 		} catch (JSONException e) {
 
 			log.error("Error in ConfigurationLoader setHttpPort -> throw unreadable file format exception : "
 					+ e.getMessage());
+			throw new NoteException(ErrorCodes.ERROR_UNREADABLE_NETTY_TRANSPORTS_YAML, e);
+		} catch (NoteException e) {
+
+			throw e;
 		} catch (Exception e) {
 
 			log.error(
 					"Error in ConfigurationLoader setHttpPort -> throw unexpected error exception : " + e.getMessage());
+			throw new NoteException(ErrorCodes.ERROR_HTTP_PORT_INITIALIZATION, e);
 		}
 	}
 
-	private static void setHttpsPort() {
+	private static void setHttpsPort() throws NoteException {
 
 		log.debug("Initilazing https port........");
 		Map yamlMap = null;
@@ -116,10 +126,12 @@ public class ConfigurationLoader {
 					if (!id.equals("msf4j-https")) {
 
 						log.error("Error in ConfigurationLoader setHttpsPort : throw invalid https port id exception");
+						throw new NoteException(ErrorCodes.ERROR_INVALID_HTTPS_PORT_ID);
 					}
 				} else {
 
 					log.error("Error in ConfigurationLoader setHttpsPort : throw https port id not found exception");
+					throw new NoteException(ErrorCodes.ERROR_HTTPS_PORT_ID_NOT_FOUND);
 				}
 
 				if (!msf4jHTTPS.isNull("port")) {
@@ -129,23 +141,30 @@ public class ConfigurationLoader {
 				} else {
 
 					log.error("Error in ConfigurationLoader setHttpsPort : throw https port not found exception");
+					throw new NoteException(ErrorCodes.ERROR_HTTPS_PORT_NOT_FOUND);
 				}
 			} else {
 
 				log.error("Error in ConfigurationLoader setHttpsPort : throw invalid file format exception");
+				throw new NoteException(ErrorCodes.ERROR_INVALID_NETTY_TRANSPORTS_YAML_FORMAT);
 			}
 		} catch (JSONException e) {
 
 			log.error("Error in ConfigurationLoader setHttpsPort -> throw unreadable file format exception : "
 					+ e.getMessage());
+			throw new NoteException(ErrorCodes.ERROR_UNREADABLE_NETTY_TRANSPORTS_YAML, e);
+		} catch (NoteException e) {
+
+			throw e;
 		} catch (Exception e) {
 
 			log.error("Error in ConfigurationLoader setHttpsPort -> throw unexpected error exception : "
 					+ e.getMessage());
+			throw new NoteException(ErrorCodes.ERROR_HTTPS_PORT_INITIALIZATION, e);
 		}
 	}
 
-	private static void setDBConfigurations() {
+	private static void setDBConfigurations() throws NoteException {
 
 		log.debug("Initilazing db configurations........");
 		Map yamlMap = null;
@@ -171,11 +190,13 @@ public class ConfigurationLoader {
 
 						log.error(
 								"Error in ConfigurationLoader setDBConfigurations : throw invalid datasource exception");
+						throw new NoteException(ErrorCodes.ERROR_INVALID_DATASOURCE);
 					}
 				} else {
 
 					log.error(
 							"Error in ConfigurationLoader setDBConfigurations : throw datasource not found exception");
+					throw new NoteException(ErrorCodes.ERROR_DATASOURCE_NOT_FOUND);
 				}
 
 				if (!noteServiceDatasource.isNull("driver")) {
@@ -186,6 +207,7 @@ public class ConfigurationLoader {
 
 					log.error(
 							"Error in ConfigurationLoader setDBConfigurations : throw database driver not found exception");
+					throw new NoteException(ErrorCodes.ERROR_DATABASE_DRIVER_NOT_FOUND);
 				}
 
 				if (!noteServiceDatasource.isNull("connectionURL")) {
@@ -197,6 +219,7 @@ public class ConfigurationLoader {
 
 					log.error(
 							"Error in ConfigurationLoader setDBConfigurations : throw database connection url not found exception");
+					throw new NoteException(ErrorCodes.ERROR_DATABASE_CONNECTION_URL_NOT_FOUND);
 				}
 
 				if (!noteServiceDatasource.isNull("host")) {
@@ -207,6 +230,7 @@ public class ConfigurationLoader {
 
 					log.error(
 							"Error in ConfigurationLoader setDBConfigurations :throw database host not found exception");
+					throw new NoteException(ErrorCodes.ERROR_DATABASE_HOST_NOT_FOUND);
 				}
 
 				if (!noteServiceDatasource.isNull("port")) {
@@ -217,6 +241,7 @@ public class ConfigurationLoader {
 
 					log.error(
 							"Error in ConfigurationLoader setDBConfigurations : throw database port not found exception");
+					throw new NoteException(ErrorCodes.ERROR_DATABASE_PORT_NOT_FOUND);
 				}
 
 				if (!noteServiceDatasource.isNull("database")) {
@@ -227,6 +252,7 @@ public class ConfigurationLoader {
 
 					log.error(
 							"Error in ConfigurationLoader setDBConfigurations : throw database name not found exception");
+					throw new NoteException(ErrorCodes.ERROR_DATABASE_NAME_NOT_FOUND);
 				}
 
 				if (!noteServiceDatasource.isNull("autoReconnect")) {
@@ -237,6 +263,7 @@ public class ConfigurationLoader {
 
 					log.error(
 							"Error in ConfigurationLoader setDBConfigurations : throw database autoReconnect configuration not found exception");
+					throw new NoteException(ErrorCodes.ERROR_DATABASE_AUTO_RECONNECT_CONFIGURATION_NOT_FOUND);
 				}
 
 				if (!noteServiceDatasource.isNull("userName")) {
@@ -247,6 +274,7 @@ public class ConfigurationLoader {
 
 					log.error(
 							"Error in ConfigurationLoader setDBConfigurations : throw database username not found exception");
+					throw new NoteException(ErrorCodes.ERROR_DATABASE_USERNAME_NOT_FOUND);
 				}
 
 				if (!noteServiceDatasource.isNull("password")) {
@@ -257,19 +285,26 @@ public class ConfigurationLoader {
 
 					log.error(
 							"Error in ConfigurationLoader setDBConfigurations : throw database password not found exception");
+					throw new NoteException(ErrorCodes.ERROR_DATABASE_PASSWORD_NOT_FOUND);
 				}
 			} else {
 
 				log.error("Error in ConfigurationLoader setDBConfigurations : throw invalid file format exception");
+				throw new NoteException(ErrorCodes.ERROR_INVALID_NETTY_TRANSPORTS_YAML_FORMAT);
 			}
 		} catch (JSONException e) {
 
 			log.error("Error in ConfigurationLoader setDBConfigurations -> throw unreadable file format exception : "
 					+ e.getMessage());
+			throw new NoteException(ErrorCodes.ERROR_UNREADABLE_NETTY_TRANSPORTS_YAML, e);
+		} catch (NoteException e) {
+
+			throw e;
 		} catch (Exception e) {
 
 			log.error("Error in ConfigurationLoader setDBConfigurations -> throw unexpected error exception : "
 					+ e.getMessage());
+			throw new NoteException(ErrorCodes.ERROR_DATABASE_CONFIGURATION_INITIALIZATION, e);
 		}
 	}
 
@@ -320,7 +355,6 @@ public class ConfigurationLoader {
 	private static String nullOrTrimmed(String s) {
 
 		String rv = null;
-
 		if (s != null && s.trim().length() > 0) {
 
 			rv = s.trim();
