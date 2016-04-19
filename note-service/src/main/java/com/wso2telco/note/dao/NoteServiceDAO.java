@@ -43,7 +43,7 @@ public class NoteServiceDAO {
 			ps.execute();
 		} catch (SQLException e) {
 
-			log.error("Error in NoteServiceDAO addNote -> failed to insert note : " + e.getMessage());
+			log.error("Error in NoteServiceDAO addNote -> failed to insert note : ", e);
 			throw new NoteException(ErrorCodes.ERROR_DATABASE_OPERATION, e);
 		} catch (NoteException e) {
 
@@ -53,9 +53,9 @@ public class NoteServiceDAO {
 			try {
 
 				NoteDBUtils.closeAllConnections(con, ps);
-			} catch (NoteException e) {
+			} catch (Exception e) {
 
-				throw e;
+				log.error("Error in NoteServiceDAO addNote -> failed to close database connection : ", e);
 			}
 		}
 
@@ -100,7 +100,7 @@ public class NoteServiceDAO {
 			}
 		} catch (SQLException e) {
 
-			log.error("Error in NoteServiceDAO getNote -> failed to retrieve note : " + e.getMessage());
+			log.error("Error in NoteServiceDAO getNote -> failed to retrieve note : ", e);
 			throw new NoteException(ErrorCodes.ERROR_DATABASE_OPERATION, e);
 		} catch (NoteException e) {
 
@@ -110,9 +110,9 @@ public class NoteServiceDAO {
 			try {
 
 				NoteDBUtils.closeAllConnections(con, ps, rs);
-			} catch (NoteException e) {
+			} catch (Exception e) {
 
-				throw e;
+				log.error("Error in NoteServiceDAO getNote -> failed to retrieve note : ", e);
 			}
 		}
 

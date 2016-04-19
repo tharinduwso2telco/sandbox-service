@@ -17,7 +17,6 @@
 package com.wso2telco.note.service;
 
 import org.wso2.msf4j.MicroservicesRunner;
-
 import com.wso2telco.note.exception.NoteException;
 import com.wso2telco.note.util.ConfigurationLoader;
 
@@ -28,14 +27,14 @@ import com.wso2telco.note.util.ConfigurationLoader;
  */
 public class Application {
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws NoteException {
 		
 		try {
 			
 			ConfigurationLoader.loadAllConfigurations();
 		} catch (NoteException e) {
 			
-			e.printStackTrace();
+			throw e;
 		}
 		
 		Integer httpPort = ConfigurationLoader.getHttpPort();

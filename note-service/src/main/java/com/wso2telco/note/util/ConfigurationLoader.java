@@ -86,16 +86,14 @@ public class ConfigurationLoader {
 			}
 		} catch (JSONException e) {
 
-			log.error("Error in ConfigurationLoader setHttpPort -> throw unreadable file format exception : "
-					+ e.getMessage());
+			log.error("Error in ConfigurationLoader setHttpPort -> throw unreadable file format exception : ", e);
 			throw new NoteException(ErrorCodes.ERROR_UNREADABLE_NETTY_TRANSPORTS_YAML, e);
 		} catch (NoteException e) {
 
 			throw e;
 		} catch (Exception e) {
 
-			log.error(
-					"Error in ConfigurationLoader setHttpPort -> throw unexpected error exception : " + e.getMessage());
+			log.error("Error in ConfigurationLoader setHttpPort -> throw unexpected error exception : ", e);
 			throw new NoteException(ErrorCodes.ERROR_HTTP_PORT_INITIALIZATION, e);
 		}
 	}
@@ -150,16 +148,14 @@ public class ConfigurationLoader {
 			}
 		} catch (JSONException e) {
 
-			log.error("Error in ConfigurationLoader setHttpsPort -> throw unreadable file format exception : "
-					+ e.getMessage());
+			log.error("Error in ConfigurationLoader setHttpsPort -> throw unreadable file format exception : ", e);
 			throw new NoteException(ErrorCodes.ERROR_UNREADABLE_NETTY_TRANSPORTS_YAML, e);
 		} catch (NoteException e) {
 
 			throw e;
 		} catch (Exception e) {
 
-			log.error("Error in ConfigurationLoader setHttpsPort -> throw unexpected error exception : "
-					+ e.getMessage());
+			log.error("Error in ConfigurationLoader setHttpsPort -> throw unexpected error exception : ", e);
 			throw new NoteException(ErrorCodes.ERROR_HTTPS_PORT_INITIALIZATION, e);
 		}
 	}
@@ -294,16 +290,15 @@ public class ConfigurationLoader {
 			}
 		} catch (JSONException e) {
 
-			log.error("Error in ConfigurationLoader setDBConfigurations -> throw unreadable file format exception : "
-					+ e.getMessage());
+			log.error("Error in ConfigurationLoader setDBConfigurations -> throw unreadable file format exception : ",
+					e);
 			throw new NoteException(ErrorCodes.ERROR_UNREADABLE_NETTY_TRANSPORTS_YAML, e);
 		} catch (NoteException e) {
 
 			throw e;
 		} catch (Exception e) {
 
-			log.error("Error in ConfigurationLoader setDBConfigurations -> throw unexpected error exception : "
-					+ e.getMessage());
+			log.error("Error in ConfigurationLoader setDBConfigurations -> throw unexpected error exception : ", e);
 			throw new NoteException(ErrorCodes.ERROR_DATABASE_CONFIGURATION_INITIALIZATION, e);
 		}
 	}

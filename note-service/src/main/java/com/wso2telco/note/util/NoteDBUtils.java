@@ -32,21 +32,19 @@ public class NoteDBUtils {
 			}
 		} catch (InstantiationException e) {
 
-			log.error("Error in NoteDBUtils getNoteDBConnection -> failed to instantiate database connection : "
-					+ e.getMessage());
+			log.error("Error in NoteDBUtils getNoteDBConnection -> failed to instantiate database connection : ", e);
 			throw new NoteException(ErrorCodes.ERROR_DATABASE_CONNECTION_INSTANTIATION, e);
 		} catch (IllegalAccessException e) {
 
-			log.error("Error in NoteDBUtils getNoteDBConnection -> illegal access of database : " + e.getMessage());
+			log.error("Error in NoteDBUtils getNoteDBConnection -> illegal access of database : ", e);
 			throw new NoteException(ErrorCodes.ERROR_DATABASE_ACCESS, e);
 		} catch (ClassNotFoundException e) {
 
-			log.error("Error in NoteDBUtils getNoteDBConnection -> database class not found : " + e.getMessage());
+			log.error("Error in NoteDBUtils getNoteDBConnection -> database class not found : ", e);
 			throw new NoteException(ErrorCodes.ERROR_DATABASE_CLASS_NOT_FOUND, e);
 		} catch (SQLException e) {
 
-			log.error("Error in NoteDBUtils getNoteDBConnection -> failed to initialize database connection : "
-					+ e.getMessage());
+			log.error("Error in NoteDBUtils getNoteDBConnection -> failed to initialize database connection : ", e);
 			throw new NoteException(ErrorCodes.ERROR_DATABASE_CONNECTION_INITIALIZATION, e);
 		}
 
@@ -56,114 +54,84 @@ public class NoteDBUtils {
 	public static synchronized void closeAllConnections(Connection connection, PreparedStatement preparedStatement)
 			throws NoteException {
 
-		try {
-
-			closeConnection(connection);
-			closeStatement(preparedStatement);
-		} catch (NoteException e) {
-
-			throw e;
-		}
+		closeConnection(connection);
+		closeStatement(preparedStatement);
 	}
 
 	public static synchronized void closeAllConnections(Connection connection, PreparedStatement preparedStatement,
-			ResultSet resultSet) throws NoteException {
+			ResultSet resultSet) {
 
-		try {
-			closeConnection(connection);
-			closeStatement(preparedStatement);
-			closeResultSet(resultSet);
-		} catch (NoteException e) {
-
-			throw e;
-		}
+		closeConnection(connection);
+		closeStatement(preparedStatement);
+		closeResultSet(resultSet);
 	}
 
-	public static synchronized void closeAllConnections(Connection connection, Statement statement)
-			throws NoteException {
+	public static synchronized void closeAllConnections(Connection connection, Statement statement) {
 
-		try {
-
-			closeConnection(connection);
-			closeStatement(statement);
-		} catch (NoteException e) {
-
-			throw e;
-		}
+		closeConnection(connection);
+		closeStatement(statement);
 	}
 
-	public static synchronized void closeAllConnections(Connection connection, Statement statement, ResultSet resultSet)
-			throws NoteException {
+	public static synchronized void closeAllConnections(Connection connection, Statement statement,
+			ResultSet resultSet) {
 
-		try {
-
-			closeConnection(connection);
-			closeStatement(statement);
-			closeResultSet(resultSet);
-		} catch (NoteException e) {
-
-			throw e;
-		}
+		closeConnection(connection);
+		closeStatement(statement);
+		closeResultSet(resultSet);
 	}
 
-	private static synchronized void closeConnection(Connection dbConnection) throws NoteException {
+	private static synchronized void closeConnection(Connection dbConnection) {
 
 		if (dbConnection != null) {
 
 			try {
 
 				dbConnection.close();
-			} catch (SQLException e) {
+			} catch (Exception e) {
 
-				log.error("Error in NoteDBUtils closeConnection -> failed to close database connection : "
-						+ e.getMessage());
-				throw new NoteException(ErrorCodes.ERROR_DATABASE_CONNECTION_CLOSE, e);
+				log.error("Error in NoteDBUtils closeConnection -> failed to close database connection : ", e);
 			}
 		}
 	}
 
-	private static synchronized void closeResultSet(ResultSet resultSet) throws NoteException {
+	private static synchronized void closeResultSet(ResultSet resultSet) {
 
 		if (resultSet != null) {
 
 			try {
 
 				resultSet.close();
-			} catch (SQLException e) {
+			} catch (Exception e) {
 
-				log.error("Error in NoteDBUtils closeResultSet -> failed to close resultset : " + e.getMessage());
-				throw new NoteException(ErrorCodes.ERROR_RESULTSET_CLOSE, e);
+				log.error("Error in NoteDBUtils closeResultSet -> failed to close resultset : ", e);
 			}
 		}
 	}
 
-	private static synchronized void closeStatement(PreparedStatement preparedStatement) throws NoteException {
+	private static synchronized void closeStatement(PreparedStatement preparedStatement) {
 
 		if (preparedStatement != null) {
 
 			try {
 
 				preparedStatement.close();
-			} catch (SQLException e) {
+			} catch (Exception e) {
 
-				log.error("Error in NoteDBUtils closeStatement -> failed to close prepared statement : "
-						+ e.getMessage());
-				throw new NoteException(ErrorCodes.ERROR_STATEMENT_CLOSE, e);
+				log.error("Error in NoteDBUtils closeStatement -> failed to close prepared statement : ", e);
 			}
 		}
 	}
 
-	private static synchronized void closeStatement(Statement statement) throws NoteException {
+	private static synchronized void closeStatement(Statement statement) {
 
 		if (statement != null) {
 
 			try {
 
 				statement.close();
-			} catch (SQLException e) {
+			} catch (Exception e) {
 
-				log.error("Error in NoteDBUtils closeStatement -> failed to close statement : " + e.getMessage());
-				throw new NoteException(ErrorCodes.ERROR_STATEMENT_CLOSE, e);
+				log.error("Error in NoteDBUtils closeStatement -> failed to close statement : ", e);
 			}
 		}
 	}

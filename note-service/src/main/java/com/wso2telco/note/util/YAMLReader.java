@@ -41,11 +41,11 @@ public class YAMLReader {
 			yamlMap = (Map) yaml.load(new FileInputStream(new File(FILE_NAME)));
 		} catch (FileNotFoundException e) {
 
-			log.error("Error in YAMLReader readYAML -> " + FILE_NAME + " not found : " + e.getMessage());
+			log.error("Error in YAMLReader readYAML -> " + FILE_NAME + " not found : ", e);
 			throw new NoteException(ErrorCodes.ERROR_NETTY_TRANSPORTS_YAML_NOT_FOUND, e);
 		} catch (Exception e) {
 
-			log.error("Error in YAMLReader readYAML : " + e.getMessage());
+			log.error("Error in YAMLReader readYAML : ", e);
 			throw new NoteException(ErrorCodes.ERROR_NETTY_TRANSPORTS_YAML_READ, e);
 		}
 	}
