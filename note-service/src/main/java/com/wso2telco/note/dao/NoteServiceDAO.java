@@ -50,13 +50,7 @@ public class NoteServiceDAO {
 			throw e;
 		} finally {
 
-			try {
-
-				NoteDBUtils.closeAllConnections(con, ps);
-			} catch (Exception e) {
-
-				log.error("Error in NoteServiceDAO addNote -> failed to close database connection : ", e);
-			}
+			NoteDBUtils.closeAllConnections(con, ps);
 		}
 
 		return true;
@@ -107,13 +101,7 @@ public class NoteServiceDAO {
 			throw e;
 		} finally {
 
-			try {
-
-				NoteDBUtils.closeAllConnections(con, ps, rs);
-			} catch (Exception e) {
-
-				log.error("Error in NoteServiceDAO getNote -> failed to retrieve note : ", e);
-			}
+			NoteDBUtils.closeAllConnections(con, ps, rs);
 		}
 
 		return noteDTO;

@@ -51,8 +51,7 @@ public class NoteDBUtils {
 		return connection;
 	}
 
-	public static synchronized void closeAllConnections(Connection connection, PreparedStatement preparedStatement)
-			throws NoteException {
+	public static synchronized void closeAllConnections(Connection connection, PreparedStatement preparedStatement) {
 
 		closeConnection(connection);
 		closeStatement(preparedStatement);
