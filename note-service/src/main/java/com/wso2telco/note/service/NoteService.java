@@ -56,14 +56,14 @@ public class NoteService {
 		Gson gson = new GsonBuilder().serializeNulls().create();
 		NoteServiceDAO noteServiceDAO = new NoteServiceDAO();
 		Status responseCode = null;
-		String responseString = null;
+		Object responseString = null;
 
 		log.debug("NoteService addNote -> incoming request body : " + gson.toJson(note));
 		try {
 
 			noteServiceDAO.addNote(note);
-			responseCode = Response.Status.OK;
-			responseString = gson.toJson(note);
+			responseCode = Response.Status.CREATED;
+			responseString = note;
 		} catch (NoteException e) {
 
 			ErrorDTO errorDTO = new ErrorDTO();
@@ -73,7 +73,7 @@ public class NoteService {
 			errorDTO.setServiceException(serviceException);
 
 			responseCode = Response.Status.BAD_REQUEST;
-			responseString = gson.toJson(errorDTO);
+			responseString = errorDTO;
 		}
 
 		log.debug("NoteService addNote -> response code : " + responseCode);
@@ -86,7 +86,6 @@ public class NoteService {
 	public Response getNote(@PathParam("clientRef") String clientRef, @PathParam("noteTypeDid") int noteTypeDid) {
 
 		log.debug("getNote -> clientRef : " + clientRef + " noteTypeDid : " + noteTypeDid);
-		Gson gson = new GsonBuilder().serializeNulls().create();
 		NoteServiceDAO noteServiceDAO = new NoteServiceDAO();
 		NoteDTO note = null;
 		Status responseCode = null;
