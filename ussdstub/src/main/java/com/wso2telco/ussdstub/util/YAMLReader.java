@@ -14,7 +14,7 @@
  * limitations under the License.
  ******************************************************************************/
 
-package com.wso2telco.note.util;
+package com.wso2telco.ussdstub.util;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -24,22 +24,44 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.yaml.snakeyaml.Yaml;
 
-import com.wso2telco.note.exception.NoteException;
+import com.wso2telco.ussdstub.exception.ErrorCodes;
+import com.wso2telco.ussdstub.exception.USSDException;
 
+
+
+// TODO: Auto-generated Javadoc
+/**
+ * The Class YAMLReader.
+ */
 public class YAMLReader {
 
+	/** The Constant log. */
 	private static final Log log = LogFactory.getLog(YAMLReader.class);
+	
+	/** The Constant FILE_NAME. */
 	private final static String FILE_NAME = "./netty-transports.yml";
-	private static Map yamlMap = null;
+	
+	/** The yaml map. */
+	private static Map<String,Object> yamlMap = null;
 
-	public static Map getYamlMap() throws NoteException{
+	/*public static String getApplicationProperty(String key) throws USSDException {
+        return getYamlMap().get(key);
+    }*/
+	
+	/**
+	 * Gets the yaml map.
+	 *
+	 * @return the yaml map
+	 * @throws USSDException the USSD exception
+	 */
+	public static Map<String,Object> getYamlMap() throws USSDException{
 
 		if (yamlMap == null) {
 
 			try {
 				
 				readYAML();
-			} catch (NoteException e) {
+			} catch (USSDException e) {
 				
 				throw e;
 			}
@@ -48,21 +70,26 @@ public class YAMLReader {
 		return yamlMap;
 	}
 
-	private static void readYAML() throws NoteException {
+	/**
+	 * Read yaml.
+	 *
+	 * @throws USSDException the USSD exception
+	 */
+	@SuppressWarnings("unchecked")
+	private static void readYAML() throws USSDException {
 
 		Yaml yaml = new Yaml();
 
 		try {
-
-			yamlMap = (Map) yaml.load(new FileInputStream(new File(FILE_NAME)));
+			yamlMap = (Map<String,Object>) yaml.load(new FileInputStream(new File(FILE_NAME)));
 		} catch (FileNotFoundException e) {
 
 			log.error("Error in YAMLReader readYAML -> " + FILE_NAME + " not found : ", e);
-			throw new NoteException(ErrorCodes.ERROR_NETTY_TRANSPORTS_YAML_NOT_FOUND, e);
+			throw new USSDException(ErrorCodes.ERROR_NETTY_TRANSPORTS_YAML_NOT_FOUND, e);
 		} catch (Exception e) {
 
 			log.error("Error in YAMLReader readYAML : ", e);
-			throw new NoteException(ErrorCodes.ERROR_NETTY_TRANSPORTS_YAML_READ, e);
+			throw new USSDException(ErrorCodes.ERROR_NETTY_TRANSPORTS_YAML_READ, e);
 		}
 	}
 }
