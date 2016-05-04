@@ -10,9 +10,9 @@ import com.wso2telco.services.dep.sandbox.servicefactory.smsmessaging.SMSRequest
 
 public class RequestBuilderFactory {
 
-	Log LOG = LogFactory.getLog(RequestBuilderFactory.class);
+	static Log  LOG = LogFactory.getLog(RequestBuilderFactory.class);
 
-	public RequestHandleable getInstance(final RequestDTO requestDTO) {
+	public static RequestHandleable getInstance(final RequestDTO requestDTO) {
 
 		RequestHandleable requestHandler = null;
 
