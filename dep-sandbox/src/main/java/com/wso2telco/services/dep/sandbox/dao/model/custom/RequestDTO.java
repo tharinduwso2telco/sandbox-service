@@ -14,7 +14,6 @@ public class RequestDTO implements Serializable {
 	private RequestType requestType;
 	private String requestPath;
 	private HttpRequest httpRequest;
-	
 
 	public RequestType getRequestType() {
 		return requestType;
@@ -36,7 +35,6 @@ public class RequestDTO implements Serializable {
 		return httpRequest.getMethod();
 	}
 
-
 	public HttpRequest getHttpRequest() {
 		return httpRequest;
 	}
@@ -44,5 +42,9 @@ public class RequestDTO implements Serializable {
 	public void setHttpRequest(HttpRequest httpRequest) {
 		this.httpRequest = httpRequest;
 	}
-	
+
+	public String getSandbox(HttpRequest httpRequest) {
+		return httpRequest.headers().get("sandbox");
+	}
+
 }
