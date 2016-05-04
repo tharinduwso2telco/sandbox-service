@@ -33,7 +33,7 @@
 	</dependencies>
 
 	<properties>
-		<microservice.mainClass>com.wso2telco.services.dep.service.Application</microservice.mainClass>
+		<microservice.mainClass>com.wso2telco.services.dep.sandbox.service.Application</microservice.mainClass>
 		<org.hibernate.version>5.1.0.Final</org.hibernate.version>
 	</properties>
 

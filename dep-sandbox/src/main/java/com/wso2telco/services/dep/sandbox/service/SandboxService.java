@@ -16,48 +16,27 @@
 
 package com.wso2telco.services.dep.sandbox.service;
 
-import javax.ws.rs.DELETE;
-import javax.ws.rs.GET;
+import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
+import com.wso2telco.services.dep.sandbox.dao.model.custom.RequestDTO;
+import com.wso2telco.services.dep.sandbox.servicefactory.RequestBuilderFactory;
+import com.wso2telco.services.dep.sandbox.servicefactory.Returnable;
+import com.wso2telco.services.dep.sandbox.util.RequestType;
+import io.netty.handler.codec.http.HttpMethod;
 
 /**
- * This is the Microservice resource class.
- * See <a href="https://github.com/wso2/msf4j#getting-started">https://github.com/wso2/msf4j#getting-started</a>
- * for the usage of annotations.
+ * This is the Microservice resource class. See
+ * <a href="https://github.com/wso2/msf4j#getting-started">https://github.com/
+ * wso2/msf4j#getting-started</a> for the usage of annotations.
  *
  * @since 1.8.0-SNAPSHOT
  */
-@Path("/service")
+@Path("/")
+@Consumes(MediaType.APPLICATION_JSON)
+@Produces(MediaType.APPLICATION_JSON)
 public class SandboxService {
 
-    @GET
-    @Path("/")
-    public String get() {
-        // TODO: Implementation for HTTP GET request
-        System.out.println("GET invoked");
-        return "Hello from WSO2 MSF4J";
-    }
-
-    @POST
-    @Path("/")
-    public void post() {
-        // TODO: Implementation for HTTP POST request
-        System.out.println("POST invoked");
-    }
-
-    @PUT
-    @Path("/")
-    public void put() {
-        // TODO: Implementation for HTTP PUT request
-        System.out.println("PUT invoked");
-    }
-
-    @DELETE
-    @Path("/")
-    public void delete() {
-        // TODO: Implementation for HTTP DELETE request
-        System.out.println("DELETE invoked");
-    }
 }
