@@ -1,12 +1,13 @@
 package com.wso2telco.services.dep.sandbox.servicefactory.smsmessaging;
 
-import com.wso2telco.services.dep.sandbox.dao.model.custom.RequestDTO;
-import com.wso2telco.services.dep.sandbox.servicefactory.RequestHandleable;
+import com.wso2telco.services.dep.sandbox.dao.model.custom.SendMTSMSRequestWrapperDTO;
+import com.wso2telco.services.dep.sandbox.servicefactory.AbstractRequestHandler;
 import com.wso2telco.services.dep.sandbox.servicefactory.Returnable;
 
- class SendMTSMSService implements RequestHandleable {
+ class SendMTSMSService extends AbstractRequestHandler<SendMTSMSRequestWrapperDTO> {
 
-	public Returnable execute(RequestDTO requestDTO) throws Exception {
+	@Override
+	protected Returnable process(SendMTSMSRequestWrapperDTO extendedRequestDTO) throws Exception {
 		// TODO Auto-generated method stub
 		return null;
 	}
