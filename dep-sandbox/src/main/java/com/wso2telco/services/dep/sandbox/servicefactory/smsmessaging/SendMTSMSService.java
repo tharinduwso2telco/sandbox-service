@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import com.wso2telco.services.dep.sandbox.dao.UserDAO;
 import com.wso2telco.services.dep.sandbox.dao.model.custom.OutboundSMSMessageRequestBean;
 import com.wso2telco.services.dep.sandbox.dao.model.custom.SendMTSMSRequestWrapperDTO;
 import com.wso2telco.services.dep.sandbox.dao.model.domain.User;
@@ -18,8 +17,7 @@ class SendMTSMSService extends AbstractRequestHandler<SendMTSMSRequestWrapperDTO
 
 		try {
 
-			UserDAO userDAO = new UserDAO();
-			User user = userDAO.getUser("admin");
+			User user = extendedRequestDTO.getUser();
 
 			System.out.println("---------------------------" + user.getUserName());
 
@@ -71,5 +69,11 @@ class SendMTSMSService extends AbstractRequestHandler<SendMTSMSRequestWrapperDTO
 		}
 
 		return null;
+	}
+
+	@Override
+	protected boolean validate(SendMTSMSRequestWrapperDTO wrapperDTO) throws Exception {
+		// TODO Auto-generated method stub
+		return false;
 	}
 }
