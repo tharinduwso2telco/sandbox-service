@@ -1,6 +1,5 @@
 package com.wso2telco.services.dep.sandbox.servicefactory.location;
 
-import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -33,10 +32,7 @@ class LocationRequestHandler  extends AbstractRequestHandler<LocationRequestWrap
 	@Override
 	protected Returnable process(LocationRequestWrapperDTO extendedRequestDTO) throws Exception {
 
-        /*
-         * Generate response
-         */
-        String userNum = getLastMobileNumber(extendedRequestDTO.getAddress());
+		String userNum = getLastMobileNumber(extendedRequestDTO.getAddress());
         User user=extendedRequestDTO.getUser();
         ManageNumber wlnumber = locationDao.getWhitelisted(user.getId(), userNum);
         LocationResponseWrapperDTO responseWrapperDTO = new LocationResponseWrapperDTO();
