@@ -1,10 +1,8 @@
 package com.wso2telco.services.dep.sandbox.dao.model.custom;
 
 import java.io.Serializable;
-
 import com.wso2telco.services.dep.sandbox.dao.model.domain.User;
 import com.wso2telco.services.dep.sandbox.util.RequestType;
-
 import io.netty.handler.codec.http.HttpMethod;
 import io.netty.handler.codec.http.HttpRequest;
 
@@ -13,7 +11,6 @@ public class RequestDTO implements Serializable {
 	private static final long serialVersionUID = -57225936985453608L;
 
 	private RequestType requestType;
-	private String requestPath;
 	protected HttpRequest httpRequest;
 	final String JWT_TOKEN = "x-jwt-assertion";
 	//TODO:This need to replace with custom dto,instead of domain object
@@ -29,11 +26,7 @@ public class RequestDTO implements Serializable {
 	}
 
 	public String getRequestPath() {
-		return requestPath;
-	}
-
-	public void setRequestPath(String requestPath) {
-		this.requestPath = requestPath;
+		return httpRequest.getUri();
 	}
 
 	public HttpMethod getHttpMethod() {

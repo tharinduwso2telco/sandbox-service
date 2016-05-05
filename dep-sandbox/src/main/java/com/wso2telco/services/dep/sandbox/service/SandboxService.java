@@ -79,6 +79,7 @@ public class SandboxService {
 		requestDTO.setHttpRequest(httpRequest);
 		requestDTO.setRequestType(RequestType.SMSMESSAGING);
 		requestDTO.setShortCode(shortCode);
+		requestDTO.setOutboundSMSMessageRequestBean(outboundSMSMessageRequestBean);
 
 		RequestHandleable handler = RequestBuilderFactory.getInstance(requestDTO);
 
