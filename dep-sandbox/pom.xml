@@ -20,7 +20,6 @@
 
 	<groupId>com.wso2telco.services.dep</groupId>
 	<artifactId>dep-sanbox</artifactId>
-	<version>1.8.0-SNAPSHOT</version>
 	<name>WSO2.Telco Sandbox Microservice</name>
 
 
@@ -40,12 +39,27 @@
 			<artifactId>mysql-connector-java</artifactId>
 			<version>${mysql.version}</version>
 		</dependency>
+		
+		<dependency>
+			<groupId>com.wso2telco.dep</groupId>
+			<artifactId>oneapi-validation</artifactId>
+			<version>${com.wso2telco.dep.version}</version>
+		</dependency>
+		<dependency>
+               <groupId>com.google.code.gson</groupId>
+               <artifactId>gson</artifactId>
+               <version>${google.code.gson.version}</version>
+           </dependency>
 	</dependencies>
 
 	<properties>
 		<microservice.mainClass>com.wso2telco.services.dep.sandbox.service.Application</microservice.mainClass>
 		<org.hibernate.version>5.1.0.Final</org.hibernate.version>
 		<mysql.version>5.1.6</mysql.version>
+		<org.json.wso2.version>3.0.0.wso2v1</org.json.wso2.version>
+		<com.wso2telco.dep.version>1.8.0-SNAPSHOT</com.wso2telco.dep.version>
+		<google.code.gson.version>2.3.1</google.code.gson.version>
+		
 	</properties>
 
 	<repositories>
