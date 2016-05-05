@@ -18,7 +18,9 @@ package com.wso2telco.services.dep.sandbox.service;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
@@ -27,9 +29,12 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
 import com.wso2telco.services.dep.sandbox.dao.model.custom.LocationRequestWrapperDTO;
+import com.wso2telco.services.dep.sandbox.dao.model.custom.OutboundSMSMessageRequestBean;
+import com.wso2telco.services.dep.sandbox.dao.model.custom.SendMTSMSRequestWrapperDTO;
 import com.wso2telco.services.dep.sandbox.servicefactory.RequestBuilderFactory;
 import com.wso2telco.services.dep.sandbox.servicefactory.RequestHandleable;
 import com.wso2telco.services.dep.sandbox.servicefactory.Returnable;
+import com.wso2telco.services.dep.sandbox.util.RequestType;
 
 import io.netty.handler.codec.http.HttpRequest;
 
@@ -44,6 +49,7 @@ import io.netty.handler.codec.http.HttpRequest;
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
 public class SandboxService {
+
 	@GET
 	@Path("/location/{v1}/queries/location")
 	public Response getLocation(@QueryParam("address") String address,
@@ -54,16 +60,37 @@ public class SandboxService {
 		requestDTO.setRequestedAccuracy(requestedAccuracy);
 		requestDTO.setHttpRequest(httpRequest);
 		RequestHandleable handler = RequestBuilderFactory.getInstance(requestDTO);
-		
-		Returnable returnable=null;
+
+		Returnable returnable = null;
 		try {
 			returnable = handler.execute(requestDTO);
 			return Response.status(returnable.getStatus()).entity(returnable.getResponse()).build();
 		} catch (Exception e) {
-			return Response.status( Response.Status.BAD_REQUEST ).entity(returnable.getResponse()).build();
+			return Response.status(Response.Status.BAD_REQUEST).entity(returnable.getResponse()).build();
 		}
-		
-		
-		
+	}
+
+	@POST
+	@Path("/smsmessaging/{apiVersion}/outbound/{shortCode}/requests")
+	public Response handleSendMTSMSRequest(@Context HttpRequest httpRequest, @PathParam("apiVersion") String apiVersion,
+			@PathParam("shortCode") String shortCode, OutboundSMSMessageRequestBean outboundSMSMessageRequestBean) {
+
+		SendMTSMSRequestWrapperDTO requestDTO = new SendMTSMSRequestWrapperDTO();
+		requestDTO.setHttpRequest(httpRequest);
+		requestDTO.setRequestType(RequestType.SMSMESSAGING);
+		requestDTO.setShortCode(shortCode);
+
+		RequestHandleable handler = RequestBuilderFactory.getInstance(requestDTO);
+
+		Returnable returnable = null;
+
+		try {
+
+			returnable = handler.execute(requestDTO);
+			return Response.status(returnable.getStatus()).entity(returnable.getResponse()).build();
+		} catch (Exception e) {
+
+			return Response.status(Response.Status.BAD_REQUEST).entity(returnable.getResponse()).build();
+		}
 	}
 }

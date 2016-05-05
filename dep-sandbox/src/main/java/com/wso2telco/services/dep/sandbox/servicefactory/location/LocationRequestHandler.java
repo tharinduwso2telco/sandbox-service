@@ -11,5 +11,4 @@ class LocationRequestHandler  extends AbstractRequestHandler<LocationRequestWrap
 		// TODO Auto-generated method stub
 		return null;
 	}
-
 }
