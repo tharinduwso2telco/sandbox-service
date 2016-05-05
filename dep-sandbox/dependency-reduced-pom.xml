@@ -27,6 +27,8 @@
                 <copy />
                 <echo>Copying wso2carbon.jks to the target directory</echo>
                 <copy />
+                <echo>Copying hibernate.cfg.xml to the target directory</echo>
+                <copy />
               </tasks>
             </configuration>
           </execution>
@@ -68,6 +70,7 @@
   <properties>
     <microservice.mainClass>com.wso2telco.services.dep.sandbox.service.Application</microservice.mainClass>
     <org.hibernate.version>5.1.0.Final</org.hibernate.version>
+    <mysql.version>5.1.6</mysql.version>
   </properties>
 </project>
 

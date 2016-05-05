@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-configuration PUBLIC
+        "-//Hibernate/Hibernate Configuration DTD 3.0//EN"
+        "http://hibernate.sourceforge.net/hibernate-configuration-3.0.dtd">
+<hibernate-configuration>
+	<session-factory>
+		<!-- 2014-10-22 -->
+		<property name="hibernate.connection.driver_class">org.gjt.mm.mysql.Driver</property>
+
+		<property name="hibernate.connection.url">jdbc:mysql://localhost:3306/dev2_mife_sandbox_hub</property>
+
+		<property name="hibernate.dialect">org.hibernate.dialect.MySQLInnoDBDialect</property>
+
+		<!-- This is use to create the database -->
+		<!--<property name="hibernate.dialect">org.hibernate.dialect.MySQLDialect</property> -->
+
+		<!-- Username of the database -->
+		<property name="hibernate.connection.username">root</property>
+
+		<!-- Password of the database -->
+		<property name="connection.password"></property>
+
+		<!-- Disable the second-level cache -->
+		<property name="cache.provider_class">org.hibernate.cache.internal.NoCacheProvider</property>
+		<property name="hibernate.jdbc.batch_size">50</property>
+		<property name="hibernate.show_sql">false</property>
+		<property name="hibernate.format_sql">true</property>
+		<property name="hibernate.connection.pool_size">50</property>
+
+		<!-- This is use to create the database -->
+		<!--<property name="hibernate.hbm2ddl.auto">update</property> -->
+
+		<property name="hibernate.c3p0.min_size">10</property>
+		<!-- Minimum number of JDBC connections in the pool. Hibernate default: 
+			1 -->
+		<property name="hibernate.c3p0.max_size">100</property>
+		<!-- Maximum number of JDBC connections in the pool. Hibernate default: 
+			100 -->
+		<property name="hibernate.c3p0.max_statements">100</property>
+		<!-- The size of c3p0s PreparedStatement cache.Hibernate default: 0. no 
+			caching. -->
+		<property name="hibernate.c3p0.idle_test_period">100</property>
+		<!-- (seconds) c3p0 will test all idle, pooled but unchecked-out connections, 
+			every this number of seconds. Hibernate default: 0 (never validate) -->
+		<property name="hibernate.c3p0.acquire_increment">10</property>
+		<!-- how many connections at a time c3p0 will try to acquire. Hibernate 
+			default: 1 -->
+		<property name="hibernate.c3p0.timeout">100</property>
+		<property name="hibernate.c3p0.checkoutTimeout">1000</property>
+		<property name="hibernate.c3p0.acquireRetryAttempts">1</property>
+		<property name="hibernate.c3p0.acquireRetryDelay">5000</property>
+
+		<!--<property name="hibernate.current_session_context_class">thread</property> -->
+
+		<!-- Mapping entitiy classes -->
+		<mapping class="com.wso2telco.services.dep.sandbox.dao.model.domain.Payment" />
+		<mapping class="com.wso2telco.services.dep.sandbox.dao.model.domain.Sms" />
+		<mapping
+			class="com.wso2telco.services.dep.sandbox.dao.model.domain.ManageNumber" />
+		<mapping
+			class="com.wso2telco.services.dep.sandbox.dao.model.domain.SMSSubscription" />
+		<mapping
+			class="com.wso2telco.services.dep.sandbox.dao.model.domain.SenderAddress" />
+		<mapping class="com.wso2telco.services.dep.sandbox.dao.model.domain.User" />
+		<mapping
+			class="com.wso2telco.services.dep.sandbox.dao.model.domain.ChargeAmountRequest" />
+		<mapping
+			class="com.wso2telco.services.dep.sandbox.dao.model.domain.PaymentTransaction" />
+		<mapping
+			class="com.wso2telco.services.dep.sandbox.dao.model.domain.SMSRequestLog" />
+		<mapping
+			class="com.wso2telco.services.dep.sandbox.dao.model.domain.SubscribeSMSRequest" />
+		<mapping
+			class="com.wso2telco.services.dep.sandbox.dao.model.domain.Paymentparam" />
+		<mapping
+			class="com.wso2telco.services.dep.sandbox.dao.model.domain.Smsparam" />
+		<mapping
+			class="com.wso2telco.services.dep.sandbox.dao.model.domain.SendSMSToApplication" />
+		<mapping
+			class="com.wso2telco.services.dep.sandbox.dao.model.domain.LocationRequestLog" />
+		<mapping
+			class="com.wso2telco.services.dep.sandbox.dao.model.domain.Locationparam" />
+		<mapping
+			class="com.wso2telco.services.dep.sandbox.dao.model.domain.DeliverySubscription" />
+		<mapping
+			class="com.wso2telco.services.dep.sandbox.dao.model.domain.UssdSubscriptions" />
+		<mapping
+			class="com.wso2telco.services.dep.sandbox.dao.model.domain.UssdTransaction" />
+		<mapping
+			class="com.wso2telco.services.dep.sandbox.dao.model.domain.SMSDeliveryStatus" />
+		<mapping
+			class="com.wso2telco.services.dep.sandbox.dao.model.domain.MobileIdApiRequest" />
+		<mapping
+			class="com.wso2telco.services.dep.sandbox.dao.model.domain.MobileApiEncodeRequest" />
+	</session-factory>
+</hibernate-configuration>

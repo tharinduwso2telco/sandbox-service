@@ -30,15 +30,25 @@
 			<artifactId>hibernate-core</artifactId>
 			<version>${org.hibernate.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-c3p0</artifactId>
+			<version>${org.hibernate.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>mysql</groupId>
+			<artifactId>mysql-connector-java</artifactId>
+			<version>${mysql.version}</version>
+		</dependency>
 	</dependencies>
 
 	<properties>
 		<microservice.mainClass>com.wso2telco.services.dep.sandbox.service.Application</microservice.mainClass>
 		<org.hibernate.version>5.1.0.Final</org.hibernate.version>
+		<mysql.version>5.1.6</mysql.version>
 	</properties>
 
 	<repositories>
-
 		<repository>
 			<id>wso2telco-nexus</id>
 			<name>WSO2Telco internal Repository</name>
@@ -73,7 +83,6 @@
 				<enabled>false</enabled>
 			</releases>
 		</repository>
-
 	</repositories>
 
 	<build>
@@ -93,6 +102,8 @@
 								<copy file="conf/netty-transports.yml" tofile="${basedir}/target/netty-transports.yml" />
 								<echo>Copying wso2carbon.jks to the target directory</echo>
 								<copy file="conf/wso2carbon.jks" tofile="${basedir}/target/wso2carbon.jks" />
+								<echo>Copying hibernate.cfg.xml to the target directory</echo>
+								<copy file="conf/hibernate.cfg.xml" tofile="${basedir}/target/hibernate.cfg.xml" />
 							</tasks>
 						</configuration>
 					</execution>
