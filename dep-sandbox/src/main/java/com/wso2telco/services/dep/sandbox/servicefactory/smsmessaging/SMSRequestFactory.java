@@ -2,10 +2,9 @@ package com.wso2telco.services.dep.sandbox.servicefactory.smsmessaging;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 import com.wso2telco.services.dep.sandbox.dao.model.custom.RequestDTO;
+import com.wso2telco.services.dep.sandbox.dao.model.custom.SendMTSMSRequestWrapperDTO;
 import com.wso2telco.services.dep.sandbox.servicefactory.RequestHandleable;
-
 import io.netty.handler.codec.http.HttpMethod;
 
 public class SMSRequestFactory {
@@ -14,6 +13,7 @@ public class SMSRequestFactory {
 
 	public static RequestHandleable getInstance(final RequestDTO requestDTO) {
 
+		SendMTSMSRequestWrapperDTO sendMTSMSRequestWrapperDTO = (SendMTSMSRequestWrapperDTO) requestDTO;
 		final String QUERY_DELIVERY_STATUS = "deliveryInfos";
 		final String SEND_MT_SMS = "requests";
 		final String RETRIVE_SMS = "registrations";

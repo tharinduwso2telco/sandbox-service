@@ -3,8 +3,11 @@ package com.wso2telco.services.dep.sandbox.servicefactory.smsmessaging;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+
+import com.wso2telco.services.dep.sandbox.dao.UserDAO;
 import com.wso2telco.services.dep.sandbox.dao.model.custom.OutboundSMSMessageRequestBean;
 import com.wso2telco.services.dep.sandbox.dao.model.custom.SendMTSMSRequestWrapperDTO;
+import com.wso2telco.services.dep.sandbox.dao.model.domain.User;
 import com.wso2telco.services.dep.sandbox.servicefactory.AbstractRequestHandler;
 import com.wso2telco.services.dep.sandbox.servicefactory.Returnable;
 
@@ -14,6 +17,11 @@ class SendMTSMSService extends AbstractRequestHandler<SendMTSMSRequestWrapperDTO
 	protected Returnable process(SendMTSMSRequestWrapperDTO extendedRequestDTO) throws Exception {
 
 		try {
+
+			UserDAO userDAO = new UserDAO();
+			User user = userDAO.getUser("admin");
+
+			System.out.println("---------------------------" + user.getUserName());
 
 			OutboundSMSMessageRequestBean requestBean = extendedRequestDTO.getOutboundSMSMessageRequestBean();
 
