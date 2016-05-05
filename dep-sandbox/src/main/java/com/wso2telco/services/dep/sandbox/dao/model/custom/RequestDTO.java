@@ -14,6 +14,7 @@ public class RequestDTO implements Serializable {
 	private RequestType requestType;
 	private String requestPath;
 	private HttpRequest httpRequest;
+	final String JWT_TOKEN = "x-jwt-assertion";
 
 	public RequestType getRequestType() {
 		return requestType;
@@ -43,8 +44,14 @@ public class RequestDTO implements Serializable {
 		this.httpRequest = httpRequest;
 	}
 
-	public String getSandbox(HttpRequest httpRequest) {
+	public String getSandbox() {
 		return httpRequest.headers().get("sandbox");
+	}
+
+	public String getAuthtoken() {
+
+		return httpRequest.headers().get(JWT_TOKEN);
+
 	}
 
 }

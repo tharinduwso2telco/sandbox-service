@@ -20,7 +20,6 @@
 
 	<groupId>com.wso2telco.services.dep</groupId>
 	<artifactId>dep-sanbox</artifactId>
-	<version>1.8.0-SNAPSHOT</version>
 	<name>WSO2.Telco Sandbox Microservice</name>
 
 
@@ -30,11 +29,24 @@
 			<artifactId>hibernate-core</artifactId>
 			<version>${org.hibernate.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>com.googlecode.json-simple.wso2</groupId>
+			<artifactId>json-simple</artifactId>
+			<version>${com.googlecode.json-simple.wso2.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.json.wso2</groupId>
+			<artifactId>json</artifactId>
+			<version>${org.json.wso2.version}</version>
+		</dependency>
 	</dependencies>
 
 	<properties>
 		<microservice.mainClass>com.wso2telco.services.dep.sandbox.service.Application</microservice.mainClass>
 		<org.hibernate.version>5.1.0.Final</org.hibernate.version>
+		<com.googlecode.json-simple.wso2.version>1.1.wso2v1</com.googlecode.json-simple.wso2.version>
+		<org.json.wso2.version>3.0.0.wso2v1</org.json.wso2.version>
+		
 	</properties>
 
 	<repositories>
@@ -73,6 +85,7 @@
 				<enabled>false</enabled>
 			</releases>
 		</repository>
+		
 
 	</repositories>
 

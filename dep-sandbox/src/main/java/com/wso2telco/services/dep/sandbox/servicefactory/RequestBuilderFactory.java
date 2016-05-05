@@ -12,6 +12,7 @@ public class RequestBuilderFactory {
 
 	static Log  LOG = LogFactory.getLog(RequestBuilderFactory.class);
 
+	@SuppressWarnings("rawtypes")
 	public static RequestHandleable getInstance(final RequestDTO requestDTO) {
 
 		RequestHandleable requestHandler = null;
