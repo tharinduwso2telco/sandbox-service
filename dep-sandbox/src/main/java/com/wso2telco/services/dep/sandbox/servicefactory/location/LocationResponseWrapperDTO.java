@@ -40,14 +40,13 @@ class LocationResponseWrapperDTO implements Returnable {
 
 	@Override
 	public Object getResponse() {
-		// TODO Auto-generated method stub
-		return null;
+		LocationResponse response= new LocationResponse(requestError,terminalLocationList);
+		return response;
 	}
 
 	@Override
 	public Status getStatus() {
-		// TODO Auto-generated method stub
-		return null;
+		return httpStatus;
 	}
 
 	public RequestError getRequestError() {
@@ -58,6 +57,29 @@ class LocationResponseWrapperDTO implements Returnable {
 		this.requestError = requestError;
 	}
 
-	
+	class LocationResponse{
+		
+		private RequestError requestError;
+		private TerminalLocationList terminalLocationList ;
+		
+		LocationResponse(RequestError requestError,TerminalLocationList terminalLocationList ){
+			this.requestError=requestError;
+			this.terminalLocationList=terminalLocationList;
+		}
+		
+		public RequestError getRequestError() {
+			return requestError;
+		}
+		public void setRequestError(RequestError requestError) {
+			this.requestError = requestError;
+		}
+		public TerminalLocationList getTerminalLocationList() {
+			return terminalLocationList;
+		}
+		public void setTerminalLocationList(TerminalLocationList terminalLocationList) {
+			this.terminalLocationList = terminalLocationList;
+		}
+		
+	}
 	
 }
