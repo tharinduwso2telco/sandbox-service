@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class OutboundSMSMessageResponseBean {
+	
 	private OutboundSMSMessageRequest outboundSMSMessageRequest = null;
 
 	public OutboundSMSMessageRequest getOutboundSMSMessageRequest() {
@@ -15,6 +16,7 @@ public class OutboundSMSMessageResponseBean {
 	}
 
 	public static class OutboundSMSMessageRequest {
+		
 		private List<String> address = new ArrayList<String>();
 		private DeliveryInfoList deliveryInfoList = null;
 		private String senderAddress = null;
@@ -112,7 +114,6 @@ public class OutboundSMSMessageResponseBean {
 			public static class DeliveryInfo {
 
 				private String address = null;
-
 				private String deliveryStatus = null;
 
 				public String getAddress() {
