@@ -9,7 +9,6 @@ import com.wso2telco.services.dep.sandbox.dao.model.domain.LocationRequestLog;
 import com.wso2telco.services.dep.sandbox.dao.model.domain.Locationparam;
 import com.wso2telco.services.dep.sandbox.dao.model.domain.ManageNumber;
 import com.wso2telco.services.dep.sandbox.dao.model.domain.User;
-import com.wso2telco.services.dep.sandbox.util.HibernateUtil;
 
 public class LocationDAO extends AbstractDAO {
 
