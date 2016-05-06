@@ -26,7 +26,9 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.Status;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import com.wso2telco.services.dep.sandbox.dao.model.custom.LocationRequestWrapperDTO;
 import com.wso2telco.services.dep.sandbox.dao.model.custom.OutboundSMSMessageRequestBean;
@@ -49,12 +51,14 @@ import io.netty.handler.codec.http.HttpRequest;
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
 public class SandboxService {
+Log LOG = LogFactory.getLog( SandboxService.class);
 
 	@GET
 	@Path("/location/{v1}/queries/location")
 	public Response getLocation(@QueryParam("address") String address,
 			@QueryParam("requestedAccuracy") String requestedAccuracy, @Context HttpRequest httpRequest) {
-		System.out.println("GET invoked");
+		LOG.debug("/location/{v1}/queries/location invorked :"+address + requestedAccuracy +httpRequest);
+		
 		LocationRequestWrapperDTO requestDTO = new LocationRequestWrapperDTO();
 		requestDTO.setAddress(address);
 		requestDTO.setRequestedAccuracy(requestedAccuracy);
@@ -65,7 +69,9 @@ public class SandboxService {
 		Returnable returnable = null;
 		try {
 			returnable = handler.execute(requestDTO);
-			return Response.status(returnable.getHttpStatus()).entity(returnable.getResponse()).build();
+			Response response =Response.status(returnable.getHttpStatus()).entity(returnable.getResponse()).build(); 
+			LOG.debug("Response :"+response );
+			return response;
 		} catch (Exception e) {
 			return Response.status(Response.Status.BAD_REQUEST).entity(returnable.getResponse()).build();
 		}
