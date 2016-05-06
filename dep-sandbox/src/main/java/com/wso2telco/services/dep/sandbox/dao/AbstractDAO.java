@@ -80,21 +80,5 @@ public class AbstractDAO {
 	        return usr;
 	    }
 	 
-	 public void saveAnyObject(Object obj)throws Exception{
-		 
-		 Session session = getSession();
-		 Transaction tx = session.beginTransaction();
-		 try {
-			tx.begin();
-			 session.beginTransaction();
-			 session.save(obj);
-			 tx.commit();
-		} catch (Exception e) {
-			tx.rollback();
-			throw e;
-		}
-		 
-	 }
-	 
 	 
 }
