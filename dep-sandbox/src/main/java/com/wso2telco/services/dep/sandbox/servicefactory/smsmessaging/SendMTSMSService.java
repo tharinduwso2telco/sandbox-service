@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.commons.logging.LogFactory;
+
 import com.wso2telco.services.dep.sandbox.dao.model.custom.OutboundSMSMessageRequestBean;
 import com.wso2telco.services.dep.sandbox.dao.model.custom.SendMTSMSRequestWrapperDTO;
 import com.wso2telco.services.dep.sandbox.dao.model.domain.User;
@@ -11,7 +13,9 @@ import com.wso2telco.services.dep.sandbox.servicefactory.AbstractRequestHandler;
 import com.wso2telco.services.dep.sandbox.servicefactory.Returnable;
 
 class SendMTSMSService extends AbstractRequestHandler<SendMTSMSRequestWrapperDTO> {
-
+	{
+		LOG = LogFactory.getLog(SendMTSMSService.class);
+	}
 	@Override
 	protected Returnable process(SendMTSMSRequestWrapperDTO extendedRequestDTO) throws Exception {
 
