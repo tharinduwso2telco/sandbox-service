@@ -1,15 +1,11 @@
 package com.wso2telco.services.dep.sandbox.servicefactory.location;
 
-import javax.ws.rs.core.Response.Status;
-
 import com.wso2telco.oneapivalidation.exceptions.RequestError;
-import com.wso2telco.services.dep.sandbox.servicefactory.Returnable;
+import com.wso2telco.services.dep.sandbox.servicefactory.AbstractReturnWrapperDTO;
 
-class LocationResponseWrapperDTO implements Returnable {
+class LocationResponseWrapperDTO extends AbstractReturnWrapperDTO {
 
-	private RequestError requestError;
 	private  TerminalLocationList terminalLocationList ;
-	private Status httpStatus;
 	private String location;
 	
 	
@@ -22,13 +18,6 @@ class LocationResponseWrapperDTO implements Returnable {
 		this.location = location;
 	}
 
-	public Status getHttpStatus() {
-		return httpStatus;
-	}
-
-	public void setHttpStatus(Status httpStatus) {
-		this.httpStatus = httpStatus;
-	}
 
 	public TerminalLocationList getTerminalLocationList() {
 		return terminalLocationList;
@@ -40,22 +29,11 @@ class LocationResponseWrapperDTO implements Returnable {
 
 	@Override
 	public Object getResponse() {
-		LocationResponse response= new LocationResponse(requestError,terminalLocationList);
+		LocationResponse response= new LocationResponse(getRequestError(),terminalLocationList);
 		return response;
 	}
 
-	@Override
-	public Status getStatus() {
-		return httpStatus;
-	}
 
-	public RequestError getRequestError() {
-		return requestError;
-	}
-
-	public void setRequestError(RequestError requestError) {
-		this.requestError = requestError;
-	}
 
 	class LocationResponse{
 		

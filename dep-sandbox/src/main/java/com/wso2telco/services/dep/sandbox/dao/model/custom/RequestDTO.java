@@ -45,7 +45,7 @@ public class RequestDTO implements Serializable {
 		return httpRequest.headers().get("sandbox");
 	}
 
-	public String getAuthtoken() {
+	public String getJWTToken() {
 
 		return httpRequest.headers().get(JWT_TOKEN);
 

@@ -80,4 +80,22 @@ class SendMTSMSService extends AbstractRequestHandler<SendMTSMSRequestWrapperDTO
 		// TODO Auto-generated method stub
 		return false;
 	}
+
+	@Override
+	protected Returnable getResponseDTO() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	protected List<String> getAddress() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	protected void init(SendMTSMSRequestWrapperDTO extendedRequestDTO) throws Exception {
+		// TODO Auto-generated method stub
+		
+	}
 }

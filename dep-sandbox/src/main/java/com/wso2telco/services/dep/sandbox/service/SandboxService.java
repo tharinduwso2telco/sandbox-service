@@ -64,7 +64,7 @@ public class SandboxService {
 		Returnable returnable = null;
 		try {
 			returnable = handler.execute(requestDTO);
-			return Response.status(returnable.getStatus()).entity(returnable.getResponse()).build();
+			return Response.status(returnable.getHttpStatus()).entity(returnable.getResponse()).build();
 		} catch (Exception e) {
 			return Response.status(Response.Status.BAD_REQUEST).entity(returnable.getResponse()).build();
 		}
@@ -88,7 +88,7 @@ public class SandboxService {
 		try {
 
 			returnable = handler.execute(requestDTO);
-			return Response.status(returnable.getStatus()).entity(returnable.getResponse()).build();
+			return Response.status(returnable.getHttpStatus()).entity(returnable.getResponse()).build();
 		} catch (Exception e) {
 
 			return Response.status(Response.Status.BAD_REQUEST).entity(returnable.getResponse()).build();

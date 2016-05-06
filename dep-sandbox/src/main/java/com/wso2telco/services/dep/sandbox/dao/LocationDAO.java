@@ -12,22 +12,7 @@ import com.wso2telco.services.dep.sandbox.dao.model.domain.User;
 
 public class LocationDAO extends AbstractDAO {
 
-	public ManageNumber getWhitelisted(int userid, String num) {
-
-		Session sess = getSession();
-
-		ManageNumber whitelisted = null;
-		try {
-			whitelisted = (ManageNumber) sess.createQuery("from ManageNumber where user.id = ? and number = ?")
-					.setInteger(0, userid).setString(1, num).uniqueResult();
-
-		} catch (Exception e) {
-			System.out.println("getUserWhitelist: " + e);
-		} finally {
-			sess.close();
-		}
-		return whitelisted;
-	}
+	
 
 	/**
 	 * 

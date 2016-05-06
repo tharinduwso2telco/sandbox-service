@@ -1,7 +1,9 @@
 package com.wso2telco.services.dep.sandbox.servicefactory.location;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import javax.ws.rs.core.Response.Status;
 
@@ -22,6 +24,9 @@ class LocationRequestHandler  extends AbstractRequestHandler<LocationRequestWrap
 	final static String RETRIEVED = "Retrieved";
 	final static String NOT_RETRIEVED="NotRetrieved";
 	final static String SIMPLE_DATE_FORMAT= "yyyy-MM-dd HH:mm:ss";
+	  LocationResponseWrapperDTO responseWrapperDTO =null;
+	  LocationRequestWrapperDTO extendedRequestDTO=null;
+	
 	private LocationDAO locationDao=null;
 	{
 		LOG = LogFactory.getLog(LocationRequestHandler.class);
@@ -32,85 +37,80 @@ class LocationRequestHandler  extends AbstractRequestHandler<LocationRequestWrap
 	@Override
 	protected Returnable process(LocationRequestWrapperDTO extendedRequestDTO) throws Exception {
 
-		String userNum = getLastMobileNumber(extendedRequestDTO.getAddress());
+		
         User user=extendedRequestDTO.getUser();
-        ManageNumber wlnumber = locationDao.getWhitelisted(user.getId(), userNum);
-        LocationResponseWrapperDTO responseWrapperDTO = new LocationResponseWrapperDTO();
-        
-        if (wlnumber != null) {
+       
+        //Temp status variable
+        Locationparam locparam = locationDao.queryLocationParam(user.getId());
 
-            //Temp status variable
-            Locationparam locparam = locationDao.queryLocationParam(user.getId());
-
-            if (locparam != null) {
+        if (locparam != null) {
+        	
+        	
+            if (locparam.getLocationRetrieveStatus().equals(RETRIEVED)) {
+            	LOG.debug("Location retrieve status : "+ RETRIEVED);
             	
+                locationDao.saveTransaction(extendedRequestDTO.getAddress(), 
+                						Double.valueOf(extendedRequestDTO.getRequestedAccuracy()), 
+                						"Retrieved", user);
+
+                TerminalLocationList objTerminalLocationList = new TerminalLocationList();
+
+                TerminalLocation objTerminalLocation = new TerminalLocation();
+                objTerminalLocation.setAddress(extendedRequestDTO.getAddress());
+
+                TerminalLocation.CurrentLocation objCurrentLocation = new TerminalLocation.CurrentLocation();
+                objCurrentLocation.setAccuracy(Double.valueOf(extendedRequestDTO.getRequestedAccuracy()));
+                objCurrentLocation.setAltitude(Double.parseDouble(locparam.getAltitude()));
+                objCurrentLocation.setLatitude(Double.parseDouble(locparam.getLatitude()));
+                objCurrentLocation.setLongitude(Double.parseDouble(locparam.getLongitude()));
+
+                SimpleDateFormat dateFormat = new SimpleDateFormat(SIMPLE_DATE_FORMAT);
+                Date currentDate = new Date();
+                objCurrentLocation.setTimestamp(dateFormat.format(currentDate));
+
+                objTerminalLocation.setCurrentLocation(objCurrentLocation);
+                objTerminalLocation.setLocationRetrievalStatus(RETRIEVED);
+
+                objTerminalLocationList.setTerminalLocation(objTerminalLocation);
+
+                
+                responseWrapperDTO.setTerminalLocationList(objTerminalLocationList);
+                responseWrapperDTO.setHttpStatus(Status.OK);
+
+            } else if (locparam.getLocationRetrieveStatus().equals(NOT_RETRIEVED)) {
             	
-                if (locparam.getLocationRetrieveStatus().equals(RETRIEVED)) {
-                	LOG.debug("Location retrieve status : "+ RETRIEVED);
-                	
-                    locationDao.saveTransaction(extendedRequestDTO.getAddress(), 
-                    						Double.valueOf(extendedRequestDTO.getRequestedAccuracy()), 
-                    						"Retrieved", user);
+                LOG.debug("Location retrieve status :"+NOT_RETRIEVED);
+                
+                locationDao.saveTransaction(extendedRequestDTO.getAddress(), 
+						Double.valueOf(extendedRequestDTO.getRequestedAccuracy()), 
+						NOT_RETRIEVED, user);
 
-                    TerminalLocationList objTerminalLocationList = new TerminalLocationList();
+                TerminalLocationList objTerminalLocationList = new TerminalLocationList();
 
-                    TerminalLocation objTerminalLocation = new TerminalLocation();
-                    objTerminalLocation.setAddress(extendedRequestDTO.getAddress());
+                TerminalLocation objTerminalLocation = new TerminalLocation();
+                objTerminalLocation.setAddress(extendedRequestDTO.getAddress());
+                objTerminalLocation.setLocationRetrievalStatus("NotRetrieved");
 
-                    TerminalLocation.CurrentLocation objCurrentLocation = new TerminalLocation.CurrentLocation();
-                    objCurrentLocation.setAccuracy(Double.valueOf(extendedRequestDTO.getRequestedAccuracy()));
-                    objCurrentLocation.setAltitude(Double.parseDouble(locparam.getAltitude()));
-                    objCurrentLocation.setLatitude(Double.parseDouble(locparam.getLatitude()));
-                    objCurrentLocation.setLongitude(Double.parseDouble(locparam.getLongitude()));
+                objTerminalLocationList.setTerminalLocation(objTerminalLocation);
+                
+                responseWrapperDTO.setTerminalLocationList(objTerminalLocationList);
+                responseWrapperDTO.setHttpStatus(Status.OK);
 
-                    SimpleDateFormat dateFormat = new SimpleDateFormat(SIMPLE_DATE_FORMAT);
-                    Date currentDate = new Date();
-                    objCurrentLocation.setTimestamp(dateFormat.format(currentDate));
-
-                    objTerminalLocation.setCurrentLocation(objCurrentLocation);
-                    objTerminalLocation.setLocationRetrievalStatus(RETRIEVED);
-
-                    objTerminalLocationList.setTerminalLocation(objTerminalLocation);
-
-                    
-                    responseWrapperDTO.setTerminalLocationList(objTerminalLocationList);
-                    responseWrapperDTO.setHttpStatus(Status.OK);
-
-                } else if (locparam.getLocationRetrieveStatus().equals(NOT_RETRIEVED)) {
-                	
-                    LOG.debug("Location retrieve status :"+NOT_RETRIEVED);
-                    
-                    locationDao.saveTransaction(extendedRequestDTO.getAddress(), 
-    						Double.valueOf(extendedRequestDTO.getRequestedAccuracy()), 
-    						NOT_RETRIEVED, user);
-
-                    TerminalLocationList objTerminalLocationList = new TerminalLocationList();
-
-                    TerminalLocation objTerminalLocation = new TerminalLocation();
-                    objTerminalLocation.setAddress(extendedRequestDTO.getAddress());
-                    objTerminalLocation.setLocationRetrievalStatus("NotRetrieved");
-
-                    objTerminalLocationList.setTerminalLocation(objTerminalLocation);
-                    
-                    responseWrapperDTO.setTerminalLocationList(objTerminalLocationList);
-                    responseWrapperDTO.setHttpStatus(Status.OK);
-
-                } else if (locparam.getLocationRetrieveStatus().equals("Error")) {
-                    
-                    LOG.debug("Location retrieve status : Error");
-                    responseWrapperDTO.setRequestError(constructRequestError(SERVICEEXCEPTION, "SVC0002", "Invalid input value for message part %1", extendedRequestDTO.getAddress()));
-                    responseWrapperDTO.setHttpStatus(Status.BAD_REQUEST);
-                }
-            } else {
-                LOG.debug("Location parameters are empty");
-                responseWrapperDTO.setRequestError(constructRequestError(SERVICEEXCEPTION,"SVC0002", "Invalid input value for message part %1",extendedRequestDTO.getAddress()));
+            } else if (locparam.getLocationRetrieveStatus().equals("Error")) {
+                
+                LOG.debug("Location retrieve status : Error");
+                responseWrapperDTO.setRequestError(constructRequestError(SERVICEEXCEPTION, "SVC0002", "Invalid input value for message part %1", extendedRequestDTO.getAddress()));
                 responseWrapperDTO.setHttpStatus(Status.BAD_REQUEST);
             }
         } else {
-        	 LOG.debug("Location parameters are empty");
-            responseWrapperDTO.setRequestError(constructRequestError(SERVICEEXCEPTION,"SVC0001", "A service error occurred. Error code is %1",extendedRequestDTO.getAddress()+ " Not Whitelisted"));
+            LOG.debug("Location parameters are empty");
+            responseWrapperDTO.setRequestError(constructRequestError(SERVICEEXCEPTION,"SVC0002", "Invalid input value for message part %1",extendedRequestDTO.getAddress()));
             responseWrapperDTO.setHttpStatus(Status.BAD_REQUEST);
         }
+    
+        /////////////
+        
+        
 		return responseWrapperDTO;
 	}
 
@@ -121,6 +121,27 @@ class LocationRequestHandler  extends AbstractRequestHandler<LocationRequestWrap
 		 String[] params ={wrapperDTO.getAddress(),wrapperDTO.getRequestedAccuracy()};
 	     validator.validate(params);
 		return false;
+	}
+
+
+	@Override
+	protected Returnable getResponseDTO() {
+		return responseWrapperDTO;
+	}
+
+
+	@Override
+	protected List<String> getAddress() {
+		List<String> address =new ArrayList<String>();
+		address.add(extendedRequestDTO.getAddress());
+		return address;
+	}
+
+
+	@Override
+	protected void init(LocationRequestWrapperDTO extendedRequestDTO) throws Exception {
+		responseWrapperDTO  = new LocationResponseWrapperDTO();
+		this.extendedRequestDTO =extendedRequestDTO;
 	}
 
 }

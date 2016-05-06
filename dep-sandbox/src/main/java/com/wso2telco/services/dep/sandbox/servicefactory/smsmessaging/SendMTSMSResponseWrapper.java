@@ -1,9 +1,8 @@
 package com.wso2telco.services.dep.sandbox.servicefactory.smsmessaging;
 
-import javax.ws.rs.core.Response.Status;
-import com.wso2telco.services.dep.sandbox.servicefactory.Returnable;
+import com.wso2telco.services.dep.sandbox.servicefactory.AbstractReturnWrapperDTO;
 
-public class SendMTSMSResponseWrapper implements Returnable {
+public class SendMTSMSResponseWrapper extends AbstractReturnWrapperDTO{
 
 	@Override
 	public Object getResponse() {
@@ -11,9 +10,4 @@ public class SendMTSMSResponseWrapper implements Returnable {
 		return null;
 	}
 
-	@Override
-	public Status getStatus() {
-		// TODO Auto-generated method stub
-		return null;
-	}
 }
