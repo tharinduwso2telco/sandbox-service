@@ -78,6 +78,7 @@ public class SandboxService {
 		SendMTSMSRequestWrapperDTO requestDTO = new SendMTSMSRequestWrapperDTO();
 		requestDTO.setHttpRequest(httpRequest);
 		requestDTO.setRequestType(RequestType.SMSMESSAGING);
+		requestDTO.setApiVersion(apiVersion);
 		requestDTO.setShortCode(shortCode);
 		requestDTO.setOutboundSMSMessageRequestBean(outboundSMSMessageRequestBean);
 
