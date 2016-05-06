@@ -59,6 +59,7 @@ public class SandboxService {
 		requestDTO.setAddress(address);
 		requestDTO.setRequestedAccuracy(requestedAccuracy);
 		requestDTO.setHttpRequest(httpRequest);
+		requestDTO.setRequestType(RequestType.LOCATION);
 		RequestHandleable handler = RequestBuilderFactory.getInstance(requestDTO);
 
 		Returnable returnable = null;
