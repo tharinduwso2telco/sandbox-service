@@ -3,9 +3,10 @@ package com.wso2telco.services.dep.sandbox.servicefactory.smsmessaging;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-
 import org.apache.commons.logging.LogFactory;
-
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.wso2telco.oneapivalidation.service.impl.sms.ValidateSendSms;
 import com.wso2telco.services.dep.sandbox.dao.model.custom.OutboundSMSMessageRequestBean;
 import com.wso2telco.services.dep.sandbox.dao.model.custom.SendMTSMSRequestWrapperDTO;
 import com.wso2telco.services.dep.sandbox.dao.model.domain.User;
@@ -13,9 +14,13 @@ import com.wso2telco.services.dep.sandbox.servicefactory.AbstractRequestHandler;
 import com.wso2telco.services.dep.sandbox.servicefactory.Returnable;
 
 class SendMTSMSService extends AbstractRequestHandler<SendMTSMSRequestWrapperDTO> {
+
 	{
 		LOG = LogFactory.getLog(SendMTSMSService.class);
 	}
+
+	Gson gson = new GsonBuilder().serializeNulls().create();
+
 	@Override
 	protected Returnable process(SendMTSMSRequestWrapperDTO extendedRequestDTO) throws Exception {
 
@@ -77,7 +82,9 @@ class SendMTSMSService extends AbstractRequestHandler<SendMTSMSRequestWrapperDTO
 
 	@Override
 	protected boolean validate(SendMTSMSRequestWrapperDTO wrapperDTO) throws Exception {
-		// TODO Auto-generated method stub
+
+		ValidateSendSms validator = new ValidateSendSms();
+		validator.validate(gson.toJson(wrapperDTO.getOutboundSMSMessageRequestBean()));
 		return false;
 	}
 

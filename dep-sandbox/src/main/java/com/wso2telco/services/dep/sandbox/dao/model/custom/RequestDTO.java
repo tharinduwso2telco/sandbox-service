@@ -13,10 +13,10 @@ public class RequestDTO implements Serializable {
 	private RequestType requestType;
 	protected HttpRequest httpRequest;
 	final String JWT_TOKEN = "x-jwt-assertion";
-	//TODO:This need to replace with custom dto,instead of domain object
+	private String apiVersion;
+	// TODO:This need to replace with custom dto,instead of domain object
 	private User user;
-	
-	
+
 	public RequestType getRequestType() {
 		return requestType;
 	}
@@ -58,7 +58,12 @@ public class RequestDTO implements Serializable {
 	public void setUser(User user) {
 		this.user = user;
 	}
-	
-	
 
+	public String getApiVersion() {
+		return apiVersion;
+	}
+
+	public void setApiVersion(String apiVersion) {
+		this.apiVersion = apiVersion;
+	}
 }
