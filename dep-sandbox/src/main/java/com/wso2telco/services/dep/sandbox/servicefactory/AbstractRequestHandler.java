@@ -61,17 +61,23 @@ public abstract class AbstractRequestHandler<E2 extends RequestDTO> implements R
 		requestDTO.setUser(user);
 
 		validate(wrapperDTO);
+		
+		/**
+		 * if the current instance does not contain address
+		 */
+		if (!(this instanceof AddressIgnorerable)) {
+			
+			List<String> userNotWhiteListed = getNotWhitelistedNumbers(user);
+			if (userNotWhiteListed != null && !userNotWhiteListed.isEmpty()) {
+				Returnable responseDTO = getResponseDTO();
 
-		List<String> userNotWhiteListed = getNotWhitelistedNumbers(user);
-		if (userNotWhiteListed != null && !userNotWhiteListed.isEmpty()) {
-			Returnable responseDTO = getResponseDTO();
-
-			LOG.debug("Location parameters are empty");
-			responseDTO.setRequestError(
-					constructRequestError(SERVICEEXCEPTION, "SVC0001", "A service error occurred. Error code is %1",
-							StringUtils.join(userNotWhiteListed.toArray()) + " Not Whitelisted"));
-			responseDTO.setHttpStatus(Status.BAD_REQUEST);
-			return responseDTO;
+				LOG.debug("Location parameters are empty");
+				responseDTO.setRequestError(
+						constructRequestError(SERVICEEXCEPTION, "SVC0001", "A service error occurred. Error code is %1",
+								StringUtils.join(userNotWhiteListed.toArray()) + " Not Whitelisted"));
+				responseDTO.setHttpStatus(Status.BAD_REQUEST);
+				return responseDTO;
+			}
 		}
 
 		return process(wrapperDTO);
