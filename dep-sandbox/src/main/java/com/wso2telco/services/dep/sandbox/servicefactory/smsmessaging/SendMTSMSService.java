@@ -81,6 +81,7 @@ class SendMTSMSService extends AbstractRequestHandler<SendMTSMSRequestWrapperDTO
 				} else {
 
 					OutboundSMSMessageResponseBean responseBean = new OutboundSMSMessageResponseBean();
+
 					OutboundSMSMessageResponseBean.OutboundSMSMessageRequest smsMessageResponse = new OutboundSMSMessageResponseBean.OutboundSMSMessageRequest();
 					smsMessageResponse.setAddress(requestBean.getOutboundSMSMessageRequest().getAddress());
 
@@ -122,7 +123,6 @@ class SendMTSMSService extends AbstractRequestHandler<SendMTSMSRequestWrapperDTO
 					responseBean.setOutboundSMSMessageRequest(smsMessageResponse);
 
 					responseWrapperDTO.setOutboundSMSMessageResponseBean(responseBean);
-					;
 					responseWrapperDTO.setHttpStatus(Status.OK);
 				}
 			}
