@@ -3,9 +3,7 @@ package com.wso2telco.services.dep.sandbox.servicefactory.smsmessaging;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-
 import javax.ws.rs.core.Response.Status;
-
 import org.apache.commons.logging.LogFactory;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -21,7 +19,7 @@ import com.wso2telco.services.dep.sandbox.servicefactory.Returnable;
 class SendMTSMSService extends AbstractRequestHandler<SendMTSMSRequestWrapperDTO> {
 
 	Gson gson = new GsonBuilder().serializeNulls().create();
-	SendMTSMSRequestWrapperDTO extendedRequestDTO = null; // why ?
+	SendMTSMSRequestWrapperDTO extendedRequestDTO = null;
 	SendMTSMSResponseWrapper responseWrapperDTO = null;
 	private SMSMessagingDAO smsMessagingDAO = null;
 
@@ -82,13 +80,6 @@ class SendMTSMSService extends AbstractRequestHandler<SendMTSMSRequestWrapperDTO
 					responseWrapperDTO.setHttpStatus(Status.BAD_REQUEST);
 				} else {
 
-					String inSideResourceURL = "http://wso2telco.sandbox.com" + "/smsmessaging/"
-							+ extendedRequestDTO.getApiVersion() + "/outbound/" + extendedRequestDTO.getShortCode()
-							+ "/requests/" + mtSMSTransactionId + "/deliveryInfos";
-					String outSideResourceURL = "http://wso2telco.sandbox.com" + "/smsmessaging/"
-							+ extendedRequestDTO.getApiVersion() + "/outbound/" + extendedRequestDTO.getShortCode()
-							+ "/requests/" + mtSMSTransactionId;
-
 					OutboundSMSMessageResponseBean responseBean = new OutboundSMSMessageResponseBean();
 					OutboundSMSMessageResponseBean.OutboundSMSMessageRequest smsMessageResponse = new OutboundSMSMessageResponseBean.OutboundSMSMessageRequest();
 					smsMessageResponse.setAddress(requestBean.getOutboundSMSMessageRequest().getAddress());
@@ -106,7 +97,8 @@ class SendMTSMSService extends AbstractRequestHandler<SendMTSMSRequestWrapperDTO
 						deliveryInforArrayList.add(responseDeliveryInfo);
 					}
 					responseDeliveryInfoList.setDeliveryInfo(deliveryInforArrayList);
-					responseDeliveryInfoList.setResourceURL(inSideResourceURL);
+					responseDeliveryInfoList.setResourceURL(getinSideResourceURL(mtSMSTransactionId).toString());
+					smsMessageResponse.setDeliveryInfoList(responseDeliveryInfoList);
 
 					smsMessageResponse.setSenderAddress(requestBean.getOutboundSMSMessageRequest().getSenderAddress());
 					OutboundSMSMessageResponseBean.OutboundSMSMessageRequest.OutboundSMSTextMessage responseSMSTextMessage = new OutboundSMSMessageResponseBean.OutboundSMSMessageRequest.OutboundSMSTextMessage();
@@ -125,7 +117,7 @@ class SendMTSMSService extends AbstractRequestHandler<SendMTSMSRequestWrapperDTO
 					smsMessageResponse.setReceiptRequest(responseReceiptRequest);
 
 					smsMessageResponse.setSenderName(requestBean.getOutboundSMSMessageRequest().getSenderName());
-					smsMessageResponse.setResourceURL(outSideResourceURL);
+					smsMessageResponse.setResourceURL(getoutSideResourceURL(mtSMSTransactionId).toString());
 
 					responseBean.setOutboundSMSMessageRequest(smsMessageResponse);
 
@@ -168,6 +160,47 @@ class SendMTSMSService extends AbstractRequestHandler<SendMTSMSRequestWrapperDTO
 	protected void init(SendMTSMSRequestWrapperDTO extendedRequestDTO) throws Exception {
 
 		responseWrapperDTO = new SendMTSMSResponseWrapper();
-		this.extendedRequestDTO = extendedRequestDTO; // why ?
+		this.extendedRequestDTO = extendedRequestDTO;
+	}
+
+	private StringBuilder getinSideResourceURL(final String mtSMSTransactionId) {
+
+		StringBuilder inSideResourceURLBuilder = new StringBuilder();
+		try {
+
+			inSideResourceURLBuilder.append("http://wso2telco.sandbox.com");
+			inSideResourceURLBuilder.append("/smsmessaging/");
+			inSideResourceURLBuilder.append(extendedRequestDTO.getApiVersion());
+			inSideResourceURLBuilder.append("/outbound/");
+			inSideResourceURLBuilder.append(extendedRequestDTO.getShortCode());
+			inSideResourceURLBuilder.append("/requests/");
+			inSideResourceURLBuilder.append(mtSMSTransactionId);
+			inSideResourceURLBuilder.append("/deliveryInfos");
+		} catch (Exception e) {
+
+			throw e;
+		}
+
+		return inSideResourceURLBuilder;
+	}
+
+	private StringBuilder getoutSideResourceURL(final String mtSMSTransactionId) {
+
+		StringBuilder outSideResourceURLBuilder = new StringBuilder();
+		try {
+
+			outSideResourceURLBuilder.append("http://wso2telco.sandbox.com");
+			outSideResourceURLBuilder.append("/smsmessaging/");
+			outSideResourceURLBuilder.append(extendedRequestDTO.getApiVersion());
+			outSideResourceURLBuilder.append("/outbound/");
+			outSideResourceURLBuilder.append(extendedRequestDTO.getShortCode());
+			outSideResourceURLBuilder.append("/requests/");
+			outSideResourceURLBuilder.append(mtSMSTransactionId);
+		} catch (Exception e) {
+
+			throw e;
+		}
+
+		return outSideResourceURLBuilder;
 	}
 }
