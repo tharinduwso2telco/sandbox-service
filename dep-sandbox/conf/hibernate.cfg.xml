@@ -73,7 +73,7 @@
 		<mapping
 			class="com.wso2telco.services.dep.sandbox.dao.model.domain.Paymentparam" />
 		<mapping
-			class="com.wso2telco.services.dep.sandbox.dao.model.domain.Smsparam" />
+			class="com.wso2telco.services.dep.sandbox.dao.model.domain.SMSMessagingParam" />
 		<mapping
 			class="com.wso2telco.services.dep.sandbox.dao.model.domain.SendSMSToApplication" />
 		<mapping

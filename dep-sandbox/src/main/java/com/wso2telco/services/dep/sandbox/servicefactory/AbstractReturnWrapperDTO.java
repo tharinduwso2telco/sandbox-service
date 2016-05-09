@@ -16,8 +16,7 @@ public abstract class AbstractReturnWrapperDTO implements Returnable {
 
 	@Override
 	public void setHttpStatus(Status httpStatus) {
-		this.httpStatus=httpStatus;
-		
+		this.httpStatus=httpStatus;	
 	}
 
 	public RequestError getRequestError() {
