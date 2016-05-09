@@ -10,18 +10,40 @@ import com.wso2telco.services.dep.sandbox.dao.model.domain.User;
 
 public class SMSMessagingDAO extends CommonDAO {
 
-	public SMSMessagingParam getSMSMessagingParam (int userId){
-	
+	public SMSMessagingParam getSMSMessagingParam(int userId) {
+
 		SMSMessagingParam smsMessagingParam = null;
-		
+
 		Session session = getSession();
-        
-		smsMessagingParam = (SMSMessagingParam) session.createQuery("from SMSMessagingParam where userid = ?").setInteger(0, userId).uniqueResult();
-				
+
+		smsMessagingParam = (SMSMessagingParam) session.createQuery("from SMSMessagingParam where userid = ?")
+				.setInteger(0, userId).uniqueResult();
+
 		return smsMessagingParam;
 	}
-	
-	
+
+	public SMSDeliveryStatus getPreviousSMSDeliveryDetailsByMtSMSTransactionId(String mtSMSTransactionId) {
+
+		SMSDeliveryStatus smsDeliveryStatus = null;
+
+		Session session = getSession();
+
+		smsDeliveryStatus = (SMSDeliveryStatus) session.get(SMSDeliveryStatus.class, mtSMSTransactionId);
+
+		return smsDeliveryStatus;
+	}
+
+	public SMSRequestLog getPreviousSMSRequestDetailsBySMSId(int smsId) {
+
+		SMSRequestLog smsRequestLog = null;
+
+		Session session = getSession();
+
+		smsRequestLog = (SMSRequestLog) session.get(SMSRequestLog.class, smsId);
+
+		return smsRequestLog;
+	}
+
 	public String saveSendSMSTransaction(String senderAddress, String addresses, String message,
 			String clientCorrelator, String senderName, String notifyURL, String callbackData, Integer batchsize,
 			String status, Integer txntype, String criteria, String notificationFormat, User user,
@@ -81,5 +103,47 @@ public class SMSMessagingDAO extends CommonDAO {
 		}
 
 		return mtSMSTransactionId;
+	}
+
+	public boolean saveQueryDeliveryStatusTransaction(String senderAddress, String addresses, String message,
+			String clientCorrelator, String senderName, String notifyURL, String callbackData, Integer batchsize,
+			String status, Integer txntype, String criteria, String notificationFormat, User user, String requestId) {
+
+		Session session = null;
+		Transaction tx = null;
+		SMSRequestLog smsRequest = new SMSRequestLog();
+
+		try {
+			session = getSession();
+			tx = session.beginTransaction();
+
+			smsRequest.setSenderAddress(senderAddress);
+			smsRequest.setAddresses((String) addresses);
+			smsRequest.setMessage(message);
+			smsRequest.setClientCorrelator(clientCorrelator);
+			smsRequest.setSenderName(senderName);
+			smsRequest.setNotifyURL(notifyURL);
+			smsRequest.setCallbackData(callbackData);
+			smsRequest.setUser(user);
+			smsRequest.setDate(new Date());
+			smsRequest.setBatchsize(batchsize);
+			smsRequest.setTransactionstatus(status);
+			smsRequest.setTxntype(txntype);
+			smsRequest.setCriteria(criteria);
+			smsRequest.setNotificationFormat(notificationFormat);
+			smsRequest.setRequestId(requestId);
+			session.save(smsRequest);
+
+			tx.commit();
+		} catch (Exception e) {
+
+			tx.rollback();
+			return false;
+		} finally {
+
+			session.close();
+		}
+
+		return true;
 	}
 }
