@@ -32,6 +32,7 @@ import org.apache.commons.logging.LogFactory;
 
 import com.wso2telco.services.dep.sandbox.dao.model.custom.LocationRequestWrapperDTO;
 import com.wso2telco.services.dep.sandbox.dao.model.custom.OutboundSMSMessageRequestBean;
+import com.wso2telco.services.dep.sandbox.dao.model.custom.QuerySMSDeliveryStatusRequestWrapperDTO;
 import com.wso2telco.services.dep.sandbox.dao.model.custom.SendMTSMSRequestWrapperDTO;
 import com.wso2telco.services.dep.sandbox.servicefactory.RequestBuilderFactory;
 import com.wso2telco.services.dep.sandbox.servicefactory.RequestHandleable;
@@ -51,14 +52,14 @@ import io.netty.handler.codec.http.HttpRequest;
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
 public class SandboxService {
-Log LOG = LogFactory.getLog( SandboxService.class);
+	Log LOG = LogFactory.getLog(SandboxService.class);
 
 	@GET
 	@Path("/location/{v1}/queries/location")
 	public Response getLocation(@QueryParam("address") String address,
 			@QueryParam("requestedAccuracy") String requestedAccuracy, @Context HttpRequest httpRequest) {
-		LOG.debug("/location/{v1}/queries/location invorked :"+address + requestedAccuracy +httpRequest);
-		
+		LOG.debug("/location/{v1}/queries/location invorked :" + address + requestedAccuracy + httpRequest);
+
 		LocationRequestWrapperDTO requestDTO = new LocationRequestWrapperDTO();
 		requestDTO.setAddress(address);
 		requestDTO.setRequestedAccuracy(requestedAccuracy);
@@ -69,8 +70,8 @@ Log LOG = LogFactory.getLog( SandboxService.class);
 		Returnable returnable = null;
 		try {
 			returnable = handler.execute(requestDTO);
-			Response response =Response.status(returnable.getHttpStatus()).entity(returnable.getResponse()).build(); 
-			LOG.debug("Response :"+response );
+			Response response = Response.status(returnable.getHttpStatus()).entity(returnable.getResponse()).build();
+			LOG.debug("Response :" + response);
 			return response;
 		} catch (Exception e) {
 			return Response.status(Response.Status.BAD_REQUEST).entity(returnable.getResponse()).build();
@@ -101,5 +102,31 @@ Log LOG = LogFactory.getLog( SandboxService.class);
 
 			return Response.status(Response.Status.BAD_REQUEST).entity(returnable.getResponse()).build();
 		}
+	}
+
+	@GET
+	@Path("/smsmessaging/{apiVersion}/outbound/{shortCode}/requests/{mtSMSTransactionId}/deliveryInfos")
+	public Response handleQuerySMSDeliveryStatusRequest(@Context HttpRequest httpRequest,
+			@PathParam("apiVersion") String apiVersion, @PathParam("shortCode") String shortCode,
+			@PathParam("mtSMSTransactionId") String mtSMSTransactionId) {
+
+		QuerySMSDeliveryStatusRequestWrapperDTO requestDTO = new QuerySMSDeliveryStatusRequestWrapperDTO();
+		requestDTO.setHttpRequest(httpRequest);
+		requestDTO.setRequestType(RequestType.SMSMESSAGING);
+		requestDTO.setApiVersion(apiVersion);
+		requestDTO.setShortCode(shortCode);
+		requestDTO.setMtSMSTransactionId(mtSMSTransactionId);
+
+		RequestHandleable handler = RequestBuilderFactory.getInstance(requestDTO);
+
+		Returnable returnable = null;
+
+		try {
+			returnable = handler.execute(requestDTO);
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+
+		return null;
 	}
 }
