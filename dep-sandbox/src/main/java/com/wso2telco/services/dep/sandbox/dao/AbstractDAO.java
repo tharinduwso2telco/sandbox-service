@@ -13,7 +13,7 @@ import org.hibernate.cfg.Configuration;
 import com.wso2telco.services.dep.sandbox.dao.model.domain.ManageNumber;
 import com.wso2telco.services.dep.sandbox.dao.model.domain.User;
 
-public class AbstractDAO {
+public abstract class AbstractDAO {
 
 	private static final SessionFactory sessionFactory;
 	private final static String FILE_NAME = "./hibernate.cfg.xml";
@@ -79,22 +79,6 @@ public class AbstractDAO {
 
 	        return usr;
 	    }
-	 
-	 public void saveAnyObject(Object obj)throws Exception{
-		 
-		 Session session = getSession();
-		 Transaction tx = session.beginTransaction();
-		 try {
-			tx.begin();
-			 session.beginTransaction();
-			 session.save(obj);
-			 tx.commit();
-		} catch (Exception e) {
-			tx.rollback();
-			throw e;
-		}
-		 
-	 }
 	 
 	 
 }

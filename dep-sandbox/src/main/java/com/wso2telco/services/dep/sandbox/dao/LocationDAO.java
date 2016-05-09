@@ -7,12 +7,9 @@ import org.hibernate.Transaction;
 
 import com.wso2telco.services.dep.sandbox.dao.model.domain.LocationRequestLog;
 import com.wso2telco.services.dep.sandbox.dao.model.domain.Locationparam;
-import com.wso2telco.services.dep.sandbox.dao.model.domain.ManageNumber;
 import com.wso2telco.services.dep.sandbox.dao.model.domain.User;
 
 public class LocationDAO extends AbstractDAO {
-
-	
 
 	/**
 	 * 
@@ -32,8 +29,8 @@ public class LocationDAO extends AbstractDAO {
 		return locparam;
 	}
 
-	public boolean saveTransaction(String address, Double requestedAccuracy, String tranStatus, User user) throws Exception {
-
+	public boolean saveTransaction(String address, Double requestedAccuracy, String tranStatus, User user)
+			throws Exception {
 		LocationRequestLog locationRequestLog = new LocationRequestLog();
 		locationRequestLog.setAddress(address);
 		locationRequestLog.setRequestedAccuracy(requestedAccuracy);
@@ -41,7 +38,17 @@ public class LocationDAO extends AbstractDAO {
 		locationRequestLog.setDate(new Date());
 		locationRequestLog.setUser(user);
 
-		saveAnyObject(locationRequestLog);
+		Session session = getSession();
+		Transaction tx = session.beginTransaction();
+		try {
+			tx.begin();
+			session.beginTransaction();
+			session.save(locationRequestLog);
+			tx.commit();
+		} catch (Exception e) {
+			tx.rollback();
+			throw e;
+		}
 
 		return true;
 	}

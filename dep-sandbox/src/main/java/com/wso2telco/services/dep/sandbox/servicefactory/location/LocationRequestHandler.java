@@ -13,7 +13,6 @@ import com.wso2telco.oneapivalidation.service.impl.location.ValidateLocation;
 import com.wso2telco.services.dep.sandbox.dao.LocationDAO;
 import com.wso2telco.services.dep.sandbox.dao.model.custom.LocationRequestWrapperDTO;
 import com.wso2telco.services.dep.sandbox.dao.model.domain.Locationparam;
-import com.wso2telco.services.dep.sandbox.dao.model.domain.ManageNumber;
 import com.wso2telco.services.dep.sandbox.dao.model.domain.User;
 import com.wso2telco.services.dep.sandbox.servicefactory.AbstractRequestHandler;
 import com.wso2telco.services.dep.sandbox.servicefactory.Returnable;
