@@ -92,7 +92,6 @@ public class Endpoints {
 			LOG.info("Authenicator: USSDAuthenticator");
 		}
 
-		senderAddress = "tel:+" + senderAddress;
 		Gson gson = new GsonBuilder().serializeNulls().create();
 		InboundMessage inboundMsg = new InboundMessage();
 		ResponseRequest inboundRepReq = new ResponseRequest();
