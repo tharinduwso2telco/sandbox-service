@@ -14,17 +14,17 @@
  * limitations under the License.
  */
 
-package com.wso2telco.dep.service.conf;
+package com.wso2telco.dep.tpservice.conf;
 
-class TokenPoolService {
+class TokenPoolManager {
 
-	private TokenPoolService() {
-		tokenPoolService = new TokenPoolService();
+	private TokenPoolManager() {
+		tokenPoolService = new TokenPoolManager();
 	}
 
-	private static TokenPoolService tokenPoolService;
+	private static TokenPoolManager tokenPoolService;
 
-	public static TokenPoolService getInstance() {
+	public static TokenPoolManager getInstance() {
 		return tokenPoolService;
 	}
 

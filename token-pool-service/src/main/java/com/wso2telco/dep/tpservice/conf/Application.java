@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package com.wso2telco.dep.service.conf;
+package com.wso2telco.dep.tpservice.conf;
 
 import org.wso2.msf4j.MicroservicesRunner;
 
-import com.wso2telco.dep.service.TokenService;
+import com.wso2telco.dep.tpservice.rest.TokenPoolService;
 
 public class Application {
     public static void main(String[] args) {
@@ -31,11 +31,11 @@ public class Application {
 			/**
 			 * initialize token pool service
 			 */
-			TokenPoolService.getInstance().init();
+			TokenPoolManager.getInstance().init();
 			
 			
 			new MicroservicesRunner()
-			        .deploy(new TokenService())
+			        .deploy(new TokenPoolService())
 			        .start();
 			
 			

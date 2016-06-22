@@ -1,4 +1,4 @@
-package com.wso2telco.dep.service.model;
+package com.wso2telco.dep.tpservice.model;
 
 import java.io.Serializable;
 

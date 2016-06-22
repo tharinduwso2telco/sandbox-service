@@ -1,8 +1,8 @@
-package com.wso2telco.dep.service.conf;
+package com.wso2telco.dep.tpservice.conf;
 
 import java.io.Serializable;
 
-import com.wso2telco.dep.service.model.ConfigDTO;
+import com.wso2telco.dep.tpservice.model.ConfigDTO;
 
 public class ConfigReader implements Serializable {
 
