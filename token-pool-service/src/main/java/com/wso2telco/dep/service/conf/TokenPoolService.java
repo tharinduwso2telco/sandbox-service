@@ -16,32 +16,20 @@
 
 package com.wso2telco.dep.service.conf;
 
-import org.wso2.msf4j.MicroservicesRunner;
+class TokenPoolService {
 
-import com.wso2telco.dep.service.TokenService;
+	private TokenPoolService() {
+		tokenPoolService = new TokenPoolService();
+	}
 
-public class Application {
-    public static void main(String[] args) {
-    	
-    	try {
-    		/**
-    		 * initialize configuration reading
-    		 */
-			ConfigReader.getInstance().init();
-			/**
-			 * initialize token pool service
-			 */
-			TokenPoolService.getInstance().init();
-			
-			
-			new MicroservicesRunner()
-			        .deploy(new TokenService())
-			        .start();
-			
-			
-    	} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-    }
+	private static TokenPoolService tokenPoolService;
+
+	public static TokenPoolService getInstance() {
+		return tokenPoolService;
+	}
+
+	public void init()throws Exception{
+		
+		//TODO:need to implimet busness logic
+	}
 }

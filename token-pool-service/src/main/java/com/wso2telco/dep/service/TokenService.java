@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.wso2telco.dep.service.conf;
+package com.wso2telco.dep.service;
 
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -30,7 +30,7 @@ import javax.ws.rs.Path;
  * @since 1.0.0-SNAPSHOT
  */
 @Path("/service")
-public class AppInitializer {
+public class TokenService {
 
     @GET
     @Path("/")
