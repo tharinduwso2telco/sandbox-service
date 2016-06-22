@@ -16,20 +16,22 @@
 
 package com.wso2telco.dep.tpservice.conf;
 
-final class TokenPoolManager {
+final class SessionManager implements Runnable{
+	private static SessionManager instance;
 
-	private TokenPoolManager() {
-		tokenPoolService = new TokenPoolManager();
+	{
+		instance = new SessionManager();
 	}
 
-	private static TokenPoolManager tokenPoolService;
-
-	public static TokenPoolManager getInstance() {
-		return tokenPoolService;
+	public static SessionManager getInstance() {
+		return instance;
 	}
 
-	public void init()throws Exception{
+	@Override
+	public void run() {
+		// TODO Auto-generated method stub
 		
-		//TODO:need to implimet busness logic
 	}
+	
+	
 }
