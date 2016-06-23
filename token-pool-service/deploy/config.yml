@@ -1,0 +1,15 @@
+database:
+  driverClass: com.mysql.jdbc.Driver
+  user: <user>
+  password: <pwd>
+  url: jdbc:mysql://localhost/<db>
+host: localhost
+server:
+applicationConnectors:
+- type: http
+# The port the application will listen on
+port: 8181
+adminConnectors:
+- type: http
+# The admin port
+port: 8282

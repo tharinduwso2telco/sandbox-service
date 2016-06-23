@@ -2,7 +2,9 @@ package com.wso2telco.dep.tpservice.model;
 
 import java.io.Serializable;
 
-public class ConfigDTO implements Serializable{
+import io.dropwizard.Configuration;
+
+public class ConfigDTO extends Configuration implements Serializable{
 
 	/**
 	 * 
