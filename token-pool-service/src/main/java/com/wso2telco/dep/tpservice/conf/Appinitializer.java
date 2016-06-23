@@ -23,12 +23,21 @@ import com.wso2telco.dep.tpservice.model.ConfigDTO;
 import com.wso2telco.dep.tpservice.rest.TokenPoolService;
 
 import io.dropwizard.Application;
+import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
+import io.federecio.dropwizard.swagger.SwaggerDropwizard;
 
 public class Appinitializer extends Application<ConfigDTO> {
 
-	private static final Logger log = LoggerFactory.getLogger(Appinitializer.class);
+	static Logger  log = LoggerFactory.getLogger(Appinitializer.class);
 
+	private final SwaggerDropwizard swaggerDropwizard = new SwaggerDropwizard();
+
+	@Override
+	public void initialize(Bootstrap<ConfigDTO> bootstrap) {
+		swaggerDropwizard.onInitialize(bootstrap);
+	}
+	
 	@Override
 	public void run(ConfigDTO arg0, Environment env) throws Exception {
 		/**
@@ -41,6 +50,7 @@ public class Appinitializer extends Application<ConfigDTO> {
 		TokenPoolManager.getInstance().init();
 
 		env.jersey().register(new TokenPoolService());
+		swaggerDropwizard.onRun(arg0,env,arg0.getHost(),arg0.getPort());
 
 	}
 
@@ -48,7 +58,7 @@ public class Appinitializer extends Application<ConfigDTO> {
 		try {
 			new Appinitializer().run(args);
 		} catch (Exception e) {
-			log.error("", e);
+			log.error("",e);
 		}
 	}
 

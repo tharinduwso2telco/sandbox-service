@@ -13,9 +13,6 @@ public class ConfigReader implements Serializable {
 	private ConfigDTO configDTO;
 	private static ConfigReader reader;
 
-	{
-		reader = new ConfigReader();
-	}
 
 	private ConfigReader() {
 
@@ -26,7 +23,7 @@ public class ConfigReader implements Serializable {
 	}
 
 	public static ConfigReader getInstance() {
-		if (reader != null) {
+		if (reader == null) {
 			reader = new ConfigReader();
 		}
 		return reader;

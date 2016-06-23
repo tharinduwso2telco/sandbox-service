@@ -21,6 +21,12 @@ import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+
+import com.wordnik.swagger.annotations.Api;
+import com.wordnik.swagger.annotations.ApiOperation;
+import com.wordnik.swagger.annotations.ApiParam;
+import com.wordnik.swagger.annotations.ApiResponses;
 
 /**
  * This is the Microservice resource class.
@@ -29,12 +35,18 @@ import javax.ws.rs.Path;
  *
  * @since 1.0.0-SNAPSHOT
  */
+@Api(value = "/service", description = "This service provide a rest service for providing a valid token")
 @Path("/service")
 public class TokenPoolService {
 
     @GET
-    @Path("/")
-    public String get() {
+    @Path("/{ownerID}")
+    @ApiOperation(
+			value = "Get the valid token",
+			notes = "API for return the contact by given the id",
+			response = String.class
+			)	
+    public String get(@ApiParam(value = "owner Id of token to fetch", required = true) @PathParam("id") String id) {
         // TODO: Implementation for HTTP GET request
         System.out.println("GET invoked");
         return "Hello from WSO2 MSF4J";
@@ -49,6 +61,10 @@ public class TokenPoolService {
 
     @PUT
     @Path("/")
+    @ApiOperation(
+			value = "Update token",
+			notes = "API for update token by id " 
+			)
     public void put() {
         // TODO: Implementation for HTTP PUT request
         System.out.println("PUT invoked");
