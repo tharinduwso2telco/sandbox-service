@@ -43,7 +43,7 @@ public class Appinitializer extends Application<ConfigDTO> {
 		/**
 		 * initialize configuration reading
 		 */
-		ConfigReader.getInstance().init();
+		ConfigReader.init(arg0,env);
 		/**
 		 * initialize token pool service
 		 */
