@@ -59,7 +59,7 @@ CREATE TABLE `tsttoken` (
   `accesstoken` varchar(200) DEFAULT NULL,
   `refreshtoken` varchar(200) DEFAULT NULL,
   `lastrefreshdone` timestamp NULL DEFAULT NULL,
-  `isvalid` int(1) NOT NULL,
+  `isvalid` BIT(1) NOT NULL,
   `uc` int(11) DEFAULT '0',
   CONSTRAINT `pk01tsttoken` PRIMARY KEY (`tokendid`),
   CONSTRAINT `fk01tsttoken` FOREIGN KEY (`tsxwhodid`) REFERENCES `tsxwho` (`tsxwhodid`) ON DELETE NO ACTION ON UPDATE NO ACTION
@@ -87,7 +87,7 @@ CREATE TABLE `tsxwho` (
   `ownerid` varchar(200) NOT NULL,
   `tokenurl` varchar(400) NOT NULL,
   `defaultconnectionresettime` bigint(20) NOT NULL,
-  `isvalid` int(1) NOT NULL,
+  `isvalid` BIT(1) NOT NULL,
   `createddate` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `uc` int(11) DEFAULT '0',
   PRIMARY KEY (`tsxwhodid`),
