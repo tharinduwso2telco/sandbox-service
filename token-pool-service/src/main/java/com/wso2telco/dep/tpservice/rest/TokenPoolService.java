@@ -17,47 +17,60 @@
 package com.wso2telco.dep.tpservice.rest;
 
 import javax.ws.rs.DELETE;
+import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 
-/**
- * This is the Microservice resource class.
- * See <a href="https://github.com/wso2/msf4j#getting-started">https://github.com/wso2/msf4j#getting-started</a>
- * for the usage of annotations.
- *
- * @since 1.0.0-SNAPSHOT
- */
-@Path("/service")
+import com.wordnik.swagger.annotations.Api;
+import com.wordnik.swagger.annotations.ApiOperation;
+import com.wordnik.swagger.annotations.ApiParam;
+import com.wordnik.swagger.annotations.ApiResponse;
+import com.wordnik.swagger.annotations.ApiResponses;
+
+@Api(value = "/tokenservice", description = "This service provide a rest service for providing a valid token")
+@Path("/tokenservice")
 public class TokenPoolService {
 
-    @GET
-    @Path("/")
-    public String get() {
-        // TODO: Implementation for HTTP GET request
-        System.out.println("GET invoked");
-        return "Hello from WSO2 MSF4J";
-    }
+	@GET
+	@Path("/{ownerID}")
+	@ApiOperation(value = "Get the valid token", notes = "API for return the contact by given the id", response = String.class)
+	public String get(
+			@ApiParam(value = "owner Id of token to fetch", required = true) @PathParam("ownerID") String id) {
+		// TODO: Implementation for HTTP GET request
+		System.out.println("GET invoked");
+		return "Hello from WSO2 MSF4J";
+	}
 
-    @POST
-    @Path("/")
-    public void post() {
-        // TODO: Implementation for HTTP POST request
-        System.out.println("POST invoked");
-    }
+	@POST
+	@Path("/{wonerid}}")
+	@ApiOperation(value = "New token details", notes = "API for update token create ")
+	@ApiResponses({ 
+				@ApiResponse(code = 201, message = "Successfully created the contact"),
+				@ApiResponse(code = 400, message = "Bad Request ") })
 
-    @PUT
-    @Path("/")
-    public void put() {
-        // TODO: Implementation for HTTP PUT request
-        System.out.println("PUT invoked");
-    }
+	public void post(@ApiParam(value = "Owner of the token ", required = true) @PathParam("wonerid") String wonerid) {
+		// TODO: Implementation for HTTP POST request
+		System.out.println("POST invoked");
+	}
 
-    @DELETE
-    @Path("/")
-    public void delete() {
-        // TODO: Implementation for HTTP DELETE request
-        System.out.println("DELETE invoked");
-    }
+	@PUT
+	@Path("/{tokenID}")
+	@ApiOperation(value = "Update token details", notes = "API for update token by id ")
+	public void put(@ApiParam(value = "token id to update ", required = true) @PathParam("tokenid") String tokenid,
+			@ApiParam(value = "new refreshTime to update ", required = true) @FormParam("refreshTime") String refreshTime) {
+		// TODO: Implementation for HTTP PUT request
+		System.out.println("PUT invoked");
+	}
+
+	@DELETE
+	@Path("/{tokenID}")
+	@ApiOperation(value = "Delete token ", notes = "Delete token ")
+	public void delete(
+			@ApiParam(value = "token Id  to delete ", required = true) @PathParam("tokenid") String tokenid) {
+		// TODO: Implementation for HTTP DELETE request
+		System.out.println("DELETE invoked");
+	}
 }

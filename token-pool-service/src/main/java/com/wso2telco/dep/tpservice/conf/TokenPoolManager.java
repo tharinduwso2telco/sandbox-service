@@ -19,12 +19,15 @@ package com.wso2telco.dep.tpservice.conf;
 final class TokenPoolManager {
 
 	private TokenPoolManager() {
-		tokenPoolService = new TokenPoolManager();
+		
 	}
 
 	private static TokenPoolManager tokenPoolService;
 
 	public static TokenPoolManager getInstance() {
+		if(tokenPoolService==null){
+			tokenPoolService = new TokenPoolManager();
+		}
 		return tokenPoolService;
 	}
 
