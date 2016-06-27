@@ -18,28 +18,62 @@ package com.wso2telco.dep.tpservice.manager;
 
 import java.util.ArrayList;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.gson.Gson;
 import com.wso2telco.dep.tpservice.dao.WhoDAO;
 import com.wso2telco.dep.tpservice.model.WhoDTO;
+import com.wso2telco.dep.tpservice.util.exception.BusinessException;
+import com.wso2telco.dep.tpservice.util.exception.GenaralError;
 
 public class WhoManager {
 
-	static Logger log = LoggerFactory.getLogger(WhoManager.class);
+	private static Logger log = LoggerFactory.getLogger(WhoManager.class);
 
 	/**
 	 * Get All Owners
 	 * @return ArrayList of WhoDTO
 	 * @throws Exception, return when an error is occurred.
 	 */
-	public static ArrayList<WhoDTO> getAllOwners() throws Exception {
+	public ArrayList<WhoDTO> getAllOwners() throws BusinessException {
 		ArrayList<WhoDTO> ownersList = null;
 		try {
-			ownersList = WhoDAO.getAllOwners();
+			WhoDAO whoDao = new WhoDAO();
+			ownersList = whoDao.getAllOwners();
 		} catch (Exception e) {
-			log.debug("getAllOwners() failed");
+			log.error("getAllOwners() failed ", e);
+			throw new BusinessException(GenaralError.INTERNAL_SERVER_ERROR);
 		}
 		return ownersList;
+	}
+	
+	/**
+	 * Get All Owners JSON
+	 * @return JSONObject {"owners":[]}
+	 * @throws Exception, return when an error is occurred.
+	 */
+	public JSONObject getAllOwnersJSON() throws BusinessException {
+		ArrayList<WhoDTO> ownersList = null;
+		JSONObject result = new JSONObject();
+		try {
+			//get list of objects
+			WhoDAO whoDao = new WhoDAO();
+			ownersList = whoDao.getAllOwners();
+			
+			//get json string from list
+			Gson gson = new Gson();
+		    String jsonString = gson.toJson(ownersList);
+		    
+		    //convert to json array and set to result object
+		    JSONArray resultObject = new JSONArray(jsonString);
+			result.put("owners", resultObject);
+		} catch (Exception e) {
+			log.error("getAllOwnersJSON() failed ", e);
+			throw new BusinessException(GenaralError.INTERNAL_SERVER_ERROR);
+		}
+		return result;
 	}
 }
