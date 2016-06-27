@@ -14,24 +14,25 @@
  * limitations under the License.
  */
 
-package com.wso2telco.dep.tpservice.conf;
+package com.wso2telco.dep.tpservice.session;
 
-final class SessionManager implements Runnable{
-	private static SessionManager instance;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-	{
-		instance = new SessionManager();
-	}
+import com.google.common.cache.RemovalListener;
+import com.google.common.cache.RemovalNotification;
+import com.wso2telco.dep.tpservice.model.SessionDTO;
 
-	public static SessionManager getInstance() {
-		return instance;
-	}
+class SessionRemovalListener implements RemovalListener<String,SessionDTO> {
+	
+	private Logger log = LoggerFactory.getLogger(SessionRemovalListener.class);
 
 	@Override
-	public void run() {
-		// TODO Auto-generated method stub
+	public void onRemoval(RemovalNotification<String, SessionDTO> arg0) {
+		log.info("Session Expired "+arg0);
 		
 	}
 	
-	
+	 
+
 }

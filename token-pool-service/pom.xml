@@ -21,6 +21,7 @@
 		<dropwizard.swagger.version>0.6</dropwizard.swagger.version>
 		<metrics.version>3.1.0</metrics.version>
 		<mysql.version>6.0.2</mysql.version>
+		<com.google.guava.version>19.0</com.google.guava.version>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -75,6 +76,14 @@
 			<version>1.9.5</version>
 			<scope>test</scope>
 		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/com.google.guava/guava -->
+		<dependency>
+			<groupId>com.google.guava</groupId>
+			<artifactId>guava</artifactId>
+			<version>${com.google.guava.version}</version>
+		</dependency>
+
 	</dependencies>
 	<build>
 		<plugins>
