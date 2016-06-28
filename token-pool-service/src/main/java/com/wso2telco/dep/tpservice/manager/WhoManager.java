@@ -43,8 +43,8 @@ public class WhoManager {
 	 * @throws Exception,
 	 *             return when an error is occurred.
 	 */
-	public ArrayList<WhoDTO> getAllOwners() throws BusinessException {
-		ArrayList<WhoDTO> ownersList = null;
+	public List<WhoDTO> getAllOwners() throws BusinessException {
+		List<WhoDTO> ownersList = null;
 		try {
 			WhoDAO whoDao = new WhoDAO();
 			ownersList = whoDao.getAllOwners();

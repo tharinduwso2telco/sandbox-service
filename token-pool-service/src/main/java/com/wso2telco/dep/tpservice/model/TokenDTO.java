@@ -18,37 +18,113 @@ package com.wso2telco.dep.tpservice.model;
 
 import java.io.Serializable;
 
-public class TokenDTO implements Serializable{
+/**
+ * Model class for tsttoken table
+ * @author Chinthana
+ * @since 24/06/2016
+ *
+ */
+public class TokenDTO implements Serializable {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 119824963735503362L;
+	private static final long serialVersionUID = 3164068409562912730L;
+	
+	private int id;
+	
+	private int whoId;
+
+	private String tokenAuth;
+	
 	private long tokenValidity;
-	private long createdOn;
-	private String tokenId;
 	
+	private String accessToken;
 	
+	private String refreshToken;
 	
+	private long lastRefreshDone;
 	
-	public String getTokenId() {
-		return tokenId;
+	private boolean valid;
+	
+	private int uc;
+	
+	private long createdTime;
+
+	public int getId() {
+		return id;
 	}
-	public void setTokenId(String tokenId) {
-		this.tokenId = tokenId;
+
+	public void setId(int id) {
+		this.id = id;
 	}
-	public long getCreatedOn() {
-		return createdOn;
+
+	public int getWhoId() {
+		return whoId;
 	}
-	public void setCreatedOn(long createdOn) {
-		this.createdOn = createdOn;
+
+	public void setWhoId(int whoId) {
+		this.whoId = whoId;
 	}
+
+	public String getTokenAuth() {
+		return tokenAuth;
+	}
+
+	public void setTokenAuth(String tokenAuth) {
+		this.tokenAuth = tokenAuth;
+	}
+
 	public long getTokenValidity() {
 		return tokenValidity;
 	}
+
 	public void setTokenValidity(long tokenValidity) {
 		this.tokenValidity = tokenValidity;
 	}
-	
 
+	public String getAccessToken() {
+		return accessToken;
+	}
+
+	public void setAccessToken(String accessToken) {
+		this.accessToken = accessToken;
+	}
+
+	public String getRefreshToken() {
+		return refreshToken;
+	}
+
+	public void setRefreshToken(String refreshToken) {
+		this.refreshToken = refreshToken;
+	}
+
+	public long getLastRefreshDone() {
+		return lastRefreshDone;
+	}
+
+	public void setLastRefreshDone(long lastRefreshDone) {
+		this.lastRefreshDone = lastRefreshDone;
+	}
+
+	public boolean isValid() {
+		return valid;
+	}
+
+	public void setValid(boolean valid) {
+		this.valid = valid;
+	}
+
+	public int getUc() {
+		return uc;
+	}
+
+	public void setUc(int uc) {
+		this.uc = uc;
+	}
+
+	public long getCreatedTime() {
+		return createdTime;
+	}
+
+	public void setCreatedTime(long createdTime) {
+		this.createdTime = createdTime;
+	}
 }

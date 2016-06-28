@@ -39,7 +39,7 @@ class TokenRefreshSheduler {
 		 * the seducer trigger monitoring service before the token expires
 		 * trigges two times early the default connection reset.
 		 */
-		final long tokenExpiory = (tokenDTO.getCreatedOn() + tokenDTO.getTokenValidity())
+		final long tokenExpiory = (tokenDTO.getCreatedTime() + tokenDTO.getTokenValidity())
 				- 2 * whoDTO.getDefaultConnectionRestTime();
 
 		try {
@@ -51,7 +51,7 @@ class TokenRefreshSheduler {
 										public void run() {
 							
 											try {
-												TokenPool.getInstance().removeToken(tokenDTO.getTokenId());
+												TokenPool.getInstance().removeToken(String.valueOf(tokenDTO.getId()));
 												
 												//thread sleep for 2* default connection reset time
 												Thread.sleep(2 * whoDTO.getDefaultConnectionRestTime());
@@ -69,7 +69,7 @@ class TokenRefreshSheduler {
 			/**
 			 * Schedule time already expired
 			 */
-			log.error(" token already expired tokenID :"+tokenDTO.getTokenId()+ " | owner id :"+ whoDTO.getId());
+			log.error(" token already expired tokenID :" + tokenDTO.getId() + " | owner id :"+ whoDTO.getId());
 			new TokenReGenarator().reGenarate(whoDTO, tokenDTO);
 		}
 

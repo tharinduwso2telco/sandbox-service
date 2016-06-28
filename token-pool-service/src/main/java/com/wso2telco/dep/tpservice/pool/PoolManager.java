@@ -32,7 +32,7 @@ public class PoolManager {
 
 	public void init() throws BusinessException {
 		whoService = new WhoManager();
-		ArrayList<WhoDTO> whoDTOs = whoService.getAllOwners();
+		List<WhoDTO> whoDTOs = whoService.getAllOwners();
 		for (WhoDTO whoDTO : whoDTOs) {
 			List<TokenDTO> tokenDTos = adminService.loadTokens(whoDTO.getOwnerId());
 
