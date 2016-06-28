@@ -43,6 +43,7 @@ public class TokenDAO {
 	 */
 	public ArrayList<TokenDTO> getAllTokensForOwner(String ownerId) throws SQLException {
 		if (Validator.isInvalidString(ownerId)) {
+			log.debug("ownerId cannot be null or empty");
 			throw new IllegalArgumentException("ownerId cannot be null or empty");
 		}
 		ArrayList<TokenDTO> tokenList = new ArrayList<TokenDTO>();

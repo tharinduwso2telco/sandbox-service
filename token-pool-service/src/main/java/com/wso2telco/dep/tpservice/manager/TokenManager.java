@@ -43,7 +43,7 @@ public class TokenManager {
 	public List<TokenDTO> getAllTokensForOwner(String ownerId) throws BusinessException {
 		List<TokenDTO> tokenList = null;
 		if (Validator.isInvalidString(ownerId)) {
-			log.error("owner id cannot be null");
+			log.debug("owner id cannot be null or empty");
 			throw new BusinessException(GenaralError.INPUT_PARAMETER_ERROR);
         }
 		try {
@@ -64,7 +64,7 @@ public class TokenManager {
 	public JSONObject getAllTokensForOwnerJSON(String ownerId) throws BusinessException {
 		ArrayList<TokenDTO> tokenList = null;
 		if (Validator.isInvalidString(ownerId)) {
-			log.error("owner id cannot be null");
+			log.debug("owner id cannot be null or empty");
 			throw new BusinessException(GenaralError.INPUT_PARAMETER_ERROR);
         }
 		JSONObject result = new JSONObject();
