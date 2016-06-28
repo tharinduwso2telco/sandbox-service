@@ -28,7 +28,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.wso2telco.dep.tpservice.util.Constants;
-import com.wso2telco.dep.tpservice.util.Constants.TableTsxWhoColumns;
+import com.wso2telco.dep.tpservice.util.Constants.Tables;
 import com.wso2telco.dep.tpservice.model.WhoDTO;
 
 public class WhoDAO {
@@ -47,9 +47,9 @@ public class WhoDAO {
 		try {
 			
 			StringBuilder sb = new StringBuilder();
-			sb.append("SELECT * FROM " + Constants.TABLE_TSXWHO + " ");
-			sb.append("WHERE " + TableTsxWhoColumns.IS_VALID.toString() + " = 1 ");
-			sb.append("ORDER BY " + TableTsxWhoColumns.OWNER_ID.toString());
+			sb.append("SELECT * FROM ").append(Tables.TABLE_TSXWHO.toString()).append(" ");
+			sb.append("WHERE isvalid = 1 ");
+			sb.append("ORDER BY ownerid ");
 	
 			List<Map<String, Object>> resultSet = h.select(sb.toString());
 	
@@ -75,13 +75,13 @@ public class WhoDAO {
 		WhoDTO whoDTO = null;
 		if (resultsMap != null) {
 			whoDTO = new WhoDTO();
-			int id = (Integer)resultsMap.get(TableTsxWhoColumns.TSXWHODID.toString());
-			String ownerId = (String)resultsMap.get(TableTsxWhoColumns.OWNER_ID.toString());
-			String tokenUrl = (String)resultsMap.get(TableTsxWhoColumns.TOKEN_URL.toString());
-			long defaultConnectionResetTime = (Long)resultsMap.get(TableTsxWhoColumns.DEFAULT_CONNECTION_RESET_TIME.toString());
-			boolean isValid = (Boolean)resultsMap.get(TableTsxWhoColumns.IS_VALID.toString());
-			Timestamp createdDate = (Timestamp)resultsMap.get(TableTsxWhoColumns.CREATED_DATE.toString());
-			int uc = (Integer)resultsMap.get(TableTsxWhoColumns.UC.toString());
+			int id = (Integer)resultsMap.get("tsxwhodid");
+			String ownerId = (String)resultsMap.get("ownerid");
+			String tokenUrl = (String)resultsMap.get("tokenurl");
+			long defaultConnectionResetTime = (Long)resultsMap.get("defaultconnectionresettime");
+			boolean isValid = (Boolean)resultsMap.get("isvalid");
+			Timestamp createdDate = (Timestamp)resultsMap.get("createddate");
+			int uc = (Integer)resultsMap.get("uc");
 
 			whoDTO.setId(id);
 			whoDTO.setOwnerId(ownerId);

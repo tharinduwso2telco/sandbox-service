@@ -31,6 +31,7 @@ import com.wso2telco.dep.tpservice.model.TokenDTO;
 import com.wso2telco.dep.tpservice.util.Constants;
 import com.wso2telco.dep.tpservice.util.Constants.TableTstTokenColumns;
 import com.wso2telco.dep.tpservice.util.Constants.TableTsxWhoColumns;
+import com.wso2telco.dep.tpservice.util.Constants.Tables;
 import com.wso2telco.dep.tpservice.util.Validator;
 
 public class TokenDAO {
@@ -51,12 +52,12 @@ public class TokenDAO {
 		Handle h = dbi.open();
 		try {
 			StringBuilder sb = new StringBuilder();			
-			sb.append("SELECT " + Constants.TABLE_TSTTOKEN + ".* ");
-			sb.append("FROM " + Constants.TABLE_TSTTOKEN + " ");
-			sb.append("INNER JOIN " + Constants.TABLE_TSXWHO + " ");
-			sb.append("ON " + Constants.TABLE_TSTTOKEN + "." + TableTstTokenColumns.TSXWHODID.toString() + " = " + Constants.TABLE_TSXWHO + "." + TableTsxWhoColumns.TSXWHODID.toString() + " ");
-			sb.append("WHERE " + Constants.TABLE_TSXWHO + "." + TableTsxWhoColumns.OWNER_ID.toString() + " = :ownerId ");
-			sb.append("AND " + Constants.TABLE_TSTTOKEN + "." + TableTstTokenColumns.IS_VALID.toString() + " = :valid ");
+			sb.append("SELECT T.* ");
+			sb.append("FROM ").append(Tables.TABLE_TSTTOKEN.toString()).append(" T ");
+			sb.append("INNER JOIN ").append(Tables.TABLE_TSXWHO.toString()).append(" W ");
+			sb.append("ON T.tsxwhodid = W.tsxwhodid ");
+			sb.append("WHERE W.ownerid = :ownerId ");
+			sb.append("AND T.isvalid = :valid ");
 	
 			List<Map<String, Object>> resultSet = h.createQuery(sb.toString())
 					.bind("valid", 1)
@@ -85,16 +86,16 @@ public class TokenDAO {
 		TokenDTO tokenDTO = null;
 		if (resultsMap != null) {
 			tokenDTO = new TokenDTO();
-			int id = (Integer)resultsMap.get(TableTstTokenColumns.TOKENDID.toString());
-			int whoId = (Integer)resultsMap.get(TableTstTokenColumns.TSXWHODID.toString());
-			String tokenAuth = (String)resultsMap.get(TableTstTokenColumns.TOKEN_AUTH.toString());
-			int tokenValidity = (Integer)resultsMap.get(TableTstTokenColumns.TOKEN_VALIDITY.toString());
-			String accessToken = (String)resultsMap.get(TableTstTokenColumns.ACCESS_TOKEN.toString());
-			String refreshToken = (String)resultsMap.get(TableTstTokenColumns.REFRESH_TOKEN.toString());
-			Timestamp lastRefreshDone = (Timestamp)resultsMap.get(TableTstTokenColumns.LAST_REFRESH_DONE.toString());
-			boolean isValid = (Boolean)resultsMap.get(TableTstTokenColumns.IS_VALID.toString());
-			int uc = (Integer)resultsMap.get(TableTstTokenColumns.UC.toString());
-			Timestamp createdTime = (Timestamp)resultsMap.get(TableTstTokenColumns.CREATED_TIME.toString());
+			int id = (Integer)resultsMap.get("tokendid");
+			int whoId = (Integer)resultsMap.get("tsxwhodid");
+			String tokenAuth = (String)resultsMap.get("tokenauth");
+			int tokenValidity = (Integer)resultsMap.get("tokenvalidity");
+			String accessToken = (String)resultsMap.get("accesstoken");
+			String refreshToken = (String)resultsMap.get("refreshtoken");
+			Timestamp lastRefreshDone = (Timestamp)resultsMap.get("lastrefreshdone");
+			boolean isValid = (Boolean)resultsMap.get("isvalid");
+			int uc = (Integer)resultsMap.get("uc");
+			Timestamp createdTime = (Timestamp)resultsMap.get("createdtime");
 
 			tokenDTO.setId(id);
 			tokenDTO.setWhoId(whoId);
