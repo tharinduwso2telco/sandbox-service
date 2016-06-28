@@ -14,8 +14,23 @@
  * limitations under the License.
  */
 
-package com.wso2telco.dep.tpservice.dao;
+package com.wso2telco.dep.tpservice.model;
 
-public class TokenDAO {
+import java.io.Serializable;
+
+public class TokenDTO implements Serializable{
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 119824963735503362L;
+	private long tokenValidity;
+	public long getTokenValidity() {
+		return tokenValidity;
+	}
+	public void setTokenValidity(long tokenValidity) {
+		this.tokenValidity = tokenValidity;
+	}
 	
+
 }

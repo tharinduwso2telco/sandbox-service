@@ -14,8 +14,17 @@
  * limitations under the License.
  */
 
-package com.wso2telco.dep.tpservice.dao;
+package com.wso2telco.dep.tpservice.pool;
 
-public class TokenDAO {
-	
+import com.wso2telco.dep.tpservice.model.TokenDTO;
+
+public class TokenRemoveListner {
+	TokenDTO tokenDTO;
+
+	public  TokenRemoveListner(TokenDTO tokenDTO) {
+		this.tokenDTO = tokenDTO;
+	}
+
+	public void removeToken() {
+	}
 }

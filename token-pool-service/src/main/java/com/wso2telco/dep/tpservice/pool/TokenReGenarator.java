@@ -14,8 +14,15 @@
  * limitations under the License.
  */
 
-package com.wso2telco.dep.tpservice.dao;
+package com.wso2telco.dep.tpservice.pool;
 
-public class TokenDAO {
-	
+import com.wso2telco.dep.tpservice.model.TokenDTO;
+import com.wso2telco.dep.tpservice.model.WhoDTO;
+import com.wso2telco.dep.tpservice.util.exception.BusinessException;
+
+public class TokenReGenarator {
+
+	public TokenDTO reGenarate(final WhoDTO who, final TokenDTO oldToken)throws BusinessException{
+		return null;
+	}
 }

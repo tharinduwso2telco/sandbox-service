@@ -16,18 +16,11 @@
 
 package com.wso2telco.dep.tpservice.session;
 
-import java.util.concurrent.TimeUnit;
+import java.util.Timer;
+import java.util.TimerTask;
 
-import javax.naming.InitialContext;
-
-import com.google.common.cache.Cache;
-import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.LoadingCache;
-import com.google.common.cache.RemovalListener;
-import com.google.common.cache.RemovalNotification;
-
-public class TestGuvava {
-
+public class TestGuvava extends TimerTask{
+public static int count=1;
 	public static void main(String[] args) {/*
 		Cache<String, String> employeeCache = CacheBuilder.newBuilder()
 				.removalListener(new RemovalListener<String, String>() {
@@ -47,7 +40,23 @@ public class TestGuvava {
 		 
 		 
 	*/
+		TestGuvava task =new TestGuvava();
+		
+		Timer timer = new Timer();
+		timer.schedule(task, 10000l);
+		while(task.count<=222){
+			System.out.println(" i am out  i am out  i am out  i am out  i am out  i am out  i am out  i am out  i am out  i am out  i am out  i am out ");
+		}
 		 
+		
+	}
+
+	@Override
+	public void run() {
+		while(true){
+		System.out.println("Time expired ---------------------" +count);
+		count++;
+		}
 		
 	}
 

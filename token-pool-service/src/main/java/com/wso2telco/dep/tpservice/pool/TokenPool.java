@@ -14,50 +14,35 @@
  * limitations under the License.
  */
 
-package com.wso2telco.dep.tpservice.session;
+package com.wso2telco.dep.tpservice.pool;
+
 
 import java.util.ArrayList;
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.wso2telco.dep.tpservice.manager.WhoManager;
 import com.wso2telco.dep.tpservice.model.TokenDTO;
-import com.wso2telco.dep.tpservice.model.WhoDTO;
+import com.wso2telco.dep.tpservice.pool.PoolManager.PoolEntry;
 import com.wso2telco.dep.tpservice.util.exception.BusinessException;
 
-final class SessionManager implements Runnable {
-
-	private Logger log = LoggerFactory.getLogger(SessionManager.class);
-	private WhoManager whoService;
-
-	private static SessionManager instance;
-
-	private SessionManager() {
-		whoService = new WhoManager();
+public class TokenPool {
+	private WhoManager adminService;
+	private List<PoolEntry> entryList;
+	
+	{
+		adminService= new WhoManager();
+		entryList = new ArrayList<PoolEntry>();
+		PoolManager x = new PoolManager();
 	}
-
-	public static SessionManager getInstance() {
-		if (instance == null) {
-			instance = new SessionManager();
-		}
-		return instance;
-	}
-
-	@Override
-	public void run() {
-
-	}
-
-	private void loadConfig() throws BusinessException {
-		log.info("INITIALIZE TOKEN DATA ");
+	
+	
+	
+	public void init(final String ownerId) throws BusinessException{
+		List<TokenDTO> tokenDTos = adminService.loadTokens(ownerId);
 		
-		ArrayList<WhoDTO> whoDTOs = whoService.getAllOwners();
-		for (WhoDTO whoDTO : whoDTOs) {
+		for (TokenDTO tokenDTO : tokenDTos) {
 			
 		}
-	
 		
 	}
 
