@@ -29,8 +29,6 @@ import org.slf4j.LoggerFactory;
 
 import com.wso2telco.dep.tpservice.model.TokenDTO;
 import com.wso2telco.dep.tpservice.util.Constants;
-import com.wso2telco.dep.tpservice.util.Constants.TableTstTokenColumns;
-import com.wso2telco.dep.tpservice.util.Constants.TableTsxWhoColumns;
 import com.wso2telco.dep.tpservice.util.Constants.Tables;
 import com.wso2telco.dep.tpservice.util.Validator;
 
@@ -107,9 +105,7 @@ public class TokenDAO {
 			tokenDTO.setValid(isValid);
 			tokenDTO.setUc(uc);
 			tokenDTO.setCreatedTime(createdTime.getTime());
-		} else {
-			//resultsMap is null
-		}
+		} //end if (resultsMap != null)
 		return tokenDTO;
 	}
 }
