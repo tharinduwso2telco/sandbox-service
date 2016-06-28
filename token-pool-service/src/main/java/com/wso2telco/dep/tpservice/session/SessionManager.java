@@ -53,7 +53,7 @@ final class SessionManager implements Runnable {
 	private void loadConfig() throws BusinessException {
 		log.info("INITIALIZE TOKEN DATA ");
 		
-		ArrayList<WhoDTO> whoDTOs = whoService.getAllOwners();
+		List<WhoDTO> whoDTOs = whoService.getAllOwners();
 		for (WhoDTO whoDTO : whoDTOs) {
 			
 		}

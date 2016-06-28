@@ -17,6 +17,7 @@
 package com.wso2telco.dep.tpservice.manager;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -39,8 +40,8 @@ public class TokenManager {
 	 * @return ArrayList of TokenDTO
 	 * @throws Exception, return when an error is occurred.
 	 */
-	public ArrayList<TokenDTO> getAllTokensForOwner(String ownerId) throws BusinessException {
-		ArrayList<TokenDTO> tokenList = null;
+	public List<TokenDTO> getAllTokensForOwner(String ownerId) throws BusinessException {
+		List<TokenDTO> tokenList = null;
 		if (Validator.isInvalidString(ownerId)) {
 			log.error("owner id cannot be null");
 			throw new BusinessException(GenaralError.INPUT_PARAMETER_ERROR);
