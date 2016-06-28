@@ -16,34 +16,30 @@
 
 package com.wso2telco.dep.tpservice.pool;
 
+import java.util.concurrent.ConcurrentHashMap;
 
-import java.util.ArrayList;
-import java.util.List;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import com.wso2telco.dep.tpservice.manager.WhoManager;
 import com.wso2telco.dep.tpservice.model.TokenDTO;
-import com.wso2telco.dep.tpservice.pool.PoolManager.PoolEntry;
-import com.wso2telco.dep.tpservice.util.exception.BusinessException;
 
 public class TokenPool {
-	private WhoManager adminService;
-	private List<PoolEntry> entryList;
+	 Logger log = LoggerFactory.getLogger(TokenPool.class);
 	
-	{
-		adminService= new WhoManager();
-		entryList = new ArrayList<PoolEntry>();
-		PoolManager x = new PoolManager();
-	}
+	private ConcurrentHashMap<String, TokenDTO> tokenPool =new ConcurrentHashMap<String,TokenDTO > ();
+	private static TokenPool instance ;
 	
-	
-	
-	public void init(final String ownerId) throws BusinessException{
-		List<TokenDTO> tokenDTos = adminService.loadTokens(ownerId);
-		
-		for (TokenDTO tokenDTO : tokenDTos) {
+	public synchronized static TokenPool getInstance(){
+		if(instance==null){
+			instance = new TokenPool();
 			
 		}
-		
+		return instance;
 	}
+	
+	 public void removeToken(final String tokenId){
+		 tokenPool.remove(tokenId);
+	 }
 
+	
 }

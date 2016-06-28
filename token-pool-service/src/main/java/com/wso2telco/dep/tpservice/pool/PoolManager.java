@@ -37,39 +37,13 @@ public class PoolManager {
 			List<TokenDTO> tokenDTos = adminService.loadTokens(whoDTO.getOwnerId());
 
 			for (TokenDTO tokenDTO : tokenDTos) {
-				PoolEntry entry = new PoolEntry(tokenDTO);
-				Timer timer = new Timer();
-				timer.schedule(new TimerTask() {
-					TokenRemoveListner trListner = new TokenRemoveListner(tokenDTO);
-
-					@Override
-					public void run() {
-
-						trListner.removeToken();
-
-					}
-				}, entry.getCreatedTime() + tokenDTO.getTokenValidity());
+				 
+				
 			}
 		}
 	}
 
-	class PoolEntry extends TimerTask {
-
-		private long createdOn;
-
-		private PoolEntry(final TokenDTO tokenDto) {
-			this.createdOn = System.currentTimeMillis();
-		}
-
-		private long getCreatedTime() {
-			return this.createdOn;
-		}
-
-		@Override
-		public void run() {
-			// TODO Auto-generated method stub
-
-		}
-
-	}
+	
+	
+	
 }

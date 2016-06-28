@@ -25,6 +25,24 @@ public class TokenDTO implements Serializable{
 	 */
 	private static final long serialVersionUID = 119824963735503362L;
 	private long tokenValidity;
+	private long createdOn;
+	private String tokenId;
+	
+	
+	
+	
+	public String getTokenId() {
+		return tokenId;
+	}
+	public void setTokenId(String tokenId) {
+		this.tokenId = tokenId;
+	}
+	public long getCreatedOn() {
+		return createdOn;
+	}
+	public void setCreatedOn(long createdOn) {
+		this.createdOn = createdOn;
+	}
 	public long getTokenValidity() {
 		return tokenValidity;
 	}
