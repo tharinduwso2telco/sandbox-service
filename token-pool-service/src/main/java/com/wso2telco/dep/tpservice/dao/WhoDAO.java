@@ -88,7 +88,7 @@ public class WhoDAO {
 			whoDTO.setTokenUrl(tokenUrl);
 			whoDTO.setDefaultConnectionRestTime(defaultConnectionResetTime);
 			whoDTO.setValid(isValid);
-			whoDTO.setCreatedDate(createdDate);
+			whoDTO.setCreatedDate(createdDate.getTime());
 			whoDTO.setUc(uc);
 		} else {
 			//resultsMap is null

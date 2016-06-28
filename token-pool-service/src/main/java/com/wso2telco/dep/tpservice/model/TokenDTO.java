@@ -17,7 +17,6 @@
 package com.wso2telco.dep.tpservice.model;
 
 import java.io.Serializable;
-import java.sql.Timestamp;
 
 /**
  * Model class for tsttoken table
@@ -41,7 +40,7 @@ public class TokenDTO implements Serializable {
 	
 	private String refreshToken;
 	
-	private Timestamp lastRefreshDone;
+	private long lastRefreshDone;
 	
 	private boolean valid;
 	
@@ -97,11 +96,11 @@ public class TokenDTO implements Serializable {
 		this.refreshToken = refreshToken;
 	}
 
-	public Timestamp getLastRefreshDone() {
+	public long getLastRefreshDone() {
 		return lastRefreshDone;
 	}
 
-	public void setLastRefreshDone(Timestamp lastRefreshDone) {
+	public void setLastRefreshDone(long lastRefreshDone) {
 		this.lastRefreshDone = lastRefreshDone;
 	}
 

@@ -102,7 +102,7 @@ public class TokenDAO {
 			tokenDTO.setTokenValidity(tokenValidity);
 			tokenDTO.setAccessToken(accessToken);
 			tokenDTO.setRefreshToken(refreshToken);
-			tokenDTO.setLastRefreshDone(lastRefreshDone);
+			tokenDTO.setLastRefreshDone(lastRefreshDone.getTime());
 			tokenDTO.setValid(isValid);
 			tokenDTO.setUc(uc);
 			tokenDTO.setCreatedTime(createdTime.getTime());
