@@ -14,24 +14,15 @@
  * limitations under the License.
  */
 
-package com.wso2telco.dep.tpservice.conf;
+package com.wso2telco.dep.tpservice.pool;
 
-final class SessionManager implements Runnable{
-	private static SessionManager instance;
+import com.wso2telco.dep.tpservice.model.TokenDTO;
+import com.wso2telco.dep.tpservice.model.WhoDTO;
+import com.wso2telco.dep.tpservice.util.exception.BusinessException;
 
-	{
-		instance = new SessionManager();
+public class TokenReGenarator {
+
+	public TokenDTO reGenarate(final WhoDTO who, final TokenDTO oldToken)throws BusinessException{
+		return null;
 	}
-
-	public static SessionManager getInstance() {
-		return instance;
-	}
-
-	@Override
-	public void run() {
-		// TODO Auto-generated method stub
-		
-	}
-	
-	
 }

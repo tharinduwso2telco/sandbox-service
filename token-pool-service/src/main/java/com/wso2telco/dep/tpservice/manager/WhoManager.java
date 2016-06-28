@@ -17,6 +17,8 @@
 package com.wso2telco.dep.tpservice.manager;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -25,6 +27,7 @@ import org.slf4j.LoggerFactory;
 
 import com.google.gson.Gson;
 import com.wso2telco.dep.tpservice.dao.WhoDAO;
+import com.wso2telco.dep.tpservice.model.TokenDTO;
 import com.wso2telco.dep.tpservice.model.WhoDTO;
 import com.wso2telco.dep.tpservice.util.exception.BusinessException;
 import com.wso2telco.dep.tpservice.util.exception.GenaralError;
@@ -35,8 +38,10 @@ public class WhoManager {
 
 	/**
 	 * Get All Owners
+	 * 
 	 * @return ArrayList of WhoDTO
-	 * @throws Exception, return when an error is occurred.
+	 * @throws Exception,
+	 *             return when an error is occurred.
 	 */
 	public ArrayList<WhoDTO> getAllOwners() throws BusinessException {
 		ArrayList<WhoDTO> ownersList = null;
@@ -49,26 +54,28 @@ public class WhoManager {
 		}
 		return ownersList;
 	}
-	
+
 	/**
 	 * Get All Owners JSON
+	 * 
 	 * @return JSONObject {"owners":[]}
-	 * @throws Exception, return when an error is occurred.
+	 * @throws Exception,
+	 *             return when an error is occurred.
 	 */
 	public JSONObject getAllOwnersJSON() throws BusinessException {
 		ArrayList<WhoDTO> ownersList = null;
 		JSONObject result = new JSONObject();
 		try {
-			//get list of objects
+			// get list of objects
 			WhoDAO whoDao = new WhoDAO();
 			ownersList = whoDao.getAllOwners();
-			
-			//get json string from list
+
+			// get json string from list
 			Gson gson = new Gson();
-		    String jsonString = gson.toJson(ownersList);
-		    
-		    //convert to json array and set to result object
-		    JSONArray resultObject = new JSONArray(jsonString);
+			String jsonString = gson.toJson(ownersList);
+
+			// convert to json array and set to result object
+			JSONArray resultObject = new JSONArray(jsonString);
 			result.put("owners", resultObject);
 		} catch (Exception e) {
 			log.error("getAllOwnersJSON() failed ", e);
@@ -76,4 +83,11 @@ public class WhoManager {
 		}
 		return result;
 	}
+
+	public List<TokenDTO> loadTokens(final String ownerID) throws BusinessException {
+
+		return Collections.EMPTY_LIST;
+
+	}
+
 }

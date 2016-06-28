@@ -105,7 +105,7 @@ public class TokenDAO {
 			tokenDTO.setLastRefreshDone(lastRefreshDone);
 			tokenDTO.setValid(isValid);
 			tokenDTO.setUc(uc);
-			tokenDTO.setCreatedTime(createdTime);
+			tokenDTO.setCreatedTime(createdTime.getTime());
 		} else {
 			//resultsMap is null
 		}

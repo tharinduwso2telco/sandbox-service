@@ -35,7 +35,7 @@ public class TokenDTO implements Serializable {
 
 	private String tokenAuth;
 	
-	private int tokenValidity;
+	private long tokenValidity;
 	
 	private String accessToken;
 	
@@ -47,7 +47,7 @@ public class TokenDTO implements Serializable {
 	
 	private int uc;
 	
-	private Timestamp createdTime;
+	private long createdTime;
 
 	public int getId() {
 		return id;
@@ -73,11 +73,11 @@ public class TokenDTO implements Serializable {
 		this.tokenAuth = tokenAuth;
 	}
 
-	public int getTokenValidity() {
+	public long getTokenValidity() {
 		return tokenValidity;
 	}
 
-	public void setTokenValidity(int tokenValidity) {
+	public void setTokenValidity(long tokenValidity) {
 		this.tokenValidity = tokenValidity;
 	}
 
@@ -121,11 +121,11 @@ public class TokenDTO implements Serializable {
 		this.uc = uc;
 	}
 
-	public Timestamp getCreatedTime() {
+	public long getCreatedTime() {
 		return createdTime;
 	}
 
-	public void setCreatedTime(Timestamp createdTime) {
+	public void setCreatedTime(long createdTime) {
 		this.createdTime = createdTime;
 	}
 }
