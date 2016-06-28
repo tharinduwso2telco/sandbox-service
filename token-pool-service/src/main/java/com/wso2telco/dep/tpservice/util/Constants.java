@@ -26,4 +26,28 @@ public class Constants {
             return value;
         }
     }
+
+	public enum TableTstTokenColumns {
+		TOKENDID("tokendid"),
+		TSXWHODID("tsxwhodid"),
+		TOKEN_AUTH("tokenauth"),
+		TOKEN_VALIDITY("tokenvalidity"),
+		ACCESS_TOKEN("accesstoken"),
+		REFRESH_TOKEN("refreshtoken"),
+		LAST_REFRESH_DONE("lastrefreshdone"),
+		IS_VALID("isvalid"),
+		UC("uc"),
+		CREATED_TIME("createdtime");
+		
+		private final String value;
+        
+		TableTstTokenColumns(String val) {
+            value = val;
+        }
+
+        @Override
+        public String toString() {
+            return value;
+        }
+    }
 }
