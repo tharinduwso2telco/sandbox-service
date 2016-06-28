@@ -24,7 +24,31 @@ public class ConfigDTO extends Configuration implements Serializable{
 	@JsonProperty
 	private int port;
 	
+	@JsonProperty
+	private long waitingTimeForToken;
 	
+
+	@JsonProperty
+	private int maxNumberOfAttemptForToken;
+	
+	
+	
+	public int getMaxNumberOfAttemptForToken() {
+		return maxNumberOfAttemptForToken;
+	}
+
+	public void setMaxNumberOfAttemptForToken(int maxNumberOfAttemptForToken) {
+		this.maxNumberOfAttemptForToken = maxNumberOfAttemptForToken;
+	}
+
+	public long getWaitingTimeForToken() {
+		return waitingTimeForToken;
+	}
+
+	public void setWaitingTimeForToken(long waitingTimeForToken) {
+		this.waitingTimeForToken = waitingTimeForToken;
+	}
+
 	public DataSourceFactory getDataSourceFactory() {
 		return database;
 	}

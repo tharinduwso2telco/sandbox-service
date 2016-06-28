@@ -27,10 +27,18 @@ public class TokenDTO implements Serializable{
 	private long tokenValidity;
 	private long createdOn;
 	private String tokenId;
+	private boolean valid;
 	
 	
 	
 	
+	
+	public boolean isValid() {
+		return valid;
+	}
+	public void setValid(boolean valid) {
+		this.valid = valid;
+	}
 	public String getTokenId() {
 		return tokenId;
 	}

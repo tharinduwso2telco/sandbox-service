@@ -17,30 +17,29 @@
 package com.wso2telco.dep.tpservice.pool;
 
 import java.util.ArrayList;
-import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.wso2telco.dep.tpservice.manager.WhoManager;
-import com.wso2telco.dep.tpservice.model.TokenDTO;
 import com.wso2telco.dep.tpservice.model.WhoDTO;
 import com.wso2telco.dep.tpservice.util.exception.BusinessException;
+import com.wso2telco.dep.tpservice.util.exception.TokenException;
 
 public class PoolManager {
-	private WhoManager whoService;
-	private WhoManager adminService;
+	static Logger log = LoggerFactory.getLogger(PoolManager.class);	
 
-	public void init() throws BusinessException {
-		whoService = new WhoManager();
-		ArrayList<WhoDTO> whoDTOs = whoService.getAllOwners();
-		for (WhoDTO whoDTO : whoDTOs) {
-			List<TokenDTO> tokenDTos = adminService.loadTokens(whoDTO.getOwnerId());
-
-			for (TokenDTO tokenDTO : tokenDTos) {
-				 
-				
-			}
+	public static void init() throws BusinessException {
+		log.info("loading initializing token pool ");
+		ArrayList<WhoDTO> whoDTOs =  new WhoManager().getAllOwners();
+		
+		if(whoDTOs==null ||whoDTOs.isEmpty()){
+			throw new TokenException(TokenException.TokenError.NO_VALID_ENDPONT);
 		}
+		for (WhoDTO whoDTO : whoDTOs) {
+			new PoolEntryService().addTokePool(whoDTO);
+		}
+		log.info("Token pool initialized");
 	}
 
 	

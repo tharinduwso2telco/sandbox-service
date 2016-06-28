@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.wso2telco.dep.tpservice.session;
+package com.wso2telco.dep.tpservice.pool.session;
 
 import java.util.concurrent.TimeUnit;
 
