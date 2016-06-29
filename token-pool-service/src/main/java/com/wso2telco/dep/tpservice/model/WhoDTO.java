@@ -17,7 +17,6 @@
 package com.wso2telco.dep.tpservice.model;
 
 import java.io.Serializable;
-import java.sql.Timestamp;
 
 /**
  * Model class for tsxwho table
@@ -39,7 +38,7 @@ public class WhoDTO implements Serializable {
 	
 	private boolean valid;
 	
-	private Timestamp createdDate;
+	private long createdDate;
 	
 	private int uc;
 
@@ -83,11 +82,11 @@ public class WhoDTO implements Serializable {
 		this.valid = valid;
 	}
 
-	public Timestamp getCreatedDate() {
+	public long getCreatedDate() {
 		return createdDate;
 	}
 
-	public void setCreatedDate(Timestamp createdDate) {
+	public void setCreatedDate(long createdDate) {
 		this.createdDate = createdDate;
 	}
 

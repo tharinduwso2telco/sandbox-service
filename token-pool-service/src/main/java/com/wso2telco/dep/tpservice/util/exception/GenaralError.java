@@ -4,8 +4,9 @@ import com.wso2telco.dep.tpservice.util.exception.ThrowableError;
 
 public enum GenaralError implements ThrowableError {
 
-	UNDEFINED("CORE0001", "Undefined Error"),
-	INTERNAL_SERVER_ERROR("CORE0299", "Internal Server Error");
+	UNDEFINED("TP0001", "Undefined Error"),
+	INTERNAL_SERVER_ERROR("TP0002", "Internal Server Error"),
+	INPUT_PARAMETER_ERROR("TP0003", "Input Parameter Error");
 
 	private String code;
 	private String desc;

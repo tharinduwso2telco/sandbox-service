@@ -28,7 +28,7 @@ import com.wso2telco.dep.tpservice.model.SessionDTO;
 public class SessionHolder {
 	
 	private Logger log = LoggerFactory.getLogger(SessionHolder.class);
-	private Cache<String,SessionDTO> tokenSessions;
+	private Cache<Integer,SessionDTO> tokenSessions;
 	private String ownerID;
 	
 	private static SessionHolder instance ;
@@ -38,7 +38,7 @@ public class SessionHolder {
 	 * @param ownerID
 	 * @param sesionExpioryTime
 	 */
-	private SessionHolder(final String ownerID,final int sesionExpioryTime){
+	private SessionHolder(final String ownerID,final long sesionExpioryTime){
 		tokenSessions =CacheBuilder.newBuilder()
 									.removalListener(new SessionRemovalListener ())
 									.expireAfterWrite(sesionExpioryTime, TimeUnit.MILLISECONDS)
@@ -46,7 +46,7 @@ public class SessionHolder {
 		this.ownerID =ownerID;
 	}
 	
-	public static void init(final String ownerID,final int sesionExpioryTime){
+	public static void init(final String ownerID,final long sesionExpioryTime){
 		instance = new SessionHolder(ownerID,sesionExpioryTime);
 	}
 	
@@ -59,13 +59,13 @@ public class SessionHolder {
 	 * once the session added to the session pool it will remove from the session 
 	 * @param tokenId
 	 */
-	public synchronized void  acquireSession(final String tokenId){
+	public synchronized void  acquireSession(final Integer tokenId){
 		SessionDTO dto = new SessionDTO();
-		dto.setOwnerID(tokenId);;
+		dto.setOwnerID(ownerID);;
 		dto.setSessionId(tokenId +":"+String.valueOf(System.currentTimeMillis()));
-		dto.setTokenId(tokenId.trim());
+		dto.setTokenId(tokenId);
 		dto.setCreatedTimeInMl(System.currentTimeMillis());
-		tokenSessions.put(tokenId.trim(), dto);
+		tokenSessions.put(tokenId, dto);
 		
 	}
 }

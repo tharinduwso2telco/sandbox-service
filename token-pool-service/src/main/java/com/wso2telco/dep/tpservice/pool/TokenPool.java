@@ -56,8 +56,8 @@ public class TokenPool {
 
 	public void addToPool(final TokenDTO tokenDTO, final WhoDTO whoDTO) {
 		log.info("New Token Added to the pool :" + tokenDTO);
-		if (tokenPool.containsKey(tokenDTO.getTokenId())) {
-			List<TokenDTO> dtos = tokenPool.get(tokenDTO.getTokenId());
+		if (tokenPool.containsKey(tokenDTO.getId())) {
+			List<TokenDTO> dtos = tokenPool.get(tokenDTO.getId());
 			synchronized (dtos) {
 				dtos.add(tokenDTO);
 
@@ -109,7 +109,7 @@ public class TokenPool {
 		synchronized (tokenList) {
 			for (TokenDTO tokenDTO : tokenList) {
 				if(tokenDTO.isValid()){
-					SessionHolder.getInstance().acquireSession(tokenDTO.getTokenId());
+					SessionHolder.getInstance().acquireSession(tokenDTO.getId());
 					log.info("Valid token found "+tokenDTO);
 					return tokenDTO;
 				}

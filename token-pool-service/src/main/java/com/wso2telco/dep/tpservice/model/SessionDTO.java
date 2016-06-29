@@ -27,7 +27,7 @@ public class SessionDTO implements Serializable {
 
 	private String ownerID;
 	private String sessionId;
-	private String tokenId;
+	private Integer tokenId;
 	private long createdTimeInMl;
 
 	public String getOwnerID() {
@@ -46,11 +46,11 @@ public class SessionDTO implements Serializable {
 		this.sessionId = sessionId;
 	}
 
-	public String getTokenId() {
+	public Integer getTokenId() {
 		return tokenId;
 	}
 
-	public void setTokenId(String tokenId) {
+	public void setTokenId(Integer tokenId) {
 		this.tokenId = tokenId;
 	}
 

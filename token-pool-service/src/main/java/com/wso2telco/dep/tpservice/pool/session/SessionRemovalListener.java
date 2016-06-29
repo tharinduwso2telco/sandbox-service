@@ -23,12 +23,12 @@ import com.google.common.cache.RemovalListener;
 import com.google.common.cache.RemovalNotification;
 import com.wso2telco.dep.tpservice.model.SessionDTO;
 
-class SessionRemovalListener implements RemovalListener<String,SessionDTO> {
+class SessionRemovalListener implements RemovalListener<Integer,SessionDTO> {
 	
 	private Logger log = LoggerFactory.getLogger(SessionRemovalListener.class);
 
 	@Override
-	public void onRemoval(RemovalNotification<String, SessionDTO> arg0) {
+	public void onRemoval(RemovalNotification<Integer, SessionDTO> arg0) {
 		log.info("Session Expired "+arg0);
 		
 	}

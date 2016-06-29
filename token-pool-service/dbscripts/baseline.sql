@@ -61,6 +61,7 @@ CREATE TABLE `tsttoken` (
   `lastrefreshdone` timestamp NULL DEFAULT NULL,
   `isvalid` BIT(1) NOT NULL,
   `uc` int(11) DEFAULT '0',
+  `createdtime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   CONSTRAINT `pk01tsttoken` PRIMARY KEY (`tokendid`),
   CONSTRAINT `fk01tsttoken` FOREIGN KEY (`tsxwhodid`) REFERENCES `tsxwho` (`tsxwhodid`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
