@@ -6,7 +6,8 @@ public enum GenaralError implements ThrowableError {
 
 	UNDEFINED("TP0001", "Undefined Error"),
 	INTERNAL_SERVER_ERROR("TP0002", "Internal Server Error"),
-	INPUT_PARAMETER_ERROR("TP0003", "Input Parameter Error");
+	INPUT_PARAMETER_ERROR("TP0003", "Input Parameter Error"),
+	INVALID_GRANT_ERROR("TP0004", "Invalid Authorization Request Type Error");
 
 	private String code;
 	private String desc;

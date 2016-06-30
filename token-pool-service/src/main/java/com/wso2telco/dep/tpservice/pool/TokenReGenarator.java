@@ -66,8 +66,8 @@ public class TokenReGenarator {
 
 				}
 				catch(Exception e){
-					log.error("Invalid Authorization Grant Type");
-					e.printStackTrace();
+					log.error("Invalid Authorization Grant Type"+e.getMessage(),e);
+					throw new BusinessException(GenaralError.INVALID_GRANT_ERROR);
 					
 				}
 			
