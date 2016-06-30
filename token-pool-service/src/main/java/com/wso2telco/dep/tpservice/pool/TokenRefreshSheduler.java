@@ -51,7 +51,7 @@ class TokenRefreshSheduler {
 										public void run() {
 							
 											try {
-												TokenPool.getInstance().removeToken(String.valueOf(tokenDTO.getId()));
+												TokenPool.getInstance().removeToken(whoDTO,tokenDTO);
 												
 												//thread sleep for 2* default connection reset time
 												Thread.sleep(2 * whoDTO.getDefaultConnectionRestTime());

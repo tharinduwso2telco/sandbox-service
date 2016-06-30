@@ -20,6 +20,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.wso2telco.dep.tpservice.model.ConfigDTO;
+import com.wso2telco.dep.tpservice.pool.PoolManager;
 import com.wso2telco.dep.tpservice.rest.TokenPoolService;
 
 import io.dropwizard.Application;
@@ -47,7 +48,7 @@ public class Appinitializer extends Application<ConfigDTO> {
 		/**
 		 * initialize token pool service
 		 */
-		TokenPoolManager.getInstance().init();
+		PoolManager.init();
 
 		env.jersey().register(new TokenPoolService());
 		swaggerDropwizard.onRun(arg0,env,arg0.getHost(),arg0.getPort());

@@ -18,12 +18,6 @@ package com.wso2telco.dep.tpservice.model;
 
 import java.io.Serializable;
 
-/**
- * Model class for tsttoken table
- * @author Chinthana
- * @since 24/06/2016
- *
- */
 public class TokenDTO implements Serializable {
 
 	private static final long serialVersionUID = 3164068409562912730L;
@@ -35,14 +29,14 @@ public class TokenDTO implements Serializable {
 	private String tokenAuth;
 	
 	private long tokenValidity;
+	private boolean valid;
+	
 	
 	private String accessToken;
 	
 	private String refreshToken;
 	
 	private long lastRefreshDone;
-	
-	private boolean valid;
 	
 	private int uc;
 	
