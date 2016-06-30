@@ -27,7 +27,18 @@ public class SessionDTO implements Serializable {
 
 	private String ownerID;
 	private String sessionId;
-	private Integer tokenId;
+	private TokenDTO tokenDTO;
+	
+	
+	
+	public TokenDTO getTokenDTO() {
+		return tokenDTO;
+	}
+
+	public void setTokenDTO(TokenDTO tokenDTO) {
+		this.tokenDTO = tokenDTO;
+	}
+
 	private long createdTimeInMl;
 
 	public String getOwnerID() {
@@ -46,14 +57,6 @@ public class SessionDTO implements Serializable {
 		this.sessionId = sessionId;
 	}
 
-	public Integer getTokenId() {
-		return tokenId;
-	}
-
-	public void setTokenId(Integer tokenId) {
-		this.tokenId = tokenId;
-	}
-
 	public long getCreatedTimeInMl() {
 		return createdTimeInMl;
 	}
@@ -64,7 +67,7 @@ public class SessionDTO implements Serializable {
 
 	@Override
 	public String toString() {
-		return "SessionDTO [ownerID=" + ownerID + ", sessionId=" + sessionId + ", tokenId=" + tokenId
+		return "SessionDTO [ownerID=" + ownerID + ", sessionId=" + sessionId + ", tokenDTO=" + tokenDTO
 				+ ", createdTimeInMl=" + createdTimeInMl + "]";
 	} 
 

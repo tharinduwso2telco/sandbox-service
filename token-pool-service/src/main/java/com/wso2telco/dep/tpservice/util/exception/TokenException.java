@@ -29,8 +29,15 @@ public class TokenException extends BusinessException {
 	
 	public enum  TokenError  implements ThrowableError{
 
-		TOKENPOOL_EMPTY("TOKEN_POOL_EMPTY","NO pool entry for this Owner"),
-		NO_VALID_ENDPONT("NO_VALID_ENDPONT","No Valid token owner defind at the db");
+		TOKENPOOL_EMPTY("TPS0005","NO pool entry for this Owner"),
+		NO_VALID_ENDPONT("TPS0006","No Valid token owner defind at the db"),
+		NO_VALID_WHO("TPS0007","No Valid owner defind"),
+		NO_TOKENRESET_TIME("TPS0008","No token reset time specified for the owner"),
+		TOKEN_ALREDY_REMOVED("TPS0009","Token alredy removed from the token pool"),
+		INVALID_TOKEN("TPS0010","Invalid token"),
+		INVALID_TOKEN_REFRESH("TPS0012","Only master node allow to re-fesh the token"),
+		POOL_NOT_READY("TPS0013","Token pool not initialized yet")
+		;
 		
 		TokenError(final String msgf,final String coded){
 			this.msg =msgf;

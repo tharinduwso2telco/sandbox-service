@@ -14,12 +14,25 @@
  * limitations under the License.
  */
 
-package com.wso2telco.dep.tpservice.pool;
+package com.wso2telco.dep.tpservice.pool.alltimefirst;
 
-import com.wso2telco.dep.tpservice.model.TokenDTO;
-import com.wso2telco.dep.tpservice.util.exception.TokenException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-public interface TokenPool {
+import com.google.common.cache.RemovalListener;
+import com.google.common.cache.RemovalNotification;
+import com.wso2telco.dep.tpservice.model.SessionDTO;
+
+class SessionRemovalListener implements RemovalListener<String,SessionDTO> {
 	
-	TokenDTO accqureToken() throws InterruptedException, TokenException ;
+	private Logger log = LoggerFactory.getLogger(SessionRemovalListener.class);
+
+	@Override
+	public void onRemoval(RemovalNotification<String, SessionDTO> arg0) {
+		log.info("Session Expired "+arg0);
+		
+	}
+	
+	 
+
 }

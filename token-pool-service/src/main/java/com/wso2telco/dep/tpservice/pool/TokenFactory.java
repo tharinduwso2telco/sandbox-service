@@ -16,10 +16,21 @@
 
 package com.wso2telco.dep.tpservice.pool;
 
-import com.wso2telco.dep.tpservice.model.TokenDTO;
+import com.wso2telco.dep.tpservice.model.WhoDTO;
+import com.wso2telco.dep.tpservice.pool.alltimefirst.ATFPoolEntryService;
 import com.wso2telco.dep.tpservice.util.exception.TokenException;
 
-public interface TokenPool {
+public class TokenFactory {
+
+	/**
+	 
+	 * @param whoDTO
+	 * @return
+	 * @throws TokenException
+	 */
+	//TODO:there can be servel token initialization method defined 
+	public static TokenPoolInitializer getPoolInitImplimenter(final WhoDTO whoDTO) throws TokenException{
+		return ATFPoolEntryService.createInstance(whoDTO);
+	}
 	
-	TokenDTO accqureToken() throws InterruptedException, TokenException ;
 }
