@@ -155,8 +155,7 @@ class TokenPoolImpl implements TokenPool {
 			tokenManager.saveToken(whoDTO, newTokenDTO);
 			
 		} catch (BusinessException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			throw new TokenException(e.getErrorType());
 		}
 	}
 
