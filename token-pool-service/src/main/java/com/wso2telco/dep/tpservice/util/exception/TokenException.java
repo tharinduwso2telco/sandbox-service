@@ -36,7 +36,9 @@ public class TokenException extends BusinessException {
 		TOKEN_ALREDY_REMOVED("TPS0009","Token alredy removed from the token pool"),
 		INVALID_TOKEN("TPS0010","Invalid token"),
 		INVALID_TOKEN_REFRESH("TPS0012","Only master node allow to re-fesh the token"),
-		POOL_NOT_READY("TPS0013","Token pool not initialized yet")
+		POOL_NOT_READY("TPS0013","Token pool not initialized yet"),
+		NULL_ACCESS_TOKEN("TPS0014","Access Token is null"),
+		NULL_REFRESH_TOKEN("TPS0015","Refresh Token is null")
 		;
 		
 		TokenError(final String msgf,final String coded){

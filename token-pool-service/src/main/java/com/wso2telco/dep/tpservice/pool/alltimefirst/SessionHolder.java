@@ -16,8 +16,6 @@
 
 package com.wso2telco.dep.tpservice.pool.alltimefirst;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import org.slf4j.Logger;
@@ -33,7 +31,7 @@ import com.wso2telco.dep.tpservice.util.exception.TokenException;
 public class SessionHolder {
 	
 	private Logger log = LoggerFactory.getLogger(SessionHolder.class);
-	private Map<Integer,Cache<String,SessionDTO>> tokenSessions;
+	private Cache<String,SessionDTO> tokenSessions;
 	private  WhoDTO whoDTO;
 	
 	
@@ -44,9 +42,11 @@ public class SessionHolder {
 	 */
 	private SessionHolder(final  WhoDTO whoDTO ){
 		log.debug("New token Session created for :"+whoDTO);
-		tokenSessions =new HashMap<Integer,Cache<String,SessionDTO>>();
-									
 		this.whoDTO =whoDTO;
+		tokenSessions =CacheBuilder.newBuilder()
+				.removalListener(new SessionRemovalListener ())
+				.expireAfterWrite(whoDTO.getDefaultConnectionRestTime(), TimeUnit.MILLISECONDS)
+				.build();
 	}
 	/**
 	 * token owner id and the default session expire time is mandatory to create session instance
@@ -73,34 +73,21 @@ public class SessionHolder {
 	 */
 	public synchronized void  acquireSession(final TokenDTO tokenDTO){
 		log.debug(" acquire new Session "+tokenDTO.getId());
-		Cache<String,SessionDTO> tokenCache= null;
 		
-		if(tokenSessions.containsKey(tokenDTO.getId())){
-			log.debug(" session poll for "+tokenDTO + " obtanning from the cache ");
-			tokenCache = tokenSessions.get(tokenDTO.getId());
-		}else{
-			log.debug("New session poll created for "+tokenDTO );
-			tokenCache =CacheBuilder.newBuilder()
-					.removalListener(new SessionRemovalListener ())
-					.expireAfterWrite(whoDTO.getDefaultConnectionRestTime(), TimeUnit.MILLISECONDS)
-					.build();
-		}
-			
 		SessionDTO dto = new SessionDTO();
 		dto.setOwnerID(whoDTO.getOwnerId());;
 		dto.setSessionId(tokenDTO.getId() +":"+String.valueOf(System.currentTimeMillis()));
 		dto.setTokenDTO(tokenDTO);
 		dto.setCreatedTimeInMl(System.currentTimeMillis());
-		tokenCache.put(dto.getSessionId(), dto);
+		tokenSessions.put(dto.getSessionId(), dto);
 		
 	}
 	
 	public boolean isInUse(final TokenDTO tokenDTO)throws TokenException{
 		log.debug("check for usability of :"+tokenDTO);
 		boolean isInuse =false;
-		Cache<String,SessionDTO> tokenCache = tokenSessions.get(tokenDTO.getId());
 		//If token pool size is 0 then it will return not in use
-		if(tokenCache.size()==0){
+		if(tokenSessions.size()==0){
 			isInuse= Boolean.FALSE;
 		}
 		return isInuse;

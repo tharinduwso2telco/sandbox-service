@@ -54,6 +54,36 @@ class TokenPoolImpl implements TokenPool {
 		this.configReader = ConfigReader.getInstance();
 	}
 
+	public synchronized void pool(TokenDTO tokenDTO) throws TokenException{
+		if(tokenDTO ==null ){
+			log.warn("try to add null to token pool ");
+			throw new TokenException(TokenException.TokenError.INVALID_TOKEN);
+			
+		}
+		
+		if(tokenDTO.isValid()==false ){
+			log.warn("try to add Invalid to token pool ");
+			throw new TokenException(TokenException.TokenError.INVALID_TOKEN);
+			
+		}
+		if(tokenDTO.getAccessToken()==null ||tokenDTO.getAccessToken().length()==0 ){
+			log.warn("token object without access token try to pool ");
+			throw new TokenException(TokenException.TokenError.NULL_ACCESS_TOKEN);
+			
+		}
+		if(tokenDTO.getRefreshToken()==null ||tokenDTO.getRefreshToken().length()==0 ){
+			log.warn("token object without access token try to pool ");
+			throw new TokenException(TokenException.TokenError.NULL_REFRESH_TOKEN);
+			
+		}
+		
+		if(tokenList.contains(tokenDTO)){
+			log.debug("token added to pool "+tokenDTO);
+			tokenList.add(tokenDTO);
+		}
+		
+		
+	}
 	
 	public static  TokenPoolImpl createInstance(final WhoDTO whoDTO)throws TokenException {
 		return new TokenPoolImpl(whoDTO);
