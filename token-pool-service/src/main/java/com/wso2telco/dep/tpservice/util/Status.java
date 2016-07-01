@@ -14,12 +14,20 @@
  * limitations under the License.
  */
 
-package com.wso2telco.dep.tpservice.pool;
+package com.wso2telco.dep.tpservice.util;
 
-import com.wso2telco.dep.tpservice.model.TokenDTO;
-import com.wso2telco.dep.tpservice.util.exception.TokenException;
+public enum Status {
+	REGENARATE_FAIL(4000, "REGENARATE_FAIL"), REGENARATE_SUCSESS(4001, "REGENARATE_SUCESS");
+	private Integer key;
+	private String code;
 
-public interface TokenPool {
-	
-	TokenDTO accqureToken() throws InterruptedException, TokenException ;
+	Status(Integer key, String code) {
+		this.key = key;
+		this.code = code;
+	}
+
+	public Integer getKey() {
+		return this.key;
+	}
+
 }

@@ -29,16 +29,26 @@ public class ConfigDTO extends Configuration implements Serializable{
 	
 
 	@JsonProperty
-	private int maxNumberOfAttemptForToken;
+	private int retrAttempts;
+	
+	@JsonProperty
+	private Boolean isMaster;
 	
 	
-	
-	public int getMaxNumberOfAttemptForToken() {
-		return maxNumberOfAttemptForToken;
+	public Boolean isMaster() {
+		return isMaster;
 	}
 
-	public void setMaxNumberOfAttemptForToken(int maxNumberOfAttemptForToken) {
-		this.maxNumberOfAttemptForToken = maxNumberOfAttemptForToken;
+	public void setIsMaster(Boolean isMaster) {
+		this.isMaster = isMaster;
+	}
+
+	public int getRetryAttempt() {
+		return retrAttempts;
+	}
+
+	public void setRetryAttempt(int maxNumberOfAttemptForToken) {
+		this.retrAttempts = maxNumberOfAttemptForToken;
 	}
 
 	public long getWaitingTimeForToken() {

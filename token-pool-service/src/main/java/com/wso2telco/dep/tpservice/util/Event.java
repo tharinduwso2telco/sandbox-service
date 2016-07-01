@@ -14,17 +14,20 @@
  * limitations under the License.
  */
 
-package com.wso2telco.dep.tpservice.pool;
+package com.wso2telco.dep.tpservice.util;
 
-import com.wso2telco.dep.tpservice.model.TokenDTO;
+public enum Event {
+	RE_GENARATE_TOKEN(2000, "REFRESH_TOKEN");
 
-public class TokenRemoveListner {
-	TokenDTO tokenDTO;
+	private Integer key;
+	private String code;
 
-	public  TokenRemoveListner(TokenDTO tokenDTO) {
-		this.tokenDTO = tokenDTO;
+	Event(Integer key, String code) {
+		this.key = key;
+		this.code = code;
 	}
 
-	public void removeToken() {
+	public Integer getKey() {
+		return this.key;
 	}
 }

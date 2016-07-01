@@ -27,9 +27,11 @@ import org.slf4j.LoggerFactory;
 import com.google.gson.Gson;
 import com.wso2telco.dep.tpservice.dao.TokenDAO;
 import com.wso2telco.dep.tpservice.model.TokenDTO;
+import com.wso2telco.dep.tpservice.model.WhoDTO;
 import com.wso2telco.dep.tpservice.util.Validator;
 import com.wso2telco.dep.tpservice.util.exception.BusinessException;
 import com.wso2telco.dep.tpservice.util.exception.GenaralError;
+import com.wso2telco.dep.tpservice.util.exception.TokenException;
 
 public class TokenManager {
 
@@ -85,5 +87,13 @@ public class TokenManager {
 			throw new BusinessException(GenaralError.INTERNAL_SERVER_ERROR);
 		}
 		return result;
+	}
+	
+	public void invalidate(final WhoDTO whoDTO ,final TokenDTO tokenDto)throws TokenException {
+		log.debug("InValidating the token "+whoDTO+ " token "+tokenDto );
+	}
+	
+	public void saveToken(final WhoDTO whoDTO ,final TokenDTO tokenDto)throws TokenException {
+		log.debug("save the token "+whoDTO+ " token "+tokenDto );
 	}
 }
