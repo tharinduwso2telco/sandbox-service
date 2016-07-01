@@ -25,8 +25,8 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
+import javax.ws.rs.core.Response.Status;
 
-import org.apache.http.HttpException;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.slf4j.Logger;
@@ -77,7 +77,7 @@ public class TokenReGenarator {
 				log.debug("Refresh token re-generation success");
 
 			} catch (JSONException e) {
-				log.error("Invalid Authorization Grant Type" + e.getMessage(),e);
+				log.error("Invalid Refresh Token for Authorization Grant Type " ,e);
 			}
 
 		} else {
@@ -93,8 +93,9 @@ public class TokenReGenarator {
 	 * @param urlParameters
 	 * @param authheader
 	 * @return
+	 * @throws BusinessException 
 	 */
-	protected String makeTokenrequest(String tokenurl, String urlParameters, String authheader) {
+	protected String makeTokenrequest(String tokenurl, String urlParameters, String authheader) throws BusinessException {
 		String retStr = "";
 		HttpURLConnection connection = null;
 		InputStream is = null;
@@ -125,12 +126,7 @@ public class TokenReGenarator {
 				wr.close();
 
 				//filter out invalid http codes
-				if ((connection.getResponseCode() != 200) && (connection.getResponseCode() != 201) && (connection.getResponseCode() != 400) && (connection.getResponseCode() != 401)) {
-					log.debug("Failed : HTTP error code : "	+ connection.getResponseCode());
-					throw new HttpException();
-				}
-
-				if ((connection.getResponseCode() == 200) || (connection.getResponseCode() == 201)) {
+				if ((connection.getResponseCode() == Status.OK.getStatusCode()) || (connection.getResponseCode() == Status.CREATED.getStatusCode())) {
 					is = connection.getInputStream();
 				} else {
 					is = connection.getErrorStream();
@@ -142,21 +138,20 @@ public class TokenReGenarator {
 					retStr += output;
 				}
 			} catch (Exception e) {
-				log.error( "[WSRequestService ], makerequest, " + e.getMessage(), e);
+				log.error( "[TokenReGenarator ], makerequest, " , e);
+				throw new BusinessException(GenaralError.INTERNAL_SERVER_ERROR);
 			} finally {
 				try {
 					br.close();
 				} catch (IOException e) {
 				}
-
+			
 				if (connection != null) {
 					connection.disconnect();
 				}
 			}
-		} else {
-			log.error("Token refresh details are invalid.");
+		
 		}
-
 		return retStr;
 	}
 
