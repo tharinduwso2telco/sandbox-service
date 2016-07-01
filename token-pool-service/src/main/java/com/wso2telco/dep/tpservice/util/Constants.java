@@ -1,5 +1,7 @@
 package com.wso2telco.dep.tpservice.util;
 
+import java.nio.charset.StandardCharsets;
+
 public class Constants {
 	public enum Tables {
 		TABLE_TSXWHO("tsxwho"),
@@ -17,4 +19,38 @@ public class Constants {
             return value;
         }
     }
+	public enum URLProperties{
+		URL_METHOD("POST"),
+		AUTHORIZATION_GRANT_TYPE("Authorization"),
+		LENGTH("Content-Length");		
+		
+		private final String value;
+		
+		URLProperties(String val){
+			 value = val;
+        }
+		
+		public String getValue() {
+         return value;
+     }
+	}
+	public enum URLTypes{
+		CONTENT("Content-Type","application/x-www-form-urlencoded"),
+		ENCODING("charset","utf-8");
+				
+		private  String type;
+		private  String value;
+
+		URLTypes(final String  type, final String  value) {
+			this.value = value;
+			this.type = type;
+		}
+		public String getType() {
+			return type;
+		}
+
+		public String getValue() {
+			return value;
+		}
+	}
 }
