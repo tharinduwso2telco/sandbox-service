@@ -1,7 +1,5 @@
 package com.wso2telco.dep.tpservice.util;
 
-import java.nio.charset.StandardCharsets;
-
 public class Constants {
 	
 	public static final String CONTEXT_TOKEN="TOKEN"; 
