@@ -18,18 +18,23 @@ package com.wso2telco.dep.tpservice.pool;
 
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
+
+import org.apache.http.HttpException;
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.wso2telco.dep.tpservice.model.TokenDTO;
 import com.wso2telco.dep.tpservice.model.WhoDTO;
+import com.wso2telco.dep.tpservice.util.Constants;
 import com.wso2telco.dep.tpservice.util.exception.BusinessException;
 import com.wso2telco.dep.tpservice.util.exception.GenaralError;
 
@@ -45,16 +50,22 @@ public class TokenReGenarator {
 	 * @throws BusinessException
 	 */
 	public TokenDTO reGenarate(final WhoDTO who, final TokenDTO oldToken) throws BusinessException {
+		String grant_type = "grant_type=refresh_token&refresh_token=";
 		TokenDTO token = new TokenDTO();
-		String Strtoken = makeTokenrequest( who.getTokenUrl(), "grant_type=refresh_token&refresh_token="	+ oldToken.getRefreshToken(), ("" + oldToken.getTokenAuth()));
+		
+		//for the response containing new access & refresh token
+		String Strtoken = makeTokenrequest(who.getTokenUrl(), grant_type + oldToken.getRefreshToken(), ("" + oldToken.getTokenAuth()));
 
 		if (Strtoken != null && Strtoken.length() > 0) {
-				try{
-					
+
+			try {
+
 				JSONObject jsontoken = new JSONObject(Strtoken);
+				
 				String newToken = jsontoken.getString("access_token");
 				String newRefreshToken = jsontoken.getString("refresh_token");
 				Long newTokenValidity = jsontoken.getLong("expires_in");
+				
 				token.setAccessToken(newToken);
 				token.setCreatedTime(new Date().getTime());
 				token.setTokenAuth(oldToken.getTokenAuth());
@@ -62,15 +73,13 @@ public class TokenReGenarator {
 				token.setTokenValidity(newTokenValidity);
 				token.setValid(true);
 				token.setWhoId(oldToken.getWhoId());
+				
 				log.debug("Refresh token re-generation success");
 
-				}
-				catch(Exception e){
-					log.error("Invalid Authorization Grant Type"+e.getMessage(),e);
-					throw new BusinessException(GenaralError.INVALID_GRANT_ERROR);
-					
-				}
-			
+			} catch (JSONException e) {
+				log.error("Invalid Authorization Grant Type" + e.getMessage(),e);
+			}
+
 		} else {
 			log.error("Token regeneration response of "	+ oldToken.getRefreshToken() + " is invalid.");
 		}
@@ -86,30 +95,28 @@ public class TokenReGenarator {
 	 * @return
 	 */
 	protected String makeTokenrequest(String tokenurl, String urlParameters, String authheader) {
-		String retStr =  "";
+		String retStr = "";
 		HttpURLConnection connection = null;
 		InputStream is = null;
-		BufferedReader br=null;
+		BufferedReader br = null;
 
+		log.debug("url : " + tokenurl + " | urlParameters : " + urlParameters + " | authheader : " + authheader);
 
-		log.debug("url : " + tokenurl + " | urlParameters : " + urlParameters	+ " | authheader : " + authheader);
-
-		if ((tokenurl != null && tokenurl.length() > 0)
-				&& (urlParameters != null && urlParameters.length() > 0)
-				&& (authheader != null && authheader.length() > 0)) {
+		if ((tokenurl != null && tokenurl.length() > 0)	&& (urlParameters != null && urlParameters.length() > 0) && (authheader != null && authheader.length() > 0)) {
 			try {
 
 				byte[] postData = urlParameters.getBytes(StandardCharsets.UTF_8);
 				int postDataLength = postData.length;
 				URL url = new URL(tokenurl);
 				connection = (HttpURLConnection) url.openConnection();
+				
 				connection.setDoOutput(true);
 				connection.setInstanceFollowRedirects(false);
-				connection.setRequestMethod("POST");
-				connection.setRequestProperty("Authorization", authheader);
-				connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
-				connection.setRequestProperty("charset", "utf-8");
-				connection.setRequestProperty("Content-Length", Integer.toString(postDataLength));
+				connection.setRequestMethod(Constants.URLProperties.URL_METHOD.getValue());
+				connection.setRequestProperty(Constants.URLProperties.AUTHORIZATION_GRANT_TYPE.getValue(), authheader);
+				connection.setRequestProperty(Constants.URLTypes.CONTENT.getType(), Constants.URLTypes.CONTENT.getValue());
+				connection.setRequestProperty(Constants.URLTypes.ENCODING.getType(), Constants.URLTypes.ENCODING.getValue());
+				connection.setRequestProperty(Constants.URLProperties.LENGTH.getValue(), Integer.toString(postDataLength));
 				connection.setUseCaches(false);
 
 				DataOutputStream wr = new DataOutputStream(connection.getOutputStream());
@@ -117,16 +124,13 @@ public class TokenReGenarator {
 				wr.flush();
 				wr.close();
 
-				if ((connection.getResponseCode() != 200)
-						&& (connection.getResponseCode() != 201)
-						&& (connection.getResponseCode() != 400)
-						&& (connection.getResponseCode() != 401)) {
-					log.debug("Failed : HTTP error code : "+ connection.getResponseCode());
-					throw new RuntimeException("Failed : HTTP error code : "+ connection.getResponseCode());
+				//filter out invalid http codes
+				if ((connection.getResponseCode() != 200) && (connection.getResponseCode() != 201) && (connection.getResponseCode() != 400) && (connection.getResponseCode() != 401)) {
+					log.debug("Failed : HTTP error code : "	+ connection.getResponseCode());
+					throw new HttpException();
 				}
 
-				if ((connection.getResponseCode() == 200)
-						|| (connection.getResponseCode() == 201)) {
+				if ((connection.getResponseCode() == 200) || (connection.getResponseCode() == 201)) {
 					is = connection.getInputStream();
 				} else {
 					is = connection.getErrorStream();
@@ -135,14 +139,16 @@ public class TokenReGenarator {
 				br = new BufferedReader(new InputStreamReader(is));
 				String output;
 				while ((output = br.readLine()) != null) {
-					retStr+=output;
-
+					retStr += output;
 				}
-				br.close();
 			} catch (Exception e) {
-				log.error("[WSRequestService ], makerequest, " + e.getMessage(),e);
-				e.printStackTrace();
+				log.error( "[WSRequestService ], makerequest, " + e.getMessage(), e);
 			} finally {
+				try {
+					br.close();
+				} catch (IOException e) {
+				}
+
 				if (connection != null) {
 					connection.disconnect();
 				}
