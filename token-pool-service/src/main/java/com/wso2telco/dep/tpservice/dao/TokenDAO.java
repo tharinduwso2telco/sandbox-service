@@ -28,6 +28,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.wso2telco.dep.tpservice.model.TokenDTO;
+import com.wso2telco.dep.tpservice.model.WhoDTO;
 import com.wso2telco.dep.tpservice.util.Constants;
 import com.wso2telco.dep.tpservice.util.Constants.Tables;
 import com.wso2telco.dep.tpservice.util.Validator;
@@ -108,5 +109,40 @@ public class TokenDAO {
 			tokenDTO.setCreatedTime(createdTime.getTime());
 		} //end if (resultsMap != null)
 		return tokenDTO;
+	}
+	
+	
+	public void saveNewToken(WhoDTO who_obj, TokenDTO token_obj) throws SQLException {
+	 
+		int whoId = who_obj.getId();
+		String tokenAuth = token_obj.getTokenAuth();
+		Long tokenValidity = token_obj.getTokenValidity();
+		String accessToken = token_obj.getAccessToken();
+		String refreshToken = token_obj.getRefreshToken();
+		boolean isValid = token_obj.isValid();
+		//long creation_new = token_obj.getCreatedTime();
+		
+		
+		DBI dbi = JDBIUtil.getInstance();
+		Handle h = dbi.open();
+		
+		try {
+			StringBuilder sb = new StringBuilder();			
+			sb.append(" INSERT ");
+			sb.append(" INTO ").append(Tables.TABLE_TSTTOKEN.toString());
+			sb.append(" ( tsxwhodid , tokenauth, tokenvalidity , isvalid , accesstoken , refreshtoken ) ");
+			sb.append("VALUES ");
+			sb.append("(? , ? , ? , ? , ? , ? )");
+			
+			h.execute(sb.toString() , whoId ,  tokenAuth , tokenValidity , isValid , accessToken , refreshToken);
+
+			log.debug("successfully saved the new token for " + who_obj + " with token " + token_obj);
+			
+		} catch (Exception e) {
+			log.error("TokenDAO","saveNewToken()", e);
+			throw new SQLException("Could not add the newly created token");
+		} finally {
+			h.close();
+		}
 	}
 }
