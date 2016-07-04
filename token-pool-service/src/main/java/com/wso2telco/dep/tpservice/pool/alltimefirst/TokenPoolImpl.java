@@ -182,7 +182,7 @@ class TokenPoolImpl implements TokenPool {
 			}
 			
 			
-			tokenManager.saveToken(whoDTO, newTokenDTO);
+			tokenManager.saveToken(whoDTO, newTokenDTO, token);
 			
 		} catch (BusinessException e) {
 			throw new TokenException(e.getErrorType());

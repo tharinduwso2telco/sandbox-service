@@ -112,7 +112,7 @@ public class TokenDAO {
 	}
 	
 	
-	public void saveNewToken(WhoDTO who_obj, TokenDTO token_obj) throws SQLException {
+	public void saveNewToken(WhoDTO who_obj, TokenDTO token_obj, TokenDTO token_old_obj) throws SQLException {
 	 
 		int whoId = who_obj.getId();
 		String tokenAuth = token_obj.getTokenAuth();
@@ -120,7 +120,7 @@ public class TokenDAO {
 		String accessToken = token_obj.getAccessToken();
 		String refreshToken = token_obj.getRefreshToken();
 		boolean isValid = token_obj.isValid();
-		//long creation_new = token_obj.getCreatedTime();
+		int parent_id = token_old_obj.getId();
 		
 		
 		DBI dbi = JDBIUtil.getInstance();
@@ -130,11 +130,11 @@ public class TokenDAO {
 			StringBuilder sb = new StringBuilder();			
 			sb.append(" INSERT ");
 			sb.append(" INTO ").append(Tables.TABLE_TSTTOKEN.toString());
-			sb.append(" ( tsxwhodid , tokenauth, tokenvalidity , isvalid , accesstoken , refreshtoken ) ");
+			sb.append(" ( tsxwhodid , tokenauth, tokenvalidity , isvalid , accesstoken , refreshtoken , parenttokendid ) ");
 			sb.append("VALUES ");
-			sb.append("(? , ? , ? , ? , ? , ? )");
+			sb.append("(? , ? , ? , ? , ? , ? , ?)");
 			
-			h.execute(sb.toString() , whoId ,  tokenAuth , tokenValidity , isValid , accessToken , refreshToken);
+			h.execute(sb.toString() , whoId ,  tokenAuth , tokenValidity , isValid , accessToken , refreshToken , parent_id);
 
 			log.debug("successfully saved the new token for " + who_obj + " with token " + token_obj);
 			
