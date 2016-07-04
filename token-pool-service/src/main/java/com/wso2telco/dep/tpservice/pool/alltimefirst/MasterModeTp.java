@@ -38,7 +38,7 @@ class MasterModeTp extends AbstractTokenPool {
 	public void removeToken(final TokenDTO token) throws TokenException {
 			super.removeToken(token);
 			log.debug("remove form the DB "+token);
-			tokenManager.invalidate(whoDTO, token);
+			tokenManager.invalidate(token);
 	}
 	
 	

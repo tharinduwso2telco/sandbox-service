@@ -25,6 +25,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.gson.Gson;
+import com.wso2telco.dep.tpservice.dao.EventHistoryDAO;
 import com.wso2telco.dep.tpservice.dao.TokenDAO;
 import com.wso2telco.dep.tpservice.model.TokenDTO;
 import com.wso2telco.dep.tpservice.model.WhoDTO;
@@ -89,8 +90,20 @@ public class TokenManager {
 		return result;
 	}
 	
-	public void invalidate(final WhoDTO whoDTO ,final TokenDTO tokenDto)throws TokenException {
-		log.debug("InValidating the token "+whoDTO+ " token "+tokenDto );
+	public void invalidate(final TokenDTO tokenDto)throws TokenException {
+		
+		log.debug("InValidating the token " +tokenDto );
+		
+		try {
+
+			EventHistoryDAO eventDAO = new EventHistoryDAO();
+			eventDAO.invalidateToken(tokenDto);
+
+		} catch (Exception e) {
+			log.error("TokenManager", "invalidate() failed", e);
+			throw new TokenException(GenaralError.INTERNAL_SERVER_ERROR);
+		}
+		
 	}
 	
 	public void saveToken(final WhoDTO whoDTO, final TokenDTO tokenDto, final TokenDTO oldtoken) throws TokenException {
