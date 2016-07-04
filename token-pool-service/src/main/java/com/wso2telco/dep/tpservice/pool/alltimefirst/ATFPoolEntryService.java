@@ -31,6 +31,7 @@ import com.wso2telco.dep.tpservice.model.EventHistoryDTO;
 import com.wso2telco.dep.tpservice.model.TokenDTO;
 import com.wso2telco.dep.tpservice.model.WhoDTO;
 import com.wso2telco.dep.tpservice.pool.TokenPool;
+import com.wso2telco.dep.tpservice.pool.TokenPoolImplimentable;
 import com.wso2telco.dep.tpservice.pool.TokenPoolInitializer;
 import com.wso2telco.dep.tpservice.util.Constants;
 import com.wso2telco.dep.tpservice.util.Event;
@@ -48,14 +49,26 @@ public class ATFPoolEntryService implements TokenPoolInitializer {
 	private Logger log = LoggerFactory.getLogger(ATFPoolEntryService.class);
 
 	private WhoManager adminService;
-	private TokenPoolImpl pool;
+	private TokenPoolImplimentable poolImpl;
+	private TokenPool pool;
 	private EventService eventService;
 	private ConfigReader configReader;
 	WhoDTO whoDTO;
 
 	private ATFPoolEntryService(final WhoDTO whoDTO) throws TokenException {
 		adminService = new WhoManager();
-		pool = TokenPoolImpl.createInstance(whoDTO);
+		ConfigDTO configDTO = configReader.getConfigDTO();
+		
+		if(configDTO.isMaster()){
+			MasterModeTp tempI = new MasterModeTp(whoDTO);
+			poolImpl = tempI	;
+			pool =tempI;
+		}else{
+			SlaveTokenPool tempI= new SlaveTokenPool(whoDTO);
+			poolImpl =tempI;
+			pool = tempI;
+		}
+		
 		eventService = new EventService();
 		this.whoDTO = whoDTO;
 		this.configReader = ConfigReader.getInstance();
@@ -73,54 +86,10 @@ public class ATFPoolEntryService implements TokenPoolInitializer {
 		ConfigDTO configDTO = configReader.getConfigDTO();
 		for (TokenDTO tokenDTO : tokenDTos) {
 			final long tokenExpiory = (tokenDTO.getCreatedTime() + tokenDTO.getTokenValidity());
-
-			if (configDTO.isMaster()) {//only master node allow to re -fresh the token
-				// token already expired at the initialization time then refresh
-				if (tokenExpiory <= System.currentTimeMillis()) {
-					refreshToken(tokenDTO);
-				} else {
-					shedule(tokenDTO);
-					pool.pool(tokenDTO);
-				}
-			}else{
-				if (tokenExpiory > System.currentTimeMillis()) { //expired token not allow to pool 
-					pool.pool(tokenDTO);
-					reFill(tokenDTO);
-				}
-			}
-
+			
+			shedule(tokenDTO);
+			poolImpl.pool(tokenDTO);
 		}
-	}
-
-	private void reFill(TokenDTO tokenDTO)throws BusinessException{
-		final long tokenExpiory = (tokenDTO.getCreatedTime() + tokenDTO.getTokenValidity())-2 * whoDTO.getDefaultConnectionRestTime();
-		
-		Timer timer = new Timer();
-		// Schedule the re - generate process
-		timer.schedule(new TimerTask() {
-
-			@Override
-			public void run() {
-				try {
-					pool.removeToken(tokenDTO);
-					
-					Thread.sleep( 4 * whoDTO.getDefaultConnectionRestTime());//sleep for 4 times default connection reset time
-					List<TokenDTO> tokenDTos = adminService.loadTokens(whoDTO.getOwnerId());
-					for (TokenDTO tokenDTO2 : tokenDTos) {
-						pool.pool(tokenDTO2);
-					}
-				} catch (Exception e) {
-					log.warn("Refill failed ");
-				}
-
-			}
-
-		}, tokenExpiory);
-	
-		
-		
-		
-		
 	}
 	
 	
@@ -152,19 +121,11 @@ public class ATFPoolEntryService implements TokenPoolInitializer {
 
 	}
 
-	@Override
-	public TokenPool getTokenPool() throws TokenException {
-		if (pool == null) {
-			throw new TokenException(TokenException.TokenError.TOKENPOOL_EMPTY);
-		}
-		return pool;
-	}
-
 	private void refreshToken(TokenDTO tokenDTO) {
 		try {
-			pool.removeToken(tokenDTO);
+			poolImpl.removeToken(tokenDTO);
 
-			pool.refreshToken(tokenDTO);
+			poolImpl.refreshToken(tokenDTO);
 			
 			EventHistoryDTO history = new EventHistoryDTO();
 			history.setContext(Constants.CONTEXT_TOKEN);
@@ -191,5 +152,10 @@ public class ATFPoolEntryService implements TokenPoolInitializer {
 			}
 		}
 
+	}
+
+	@Override
+	public TokenPool getTokenPool() throws TokenException {
+		return pool;
 	}
 }

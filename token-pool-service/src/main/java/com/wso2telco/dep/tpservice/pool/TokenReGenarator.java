@@ -67,7 +67,6 @@ public class TokenReGenarator {
 				Long newTokenValidity = jsontoken.getLong("expires_in");
 				
 				token.setAccessToken(newToken);
-				token.setCreatedTime(new Date().getTime());
 				token.setTokenAuth(oldToken.getTokenAuth());
 				token.setRefreshToken(newRefreshToken);
 				token.setTokenValidity(newTokenValidity);

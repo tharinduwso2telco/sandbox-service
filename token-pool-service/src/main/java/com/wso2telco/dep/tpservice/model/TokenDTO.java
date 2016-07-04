@@ -29,18 +29,18 @@ public class TokenDTO implements Serializable {
 	private String tokenAuth;
 	
 	private long tokenValidity;
+	
 	private boolean valid;
-	
-	
+		
 	private String accessToken;
 	
 	private String refreshToken;
 	
-	private long lastRefreshDone;
-	
 	private int uc;
 	
 	private long createdTime;
+	
+	private int parentTokenId;
 
 	public int getId() {
 		return id;
@@ -90,14 +90,6 @@ public class TokenDTO implements Serializable {
 		this.refreshToken = refreshToken;
 	}
 
-	public long getLastRefreshDone() {
-		return lastRefreshDone;
-	}
-
-	public void setLastRefreshDone(long lastRefreshDone) {
-		this.lastRefreshDone = lastRefreshDone;
-	}
-
 	public boolean isValid() {
 		return valid;
 	}
@@ -121,4 +113,13 @@ public class TokenDTO implements Serializable {
 	public void setCreatedTime(long createdTime) {
 		this.createdTime = createdTime;
 	}
+	
+	public int getParentTokenId() {
+		return parentTokenId;
+	}
+
+	public void setParentTokenId(int parentTokenId) {
+		this.parentTokenId = parentTokenId;
+	}
+	
 }

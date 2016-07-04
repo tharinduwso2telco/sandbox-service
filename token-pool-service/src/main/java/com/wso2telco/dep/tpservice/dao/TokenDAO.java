@@ -92,7 +92,7 @@ public class TokenDAO {
 			int tokenValidity = (Integer)resultsMap.get("tokenvalidity");
 			String accessToken = (String)resultsMap.get("accesstoken");
 			String refreshToken = (String)resultsMap.get("refreshtoken");
-			Timestamp lastRefreshDone = (Timestamp)resultsMap.get("lastrefreshdone");
+			//Timestamp lastRefreshDone = (Timestamp)resultsMap.get("lastrefreshdone");
 			boolean isValid = (Boolean)resultsMap.get("isvalid");
 			int uc = (Integer)resultsMap.get("uc");
 			Timestamp createdTime = (Timestamp)resultsMap.get("createdtime");
@@ -103,7 +103,7 @@ public class TokenDAO {
 			tokenDTO.setTokenValidity(tokenValidity);
 			tokenDTO.setAccessToken(accessToken);
 			tokenDTO.setRefreshToken(refreshToken);
-			tokenDTO.setLastRefreshDone(lastRefreshDone.getTime());
+			//tokenDTO.setLastRefreshDone(lastRefreshDone.getTime());
 			tokenDTO.setValid(isValid);
 			tokenDTO.setUc(uc);
 			tokenDTO.setCreatedTime(createdTime.getTime());

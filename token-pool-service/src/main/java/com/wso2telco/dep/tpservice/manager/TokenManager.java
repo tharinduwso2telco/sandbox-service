@@ -93,7 +93,7 @@ public class TokenManager {
 		log.debug("InValidating the token "+whoDTO+ " token "+tokenDto );
 	}
 	
-	public void saveToken(final WhoDTO whoDTO, final TokenDTO tokenDto, final TokenDTO oldtoken)	throws TokenException {
+	public void saveToken(final WhoDTO whoDTO, final TokenDTO tokenDto, final TokenDTO oldtoken) throws TokenException {
 
 		log.debug("save the token for " + whoDTO + " with token " + tokenDto);
 
@@ -107,5 +107,9 @@ public class TokenManager {
 			throw new TokenException(GenaralError.INTERNAL_SERVER_ERROR);
 		}
 
+	}
+	
+	public TokenDTO loadNewChild (final WhoDTO whoDTO ,final TokenDTO tokenDto)throws TokenException {
+		return null;
 	}
 }

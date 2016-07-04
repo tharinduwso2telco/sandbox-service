@@ -16,12 +16,12 @@
 
 package com.wso2telco.dep.tpservice.pool;
 
-import com.wso2telco.dep.tpservice.util.exception.BusinessException;
+import com.wso2telco.dep.tpservice.model.TokenDTO;
 import com.wso2telco.dep.tpservice.util.exception.TokenException;
 
-public interface TokenPoolInitializer {
-	public void initializePool() throws BusinessException;
- 	public TokenPool getTokenPool() throws TokenException;
-	
+public interface TokenPoolImplimentable {
+			void pool(TokenDTO tokenDTO) throws TokenException;
+	        void refreshToken(final TokenDTO token) throws TokenException ;
+	        void removeToken(final TokenDTO token) throws TokenException ;
 
 }
