@@ -30,9 +30,7 @@ import com.wso2telco.dep.tpservice.model.ConfigDTO;
 import com.wso2telco.dep.tpservice.model.EventHistoryDTO;
 import com.wso2telco.dep.tpservice.model.TokenDTO;
 import com.wso2telco.dep.tpservice.model.WhoDTO;
-import com.wso2telco.dep.tpservice.pool.TokenPool;
 import com.wso2telco.dep.tpservice.pool.TokenPoolImplimentable;
-import com.wso2telco.dep.tpservice.pool.TokenPoolInitializer;
 import com.wso2telco.dep.tpservice.util.Constants;
 import com.wso2telco.dep.tpservice.util.Event;
 import com.wso2telco.dep.tpservice.util.Status;
@@ -45,28 +43,25 @@ import com.wso2telco.dep.tpservice.util.exception.TokenException;
  *
  *
  */
-public class ATFPoolEntryService implements TokenPoolInitializer {
-	private Logger log = LoggerFactory.getLogger(ATFPoolEntryService.class);
+class TokenSheduler  {
+	private Logger log = LoggerFactory.getLogger(TokenSheduler.class);
 
 	private WhoManager adminService;
 	private TokenPoolImplimentable poolImpl;
-	private TokenPool pool;
 	private EventService eventService;
 	private ConfigReader configReader;
 	WhoDTO whoDTO;
 
-	private ATFPoolEntryService(final WhoDTO whoDTO) throws TokenException {
+	private TokenSheduler(final WhoDTO whoDTO) throws TokenException {
 		adminService = new WhoManager();
 		ConfigDTO configDTO = configReader.getConfigDTO();
 		
 		if(configDTO.isMaster()){
 			MasterModeTp tempI = new MasterModeTp(whoDTO);
 			poolImpl = tempI	;
-			pool =tempI;
 		}else{
 			SlaveTokenPool tempI= new SlaveTokenPool(whoDTO);
 			poolImpl =tempI;
-			pool = tempI;
 		}
 		
 		eventService = new EventService();
@@ -74,30 +69,37 @@ public class ATFPoolEntryService implements TokenPoolInitializer {
 		this.configReader = ConfigReader.getInstance();
 	}
 
-	public static TokenPoolInitializer createInstance(final WhoDTO whoDTO) throws TokenException {
+	public static TokenSheduler createInstance(final WhoDTO whoDTO) throws TokenException {
 		if (whoDTO == null) {
 			throw new TokenException(TokenException.TokenError.NO_VALID_WHO);
 		}
-		return new ATFPoolEntryService(whoDTO);
+		return new TokenSheduler(whoDTO);
 	}
 
-	public void initializePool() throws BusinessException {
+	public void initializePool() throws TokenException {
 		List<TokenDTO> tokenDTos = adminService.loadTokens(whoDTO.getOwnerId());
-		ConfigDTO configDTO = configReader.getConfigDTO();
 		for (TokenDTO tokenDTO : tokenDTos) {
 			final long tokenExpiory = (tokenDTO.getCreatedTime() + tokenDTO.getTokenValidity());
 			
-			shedule(tokenDTO);
-			poolImpl.pool(tokenDTO);
+			log.debug(" Initializing token :"+tokenDTO);
+		 
+			if (tokenExpiory > System.currentTimeMillis()) {//if the token is still valid.if the token is still valid.
+				log.debug("Initialization token - token is not expired :" +tokenDTO);
+				shedule(tokenDTO);
+				((AbstractTokenPool) poolImpl).pool(tokenDTO);
+			} else {//if the token is still valid.
+				log.debug("Initialization token - token is expired :"+tokenDTO);
+				refreshToken(tokenDTO);
+			}
 		}
 	}
 	
 	
-	private void shedule(final TokenDTO tokenDTO) throws BusinessException {
+	private void shedule(final TokenDTO tokenDTO) throws TokenException {
 
 		/**
 		 * the seducer trigger monitoring service before the token expires
-		 * trigges two times early the default connection reset.
+		 * Triggers two times early the default connection reset.
 		 */
 		final long tokenExpiory = (tokenDTO.getCreatedTime() + tokenDTO.getTokenValidity())
 				- 2 * whoDTO.getDefaultConnectionRestTime();
@@ -121,6 +123,12 @@ public class ATFPoolEntryService implements TokenPoolInitializer {
 
 	}
 
+	public TokenPoolImplimentable getTokenPoolImpl ()throws TokenException{
+		if(poolImpl==null){
+			throw new TokenException(TokenException.TokenError.NO_TOKEN_POOL_IMLIMENTATION);
+		}
+		return	poolImpl;
+	}
 	private void refreshToken(TokenDTO tokenDTO) {
 		try {
 			poolImpl.removeToken(tokenDTO);
@@ -154,8 +162,4 @@ public class ATFPoolEntryService implements TokenPoolInitializer {
 
 	}
 
-	@Override
-	public TokenPool getTokenPool() throws TokenException {
-		return pool;
-	}
 }

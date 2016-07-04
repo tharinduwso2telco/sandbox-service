@@ -31,6 +31,7 @@ import com.wso2telco.dep.tpservice.model.TokenDTO;
 import com.wso2telco.dep.tpservice.model.WhoDTO;
 import com.wso2telco.dep.tpservice.util.exception.BusinessException;
 import com.wso2telco.dep.tpservice.util.exception.GenaralError;
+import com.wso2telco.dep.tpservice.util.exception.TokenException;
 
 public class WhoManager {
 
@@ -43,14 +44,14 @@ public class WhoManager {
 	 * @throws Exception,
 	 *             return when an error is occurred.
 	 */
-	public List<WhoDTO> getAllOwners() throws BusinessException {
+	public List<WhoDTO> getAllOwners() throws TokenException {
 		List<WhoDTO> ownersList = null;
 		try {
 			WhoDAO whoDao = new WhoDAO();
 			ownersList = whoDao.getAllOwners();
 		} catch (Exception e) {
 			log.error("getAllOwners() failed ", e);
-			throw new BusinessException(GenaralError.INTERNAL_SERVER_ERROR);
+			throw new TokenException(GenaralError.INTERNAL_SERVER_ERROR);
 		}
 		return ownersList;
 	}
@@ -84,7 +85,7 @@ public class WhoManager {
 		return result;
 	}
 
-	public List<TokenDTO> loadTokens(final String ownerID) throws BusinessException {
+	public List<TokenDTO> loadTokens(final String ownerID) throws TokenException {
 
 		return Collections.EMPTY_LIST;
 

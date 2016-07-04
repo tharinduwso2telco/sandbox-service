@@ -31,7 +31,7 @@ import com.wso2telco.dep.tpservice.pool.TokenPoolImplimentable;
 import com.wso2telco.dep.tpservice.util.exception.GenaralError;
 import com.wso2telco.dep.tpservice.util.exception.TokenException;
 
-abstract class AbstractTokenPool implements TokenPool,TokenPoolImplimentable {
+abstract class AbstractTokenPool implements TokenPoolImplimentable {
 	protected Logger log;
 	protected ConfigReader configReader;
 	protected WhoDTO whoDTO;
@@ -77,61 +77,6 @@ abstract class AbstractTokenPool implements TokenPool,TokenPoolImplimentable {
 
 	}
 
-	public TokenDTO accqureToken() throws TokenException {
-		int waitattempt = 0;
-
-		TokenDTO validTokenDTO = waitUntilPoolfill(waitattempt++);
-
-		if (validTokenDTO == null) {
-			throw new TokenException(TokenException.TokenError.TOKENPOOL_EMPTY);
-		}
-		return validTokenDTO;
-
-	}
-	
-	
-
-	protected TokenDTO waitUntilPoolfill(int waitattempt) throws  TokenException {
-		log.debug("Calling waitUntilPoolfill " + whoDTO + " retry attempt :" + waitattempt);
-		synchronized (tokenList) {
-			for (TokenDTO tokenDTO : tokenList) {
-				if (tokenDTO.isValid()) {
-					sessionHolder.acquireSession(tokenDTO);
-					log.info("Valid token found " + tokenDTO);
-					return tokenDTO;
-				}
-
-			}
-
-		}
-
-		/**
-		 * sleep for pre defined attempts. if still fail throws exception
-		 */
-		log.debug("No valid token found for " + whoDTO + " ,Look up attempt :" + waitattempt);
-		ConfigDTO configDTO = ConfigReader.getInstance().getConfigDTO();
-		try {
-			Thread.sleep(configDTO.getWaitingTimeForToken());
-		} catch (InterruptedException e) {
-			log.error("",e);
-			throw new TokenException(GenaralError.INTERNAL_SERVER_ERROR);
-		}
-
-		// re try attempt
-		if (configDTO.getRetryAttempt() <= waitattempt) {
-			throw new TokenException(TokenException.TokenError.TOKENPOOL_EMPTY);
-		}
-		// recursively lookup for valid token ,
-		// this will continue until valid token found or defined attempt pass
-		waitUntilPoolfill(waitattempt++);
-
-		log.warn("", "Token pool empty :" + whoDTO);
-		throw new TokenException(TokenException.TokenError.TOKENPOOL_EMPTY);
-
-	}
-	
-	
-	
 	
 	public void removeToken(final TokenDTO token) throws TokenException {
 		log.info(" Try to remove Token : " + token + " from token pool of :" + whoDTO);
@@ -180,6 +125,70 @@ abstract class AbstractTokenPool implements TokenPool,TokenPoolImplimentable {
 		return true;
 	}
 	
+	
+	
+	/**
+	 * this will return the token pool for this owner
+	 * 
+	 * @return
+	 */
+	final public TokenPool getTokenPool() {
+		return new TokenPool() {
 
+			protected TokenDTO waitUntilPoolfill(int waitattempt) throws TokenException {
+				log.debug("Calling waitUntilPoolfill " + whoDTO + " retry attempt :" + waitattempt);
+				synchronized (tokenList) {
+					for (TokenDTO tokenDTO : tokenList) {
+						if (tokenDTO.isValid()) {
+							sessionHolder.acquireSession(tokenDTO);
+							log.info("Valid token found " + tokenDTO);
+							return tokenDTO;
+						}
+
+					}
+
+				}
+
+				/**
+				 * sleep for pre defined attempts. if still fail throws
+				 * exception
+				 */
+				log.debug("No valid token found for " + whoDTO + " ,Look up attempt :" + waitattempt);
+				ConfigDTO configDTO = ConfigReader.getInstance().getConfigDTO();
+				try {
+					Thread.sleep(configDTO.getWaitingTimeForToken());
+				} catch (InterruptedException e) {
+					log.error("", e);
+					throw new TokenException(GenaralError.INTERNAL_SERVER_ERROR);
+				}
+
+				// re try attempt
+				if (configDTO.getRetryAttempt() <= waitattempt) {
+					throw new TokenException(TokenException.TokenError.TOKENPOOL_EMPTY);
+				}
+				// recursively lookup for valid token ,
+				// this will continue until valid token found or defined attempt
+				// pass
+				waitUntilPoolfill(waitattempt++);
+
+				log.warn("", "Token pool empty :" + whoDTO);
+				throw new TokenException(TokenException.TokenError.TOKENPOOL_EMPTY);
+
+			}
+
+			@Override
+			public TokenDTO accqureToken() throws TokenException {
+				int waitattempt = 0;
+
+				TokenDTO validTokenDTO = waitUntilPoolfill(waitattempt++);
+
+				if (validTokenDTO == null) {
+					throw new TokenException(TokenException.TokenError.TOKENPOOL_EMPTY);
+				}
+				return validTokenDTO;
+
+			}
+		};
+	}
 
 }

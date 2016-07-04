@@ -45,7 +45,10 @@ public class TokenPoolService {
 		// TODO: Implementation for HTTP GET request
 
 		try {
-			TokenPool pool = PoolFactory.getInstance().getTokenPool(id);
+			TokenPool pool = PoolFactory.getInstance()
+										.getManagager()
+										.getImlimentation(id)
+										.getTokenPool();
 			return pool.accqureToken().getAccessToken();
 		} catch (TokenException  e) {
 			// TODO Auto-generated catch block

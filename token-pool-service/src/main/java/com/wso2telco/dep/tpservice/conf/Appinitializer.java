@@ -48,9 +48,7 @@ public class Appinitializer extends Application<ConfigDTO> {
 		/**
 		 * initialize token pool service
 		 */
-		PoolFactory factory = PoolFactory.getInstance();
-		
-		factory.initializeTokenPools();
+		PoolFactory.getInstance().getManagager().initializePool();
 
 		env.jersey().register(new TokenPoolService());
 		swaggerDropwizard.onRun(arg0,env,arg0.getHost(),arg0.getPort());
