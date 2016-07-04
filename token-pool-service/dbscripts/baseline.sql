@@ -58,7 +58,7 @@ CREATE TABLE `tsttoken` (
   `tokenvalidity` int(11) NOT NULL,
   `accesstoken` varchar(200) DEFAULT NULL,
   `refreshtoken` varchar(200) DEFAULT NULL,
-  `lastrefreshdone` timestamp NULL DEFAULT NULL,
+  `parenttokendid` int(11) DEFAULT NULL,
   `isvalid` BIT(1) NOT NULL,
   `uc` int(11) DEFAULT '0',
   `createdtime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
