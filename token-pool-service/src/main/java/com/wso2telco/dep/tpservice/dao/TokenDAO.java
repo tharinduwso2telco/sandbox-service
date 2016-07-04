@@ -32,8 +32,6 @@ import com.wso2telco.dep.tpservice.model.WhoDTO;
 import com.wso2telco.dep.tpservice.util.Constants;
 import com.wso2telco.dep.tpservice.util.Constants.Tables;
 import com.wso2telco.dep.tpservice.util.Validator;
-import com.wso2telco.dep.tpservice.util.exception.BusinessException;
-import com.wso2telco.dep.tpservice.util.exception.GenaralError;
 import com.wso2telco.dep.tpservice.util.exception.TokenException;
 import com.wso2telco.dep.tpservice.util.exception.TokenException.TokenError;
 
