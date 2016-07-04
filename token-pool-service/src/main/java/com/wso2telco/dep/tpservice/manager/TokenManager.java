@@ -96,4 +96,8 @@ public class TokenManager {
 	public void saveToken(final WhoDTO whoDTO ,final TokenDTO tokenDto)throws TokenException {
 		log.debug("save the token "+whoDTO+ " token "+tokenDto );
 	}
+	
+	public TokenDTO loadNewChild (final WhoDTO whoDTO ,final TokenDTO tokenDto)throws TokenException {
+		return null;
+	}
 }

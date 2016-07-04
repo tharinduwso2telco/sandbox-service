@@ -34,7 +34,48 @@ public class ConfigDTO extends Configuration implements Serializable{
 	@JsonProperty
 	private Boolean isMaster;
 	
+	@JsonProperty
+	private int tokenReadretrAttempts = 3; //default 3 times 
 	
+	@JsonProperty
+	private long tokenReadretrAfter=60000; //one minit
+	
+	
+	
+	
+	public int getRetrAttempts() {
+		return retrAttempts;
+	}
+
+	public void setRetrAttempts(int retrAttempts) {
+		this.retrAttempts = retrAttempts;
+	}
+
+	public int getTokenReadretrAttempts() {
+		return tokenReadretrAttempts;
+	}
+
+	public void setTokenReadretrAttempts(int tokenReadretrAttempts) {
+		if (tokenReadretrAttempts > 3) {
+			this.tokenReadretrAttempts = tokenReadretrAttempts;
+		}
+	}
+
+	public long getTokenReadretrAfter() {
+		return tokenReadretrAfter;
+	}
+
+	//token read retry mini limit is 1 min
+	public void setTokenReadretrAfter(long tokenReadretrAfter) {
+		if (tokenReadretrAfter > 60000) {
+			this.tokenReadretrAfter = tokenReadretrAfter;
+		}
+	}
+
+	public Boolean getIsMaster() {
+		return isMaster;
+	}
+
 	public Boolean isMaster() {
 		return isMaster;
 	}

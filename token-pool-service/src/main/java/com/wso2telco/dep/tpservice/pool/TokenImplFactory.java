@@ -16,12 +16,10 @@
 
 package com.wso2telco.dep.tpservice.pool;
 
-import com.wso2telco.dep.tpservice.util.exception.BusinessException;
-import com.wso2telco.dep.tpservice.util.exception.TokenException;
+public class TokenImplFactory {
 
-public interface TokenPoolInitializer {
-	public void initializePool() throws BusinessException;
- 	public TokenPool getTokenPool() throws TokenException;
 	
-
+	public static TokenPoolImplimentable getImplimenter(){
+		return null;
+	}
 }

@@ -29,23 +29,34 @@ import com.wordnik.swagger.annotations.ApiOperation;
 import com.wordnik.swagger.annotations.ApiParam;
 import com.wordnik.swagger.annotations.ApiResponse;
 import com.wordnik.swagger.annotations.ApiResponses;
+import com.wso2telco.dep.tpservice.pool.PoolFactory;
+import com.wso2telco.dep.tpservice.pool.TokenPool;
+import com.wso2telco.dep.tpservice.util.exception.TokenException;
 
 @Api(value = "/tokenservice", description = "This service provide a rest service for providing a valid token")
 @Path("/tokenservice")
 public class TokenPoolService {
-
+	 
 	@GET
 	@Path("/{ownerID}")
 	@ApiOperation(value = "Get the valid token", notes = "API for return the contact by given the id", response = String.class)
 	public String get(
 			@ApiParam(value = "owner Id of token to fetch", required = true) @PathParam("ownerID") String id) {
 		// TODO: Implementation for HTTP GET request
-		System.out.println("GET invoked");
+
+		try {
+			TokenPool pool = PoolFactory.getInstance().getTokenPool(id);
+			return pool.accqureToken().getAccessToken();
+		} catch (TokenException  e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 		return "Hello from WSO2 MSF4J";
 	}
 
 	@POST
-	@Path("/{wonerid}}")
+	@Path("/refresh/{wonerid}/{tokenID}")
 	@ApiOperation(value = "New token details", notes = "API for update token create ")
 	@ApiResponses({ 
 				@ApiResponse(code = 201, message = "Successfully created the contact"),
@@ -57,8 +68,8 @@ public class TokenPoolService {
 	}
 
 	@PUT
-	@Path("/{tokenID}")
-	@ApiOperation(value = "Update token details", notes = "API for update token by id ")
+	@Path("/refresh/{wonerid}/{tokenID}")
+	@ApiOperation(value = "Re -fresh  token ", notes = "Re genarate the token using refresh token ")
 	public void put(@ApiParam(value = "token id to update ", required = true) @PathParam("tokenid") String tokenid,
 			@ApiParam(value = "new refreshTime to update ", required = true) @FormParam("refreshTime") String refreshTime) {
 		// TODO: Implementation for HTTP PUT request

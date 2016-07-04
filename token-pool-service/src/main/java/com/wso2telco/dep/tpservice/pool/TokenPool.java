@@ -21,5 +21,5 @@ import com.wso2telco.dep.tpservice.util.exception.TokenException;
 
 public interface TokenPool {
 	
-	TokenDTO accqureToken() throws InterruptedException, TokenException ;
+	TokenDTO accqureToken() throws  TokenException ;
 }
