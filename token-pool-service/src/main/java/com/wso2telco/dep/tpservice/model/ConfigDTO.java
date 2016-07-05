@@ -25,11 +25,7 @@ public class ConfigDTO extends Configuration implements Serializable{
 	private int port;
 	
 	@JsonProperty
-	private long waitingTimeForToken;
-	
-
-	@JsonProperty
-	private int retrAttempts;
+	private long waitingTimeForToken=200; //times in milliseconds ,default time is 200 ms
 	
 	@JsonProperty
 	private Boolean isMaster;
@@ -38,19 +34,12 @@ public class ConfigDTO extends Configuration implements Serializable{
 	private int tokenReadretrAttempts = 3; //default 3 times 
 	
 	@JsonProperty
-	private long tokenReadretrAfter=60000; //one minit
+	private long tokenReadretrAfter=60000; //times in milliseconds,default is set to one minit
+	
+	@JsonProperty
+	private int retryAttempt=10000;
 	
 	
-	
-	
-	public int getRetrAttempts() {
-		return retrAttempts;
-	}
-
-	public void setRetrAttempts(int retrAttempts) {
-		this.retrAttempts = retrAttempts;
-	}
-
 	public int getTokenReadretrAttempts() {
 		return tokenReadretrAttempts;
 	}
@@ -71,7 +60,9 @@ public class ConfigDTO extends Configuration implements Serializable{
 			this.tokenReadretrAfter = tokenReadretrAfter;
 		}
 	}
-
+	public int getRetryAttempt(){
+		return retryAttempt;
+	}
 	public Boolean getIsMaster() {
 		return isMaster;
 	}
@@ -84,19 +75,13 @@ public class ConfigDTO extends Configuration implements Serializable{
 		this.isMaster = isMaster;
 	}
 
-	public int getRetryAttempt() {
-		return retrAttempts;
-	}
-
-	public void setRetryAttempt(int maxNumberOfAttemptForToken) {
-		this.retrAttempts = maxNumberOfAttemptForToken;
-	}
 
 	public long getWaitingTimeForToken() {
 		return waitingTimeForToken;
 	}
 
 	public void setWaitingTimeForToken(long waitingTimeForToken) {
+		if (waitingTimeForToken>200 &&waitingTimeForToken<20000)
 		this.waitingTimeForToken = waitingTimeForToken;
 	}
 
