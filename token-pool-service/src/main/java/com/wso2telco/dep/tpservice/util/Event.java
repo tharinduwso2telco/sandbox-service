@@ -18,7 +18,8 @@ package com.wso2telco.dep.tpservice.util;
 
 public enum Event {
 	RE_GENARATE_TOKEN(2000, "REFRESH_TOKEN"),
-	INVALIDATE_TOKEN(2001, "INVALIDATE_TOKEN_ID ");
+	INVALIDATE_TOKEN(2001, "INVALIDATE_TOKEN_ID "),
+	SAVED_TOKEN(2002, "TOKEN_SAVED");
 
 	private Integer key;
 	private String code;
