@@ -113,7 +113,7 @@ public class TokenDAO {
 		return tokenDTO;
 	}
 	
-	
+	// insertion for newly generated access token 
 	public void saveNewToken(WhoDTO who_obj, TokenDTO token_obj, TokenDTO token_old_obj) throws SQLException {
 	 
 		int whoId = who_obj.getId();
@@ -127,7 +127,7 @@ public class TokenDAO {
 		
 		DBI dbi = JDBIUtil.getInstance();
 		Handle h = dbi.open();
-		
+				
 		try {
 			StringBuilder sb = new StringBuilder();			
 			sb.append(" INSERT ");
@@ -137,7 +137,11 @@ public class TokenDAO {
 			sb.append("(? , ? , ? , ? , ? , ? , ?)");
 			
 			h.execute(sb.toString() , whoId ,  tokenAuth , tokenValidity , isValid , accessToken , refreshToken , parent_id);
-
+			
+			// call to insert Event for the successful save
+			EventHistoryDAO obj = new EventHistoryDAO();
+			obj.saveTokenEvent(token_obj);
+			
 			log.debug("successfully saved the new token for " + who_obj + " with token " + token_obj);
 			
 		} catch (Exception e) {
@@ -175,11 +179,12 @@ public class TokenDAO {
 		sql_check_token.append(" tokendid = :id");
 
 		try {
-			//validation for token exist
+			
 			List<Map<String, Object>> obj_check_token = inner_h.createQuery(sql_check_token.toString())
 					.bind("id", Id)
 					.list();
 			
+			//validation for token exist
 			if (obj_check_token.size() != 0) {
 				
 				inner_h.createStatement(sql_token.toString()) 

@@ -12,6 +12,8 @@ import com.wso2telco.dep.tpservice.util.Constants;
 import com.wso2telco.dep.tpservice.util.Constants.Tables;
 import com.wso2telco.dep.tpservice.util.Event;
 import com.wso2telco.dep.tpservice.util.Status;
+import com.wso2telco.dep.tpservice.util.exception.BusinessException;
+import com.wso2telco.dep.tpservice.util.exception.GenaralError;
 
 public class EventHistoryDAO {
 
@@ -57,5 +59,75 @@ public class EventHistoryDAO {
 		}
 
 	}
+	
+	//Event insertion for the status of regenerated token
+	public void regenerateTokenEvent(TokenDTO newTokenDTO) throws SQLException {
+		
+		DBI dbi_reg = JDBIUtil.getInstance();
+		Handle h_reg = dbi_reg.open();
 
+		try {
+
+			StringBuilder sql_event = new StringBuilder();
+			sql_event.append(" INSERT ");
+			sql_event.append(" INTO ").append(Tables.TABLE_TSTEVENT.toString());
+			sql_event.append(" ( jobname , text, event , status ) ");
+			sql_event.append("VALUES ");
+			sql_event.append("(? , ? , ? , ?)");
+
+			if (newTokenDTO == null) {
+
+				h_reg.execute(sql_event.toString(), Constants.CONTEXT_TOKEN, "TokenID " + newTokenDTO.getId(), Status.REGENARATE_FAIL, Event.RE_GENARATE_TOKEN);
+
+			} else {
+
+				h_reg.execute(sql_event.toString(), Constants.CONTEXT_TOKEN, "TokenID " + newTokenDTO.getId(), Status.REGENARATE_SUCSESS, Event.RE_GENARATE_TOKEN);
+
+			}
+
+		} catch (Exception e) {
+			log.error("EventHistoryDAO", "regenerateTokenEvent()", e);
+			throw new SQLException("Could not insert regenerated token event");
+		} finally {
+			h_reg.close();
+		}
+	}
+	
+	
+	//Event insertion for saved newly regenerated token
+	public void saveTokenEvent(TokenDTO tokenDto) throws SQLException {
+
+		DBI dbi_save = JDBIUtil.getInstance();
+		Handle h_save = dbi_save.open();
+
+		try {
+			StringBuilder sql_event = new StringBuilder();
+
+			sql_event.append(" INSERT ");
+			sql_event.append(" INTO ").append(Tables.TABLE_TSTEVENT.toString());
+			sql_event.append(" ( jobname , text, event , status ) ");
+			sql_event.append("VALUES ");
+			sql_event.append("(? , ? , ? , ?)");
+
+			h_save.execute(sql_event.toString(), Constants.CONTEXT_TOKEN, "TokenID "+tokenDto.getId(), Status.REGENERATE_TOKEN_SAVE, Event.SAVED_TOKEN);	
+			
+			log.debug("Event creation for the newly Regenerated Token "+ tokenDto.getId());
+		
+		} catch (Exception e) {
+
+			log.error("EventHistoryDAO", "saveTokenEvent()", e);
+			throw new SQLException("Could not insert event for saved token");
+
+		} finally {
+			h_save.close();
+		}
+
+	}
+	
 }
+
+	
+	
+	
+
+
