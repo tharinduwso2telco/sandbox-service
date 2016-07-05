@@ -175,7 +175,7 @@ abstract class AbstractTokenPool implements TokenPoolImplimentable {
 				// recursively lookup for valid token ,
 				// this will continue until valid token found or defined attempt
 				// pass
-				waitUntilPoolfill(waitattempt++);
+				waitUntilPoolfill(++waitattempt);
 
 				log.warn("", "Token pool empty :" + whoDTO);
 				throw new TokenException(TokenException.TokenError.TOKENPOOL_EMPTY);
@@ -186,7 +186,7 @@ abstract class AbstractTokenPool implements TokenPoolImplimentable {
 			public TokenDTO accqureToken() throws TokenException {
 				int waitattempt = 0;
 
-				TokenDTO validTokenDTO = waitUntilPoolfill(waitattempt++);
+				TokenDTO validTokenDTO = waitUntilPoolfill(++waitattempt);
 
 				if (validTokenDTO == null) {
 					throw new TokenException(TokenException.TokenError.TOKENPOOL_EMPTY);
