@@ -149,7 +149,12 @@ public class TokenDAO {
 	}
 	
 	//TokenDAO responsible for invalidating token 
-	public void invalidatingToken(Handle db, TokenDTO obj) throws SQLException{
+	public void invalidatingToken(TokenDTO obj) throws SQLException{
+		
+		DBI inner_dbi = JDBIUtil.getInstance();
+		Handle inner_h = inner_dbi.open();
+		inner_h.getConnection().setAutoCommit(false);
+		inner_h.begin();
 
 		int Id = obj.getId();
 		StringBuilder sql_token = new StringBuilder();
@@ -171,13 +176,13 @@ public class TokenDAO {
 
 		try {
 			//validation for token exist
-			List<Map<String, Object>> obj_check_token = db.createQuery(sql_check_token.toString())
+			List<Map<String, Object>> obj_check_token = inner_h.createQuery(sql_check_token.toString())
 					.bind("id", Id)
 					.list();
 			
 			if (obj_check_token.size() != 0) {
 				
-				 db.createStatement(sql_token.toString()) 
+				inner_h.createStatement(sql_token.toString()) 
 				   .bind("val", true) 
 				   .bind("id",  Id) 
 				   .execute();
@@ -192,6 +197,8 @@ public class TokenDAO {
 			log.error("TokenDAO", "invalidatingToken()", e);
 			throw new SQLException("Could not invalidate the token");
 			
-		} 
+		} finally{
+			inner_h.close();
+		}
 }
 }

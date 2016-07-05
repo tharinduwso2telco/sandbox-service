@@ -10,6 +10,8 @@ import org.slf4j.LoggerFactory;
 import com.wso2telco.dep.tpservice.model.TokenDTO;
 import com.wso2telco.dep.tpservice.util.Constants;
 import com.wso2telco.dep.tpservice.util.Constants.Tables;
+import com.wso2telco.dep.tpservice.util.Event;
+import com.wso2telco.dep.tpservice.util.Status;
 
 public class EventHistoryDAO {
 
@@ -34,15 +36,15 @@ public class EventHistoryDAO {
 			sql_event.append("VALUES ");
 			sql_event.append("(? , ? , ? , ?)");
 
-			h.execute(sql_event.toString(), Constants.CONTEXT_TOKEN, "TokenID "+tokenDto.getId(), "invalidating", "invalidated");
+			h.execute(sql_event.toString(), Constants.CONTEXT_TOKEN, "TokenID "+tokenDto.getId(), Status.INVALIDATE_SUCCESS, Event.INVALIDATE_TOKEN);
 
 			// for invalidating Token through TokenDAO layer
 			TokenDAO tokenObj = new TokenDAO();
-			tokenObj.invalidatingToken(h, tokenDto);
+			tokenObj.invalidatingToken( tokenDto);
 
 			// When both TokenDAO & EventDAO executed without error
 			h.commit();
-			log.debug("Token Invalidation Success");
+			log.debug("Token Invalidation Success for the token id "+ tokenDto.getId());
 
 		} catch (Exception e) {
 
