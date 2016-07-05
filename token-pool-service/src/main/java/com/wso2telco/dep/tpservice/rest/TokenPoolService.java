@@ -17,26 +17,27 @@
 package com.wso2telco.dep.tpservice.rest;
 
 import javax.ws.rs.DELETE;
-import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
-import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
 import com.wordnik.swagger.annotations.ApiParam;
-import com.wordnik.swagger.annotations.ApiResponse;
-import com.wordnik.swagger.annotations.ApiResponses;
 import com.wso2telco.dep.tpservice.pool.PoolFactory;
 import com.wso2telco.dep.tpservice.pool.TokenPool;
+import com.wso2telco.dep.tpservice.pool.TokenPoolImplimentable;
 import com.wso2telco.dep.tpservice.util.exception.TokenException;
 
 @Api(value = "/tokenservice", description = "This service provide a rest service for providing a valid token")
 @Path("/tokenservice")
 public class TokenPoolService {
-	 
+	Logger log = LoggerFactory.getLogger(TokenPoolService.class);
+	
 	@GET
 	@Path("/{ownerID}")
 	@ApiOperation(value = "Get the valid token", notes = "API for return the contact by given the id", response = String.class)
@@ -51,40 +52,59 @@ public class TokenPoolService {
 										.getTokenPool();
 			return pool.accqureToken().getAccessToken();
 		} catch (TokenException  e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			log.error("",e);
 		}
 		
 		return "Hello from WSO2 MSF4J";
 	}
-
+/*
 	@POST
-	@Path("/refresh/{wonerid}/{tokenID}")
+	@Path("/{ownerid}")
 	@ApiOperation(value = "New token details", notes = "API for update token create ")
 	@ApiResponses({ 
 				@ApiResponse(code = 201, message = "Successfully created the contact"),
 				@ApiResponse(code = 400, message = "Bad Request ") })
 
-	public void post(@ApiParam(value = "Owner of the token ", required = true) @PathParam("wonerid") String wonerid) {
-		// TODO: Implementation for HTTP POST request
-		System.out.println("POST invoked");
-	}
+	public void create(@ApiParam(value = "Owner of the token ", required = true) @PathParam("ownerid") String wonerid) {
+		
+		try {
+			PoolFactory.getInstance()
+			.getManagager()
+			.getImlimentation(wonerid);
+		} catch (TokenException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}*/
 
 	@PUT
-	@Path("/refresh/{wonerid}/{tokenID}")
+	@Path("/{ownerId}/{tokenID}")
 	@ApiOperation(value = "Re -fresh  token ", notes = "Re genarate the token using refresh token ")
-	public void put(@ApiParam(value = "token id to update ", required = true) @PathParam("tokenid") String tokenid,
-			@ApiParam(value = "new refreshTime to update ", required = true) @FormParam("refreshTime") String refreshTime) {
-		// TODO: Implementation for HTTP PUT request
-		System.out.println("PUT invoked");
+	public void put(@ApiParam(value = "token id to update ", required = true) @PathParam("ownerId") String ownerId,
+			@ApiParam(value = "new refreshTime to update ", required = true) @PathParam("tokenID") String tokenID) {
+		try {
+			TokenPoolImplimentable tokenPoolImpl = PoolFactory.getInstance().getManagager().getImlimentation(ownerId);
+			tokenPoolImpl.refreshToken(tokenID);
+			
+		} catch (TokenException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	@DELETE
-	@Path("/{tokenID}")
+	@Path("/{ownerID}/{tokenID}")
 	@ApiOperation(value = "Delete token ", notes = "Delete token ")
 	public void delete(
-			@ApiParam(value = "token Id  to delete ", required = true) @PathParam("tokenid") String tokenid) {
-		// TODO: Implementation for HTTP DELETE request
-		System.out.println("DELETE invoked");
+					@ApiParam(value = "owner Id of the token ", required = true) @PathParam("ownerID") String ownerID,
+					@ApiParam(value = "token Id  to delete ", required = true) @PathParam("tokenid") String tokenid) {
+		
+		try {
+			TokenPoolImplimentable tokenPoolImpl = PoolFactory.getInstance().getManagager().getImlimentation(ownerID);
+			tokenPoolImpl.removeToken(tokenid);
+		} catch (TokenException e) {
+			log.warn("delete token ",e);
+		}
+		
 	}
 }

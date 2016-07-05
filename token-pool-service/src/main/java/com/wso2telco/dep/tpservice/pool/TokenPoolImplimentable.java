@@ -22,6 +22,8 @@ import com.wso2telco.dep.tpservice.util.exception.TokenException;
 public interface TokenPoolImplimentable {
 	        void refreshToken(final TokenDTO token) throws TokenException ;
 	        void removeToken(final TokenDTO token) throws TokenException ;
+	        void removeToken(final String token) throws TokenException ;
 	    	TokenPool getTokenPool() throws TokenException;
+	    	void refreshToken(final String token) throws TokenException ;
 
 }

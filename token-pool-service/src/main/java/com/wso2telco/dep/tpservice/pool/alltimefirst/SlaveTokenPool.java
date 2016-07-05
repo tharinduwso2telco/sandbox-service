@@ -42,7 +42,7 @@ class SlaveTokenPool extends AbstractTokenPool {
 	public void refreshToken(final TokenDTO token) throws TokenException {
 		log.info(" Try to remove Token : " + token + " from token pool of :" + whoDTO);
 
-		 validateToken( token) ;
+		 validateToken( token.getAccessToken()) ;
 		
 		try {
 			
@@ -70,11 +70,14 @@ class SlaveTokenPool extends AbstractTokenPool {
 			
 			log.debug("add New token to pool "+ newTokenDTO);
 			synchronized (tokenList) {
-				tokenList.add(newTokenDTO);
+				tokenList.put(newTokenDTO.getAccessToken().trim(),newTokenDTO);
 			}
 			
 		} catch (BusinessException e) {
 			throw new TokenException(e.getErrorType());
 		} 
 	}
+
+	
+
 }

@@ -17,7 +17,8 @@
 package com.wso2telco.dep.tpservice.pool.alltimefirst;
 
 import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.slf4j.Logger;
 
@@ -45,7 +46,7 @@ abstract class AbstractTokenPool implements TokenPoolImplimentable {
 		this.tokenManager = new TokenManager();
 	}
 
-	protected List<TokenDTO> tokenList = new ArrayList<TokenDTO>();
+	protected Map<String,TokenDTO> tokenList = new HashMap<String,TokenDTO>();
 
 	public synchronized void pool(TokenDTO tokenDTO) throws TokenException {
 		if (tokenDTO == null) {
@@ -70,9 +71,9 @@ abstract class AbstractTokenPool implements TokenPoolImplimentable {
 
 		}
 
-		if (tokenList.contains(tokenDTO)) {
+		if (!tokenList.containsKey(tokenDTO.getAccessToken())) {
 			log.debug("token added to pool " + tokenDTO);
-			tokenList.add(tokenDTO);
+			tokenList.put(tokenDTO.getAccessToken(),tokenDTO);
 		}
 
 	}
@@ -85,7 +86,7 @@ abstract class AbstractTokenPool implements TokenPoolImplimentable {
 		ConfigDTO configDTO = configReader.getConfigDTO();
 		
 		// validate the given token exists at the token pool
-		isTokenExists = tokenList.contains(token);
+		isTokenExists = tokenList.containsKey(token.getAccessToken());
 
 		// if token is invalid throw exception
 		if (!isTokenExists) {
@@ -96,7 +97,8 @@ abstract class AbstractTokenPool implements TokenPoolImplimentable {
 		
 		// Invalidate the token, so that re issuing is restricted
 		synchronized (tokenList) {
-			isTokenRemoved = tokenList.remove(token);
+			TokenDTO tempToken = tokenList.remove(token.getAccessToken());
+			isTokenRemoved = tempToken!=null?true:false;
 		}
 		
 
@@ -111,14 +113,18 @@ abstract class AbstractTokenPool implements TokenPoolImplimentable {
 	}
 	
 	
-	protected boolean validateToken(final TokenDTO token) throws TokenException{
+	protected boolean validateToken(final String accessToken) throws TokenException{
 		boolean isTokenExists = false;
 
-		isTokenExists = tokenList.contains(token);
+		if(accessToken==null ||accessToken.trim().length()==0){
+			log.warn("Null token ");
+			throw new TokenException(TokenException.TokenError.INVALID_TOKEN);
+		}
+		isTokenExists = tokenList.containsKey(accessToken.trim());
 
 		// if token is invalid throw exception
 		if (!isTokenExists) {
-			log.warn("Invaid token unable to remove token:" + token);
+			log.warn("Invaid token  :" + accessToken);
 			throw new TokenException(TokenException.TokenError.INVALID_TOKEN);
 
 		}
@@ -138,7 +144,7 @@ abstract class AbstractTokenPool implements TokenPoolImplimentable {
 			protected TokenDTO waitUntilPoolfill(int waitattempt) throws TokenException {
 				log.debug("Calling waitUntilPoolfill " + whoDTO + " retry attempt :" + waitattempt);
 				synchronized (tokenList) {
-					for (TokenDTO tokenDTO : tokenList) {
+					for (TokenDTO tokenDTO : tokenList.values()) {
 						if (tokenDTO.isValid()) {
 							sessionHolder.acquireSession(tokenDTO);
 							log.info("Valid token found " + tokenDTO);
@@ -189,6 +195,26 @@ abstract class AbstractTokenPool implements TokenPoolImplimentable {
 
 			}
 		};
+	}
+	
+	
+	
+	@Override
+	public void removeToken(String token) throws TokenException {
+		//validate token from existing pool
+		validateToken(token) ;
+		
+		//obtain the token from map
+		TokenDTO tokenDTo = tokenList.get(token.trim());
+		removeToken(tokenDTo);
+	}
+	
+	@Override
+	public void refreshToken(String token) throws TokenException {
+		validateToken(token);
+		TokenDTO tokenDTo =tokenList.get(token.trim());
+		
+		refreshToken(tokenDTo);
 	}
 
 }
