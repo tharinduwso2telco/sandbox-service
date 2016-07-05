@@ -22,6 +22,8 @@ import org.slf4j.LoggerFactory;
 import com.wso2telco.dep.tpservice.model.ConfigDTO;
 import com.wso2telco.dep.tpservice.pool.PoolFactory;
 import com.wso2telco.dep.tpservice.rest.TokenPoolService;
+import com.wso2telco.dep.tpservice.util.exception.BusinessException;
+import com.wso2telco.dep.tpservice.util.exception.TokenException;
 
 import io.dropwizard.Application;
 import io.dropwizard.setup.Bootstrap;
@@ -41,6 +43,7 @@ public class Appinitializer extends Application<ConfigDTO> {
 	
 	@Override
 	public void run(ConfigDTO arg0, Environment env) throws Exception {
+		System.out.println("Server start with configuration :"+arg0);
 		/**
 		 * initialize configuration reading
 		 */
@@ -58,8 +61,10 @@ public class Appinitializer extends Application<ConfigDTO> {
 	public static void main(String[] args) {
 		try {
 			new Appinitializer().run(args);
+		} catch (TokenException e) {
+			System.out.println("Unable to start the server "+e.getErrorType().getCode() +" :"+e.getErrorType().getMessage());
 		} catch (Exception e) {
-			log.error("",e);
+			e.printStackTrace();
 		}
 	}
 

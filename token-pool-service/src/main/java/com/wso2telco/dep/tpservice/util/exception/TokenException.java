@@ -43,7 +43,7 @@ public class TokenException extends BusinessException {
 		NO_TOKEN_POOL_MANAGABLE("TPS0017","No token Token Pool Managable initialized")
 		;
 		
-		TokenError(final String msgf,final String coded){
+		TokenError(final String coded,final String msgf){
 			this.msg =msgf;
 			this.code = coded;
 		}

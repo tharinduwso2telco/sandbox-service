@@ -97,4 +97,13 @@ public class ConfigDTO extends Configuration implements Serializable{
 		return port;
 	}
 
+	@Override
+	public String toString() {
+		return "ConfigDTO [database=" + database + ", host=" + host + ", port=" + port + ", waitingTimeForToken="
+				+ waitingTimeForToken + ", isMaster=" + isMaster + ", tokenReadretrAttempts=" + tokenReadretrAttempts
+				+ ", tokenReadretrAfter=" + tokenReadretrAfter + ", retryAttempt=" + retryAttempt + "]";
+	}
+	
+	
+
 }

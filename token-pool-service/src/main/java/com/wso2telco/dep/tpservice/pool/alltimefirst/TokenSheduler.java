@@ -53,6 +53,7 @@ class TokenSheduler  {
 	WhoDTO whoDTO;
 
 	private TokenSheduler(final WhoDTO whoDTO) throws TokenException {
+		this.configReader = ConfigReader.getInstance();
 		adminService = new WhoManager();
 		ConfigDTO configDTO = configReader.getConfigDTO();
 		
@@ -66,7 +67,7 @@ class TokenSheduler  {
 		
 		eventService = new EventService();
 		this.whoDTO = whoDTO;
-		this.configReader = ConfigReader.getInstance();
+		 
 	}
 
 	public static TokenSheduler createInstance(final WhoDTO whoDTO) throws TokenException {

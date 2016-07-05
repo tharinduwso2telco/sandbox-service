@@ -21,6 +21,7 @@ import javax.ws.rs.GET;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
+import javax.ws.rs.core.Response;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,7 +42,7 @@ public class TokenPoolService {
 	@GET
 	@Path("/{ownerID}")
 	@ApiOperation(value = "Get the valid token", notes = "API for return the contact by given the id", response = String.class)
-	public String get(
+	public Response get(
 			@ApiParam(value = "owner Id of token to fetch", required = true) @PathParam("ownerID") String id) {
 		// TODO: Implementation for HTTP GET request
 
@@ -50,12 +51,13 @@ public class TokenPoolService {
 										.getManagager()
 										.getImlimentation(id)
 										.getTokenPool();
-			return pool.accqureToken().getAccessToken();
+			String token = pool.accqureToken().getAccessToken();
+			return Response.status(Response.Status.OK).entity(token).build();
 		} catch (TokenException  e) {
 			log.error("",e);
+			return Response.status(Response.Status.BAD_REQUEST).entity(e.getErrorType().getCode()+":"+e.getErrorType().getMessage()).build();
 		}
 		
-		return "Hello from WSO2 MSF4J";
 	}
 /*
 	@POST

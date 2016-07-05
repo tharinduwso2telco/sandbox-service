@@ -50,7 +50,7 @@ public class TokenReGenarator {
 	 * @throws BusinessException
 	 */
 	public TokenDTO reGenarate(final WhoDTO who, final TokenDTO oldToken) throws BusinessException {
-		String grant_type = "grant_type=refresh_token&refresh_token=";
+		final String grant_type = "grant_type=refresh_token&refresh_token=";
 		TokenDTO token = new TokenDTO();
 		
 		//for the response containing new access & refresh token
