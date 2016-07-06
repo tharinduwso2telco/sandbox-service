@@ -16,6 +16,7 @@
 
 package com.wso2telco.dep.tpservice.manager;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -26,12 +27,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.gson.Gson;
+import com.wso2telco.dep.tpservice.dao.TokenDAO;
 import com.wso2telco.dep.tpservice.dao.WhoDAO;
 import com.wso2telco.dep.tpservice.model.TokenDTO;
 import com.wso2telco.dep.tpservice.model.WhoDTO;
 import com.wso2telco.dep.tpservice.util.exception.BusinessException;
 import com.wso2telco.dep.tpservice.util.exception.GenaralError;
 import com.wso2telco.dep.tpservice.util.exception.TokenException;
+import com.wso2telco.dep.tpservice.util.exception.TokenException.TokenError;
 
 public class WhoManager {
 
@@ -86,8 +89,18 @@ public class WhoManager {
 	}
 
 	public List<TokenDTO> loadTokens(final String ownerID) throws TokenException {
-
-		return Collections.EMPTY_LIST;
+		
+		List<TokenDTO> response;
+		TokenDAO tokenLoad = new TokenDAO();
+		
+		try {
+			response = tokenLoad.getAllTokensForOwner(ownerID);
+		} catch (SQLException e) {
+			log.error("WhoManager","loadTokens()",e.getMessage());
+			throw new TokenException(TokenError.TOKENPOOL_EMPTY);
+		}
+		
+	    return response;
 
 	}
 
