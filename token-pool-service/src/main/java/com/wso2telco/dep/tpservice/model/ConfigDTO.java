@@ -18,11 +18,11 @@ public class ConfigDTO extends Configuration implements Serializable{
 	@JsonProperty
 	private DataSourceFactory database = new DataSourceFactory();
 	
-	@JsonProperty
+	/*@JsonProperty
 	private String host;
 	
 	@JsonProperty
-	private int port;
+	private int port;*/
 	
 	@JsonProperty
 	private long waitingTimeForToken=200; //times in milliseconds ,default time is 200 ms
@@ -88,21 +88,22 @@ public class ConfigDTO extends Configuration implements Serializable{
 	public DataSourceFactory getDataSourceFactory() {
 		return database;
 	}
+
+	@Override
+	public String toString() {
+		return "ConfigDTO [database=" + database + ", waitingTimeForToken=" + waitingTimeForToken + ", isMaster="
+				+ isMaster + ", tokenReadretrAttempts=" + tokenReadretrAttempts + ", tokenReadretrAfter="
+				+ tokenReadretrAfter + ", retryAttempt=" + retryAttempt + "]";
+	}
 	
-	public String getHost(){
+/*	public String getHost(){
 		return host;
 	}
 	
 	public int getPort(){
 		return port;
-	}
+	}*/
 
-	@Override
-	public String toString() {
-		return "ConfigDTO [database=" + database + ", host=" + host + ", port=" + port + ", waitingTimeForToken="
-				+ waitingTimeForToken + ", isMaster=" + isMaster + ", tokenReadretrAttempts=" + tokenReadretrAttempts
-				+ ", tokenReadretrAfter=" + tokenReadretrAfter + ", retryAttempt=" + retryAttempt + "]";
-	}
 	
 	
 

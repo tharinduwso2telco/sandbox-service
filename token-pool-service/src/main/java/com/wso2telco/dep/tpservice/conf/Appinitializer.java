@@ -16,6 +16,13 @@
 
 package com.wso2telco.dep.tpservice.conf;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+import org.eclipse.jetty.server.Connector;
+import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.server.ServerConnector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,6 +33,13 @@ import com.wso2telco.dep.tpservice.util.exception.BusinessException;
 import com.wso2telco.dep.tpservice.util.exception.TokenException;
 
 import io.dropwizard.Application;
+import io.dropwizard.jetty.ConnectorFactory;
+import io.dropwizard.jetty.HttpConnectorFactory;
+import io.dropwizard.jetty.HttpsConnectorFactory;
+import io.dropwizard.lifecycle.ServerLifecycleListener;
+import io.dropwizard.server.DefaultServerFactory;
+import io.dropwizard.server.ServerFactory;
+import io.dropwizard.server.SimpleServerFactory;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import io.federecio.dropwizard.swagger.SwaggerDropwizard;
@@ -54,7 +68,22 @@ public class Appinitializer extends Application<ConfigDTO> {
 		PoolFactory.getInstance().getManagager().initializePool();
 
 		env.jersey().register(new TokenPoolService());
-		swaggerDropwizard.onRun(arg0,env,arg0.getHost(),arg0.getPort());
+	/*	env.lifecycle().addServerLifecycleListener(new ServerLifecycleListener() {
+		    @Override
+		    public void serverStarted(Server server) {
+		      for (Connector connector : server.getConnectors()) {
+		        if (connector instanceof ServerConnector) {
+		          ServerConnector serverConnector = (ServerConnector) connector;
+		          System.out.println(serverConnector.getName() + " " + serverConnector.getLocalPort());
+		          // Do something useful with serverConnector.getLocalPort()
+		           swaggerDropwizard.onRun(arg0,env,"localhost",serverConnector.getLocalPort());
+		        }
+		      }
+		    }
+		  });*/
+		HttpConnectorFactory connector =getHttpConnectionFactory(arg0);
+		
+		swaggerDropwizard.onRun(arg0,env,connector.getBindHost(),connector.getPort());
 
 	}
 
@@ -67,5 +96,31 @@ public class Appinitializer extends Application<ConfigDTO> {
 			e.printStackTrace();
 		}
 	}
+	
+	  private HttpConnectorFactory getHttpConnectionFactory(ConfigDTO configuration) {
+	        List<ConnectorFactory> connectorFactories = getConnectorFactories(configuration);
+	        for (ConnectorFactory connectorFactory : connectorFactories) {
+	            if (connectorFactory instanceof HttpsConnectorFactory) {
+	                return (HttpConnectorFactory) connectorFactory;  // if we find https skip the others
+	            }
+	        }
+	        for (ConnectorFactory connectorFactory : connectorFactories) {
+	            if (connectorFactory instanceof HttpConnectorFactory) {
+	                return (HttpConnectorFactory) connectorFactory; // if not https pick http
+	            }
+	        }
 
+	        throw new IllegalStateException("Unable to find an HttpServerFactory");
+	    }
+
+	    private List<ConnectorFactory> getConnectorFactories(ConfigDTO configuration) {
+	        ServerFactory serverFactory = configuration.getServerFactory();
+	        if (serverFactory instanceof SimpleServerFactory) {
+	            return Collections.singletonList(((SimpleServerFactory) serverFactory).getConnector());
+	        } else if (serverFactory instanceof DefaultServerFactory) {
+	            return new ArrayList<>(((DefaultServerFactory) serverFactory).getApplicationConnectors());
+	        } else {
+	            throw new IllegalStateException("Unknown ServerFactory implementation: " + serverFactory.getClass());
+	        }
+	    }
 }
