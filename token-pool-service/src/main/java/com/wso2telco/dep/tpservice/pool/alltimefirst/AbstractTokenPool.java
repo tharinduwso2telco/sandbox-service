@@ -16,9 +16,10 @@
 
 package com.wso2telco.dep.tpservice.pool.alltimefirst;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import org.slf4j.Logger;
 
@@ -38,53 +39,36 @@ abstract class AbstractTokenPool implements TokenPoolImplimentable {
 	protected WhoDTO whoDTO;
 	protected SessionHolder sessionHolder;
 	protected TokenManager tokenManager;
-	
-	protected AbstractTokenPool(final WhoDTO whoDTO) throws TokenException{
+
+	protected AbstractTokenPool(final WhoDTO whoDTO) throws TokenException {
 		this.whoDTO = whoDTO;
 		this.configReader = ConfigReader.getInstance();
 		this.sessionHolder = SessionHolder.createInstance(whoDTO);
 		this.tokenManager = new TokenManager();
 	}
 
-	protected Map<String,TokenDTO> tokenList = new HashMap<String,TokenDTO>();
+	protected Map<String, TokenDTO> tokenList = new HashMap<String, TokenDTO>();
 
-	public synchronized void pool(TokenDTO tokenDTO) throws TokenException {
-		if (tokenDTO == null) {
-			log.warn("try to add null to token pool ");
-			throw new TokenException(TokenException.TokenError.INVALID_TOKEN);
+	protected abstract void reGenarate(final TokenDTO token) throws TokenException;
 
-		}
+	/**
+	 * This will trigger the token refresh and persist the new valid token
+	 * 
+	 * @param token
+	 * @throws TokenException
+	 */
+	public void refreshToken(final TokenDTO token) throws TokenException {
+		log.info(" Try to remove Token : " + token + " from token pool of :" + whoDTO);
 
-		if (tokenDTO.isValid() == false) {
-			log.warn("try to add Invalid to token pool ");
-			throw new TokenException(TokenException.TokenError.INVALID_TOKEN);
-
-		}
-		if (tokenDTO.getAccessToken() == null || tokenDTO.getAccessToken().length() == 0) {
-			log.warn("token object without access token try to pool ");
-			throw new TokenException(TokenException.TokenError.NULL_ACCESS_TOKEN);
-
-		}
-		if (tokenDTO.getRefreshToken() == null || tokenDTO.getRefreshToken().length() == 0) {
-			log.warn("token object without access token try to pool ");
-			throw new TokenException(TokenException.TokenError.NULL_REFRESH_TOKEN);
-
-		}
-
-		if (!tokenList.containsKey(tokenDTO.getAccessToken())) {
-			log.debug("token added to pool " + tokenDTO);
-			tokenList.put(tokenDTO.getAccessToken(),tokenDTO);
-		}
-
+		validateToken(token.getAccessToken());
+		reGenarate(token);
 	}
 
-	
 	public void removeToken(final TokenDTO token) throws TokenException {
 		log.info(" Try to remove Token : " + token + " from token pool of :" + whoDTO);
 
 		boolean isTokenRemoved = false, isTokenExists = false;
-		ConfigDTO configDTO = configReader.getConfigDTO();
-		
+
 		// validate the given token exists at the token pool
 		isTokenExists = tokenList.containsKey(token.getAccessToken());
 
@@ -94,13 +78,12 @@ abstract class AbstractTokenPool implements TokenPoolImplimentable {
 			throw new TokenException(TokenException.TokenError.INVALID_TOKEN);
 
 		}
-		
+
 		// Invalidate the token, so that re issuing is restricted
 		synchronized (tokenList) {
 			TokenDTO tempToken = tokenList.remove(token.getAccessToken());
-			isTokenRemoved = tempToken!=null?true:false;
+			isTokenRemoved = tempToken != null ? true : false;
 		}
-		
 
 		if (!isTokenRemoved) {
 			log.warn("Token already removed from the pool :" + whoDTO + " token :" + token);
@@ -109,14 +92,13 @@ abstract class AbstractTokenPool implements TokenPoolImplimentable {
 		}
 
 		log.debug("Token removed locally");
-		
+
 	}
-	
-	
-	protected boolean validateToken(final String accessToken) throws TokenException{
+
+	protected boolean validateToken(final String accessToken) throws TokenException {
 		boolean isTokenExists = false;
 
-		if(accessToken==null ||accessToken.trim().length()==0){
+		if (accessToken == null || accessToken.trim().length() == 0) {
 			log.warn("Null token ");
 			throw new TokenException(TokenException.TokenError.INVALID_TOKEN);
 		}
@@ -130,9 +112,7 @@ abstract class AbstractTokenPool implements TokenPoolImplimentable {
 		}
 		return true;
 	}
-	
-	
-	
+
 	/**
 	 * this will return the token pool for this owner
 	 * 
@@ -196,25 +176,64 @@ abstract class AbstractTokenPool implements TokenPoolImplimentable {
 			}
 		};
 	}
-	
-	
-	
+
 	@Override
-	public void removeToken(String token) throws TokenException {
-		//validate token from existing pool
-		validateToken(token) ;
-		
-		//obtain the token from map
+	final public void removeToken(String token) throws TokenException {
+		// validate token from existing pool
+		validateToken(token);
+
+		// obtain the token from map
 		TokenDTO tokenDTo = tokenList.get(token.trim());
 		removeToken(tokenDTo);
 	}
-	
+
 	@Override
 	public void refreshToken(String token) throws TokenException {
 		validateToken(token);
-		TokenDTO tokenDTo =tokenList.get(token.trim());
-		
+		TokenDTO tokenDTo = tokenList.get(token.trim());
+
 		refreshToken(tokenDTo);
+	}
+
+	protected void shedule(final TokenDTO newTokenDTO) throws TokenException {
+		Timer timer = new Timer();
+		// Schedule the re - generate process
+		timer.schedule(new TimerTask() {
+
+			@Override
+			public void run() {
+				try {
+					// remove the token
+					removeToken(newTokenDTO);
+					refreshToken(newTokenDTO);
+
+				} catch (TokenException e) {
+					log.error("token sheudle expired - ", e);
+				}
+
+			}
+
+		}, newTokenDTO.getTokenExpiry());
+	}
+
+	@Override
+	public void init(TokenDTO tokenDTO) throws TokenException {
+		log.debug(" Initializing token :" + tokenDTO);
+
+		if (tokenDTO.isExpired()) {// if the token is still valid.if the token
+									// is still valid.
+			log.debug("Initialization token - token is expired :" + tokenDTO);
+			reGenarate(tokenDTO);
+
+		} else {// if the token is still valid.
+			log.debug("Initialization token - token is not expired :" + tokenDTO);
+
+			// Add to token map which used to release token to the pool
+			tokenList.put(tokenDTO.getAccessToken(), tokenDTO);
+
+			shedule(tokenDTO);// Schedule for next refresh
+		}
+
 	}
 
 }

@@ -25,5 +25,6 @@ public interface TokenPoolImplimentable {
 	        void removeToken(final String token) throws TokenException ;
 	    	TokenPool getTokenPool() throws TokenException;
 	    	void refreshToken(final String token) throws TokenException ;
+	    	void init(final TokenDTO tokenDTO) throws TokenException ;
 
 }

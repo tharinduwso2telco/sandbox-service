@@ -24,7 +24,10 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
-import java.util.Date;
+
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLSession;
 import javax.ws.rs.core.Response.Status;
 
 import org.json.JSONException;
@@ -40,7 +43,8 @@ import com.wso2telco.dep.tpservice.util.exception.GenaralError;
 
 public class TokenReGenarator {
 
-	private static Logger log = LoggerFactory.getLogger(TokenReGenarator.class);
+	private Logger log = LoggerFactory.getLogger(TokenReGenarator.class);
+	private final static String GRANT_TYPE = "grant_type=refresh_token&refresh_token=";
 
 	/**
 	 * 
@@ -50,11 +54,11 @@ public class TokenReGenarator {
 	 * @throws BusinessException
 	 */
 	public TokenDTO reGenarate(final WhoDTO who, final TokenDTO oldToken) throws BusinessException {
-		final String grant_type = "grant_type=refresh_token&refresh_token=";
+		
 		TokenDTO token = new TokenDTO();
 		
 		//for the response containing new access & refresh token
-		String Strtoken = makeTokenrequest(who.getTokenUrl(), grant_type + oldToken.getRefreshToken(), ("" + oldToken.getTokenAuth()));
+		String Strtoken = makeTokenrequest(who.getTokenUrl(), GRANT_TYPE + oldToken.getRefreshToken(), ("" + oldToken.getTokenAuth()));
 
 		if (Strtoken != null && Strtoken.length() > 0) {
 
@@ -85,7 +89,7 @@ public class TokenReGenarator {
 		return token;
 
 	}
-
+	
 	/**
 	 * 
 	 * @param tokenurl
@@ -96,7 +100,7 @@ public class TokenReGenarator {
 	 */
 	protected String makeTokenrequest(String tokenurl, String urlParameters, String authheader) throws BusinessException {
 		String retStr = "";
-		HttpURLConnection connection = null;
+		HttpsURLConnection connection = null;
 		InputStream is = null;
 		BufferedReader br = null;
 
@@ -108,7 +112,7 @@ public class TokenReGenarator {
 				byte[] postData = urlParameters.getBytes(StandardCharsets.UTF_8);
 				int postDataLength = postData.length;
 				URL url = new URL(tokenurl);
-				connection = (HttpURLConnection) url.openConnection();
+				connection = (HttpsURLConnection) url.openConnection();
 				
 				connection.setDoOutput(true);
 				connection.setInstanceFollowRedirects(false);
