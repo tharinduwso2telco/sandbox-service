@@ -24,18 +24,20 @@ package com.wso2telco.dep.tpservice.pool;
 	import java.net.HttpURLConnection;
 	import java.net.URL;
 	import java.nio.charset.StandardCharsets;
-	import javax.ws.rs.core.Response.Status;
 
+	import javax.ws.rs.core.Response.Status;
+	
 	import org.json.JSONObject;
 	import org.slf4j.Logger;
 	import org.slf4j.LoggerFactory;
-
+	
 	import com.wso2telco.dep.tpservice.model.TokenDTO;
 	import com.wso2telco.dep.tpservice.model.WhoDTO;
 	import com.wso2telco.dep.tpservice.util.Constants;
 	import com.wso2telco.dep.tpservice.util.exception.BusinessException;
 	import com.wso2telco.dep.tpservice.util.exception.TokenException;
 	import com.wso2telco.dep.tpservice.util.exception.TokenException.TokenError;
+	
 	public class TokenReGenarator {
 
 		private static Logger log = LoggerFactory.getLogger(TokenReGenarator.class);
@@ -124,7 +126,7 @@ package com.wso2telco.dep.tpservice.pool;
 					connection.setDoOutput(true);
 					connection.setInstanceFollowRedirects(false);
 					connection.setRequestMethod(Constants.URLProperties.URL_METHOD.getValue());
-					connection.setRequestProperty(Constants.URLProperties.AUTHORIZATION_GRANT_TYPE.getValue(), Constants.CONTEXT_TOKEN + authheader);
+					connection.setRequestProperty(Constants.URLProperties.AUTHORIZATION_GRANT_TYPE.getValue(), Constants.AUTH_TOKEN + authheader);
 					connection.setRequestProperty(Constants.URLTypes.CONTENT.getType(),	Constants.URLTypes.CONTENT.getValue());
 					connection.setRequestProperty(Constants.URLTypes.ENCODING.getType(), Constants.URLTypes.ENCODING.getValue());
 					connection.setRequestProperty(Constants.URLProperties.LENGTH.getValue(), Integer.toString(postDataLength));
