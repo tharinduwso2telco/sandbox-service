@@ -40,7 +40,11 @@ public class TokenException extends BusinessException {
 		NULL_ACCESS_TOKEN("TPS0014","Access Token is null"),
 		NULL_REFRESH_TOKEN("TPS0015","Refresh Token is null"),
 		NO_TOKEN_POOL_IMLIMENTATION("TPS0016","No token pool implimentation initialized"),
-		NO_TOKEN_POOL_MANAGABLE("TPS0017","No token Token Pool Managable initialized")
+		NO_TOKEN_POOL_MANAGABLE("TPS0017","No token Token Pool Managable initialized"),
+		NO_VALID_TOKEN_URL("TPS0018", "No valid token url defined at the db"),
+		INVALID_AUTH_HEADER("TPS0019"," Invalid Authentication Header at the db"),
+		TOKEN_REGENERATE_FAIL("TPS0020"," Token Regeneration Failed "),
+		INVALID_REFRESH_CREDENTIALS("TPS0020"," Invalid credentials passed for Token Regeneration "),
 		;
 		
 		TokenError(final String coded,final String msgf){
