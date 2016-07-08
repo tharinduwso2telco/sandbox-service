@@ -78,7 +78,7 @@ public class TokenDTO implements Serializable {
 	}
 
 	public void setTokenValidity(long tokenValidity) {
-		this.tokenValidity = tokenValidity;
+		this.tokenValidity = tokenValidity*1000;
 	}
 
 	public String getAccessToken() {

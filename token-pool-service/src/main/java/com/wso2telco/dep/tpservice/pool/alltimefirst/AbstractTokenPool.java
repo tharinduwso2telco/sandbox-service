@@ -197,6 +197,7 @@ abstract class AbstractTokenPool implements TokenPoolImplimentable {
 
 	protected void shedule(final TokenDTO newTokenDTO) throws TokenException {
 		Timer timer = new Timer();
+		ConfigDTO configDTO =configReader.getConfigDTO();
 		// Schedule the re - generate process
 		timer.schedule(new TimerTask() {
 
@@ -213,7 +214,7 @@ abstract class AbstractTokenPool implements TokenPoolImplimentable {
 
 			}
 
-		}, newTokenDTO.getTokenExpiry());
+		}, newTokenDTO.getTokenValidity()-configDTO.getRefreshWakeUpLeadTime());
 	}
 
 	@Override

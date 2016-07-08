@@ -7,6 +7,10 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import io.dropwizard.Configuration;
 import io.dropwizard.db.DataSourceFactory;
 
+/**
+ * @author nuwan
+ *
+ */
 public class ConfigDTO extends Configuration implements Serializable{
 
 	/**
@@ -39,7 +43,19 @@ public class ConfigDTO extends Configuration implements Serializable{
 	@JsonProperty
 	private int retryAttempt=10000;
 	
+	@JsonProperty
+	private long refreshWakeUpLeadTime=5000;
 	
+	
+	
+	public long getRefreshWakeUpLeadTime() {
+		return refreshWakeUpLeadTime;
+	}
+
+	public void setRefreshWakeUpLeadTime(long refreshWakeUpLeadTime) {
+		this.refreshWakeUpLeadTime = refreshWakeUpLeadTime;
+	}
+
 	public int getTokenReadretrAttempts() {
 		return tokenReadretrAttempts;
 	}

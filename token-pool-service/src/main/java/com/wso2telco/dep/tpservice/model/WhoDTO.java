@@ -97,4 +97,13 @@ public class WhoDTO implements Serializable {
 	public void setUc(int uc) {
 		this.uc = uc;
 	}
+
+	@Override
+	public String toString() {
+		return "WhoDTO [id=" + id + ", ownerId=" + ownerId + ", tokenUrl=" + tokenUrl + ", defaultConnectionRestTime="
+				+ defaultConnectionRestTime + ", valid=" + valid + ", createdDate=" + createdDate + ", uc=" + uc + "]";
+	}
+	
+	
+	
 }
