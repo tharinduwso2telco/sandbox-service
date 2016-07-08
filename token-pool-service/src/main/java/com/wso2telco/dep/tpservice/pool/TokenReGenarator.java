@@ -16,167 +16,155 @@
 
 package com.wso2telco.dep.tpservice.pool;
 
-import java.io.BufferedReader;
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.nio.charset.StandardCharsets;
-import java.security.SecureRandom;
-import java.security.cert.X509Certificate;
-import java.util.Date;
+	import java.io.BufferedReader;
+	import java.io.DataOutputStream;
+	import java.io.IOException;
+	import java.io.InputStream;
+	import java.io.InputStreamReader;
+	import java.net.HttpURLConnection;
+	import java.net.URL;
+	import java.nio.charset.StandardCharsets;
+	import javax.ws.rs.core.Response.Status;
 
-import javax.net.ssl.HostnameVerifier;
-import javax.net.ssl.HttpsURLConnection;
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.SSLSession;
-import javax.net.ssl.TrustManager;
-import javax.net.ssl.X509TrustManager;
-import javax.ws.rs.core.Response.Status;
+	import org.json.JSONObject;
+	import org.slf4j.Logger;
+	import org.slf4j.LoggerFactory;
 
-import org.apache.http.HttpException;
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+	import com.wso2telco.dep.tpservice.model.TokenDTO;
+	import com.wso2telco.dep.tpservice.model.WhoDTO;
+	import com.wso2telco.dep.tpservice.util.Constants;
+	import com.wso2telco.dep.tpservice.util.exception.BusinessException;
+	import com.wso2telco.dep.tpservice.util.exception.TokenException;
+	import com.wso2telco.dep.tpservice.util.exception.TokenException.TokenError;
+	public class TokenReGenarator {
 
-import com.wso2telco.dep.tpservice.model.TokenDTO;
-import com.wso2telco.dep.tpservice.model.WhoDTO;
-import com.wso2telco.dep.tpservice.util.Constants;
-import com.wso2telco.dep.tpservice.util.exception.BusinessException;
-import com.wso2telco.dep.tpservice.util.exception.GenaralError;
-import com.wso2telco.dep.tpservice.util.exception.TokenException;
-import com.wso2telco.dep.tpservice.util.exception.TokenException.TokenError;
+		private static Logger log = LoggerFactory.getLogger(TokenReGenarator.class);
 
-public class TokenReGenarator {
-
-	private static Logger log = LoggerFactory.getLogger(TokenReGenarator.class);
-
-	/**
-	 * 
-	 * @param who
-	 * @param oldToken
-	 * @return
-	 * @throws BusinessException
-	 */
-	
-	
-	// regenerate new access token process
-	public TokenDTO reGenarate(final WhoDTO who, final TokenDTO oldToken) throws TokenException {
-
-		final String grant_type = "grant_type=refresh_token&refresh_token=";
-		TokenDTO token = new TokenDTO();
+		/**
+		 * 
+		 * @param who
+		 * @param oldToken
+		 * @return
+		 * @throws BusinessException
+		 */
 		
-		//  response containing new access & refresh token
-		String Strtoken = makeTokenrequest(who.getTokenUrl(), grant_type + oldToken.getRefreshToken(), ("" + oldToken.getTokenAuth()));
 		
-		//validate response message 
-		if (Strtoken != null && Strtoken.length() > 0) {
+		// regenerate new access token process
+		public TokenDTO reGenarate(final WhoDTO who, final TokenDTO oldToken) throws TokenException {
 
-			JSONObject jsontoken = new JSONObject(Strtoken);
+			final String grant_type = "grant_type=refresh_token&refresh_token=";
+			TokenDTO token = new TokenDTO();
 			
-			try {
+			//  response containing new access & refresh token
+			String Strtoken = makeTokenrequest(who.getTokenUrl(), grant_type + oldToken.getRefreshToken(), ("" + oldToken.getTokenAuth()));
+			
+			//validate response message 
+			if (Strtoken != null && Strtoken.length() > 0) {
+
+				JSONObject jsontoken = new JSONObject(Strtoken);
 				
-				String newToken = jsontoken.getString("access_token");
-				String newRefreshToken = jsontoken.getString("refresh_token");
-				Long newTokenValidity = jsontoken.getLong("expires_in");
-
-				token.setAccessToken(newToken);
-				token.setTokenAuth(oldToken.getTokenAuth());
-				token.setRefreshToken(newRefreshToken);
-				token.setTokenValidity(newTokenValidity);
-				token.setValid(true);
-				token.setWhoId(oldToken.getWhoId());
-
-				log.debug("Refresh token re-generation success");
-			} catch (Exception e) {
-				throw new TokenException(TokenError.INVALID_REFRESH_CREDENTIALS);
-			}
-
-		} 
-		return token;
-
-	}
-
-	/**
-	 * 
-	 * @param tokenurl
-	 * @param urlParameters
-	 * @param authheader
-	 * @return
-	 * @throws BusinessException
-	 */
-	protected String makeTokenrequest(String tokenurl, String urlParameters, String authheader) throws TokenException {
-		String retStr = "";
-		HttpURLConnection connection = null;
-		InputStream is = null;
-		BufferedReader br = null;
-
-		log.debug("url : " + tokenurl + " | urlParameters : " + urlParameters + " | authheader : " + authheader);
-		
-		// parameter validations
-		if ((tokenurl == null || tokenurl.length() <= 0)) {
-			log.error("TokenReGenarator , makeTokenrequest()", "Token URL is invalid");
-			throw new TokenException(TokenError.NO_VALID_TOKEN_URL);
-		} else if (urlParameters == null || urlParameters.length() <= 0) {
-			log.error("TokenReGenarator , makeTokenrequest()", "Refresh Token is Invalid");
-			throw new TokenException(TokenError.NULL_REFRESH_TOKEN);
-		} else if (authheader == null || authheader.length() <= 0) {
-			log.error("TokenReGenarator , makeTokenrequest()", "Authenticator Header is Invalid");
-			throw new TokenException(TokenError.INVALID_AUTH_HEADER);
-		} else {
-
-			try {
-
-				byte[] postData = urlParameters.getBytes(StandardCharsets.UTF_8);
-				int postDataLength = postData.length;
-				URL url = new URL(tokenurl);
-				connection = (HttpURLConnection) url.openConnection();
-
-				connection.setDoOutput(true);
-				connection.setInstanceFollowRedirects(false);
-				connection.setRequestMethod(Constants.URLProperties.URL_METHOD.getValue());
-				connection.setRequestProperty(Constants.URLProperties.AUTHORIZATION_GRANT_TYPE.getValue(), Constants.CONTEXT_TOKEN + authheader);
-				connection.setRequestProperty(Constants.URLTypes.CONTENT.getType(),	Constants.URLTypes.CONTENT.getValue());
-				connection.setRequestProperty(Constants.URLTypes.ENCODING.getType(), Constants.URLTypes.ENCODING.getValue());
-				connection.setRequestProperty(Constants.URLProperties.LENGTH.getValue(), Integer.toString(postDataLength));
-				connection.setUseCaches(false);
-
-				DataOutputStream wr = new DataOutputStream(connection.getOutputStream());
-				wr.write(postData);
-				wr.flush();
-				wr.close();
-
-				// filter out invalid http codes
-				if ((connection.getResponseCode() == Status.OK.getStatusCode())|| (connection.getResponseCode() == Status.CREATED.getStatusCode())) {
-					is = connection.getInputStream();
-				} else {				
-					is=connection.getErrorStream();					
-				}
-
-				br = new BufferedReader(new InputStreamReader(is));
-				String output;
-				while ((output = br.readLine()) != null) {
-					retStr += output;
-				}
-			} catch (Exception e) {
-				log.error("TokenReGenarator , makerequest(), ", e.getMessage());
-				throw new TokenException(TokenError.TOKEN_REGENERATE_FAIL);
-			} finally {
 				try {
-					br.close();
-				} catch (IOException e) {
+					
+					String newToken = jsontoken.getString("access_token");
+					String newRefreshToken = jsontoken.getString("refresh_token");
+					Long newTokenValidity = jsontoken.getLong("expires_in");
+
+					token.setAccessToken(newToken);
+					token.setTokenAuth(oldToken.getTokenAuth());
+					token.setRefreshToken(newRefreshToken);
+					token.setTokenValidity(newTokenValidity);
+					token.setValid(true);
+					token.setWhoId(oldToken.getWhoId());
+
+					log.debug("Refresh token re-generation success");
+				} catch (Exception e) {
+					throw new TokenException(TokenError.INVALID_REFRESH_CREDENTIALS);
 				}
 
-				if (connection != null) {
-					connection.disconnect();
-				}
-			}
+			} 
+			return token;
 
 		}
-		return retStr;
+
+		/**
+		 * 
+		 * @param tokenurl
+		 * @param urlParameters
+		 * @param authheader
+		 * @return
+		 * @throws BusinessException
+		 */
+		protected String makeTokenrequest(String tokenurl, String urlParameters, String authheader) throws TokenException {
+			String retStr = "";
+			HttpURLConnection connection = null;
+			InputStream is = null;
+			BufferedReader br = null;
+
+			log.debug("url : " + tokenurl + " | urlParameters : " + urlParameters + " | authheader : " + authheader);
+			
+			// parameter validations
+			if ((tokenurl == null || tokenurl.length() <= 0)) {
+				log.error("TokenReGenarator , makeTokenrequest()", "Token URL is invalid");
+				throw new TokenException(TokenError.NO_VALID_TOKEN_URL);
+			} else if (urlParameters == null || urlParameters.length() <= 0) {
+				log.error("TokenReGenarator , makeTokenrequest()", "Refresh Token is Invalid");
+				throw new TokenException(TokenError.NULL_REFRESH_TOKEN);
+			} else if (authheader == null || authheader.length() <= 0) {
+				log.error("TokenReGenarator , makeTokenrequest()", "Authenticator Header is Invalid");
+				throw new TokenException(TokenError.INVALID_AUTH_HEADER);
+			} else {
+
+				try {
+
+					byte[] postData = urlParameters.getBytes(StandardCharsets.UTF_8);
+					int postDataLength = postData.length;
+					URL url = new URL(tokenurl);
+					connection = (HttpURLConnection) url.openConnection();
+
+					connection.setDoOutput(true);
+					connection.setInstanceFollowRedirects(false);
+					connection.setRequestMethod(Constants.URLProperties.URL_METHOD.getValue());
+					connection.setRequestProperty(Constants.URLProperties.AUTHORIZATION_GRANT_TYPE.getValue(), Constants.CONTEXT_TOKEN + authheader);
+					connection.setRequestProperty(Constants.URLTypes.CONTENT.getType(),	Constants.URLTypes.CONTENT.getValue());
+					connection.setRequestProperty(Constants.URLTypes.ENCODING.getType(), Constants.URLTypes.ENCODING.getValue());
+					connection.setRequestProperty(Constants.URLProperties.LENGTH.getValue(), Integer.toString(postDataLength));
+					connection.setUseCaches(false);
+
+					DataOutputStream wr = new DataOutputStream(connection.getOutputStream());
+					wr.write(postData);
+					wr.flush();
+					wr.close();
+
+					// filter out invalid http codes
+					if ((connection.getResponseCode() == Status.OK.getStatusCode())|| (connection.getResponseCode() == Status.CREATED.getStatusCode())) {
+						is = connection.getInputStream();
+					} else {				
+						is=connection.getErrorStream();					
+					}
+
+					br = new BufferedReader(new InputStreamReader(is));
+					String output;
+					while ((output = br.readLine()) != null) {
+						retStr += output;
+					}
+				} catch (Exception e) {
+					log.error("TokenReGenarator , makerequest(), ", e.getMessage());
+					throw new TokenException(TokenError.TOKEN_REGENERATE_FAIL);
+				} finally {
+					try {
+						br.close();
+					} catch (IOException e) {
+					}
+
+					if (connection != null) {
+						connection.disconnect();
+					}
+				}
+
+			}
+			return retStr;
+		}
+
 	}
 
-}
+

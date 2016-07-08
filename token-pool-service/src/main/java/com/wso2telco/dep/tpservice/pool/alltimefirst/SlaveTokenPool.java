@@ -34,16 +34,10 @@ class SlaveTokenPool extends AbstractTokenPool {
 		log = LoggerFactory.getLogger(SlaveTokenPool.class);
 	}
 
-	/**
-	 * This will trigger the token refresh and persist the new valid token
-	 * @param token
-	 * @throws TokenException
-	 */
-	public void refreshToken(final TokenDTO token) throws TokenException {
+	
+	protected void reGenarate(final TokenDTO token) throws TokenException {
 		log.info(" Try to remove Token : " + token + " from token pool of :" + whoDTO);
 
-		 validateToken( token.getAccessToken()) ;
-		
 		try {
 			
 			ConfigDTO configDto = configReader.getConfigDTO();
@@ -72,11 +66,13 @@ class SlaveTokenPool extends AbstractTokenPool {
 			synchronized (tokenList) {
 				tokenList.put(newTokenDTO.getAccessToken().trim(),newTokenDTO);
 			}
+			shedule(newTokenDTO);//Schedule for next refresh
 			
 		} catch (BusinessException e) {
 			throw new TokenException(e.getErrorType());
 		} 
 	}
+
 
 	
 

@@ -42,25 +42,18 @@ class MasterModeTp extends AbstractTokenPool {
 	}
 	
 	
-	/**
-	 * This will trigger the token refresh and persist the new valid token
-	 * @param token
-	 * @throws TokenException
-	 */
-	public void refreshToken(final TokenDTO token) throws TokenException {
-		log.info(" Try to remove Token : " + token + " from token pool of :" + whoDTO);
-
-	
-		validateToken( token.getAccessToken()) ;
-		
+	@Override
+	protected void reGenarate(final TokenDTO token)throws TokenException{
 		try {
 			// generating new token
 			TokenDTO newTokenDTO = regenarator.reGenarate(whoDTO, token);
-			
 			if(newTokenDTO ==null){
 				log.warn("token refresh faild :"+token);
 				throw new TokenException(GenaralError.INTERNAL_SERVER_ERROR);
 			}
+			
+			
+			shedule(newTokenDTO);//Schedule for next refresh
 			
 			log.debug("add New token to pool "+ newTokenDTO);
 			synchronized (tokenList) {
@@ -75,6 +68,7 @@ class MasterModeTp extends AbstractTokenPool {
 		}
 	}
 
+	
 
 
 }

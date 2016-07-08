@@ -68,19 +68,7 @@ public class Appinitializer extends Application<ConfigDTO> {
 		PoolFactory.getInstance().getManagager().initializePool();
 
 		env.jersey().register(new TokenPoolService());
-	/*	env.lifecycle().addServerLifecycleListener(new ServerLifecycleListener() {
-		    @Override
-		    public void serverStarted(Server server) {
-		      for (Connector connector : server.getConnectors()) {
-		        if (connector instanceof ServerConnector) {
-		          ServerConnector serverConnector = (ServerConnector) connector;
-		          System.out.println(serverConnector.getName() + " " + serverConnector.getLocalPort());
-		          // Do something useful with serverConnector.getLocalPort()
-		           swaggerDropwizard.onRun(arg0,env,"localhost",serverConnector.getLocalPort());
-		        }
-		      }
-		    }
-		  });*/
+	 
 		HttpConnectorFactory connector =getHttpConnectionFactory(arg0);
 		
 		swaggerDropwizard.onRun(arg0,env,connector.getBindHost(),connector.getPort());

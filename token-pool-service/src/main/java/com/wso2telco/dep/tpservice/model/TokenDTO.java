@@ -42,6 +42,13 @@ public class TokenDTO implements Serializable {
 	
 	private int parentTokenId;
 
+	public long getTokenExpiry(){
+		return createdTime +(tokenValidity) ;
+	}
+	public boolean isExpired(){
+		return createdTime +(tokenValidity) <=System.currentTimeMillis();
+	}
+	
 	public int getId() {
 		return id;
 	}
@@ -71,7 +78,7 @@ public class TokenDTO implements Serializable {
 	}
 
 	public void setTokenValidity(long tokenValidity) {
-		this.tokenValidity = tokenValidity;
+		this.tokenValidity = tokenValidity*1000;
 	}
 
 	public String getAccessToken() {

@@ -16,13 +16,14 @@
 
 package com.wso2telco.dep.tpservice.pool.alltimefirst;
 
-import java.util.concurrent.TimeUnit;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.cache.Cache;
-import com.google.common.cache.CacheBuilder;
 import com.wso2telco.dep.tpservice.model.SessionDTO;
 import com.wso2telco.dep.tpservice.model.TokenDTO;
 import com.wso2telco.dep.tpservice.model.WhoDTO;
@@ -31,7 +32,7 @@ import com.wso2telco.dep.tpservice.util.exception.TokenException;
 public class SessionHolder {
 	
 	private Logger log = LoggerFactory.getLogger(SessionHolder.class);
-	private Cache<String,SessionDTO> tokenSessions;
+	private List<SessionDTO> tokenSessions;
 	private  WhoDTO whoDTO;
 	
 	
@@ -43,10 +44,11 @@ public class SessionHolder {
 	private SessionHolder(final  WhoDTO whoDTO ){
 		log.debug("New token Session created for :"+whoDTO);
 		this.whoDTO =whoDTO;
-		tokenSessions =CacheBuilder.newBuilder()
+		tokenSessions =new ArrayList<SessionDTO>();
+	/*	tokenSessions =CacheBuilder.newBuilder()
 				.removalListener(new SessionRemovalListener ())
 				.expireAfterWrite(whoDTO.getDefaultConnectionRestTime(), TimeUnit.MILLISECONDS)
-				.build();
+				.build();*/
 	}
 	/**
 	 * token owner id and the default session expire time is mandatory to create session instance
@@ -79,7 +81,27 @@ public class SessionHolder {
 		dto.setSessionId(tokenDTO.getId() +":"+String.valueOf(System.currentTimeMillis()));
 		dto.setTokenDTO(tokenDTO);
 		dto.setCreatedTimeInMl(System.currentTimeMillis());
-		tokenSessions.put(dto.getSessionId(), dto);
+		synchronized (tokenSessions) {
+			log.debug("Token"+ tokenDTO+" acuire from the pool ");
+			tokenSessions.add( dto);
+		}
+		
+		Timer timer = new Timer();
+		// Schedule the re - generate process
+		timer.schedule(new TimerTask() {
+			
+			@Override
+			public void run() {
+				// remove the token
+				log.debug("Token remove from the session "+dto);
+				synchronized (tokenSessions) {
+					tokenSessions.remove(dto);
+					
+				}
+			}
+
+		}, whoDTO.getDefaultConnectionRestTime());
+	
 		
 	}
 	

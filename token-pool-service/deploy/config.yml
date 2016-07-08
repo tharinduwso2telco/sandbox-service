@@ -18,6 +18,7 @@ retryAttempt: 4 #Number of attempts for getting valid token
 isMaster: true #server mode (master/slave)
 tokenReadretrAttempts: #Number of re-try attemts for waiting for getting valid token.this value is used only in slave mode
 tokenReadretrAfter: 120000 #Number of ms read db for valid token ,default is 1 min.this value is used only in slave mode
+refreshWakeUpLeadTime: 5000 #lead time to wake-up Token refresh process default is 5000 ms
 logging:
   level: DEBUG
   appenders:
