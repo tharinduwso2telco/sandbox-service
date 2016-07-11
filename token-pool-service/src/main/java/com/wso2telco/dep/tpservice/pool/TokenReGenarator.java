@@ -69,7 +69,7 @@ package com.wso2telco.dep.tpservice.pool;
 					
 					String newToken = jsontoken.getString("access_token");
 					String newRefreshToken = jsontoken.getString("refresh_token");
-					Long newTokenValidity = jsontoken.getLong("expires_in");
+					Long newTokenValidity = 1000 * jsontoken.getLong("expires_in");
 
 					token.setAccessToken(newToken);
 					token.setTokenAuth(oldToken.getTokenAuth());
