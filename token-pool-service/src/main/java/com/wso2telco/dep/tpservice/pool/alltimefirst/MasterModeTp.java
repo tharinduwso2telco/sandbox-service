@@ -21,7 +21,6 @@ import org.slf4j.LoggerFactory;
 import com.wso2telco.dep.tpservice.model.TokenDTO;
 import com.wso2telco.dep.tpservice.model.WhoDTO;
 import com.wso2telco.dep.tpservice.pool.TokenReGenarator;
-import com.wso2telco.dep.tpservice.util.exception.BusinessException;
 import com.wso2telco.dep.tpservice.util.exception.GenaralError;
 import com.wso2telco.dep.tpservice.util.exception.TokenException;
 
@@ -63,7 +62,7 @@ class MasterModeTp extends AbstractTokenPool {
 			
 			tokenManager.saveToken(whoDTO, newTokenDTO,token);
 			
-		} catch (BusinessException e) {
+		} catch (TokenException e) {
 			throw new TokenException(e.getErrorType());
 		}
 	}
