@@ -16,6 +16,8 @@
 
 package com.wso2telco.dep.tpservice.pool.alltimefirst;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Timer;
@@ -201,9 +203,14 @@ abstract class AbstractTokenPool implements TokenPoolImplimentable {
 		Timer timer = new Timer();
 		ConfigDTO configDTO =configReader.getConfigDTO();
 		final long sheduledTime =System.currentTimeMillis()+(newTokenDTO.getTokenValidity()-configDTO.getRefreshWakeUpLeadTime());
+		
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
+		Date sheduleTimed = new Date(sheduledTime );
+		log.debug(newTokenDTO+"Token Refresh will fire on  "+sdf.format(sheduleTimed));
 		// Schedule the re - generate process
 		timer.schedule(new TimerTask() {
-
+		
+			
 			@Override
 			public void run() {
 				try {
