@@ -3,7 +3,19 @@ package com.wso2telco.dep.tpservice.util;
 public class Constants {
 	
 	public static final String CONTEXT_TOKEN="TOKEN"; 
-	public static final String AUTH_TOKEN="Basic ";
+	public enum AuthMethod{
+		BASIC("Basic ");
+		private final String value;
+        
+		AuthMethod(String val) {
+            value = val;
+        }
+
+        @Override
+        public String toString() {
+            return value;
+        }
+		}
 	public enum Tables {
 		TABLE_TSXWHO("tsxwho"),
 		TABLE_TSTTOKEN("tsttoken"),
@@ -20,6 +32,7 @@ public class Constants {
             return value;
         }
     }
+	
 	public enum URLProperties{
 		URL_METHOD("POST"),
 		AUTHORIZATION_GRANT_TYPE("Authorization"),
