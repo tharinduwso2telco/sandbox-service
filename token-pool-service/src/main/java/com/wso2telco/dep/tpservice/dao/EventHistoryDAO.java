@@ -111,7 +111,7 @@ public class EventHistoryDAO {
 
 			h_save.execute(sql_event.toString(), Constants.CONTEXT_TOKEN, "TokenID "+tokenDto.getId(), Status.REGENERATE_TOKEN_SAVE, Event.SAVED_TOKEN);	
 			
-			log.debug("Event creation for the newly Regenerated Token "+ tokenDto.getId());
+			log.debug("Event creation for the newly Regenerated Token ");
 		
 		} catch (Exception e) {
 
