@@ -29,6 +29,7 @@ import org.slf4j.LoggerFactory;
 import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
 import com.wordnik.swagger.annotations.ApiParam;
+import com.wso2telco.dep.tpservice.model.TokenDTO;
 import com.wso2telco.dep.tpservice.pool.PoolFactory;
 import com.wso2telco.dep.tpservice.pool.TokenPool;
 import com.wso2telco.dep.tpservice.pool.TokenPoolImplimentable;
@@ -81,16 +82,19 @@ public class TokenPoolService {
 
 	@PUT
 	@Path("/{ownerId}/{tokenID}")
-	@ApiOperation(value = "Re -fresh  token ", notes = "Re genarate the token using refresh token ")
-	public void put(@ApiParam(value = "token id to update ", required = true) @PathParam("ownerId") String ownerId,
+	@ApiOperation(value = "Re -fresh  token ", notes = "Re genarate the token using refresh token ", response=String.class)
+	public Response put(@ApiParam(value = "token id to update ", required = true) @PathParam("ownerId") String ownerId,
 			@ApiParam(value = "new refreshTime to update ", required = true) @PathParam("tokenID") String tokenID) {
 		try {
 			TokenPoolImplimentable tokenPoolImpl = PoolFactory.getInstance().getManagager().getImlimentation(ownerId);
-			tokenPoolImpl.refreshToken(tokenID);
+			TokenDTO obj = tokenPoolImpl.refreshToken(tokenID);
+			return Response.status(Response.Status.OK).entity(obj.getAccessToken()).build();
 			
 		} catch (TokenException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			log.error("",e);
+			return Response.status(Response.Status.BAD_REQUEST).entity(e.getErrorType().getCode()+":"+e.getErrorType().getMessage()).build();
+			//e.printStackTrace();
 		}
 	}
 
