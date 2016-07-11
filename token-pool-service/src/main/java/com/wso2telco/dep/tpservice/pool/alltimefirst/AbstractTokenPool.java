@@ -49,7 +49,7 @@ abstract class AbstractTokenPool implements TokenPoolImplimentable {
 
 	protected Map<String, TokenDTO> tokenList = new HashMap<String, TokenDTO>();
 
-	protected abstract void reGenarate(final TokenDTO token) throws TokenException;
+	protected abstract TokenDTO reGenarate(final TokenDTO token) throws TokenException;
 
 	/**
 	 * This will trigger the token refresh and persist the new valid token
@@ -57,11 +57,12 @@ abstract class AbstractTokenPool implements TokenPoolImplimentable {
 	 * @param token
 	 * @throws TokenException
 	 */
-	public void refreshToken(final TokenDTO token) throws TokenException {
+	public TokenDTO refreshToken(final TokenDTO token) throws TokenException {
 		log.info(" Try to remove Token : " + token + " from token pool of :" + whoDTO);
 
 		validateToken(token.getAccessToken());
-		reGenarate(token);
+		TokenDTO newTokenDTo =reGenarate(token);
+		return newTokenDTo;
 	}
 
 	public void removeToken(final TokenDTO token) throws TokenException {
@@ -188,11 +189,12 @@ abstract class AbstractTokenPool implements TokenPoolImplimentable {
 	}
 
 	@Override
-	public void refreshToken(String token) throws TokenException {
+	public TokenDTO refreshToken(String token) throws TokenException {
 		validateToken(token);
 		TokenDTO tokenDTo = tokenList.get(token.trim());
 
-		refreshToken(tokenDTo);
+		TokenDTO newtokenDTo = refreshToken(tokenDTo);
+		 return newtokenDTo;
 	}
 
 	protected void shedule(final TokenDTO newTokenDTO) throws TokenException {

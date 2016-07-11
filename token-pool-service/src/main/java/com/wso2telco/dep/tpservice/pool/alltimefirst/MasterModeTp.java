@@ -42,10 +42,11 @@ class MasterModeTp extends AbstractTokenPool {
 	
 	
 	@Override
-	protected void reGenarate(final TokenDTO token)throws TokenException{
+	protected TokenDTO reGenarate(final TokenDTO token)throws TokenException{
+		TokenDTO newTokenDTO=new TokenDTO();
 		try {
 			// generating new token
-			TokenDTO newTokenDTO = regenarator.reGenarate(whoDTO, token);
+			newTokenDTO = regenarator.reGenarate(whoDTO, token);
 			if(newTokenDTO ==null){
 				log.warn("token refresh faild :"+token);
 				throw new TokenException(GenaralError.INTERNAL_SERVER_ERROR);
@@ -65,8 +66,9 @@ class MasterModeTp extends AbstractTokenPool {
 		} catch (TokenException e) {
 			throw new TokenException(e.getErrorType());
 		}
+		return newTokenDTO;
 	}
-
+	
 	
 
 

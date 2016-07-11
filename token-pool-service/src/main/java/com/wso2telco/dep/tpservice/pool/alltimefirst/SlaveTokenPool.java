@@ -35,16 +35,16 @@ class SlaveTokenPool extends AbstractTokenPool {
 	}
 
 	
-	protected void reGenarate(final TokenDTO token) throws TokenException {
+	protected TokenDTO reGenarate(final TokenDTO token) throws TokenException {
 		log.info(" Try to remove Token : " + token + " from token pool of :" + whoDTO);
-
+		TokenDTO newTokenDTO =null;
 		try {
 			
 			ConfigDTO configDto = configReader.getConfigDTO();
 			
 			int waitattempt =0;
 			
-			TokenDTO newTokenDTO =null;
+			
 			
 			//load configuration repeatedly until retry attempt expires or record found
 			while(configDto.getTokenReadretrAttempts() <= waitattempt){
@@ -70,7 +70,8 @@ class SlaveTokenPool extends AbstractTokenPool {
 			
 		} catch (BusinessException e) {
 			throw new TokenException(e.getErrorType());
-		} 
+		}
+		return newTokenDTO; 
 	}
 
 
