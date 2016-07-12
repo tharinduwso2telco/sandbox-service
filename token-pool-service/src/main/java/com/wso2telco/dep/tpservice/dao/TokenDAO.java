@@ -113,10 +113,8 @@ public class TokenDAO {
 	}
 	
 	// insertion for newly generated access token 
-	public void saveNewToken(WhoDTO who_obj, TokenDTO token_obj, TokenDTO token_old_obj) throws SQLException {
-		log.debug(" INsert new Token for :"+who_obj+" old Token :"+token_old_obj +" New Token :"+token_obj);
-		int parent_id = token_old_obj.getId();
-		token_obj.setParentTokenId(parent_id);
+	public void saveNewToken(WhoDTO who_obj, TokenDTO token_obj) throws SQLException {
+		log.debug(" INsert new Token for :"+who_obj+" old Token :"+token_obj.getParentTokenId() +" New Token :"+token_obj);
 		DBI dbi = JDBIUtil.getInstance();
 		TokenHandler tokenHandler = dbi.onDemand(TokenHandler.class);
 		

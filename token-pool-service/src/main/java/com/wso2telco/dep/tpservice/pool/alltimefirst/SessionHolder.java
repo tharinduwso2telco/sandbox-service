@@ -34,6 +34,7 @@ public class SessionHolder {
 	private Logger log = LoggerFactory.getLogger(SessionHolder.class);
 	private List<SessionDTO> tokenSessions;
 	private  WhoDTO whoDTO;
+	private  TokenDTO tokenDTO;
 	
 	
 	/**
@@ -41,9 +42,10 @@ public class SessionHolder {
 	 * @param ownerID
 	 * @param sesionExpioryTime
 	 */
-	private SessionHolder(final  WhoDTO whoDTO ){
+	private SessionHolder(final  WhoDTO whoDTO ,final TokenDTO tokenDTO){
 		log.debug("New token Session created for :"+whoDTO);
 		this.whoDTO =whoDTO;
+		this.tokenDTO = tokenDTO;
 		tokenSessions =new ArrayList<SessionDTO>();
 	/*	tokenSessions =CacheBuilder.newBuilder()
 				.removalListener(new SessionRemovalListener ())
@@ -56,7 +58,7 @@ public class SessionHolder {
 	 * @return
 	 * @throws TokenException
 	 */
-	public static SessionHolder createInstance(final WhoDTO whoDTO) throws TokenException{
+	public static SessionHolder createInstance(final WhoDTO whoDTO,final TokenDTO tokenDTO) throws TokenException{
 		if(whoDTO==null||whoDTO.getOwnerId()== null){
 			throw new TokenException(TokenException.TokenError.NO_VALID_WHO);
 		}
@@ -64,7 +66,7 @@ public class SessionHolder {
 		if(whoDTO.getDefaultConnectionRestTime()==0){
 			throw new TokenException(TokenException.TokenError.NO_TOKENRESET_TIME);
 		}
-		return new SessionHolder(  whoDTO);
+		return new SessionHolder(  whoDTO,tokenDTO);
 	}
 	
 	
@@ -73,7 +75,7 @@ public class SessionHolder {
 	 * once the session added to the session pool it will remove from the session 
 	 * @param tokenId
 	 */
-	public synchronized void  acquireSession(final TokenDTO tokenDTO){
+	public synchronized void  acquireSession(){
 		log.debug(" acquire new Session "+tokenDTO.getId());
 		
 		SessionDTO dto = new SessionDTO();
@@ -105,7 +107,7 @@ public class SessionHolder {
 		
 	}
 	
-	public boolean isInUse(final TokenDTO tokenDTO)throws TokenException{
+	public boolean isInUse()throws TokenException{
 		log.debug("check for usability of :"+tokenDTO);
 		boolean isInuse =false;
 		//If token pool size is 0 then it will return not in use

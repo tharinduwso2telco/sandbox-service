@@ -39,65 +39,113 @@ abstract class AbstractTokenPool implements TokenPoolImplimentable {
 	protected Logger log;
 	protected ConfigReader configReader;
 	protected WhoDTO whoDTO;
-	protected SessionHolder sessionHolder;
 	protected TokenManager tokenManager;
+	private Map<String, TokenInfoWrapperDTO> tokenList = new HashMap<String, TokenInfoWrapperDTO>();
 
 	protected AbstractTokenPool(final WhoDTO whoDTO) throws TokenException {
 		this.whoDTO = whoDTO;
 		this.configReader = ConfigReader.getInstance();
-		this.sessionHolder = SessionHolder.createInstance(whoDTO);
 		this.tokenManager = new TokenManager();
 	}
 
-	protected Map<String, TokenDTO> tokenList = new HashMap<String, TokenDTO>();
-
+	
 	protected abstract TokenDTO reGenarate(final TokenDTO token) throws TokenException;
-
+	
+	final protected void addToPool(final TokenDTO tokenDTO) throws TokenException{
+		log.debug("add New token to pool "+ tokenDTO);
+		TokenInfoWrapperDTO tokenWrapper = new TokenInfoWrapperDTO();
+		tokenWrapper.setTokenDTO(tokenDTO);
+		tokenWrapper.setSessionHolderList(SessionHolder.createInstance(whoDTO, tokenDTO)); 
+		// Add to token map which used to release token to the pool
+		synchronized (tokenList) {
+			tokenList.put(tokenDTO.getAccessToken().trim(), tokenWrapper);
+		}
+		
+		
+	} 
 	/**
 	 * This will trigger the token refresh and persist the new valid token
 	 * 
 	 * @param token
 	 * @throws TokenException
 	 */
-	public TokenDTO refreshToken(final TokenDTO token) throws TokenException {
+	final public TokenDTO refreshToken(final TokenDTO token) throws TokenException {
 		log.info(" Try to remove Token : " + token + " from token pool of :" + whoDTO);
 
 		validateToken(token.getAccessToken());
-		TokenDTO newTokenDTo =reGenarate(token);
+		
+		TokenDTO newTokenDTo = refreshToken(tokenList.get(token.getAccessToken()));
+		
 		return newTokenDTo;
 	}
+	
+	@Override
+	final public TokenDTO refreshToken(final String token) throws TokenException {
+		log.info(" refreshToken :"+token+ " triggered ");
+		validateToken(token);
 
+		TokenDTO newtokenDTo = refreshToken(tokenList.get(token.trim()));
+		 return newtokenDTo;
+	}
+	
+	private TokenDTO refreshToken(final TokenInfoWrapperDTO tokenWrapperDTO) throws TokenException {
+		log.info(" Try to remove Token : " + tokenWrapperDTO.getTokenDTO() + " from token pool of :" + whoDTO);
+
+		TokenDTO newTokenDTo =reGenarate(tokenWrapperDTO.getTokenDTO());
+		return newTokenDTo;
+	}
+	
+	
 	public void removeToken(final TokenDTO token) throws TokenException {
 		log.info(" Try to remove Token : " + token + " from token pool of :" + whoDTO);
 
-		boolean isTokenRemoved = false, isTokenExists = false;
-
-		// validate the given token exists at the token pool
-		isTokenExists = tokenList.containsKey(token.getAccessToken());
-
-		// if token is invalid throw exception
-		if (!isTokenExists) {
-			log.warn("Invaid token unable to remove token:" + token);
-			throw new TokenException(TokenException.TokenError.INVALID_TOKEN);
-
-		}
-
-		// Invalidate the token, so that re issuing is restricted
-		synchronized (tokenList) {
-			TokenDTO tempToken = tokenList.remove(token.getAccessToken());
-			isTokenRemoved = tempToken != null ? true : false;
-		}
-
-		if (!isTokenRemoved) {
-			log.warn("Token already removed from the pool :" + whoDTO + " token :" + token);
-
-			throw new TokenException(TokenException.TokenError.TOKEN_ALREDY_REMOVED);
-		}
-
-		log.debug("Token removed locally");
+		validateToken(token.getAccessToken());
+		removeToken(tokenList.get(token.getAccessToken()));
+		
 
 	}
+	
+	private void removeToken(final TokenInfoWrapperDTO tokenWrapperDTO) throws TokenException {
+		
+		boolean isTokenRemoved = false ;
+		
+		while (tokenWrapperDTO.getSessionHolderList().isInUse( )) {
+			log.debug("Token " + tokenWrapperDTO.getTokenDTO() + "still in use wait for ");
+			try {
+				Thread.sleep(whoDTO.getDefaultConnectionRestTime());
+			} catch (InterruptedException e) {
+				throw new TokenException(GenaralError.INTERNAL_SERVER_ERROR);
+			}
 
+		}
+		
+		// Invalidate the token, so that re issuing is restricted
+		synchronized (tokenList) {
+			TokenInfoWrapperDTO wrapper = tokenList.remove(tokenWrapperDTO.getTokenDTO().getAccessToken());
+			isTokenRemoved = wrapper != null ? true : false;
+			
+			if (!isTokenRemoved) {
+				log.warn("Token already removed from the pool :" + whoDTO + " token :" + wrapper.getTokenDTO());
+
+				throw new TokenException(TokenException.TokenError.TOKEN_ALREDY_REMOVED);
+			}
+		}
+
+		
+
+		log.debug("Token removed locally");
+	}
+
+	
+	@Override
+	final public void removeToken(String token) throws TokenException {
+		// validate token from existing pool
+		validateToken(token);
+
+		// obtain the token from map
+		removeToken(tokenList.get(token.trim()));
+	}
+	
 	protected boolean validateToken(final String accessToken) throws TokenException {
 		boolean isTokenExists = false;
 
@@ -127,11 +175,11 @@ abstract class AbstractTokenPool implements TokenPoolImplimentable {
 			protected TokenDTO waitUntilPoolfill(int waitattempt) throws TokenException {
 				log.debug("Calling waitUntilPoolfill " + whoDTO + " retry attempt :" + waitattempt);
 				synchronized (tokenList) {
-					for (TokenDTO tokenDTO : tokenList.values()) {
-						if (tokenDTO.isValid()) {
-							sessionHolder.acquireSession(tokenDTO);
-							log.info("Valid token found " + tokenDTO);
-							return tokenDTO;
+					for (TokenInfoWrapperDTO tokenDTOWrapper : tokenList.values()) {
+						if (tokenDTOWrapper.getTokenDTO().isValid()) {
+							tokenDTOWrapper.getSessionHolderList().acquireSession();
+							log.info("Valid token found " + tokenDTOWrapper.getTokenDTO());
+							return tokenDTOWrapper.getTokenDTO();
 						}
 
 					}
@@ -180,24 +228,6 @@ abstract class AbstractTokenPool implements TokenPoolImplimentable {
 		};
 	}
 
-	@Override
-	final public void removeToken(String token) throws TokenException {
-		// validate token from existing pool
-		validateToken(token);
-
-		// obtain the token from map
-		TokenDTO tokenDTo = tokenList.get(token.trim());
-		removeToken(tokenDTo);
-	}
-
-	@Override
-	public TokenDTO refreshToken(String token) throws TokenException {
-		validateToken(token);
-		TokenDTO tokenDTo = tokenList.get(token.trim());
-
-		TokenDTO newtokenDTo = refreshToken(tokenDTo);
-		 return newtokenDTo;
-	}
 
 	protected void shedule(final TokenDTO newTokenDTO) throws TokenException {
 		Timer timer = new Timer();
@@ -228,7 +258,8 @@ abstract class AbstractTokenPool implements TokenPoolImplimentable {
 
 		},sheduleTimed );
 	}
-
+	
+	
 	@Override
 	public void init(TokenDTO tokenDTO) throws TokenException {
 		log.debug(" Initializing token :" + tokenDTO);
@@ -240,13 +271,29 @@ abstract class AbstractTokenPool implements TokenPoolImplimentable {
 
 		} else {// if the token is still valid.
 			log.debug("Initialization token - token is not expired :" + tokenDTO);
-
-			// Add to token map which used to release token to the pool
-			tokenList.put(tokenDTO.getAccessToken(), tokenDTO);
+			addToPool(tokenDTO);
 
 			shedule(tokenDTO);// Schedule for next refresh
 		}
 
 	}
-
+	class TokenInfoWrapperDTO {
+		
+		protected  TokenDTO  tokenDTO;
+		protected  SessionHolder sessionHolderList;
+		public TokenDTO getTokenDTO() {
+			return tokenDTO;
+		}
+		public void setTokenDTO(TokenDTO tokenDTO) {
+			this.tokenDTO = tokenDTO;
+		}
+		public SessionHolder getSessionHolderList() {
+			return sessionHolderList;
+		}
+		public void setSessionHolderList(SessionHolder sessionHolderList) {
+			this.sessionHolderList = sessionHolderList;
+		}
+		
+		
+	} 
 }

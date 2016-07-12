@@ -106,14 +106,14 @@ public class TokenManager {
 		
 	}
 	
-	public void saveToken(final WhoDTO whoDTO, final TokenDTO tokenDto, final TokenDTO oldtoken) throws TokenException {
+	public void saveToken(final WhoDTO whoDTO, final TokenDTO tokenDto ) throws TokenException {
 
 		log.debug("save the token for " + whoDTO + " with token " + tokenDto);
 
 		try {
 
 			TokenDAO tokenDAO = new TokenDAO();
-			tokenDAO.saveNewToken(whoDTO,tokenDto,oldtoken);
+			tokenDAO.saveNewToken(whoDTO,tokenDto);
 
 		} catch (Exception e) {
 			log.error("TokenManager", "saveToken() failed", e);

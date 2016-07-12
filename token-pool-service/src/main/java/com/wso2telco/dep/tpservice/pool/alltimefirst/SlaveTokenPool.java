@@ -62,10 +62,8 @@ class SlaveTokenPool extends AbstractTokenPool {
 				throw new TokenException(GenaralError.INTERNAL_SERVER_ERROR);
 			}
 			
-			log.debug("add New token to pool "+ newTokenDTO);
-			synchronized (tokenList) {
-				tokenList.put(newTokenDTO.getAccessToken().trim(),newTokenDTO);
-			}
+			addToPool(token);
+			
 			shedule(newTokenDTO);//Schedule for next refresh
 			
 		} catch (BusinessException e) {

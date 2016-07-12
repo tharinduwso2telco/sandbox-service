@@ -43,7 +43,7 @@ class MasterModeTp extends AbstractTokenPool {
 	
 	@Override
 	protected TokenDTO reGenarate(final TokenDTO token)throws TokenException{
-		TokenDTO newTokenDTO=new TokenDTO();
+		TokenDTO newTokenDTO=null;
 		try {
 			// generating new token
 			newTokenDTO = regenarator.reGenarate(whoDTO, token);
@@ -54,14 +54,10 @@ class MasterModeTp extends AbstractTokenPool {
 			
 			
 			shedule(newTokenDTO);//Schedule for next refresh
+
+			addToPool(newTokenDTO);
 			
-			log.debug("add New token to pool "+ newTokenDTO);
-			synchronized (tokenList) {
-				tokenList.put(newTokenDTO.getAccessToken(),newTokenDTO);
-			}
-			
-			
-			tokenManager.saveToken(whoDTO, newTokenDTO,token);
+			tokenManager.saveToken(whoDTO, newTokenDTO);
 			
 		} catch (TokenException e) {
 			throw new TokenException(e.getErrorType());

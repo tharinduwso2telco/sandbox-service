@@ -133,6 +133,8 @@ public class TokenReGenarator {
 			token.setTokenValidity(newTokenValidity);
 			token.setValid(true);
 			token.setWhoId(oldToken.getWhoId());
+			//Setting parent token id
+			token.setParentTokenId(oldToken.getId());
 
 			log.debug("Refresh token re-generation success" +token);
 
