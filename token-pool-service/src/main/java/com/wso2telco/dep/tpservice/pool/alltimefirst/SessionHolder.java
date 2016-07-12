@@ -109,7 +109,7 @@ public class SessionHolder {
 	
 	public boolean isInUse()throws TokenException{
 		log.debug("check for usability of :"+tokenDTO);
-		boolean isInuse =false;
+		boolean isInuse =true;
 		//If token pool size is 0 then it will return not in use
 		if(tokenSessions.size()==0){
 			isInuse= Boolean.FALSE;

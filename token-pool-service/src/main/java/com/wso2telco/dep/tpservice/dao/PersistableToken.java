@@ -17,6 +17,7 @@
 package com.wso2telco.dep.tpservice.dao;
 
 import org.skife.jdbi.v2.sqlobject.Bind;
+import org.skife.jdbi.v2.sqlobject.GetGeneratedKeys;
 import org.skife.jdbi.v2.sqlobject.SqlUpdate;
 
 interface PersistableToken {
@@ -24,12 +25,14 @@ interface PersistableToken {
 	
 	 @SqlUpdate(" INSERT  INTO  tsttoken  ( tsxwhodid , tokenauth, tokenvalidity , isvalid , accesstoken , refreshtoken , parenttokendid ) " +
 				" VALUES  (:tsxwhodid ,:tokenauth, :tokenvalidity , :isvalid , :accesstoken , :refreshtoken , :parenttokendid )")
-	public void inset(@Bind("tsxwhodid") int tsxwhodid,@Bind("tokenauth") String tokenauth,@Bind("tokenvalidity") long tokenvalidity ,
+	 @GetGeneratedKeys
+	public int inset(@Bind("tsxwhodid") int tsxwhodid,@Bind("tokenauth") String tokenauth,@Bind("tokenvalidity") long tokenvalidity ,
 						@Bind("isvalid")boolean isvalid,@Bind("accesstoken") String accesstoken,@Bind("refreshtoken") String refreshtoken,@Bind("parenttokendid") int parenttokendid) ;
 	 
 	 @SqlUpdate(" INSERT  INTO  tsttoken  ( tsxwhodid , tokenauth, tokenvalidity , isvalid , accesstoken , refreshtoken  ) " +
 				" VALUES  (:tsxwhodid ,:tokenauth, :tokenvalidity , :isvalid , :accesstoken , :refreshtoken  )")
-	public void inset(@Bind("tsxwhodid") int tsxwhodid,@Bind("tokenauth") String tokenauth,@Bind("tokenvalidity") long tokenvalidity ,
+	 @GetGeneratedKeys
+	public int inset(@Bind("tsxwhodid") int tsxwhodid,@Bind("tokenauth") String tokenauth,@Bind("tokenvalidity") long tokenvalidity ,
 						@Bind("isvalid")boolean isvalid,@Bind("accesstoken") String accesstoken,@Bind("refreshtoken") String refreshtoken)  ;
 	 
 	 @SqlUpdate(" UPDATE tsttoken  SET  isvalid = :validity   WHERE   tokendid = :did")
