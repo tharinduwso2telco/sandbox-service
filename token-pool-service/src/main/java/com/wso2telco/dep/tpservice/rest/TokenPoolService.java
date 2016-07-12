@@ -86,6 +86,7 @@ public class TokenPoolService {
 	public Response put(@ApiParam(value = "token id to update ", required = true) @PathParam("ownerId") String ownerId,
 			@ApiParam(value = "new refreshTime to update ", required = true) @PathParam("tokenID") String tokenID) {
 		try {
+			log.debug(" calling refresh request for :"+ownerId + " tokenID:"+tokenID);
 			TokenPoolImplimentable tokenPoolImpl = PoolFactory.getInstance().getManagager().getImlimentation(ownerId);
 			TokenDTO obj = tokenPoolImpl.refreshToken(tokenID);
 			return Response.status(Response.Status.OK).entity(obj.getAccessToken()).build();

@@ -22,6 +22,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import org.slf4j.Logger;
 
@@ -41,6 +44,7 @@ abstract class AbstractTokenPool implements TokenPoolImplimentable {
 	protected WhoDTO whoDTO;
 	protected TokenManager tokenManager;
 	private Map<String, TokenInfoWrapperDTO> tokenList = new HashMap<String, TokenInfoWrapperDTO>();
+	private ScheduledExecutorService shedulerService;
 
 	protected AbstractTokenPool(final WhoDTO whoDTO) throws TokenException {
 		this.whoDTO = whoDTO;
@@ -48,21 +52,20 @@ abstract class AbstractTokenPool implements TokenPoolImplimentable {
 		this.tokenManager = new TokenManager();
 	}
 
-	
 	protected abstract TokenDTO reGenarate(final TokenDTO token) throws TokenException;
-	
-	final protected void addToPool(final TokenDTO tokenDTO) throws TokenException{
-		log.debug("add New token to pool "+ tokenDTO);
+
+	final protected void addToPool(final TokenDTO tokenDTO) throws TokenException {
+		log.debug("add New token to pool " + tokenDTO);
 		TokenInfoWrapperDTO tokenWrapper = new TokenInfoWrapperDTO();
 		tokenWrapper.setTokenDTO(tokenDTO);
-		tokenWrapper.setSessionHolderList(SessionHolder.createInstance(whoDTO, tokenDTO)); 
+		tokenWrapper.setSessionHolderList(SessionHolder.createInstance(whoDTO, tokenDTO));
 		// Add to token map which used to release token to the pool
 		synchronized (tokenList) {
 			tokenList.put(tokenDTO.getAccessToken().trim(), tokenWrapper);
 		}
-		
-		
-	} 
+
+	}
+
 	/**
 	 * This will trigger the token refresh and persist the new valid token
 	 * 
@@ -73,44 +76,44 @@ abstract class AbstractTokenPool implements TokenPoolImplimentable {
 		log.info(" Try to remove Token : " + token + " from token pool of :" + whoDTO);
 
 		validateToken(token.getAccessToken());
-		
+
 		TokenDTO newTokenDTo = refreshToken(tokenList.get(token.getAccessToken()));
-		
+
 		return newTokenDTo;
 	}
-	
+
 	@Override
 	final public TokenDTO refreshToken(final String token) throws TokenException {
-		log.info(" refreshToken :"+token+ " triggered ");
+		log.info(" refreshToken :" + token + " triggered ");
 		validateToken(token);
-
-		TokenDTO newtokenDTo = refreshToken(tokenList.get(token.trim()));
-		 return newtokenDTo;
+		TokenInfoWrapperDTO tokenWrapper = tokenList.get(token.trim());
+		removeToken(tokenWrapper);
+		TokenDTO newtokenDTo = refreshToken(tokenWrapper);
+		return newtokenDTo;
 	}
-	
+
 	private TokenDTO refreshToken(final TokenInfoWrapperDTO tokenWrapperDTO) throws TokenException {
 		log.info(" Try to remove Token : " + tokenWrapperDTO.getTokenDTO() + " from token pool of :" + whoDTO);
 
-		TokenDTO newTokenDTo =reGenarate(tokenWrapperDTO.getTokenDTO());
+		TokenDTO newTokenDTo = reGenarate(tokenWrapperDTO.getTokenDTO());
 		return newTokenDTo;
 	}
-	
-	
+
 	public void removeToken(final TokenDTO token) throws TokenException {
 		log.info(" Try to remove Token : " + token + " from token pool of :" + whoDTO);
 
 		validateToken(token.getAccessToken());
 		removeToken(tokenList.get(token.getAccessToken()));
-		
 
 	}
-	
+
 	private void removeToken(final TokenInfoWrapperDTO tokenWrapperDTO) throws TokenException {
-		
-		boolean isTokenRemoved = false ;
-		
-		while (tokenWrapperDTO.getSessionHolderList().isInUse( )) {
-			log.debug("Token " + tokenWrapperDTO.getTokenDTO() + "still in use wait for ");
+
+		boolean isTokenRemoved = false;
+
+		while (tokenWrapperDTO.getSessionHolderList().isInUse()) {
+			log.debug("Token " + tokenWrapperDTO.getTokenDTO() + "still in use wait for "
+					+ whoDTO.getDefaultConnectionRestTime());
 			try {
 				Thread.sleep(whoDTO.getDefaultConnectionRestTime());
 			} catch (InterruptedException e) {
@@ -118,12 +121,12 @@ abstract class AbstractTokenPool implements TokenPoolImplimentable {
 			}
 
 		}
-		
+
 		// Invalidate the token, so that re issuing is restricted
 		synchronized (tokenList) {
 			TokenInfoWrapperDTO wrapper = tokenList.remove(tokenWrapperDTO.getTokenDTO().getAccessToken());
 			isTokenRemoved = wrapper != null ? true : false;
-			
+
 			if (!isTokenRemoved) {
 				log.warn("Token already removed from the pool :" + whoDTO + " token :" + wrapper.getTokenDTO());
 
@@ -131,12 +134,9 @@ abstract class AbstractTokenPool implements TokenPoolImplimentable {
 			}
 		}
 
-		
-
 		log.debug("Token removed locally");
 	}
 
-	
 	@Override
 	final public void removeToken(String token) throws TokenException {
 		// validate token from existing pool
@@ -145,7 +145,7 @@ abstract class AbstractTokenPool implements TokenPoolImplimentable {
 		// obtain the token from map
 		removeToken(tokenList.get(token.trim()));
 	}
-	
+
 	protected boolean validateToken(final String accessToken) throws TokenException {
 		boolean isTokenExists = false;
 
@@ -228,21 +228,19 @@ abstract class AbstractTokenPool implements TokenPoolImplimentable {
 		};
 	}
 
-
 	protected void shedule(final TokenDTO newTokenDTO) throws TokenException {
-		Timer timer = new Timer();
-		ConfigDTO configDTO =configReader.getConfigDTO();
-		
-		final long sheduledTime =newTokenDTO.getCreatedTime()+(newTokenDTO.getTokenValidity()-configDTO.getRefreshWakeUpLeadTime());
-		
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
-		Date sheduleTimed = new Date(sheduledTime );
-		log.debug(newTokenDTO+"Token Refresh will fire on  "+sdf.format(sheduleTimed));
-		
-		// Schedule the re - generate process
-		timer.schedule(new TimerTask() {
-		
-			
+		// Timer timer = new Timer();
+		ConfigDTO configDTO = configReader.getConfigDTO();
+
+		final long sheduledTime = newTokenDTO.getCreatedTime()
+				+ (newTokenDTO.getTokenValidity() - configDTO.getRefreshWakeUpLeadTime());
+		if (shedulerService != null) {
+			shedulerService.shutdownNow();
+		}
+		shedulerService = Executors.newScheduledThreadPool(1);
+
+		shedulerService.schedule(new Runnable() {
+
 			@Override
 			public void run() {
 				try {
@@ -255,11 +253,30 @@ abstract class AbstractTokenPool implements TokenPoolImplimentable {
 				}
 
 			}
+		}, sheduledTime, TimeUnit.MILLISECONDS);
 
-		},sheduleTimed );
+		// scheduler.scheduleAtFixedRate(yourRunnable, 8, 8, TimeUnit.HOURS);
+
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
+		Date sheduleTimed = new Date(sheduledTime);
+		log.debug(newTokenDTO + "Token Refresh will fire on  " + sdf.format(sheduleTimed));
+		/*
+		 * timer.purge(); // Schedule the re - generate process
+		 * timer.schedule(new TimerTask() {
+		 * 
+		 * 
+		 * @Override public void run() { try { // remove the token
+		 * removeToken(newTokenDTO); reGenarate(newTokenDTO);
+		 * 
+		 * } catch (TokenException e) { log.error("token sheudle expired - ",
+		 * e); }
+		 * 
+		 * }
+		 * 
+		 * },sheduledTime );
+		 */
 	}
-	
-	
+
 	@Override
 	public void init(TokenDTO tokenDTO) throws TokenException {
 		log.debug(" Initializing token :" + tokenDTO);
@@ -277,23 +294,27 @@ abstract class AbstractTokenPool implements TokenPoolImplimentable {
 		}
 
 	}
+
 	class TokenInfoWrapperDTO {
-		
-		protected  TokenDTO  tokenDTO;
-		protected  SessionHolder sessionHolderList;
+
+		protected TokenDTO tokenDTO;
+		protected SessionHolder sessionHolderList;
+
 		public TokenDTO getTokenDTO() {
 			return tokenDTO;
 		}
+
 		public void setTokenDTO(TokenDTO tokenDTO) {
 			this.tokenDTO = tokenDTO;
 		}
+
 		public SessionHolder getSessionHolderList() {
 			return sessionHolderList;
 		}
+
 		public void setSessionHolderList(SessionHolder sessionHolderList) {
 			this.sessionHolderList = sessionHolderList;
 		}
-		
-		
-	} 
+
+	}
 }
