@@ -218,7 +218,7 @@ abstract class AbstractTokenPool implements TokenPoolImplimentable {
 				try {
 					// remove the token
 					removeToken(newTokenDTO);
-					refreshToken(newTokenDTO);
+					reGenarate(newTokenDTO);
 
 				} catch (TokenException e) {
 					log.error("token sheudle expired - ", e);
