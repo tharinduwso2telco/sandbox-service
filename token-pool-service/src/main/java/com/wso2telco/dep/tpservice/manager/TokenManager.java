@@ -96,8 +96,8 @@ public class TokenManager {
 		
 		try {
 
-			EventHistoryDAO eventDAO = new EventHistoryDAO();
-			eventDAO.invalidateToken(tokenDto);
+			TokenDAO tokenDAO = new TokenDAO();
+			tokenDAO.invalidatingToken(tokenDto);
 
 		} catch (Exception e) {
 			log.error("TokenManager", "invalidate() failed", e);

@@ -41,23 +41,23 @@ abstract class TokenHandler implements GetHandle{
  * @throws TokenException
  */
 	
-	public void createNewToken(final TokenDTO newTokenDTO,final WhoDTO whoDTO){
-		
+	public int createNewToken(final TokenDTO newTokenDTO,final WhoDTO whoDTO){
+		int newTokenDid=0;
 		if(newTokenDTO.getParentTokenId()==0){
-			tokenPersister().inset(whoDTO.getId(), newTokenDTO.getTokenAuth(), 
+			newTokenDid= tokenPersister().inset(whoDTO.getId(), newTokenDTO.getTokenAuth(), 
 								newTokenDTO.getTokenValidity(), Boolean.TRUE,
 								newTokenDTO.getAccessToken(), newTokenDTO.getRefreshToken());
 			
 		}else{
 			///tokenPersister().update(Boolean.FALSE, newTokenDTO.getParentTokenId()); 
 			
-			tokenPersister().inset(whoDTO.getId(), newTokenDTO.getTokenAuth(), 
+			newTokenDid=tokenPersister().inset(whoDTO.getId(), newTokenDTO.getTokenAuth(), 
 					newTokenDTO.getTokenValidity(), Boolean.TRUE,
 					newTokenDTO.getAccessToken(), newTokenDTO.getRefreshToken(),newTokenDTO.getParentTokenId());
 		}
 		
 		persistableEvent().insert(CREATE_NEW_TOKEN, newTokenDTO.getAccessToken()+"|"+newTokenDTO.getRefreshToken(), Event.SAVED_TOKEN.getKey(), Status.REGENERATE_TOKEN_SAVE.getKey());
-		
+		return newTokenDid;
 	}
 	
 	public void invalidateToken(final TokenDTO newTokenDTO){

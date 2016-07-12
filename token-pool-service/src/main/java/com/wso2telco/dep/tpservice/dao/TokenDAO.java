@@ -118,7 +118,10 @@ public class TokenDAO {
 		DBI dbi = JDBIUtil.getInstance();
 		TokenHandler tokenHandler = dbi.onDemand(TokenHandler.class);
 		
-		tokenHandler.createNewToken(token_obj, who_obj);
+		int newTokenDid = tokenHandler.createNewToken(token_obj, who_obj);
+		//Generated token did set in to new token dto
+		token_obj.setId(newTokenDid);
+		
 	}
 	
 	
