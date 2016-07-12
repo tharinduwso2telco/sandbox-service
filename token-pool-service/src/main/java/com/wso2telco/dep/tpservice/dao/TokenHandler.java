@@ -49,7 +49,7 @@ abstract class TokenHandler implements GetHandle{
 								newTokenDTO.getAccessToken(), newTokenDTO.getRefreshToken());
 			
 		}else{
-			tokenPersister().update(Boolean.FALSE, newTokenDTO.getParentTokenId()); 
+			///tokenPersister().update(Boolean.FALSE, newTokenDTO.getParentTokenId()); 
 			
 			tokenPersister().inset(whoDTO.getId(), newTokenDTO.getTokenAuth(), 
 					newTokenDTO.getTokenValidity(), Boolean.TRUE,

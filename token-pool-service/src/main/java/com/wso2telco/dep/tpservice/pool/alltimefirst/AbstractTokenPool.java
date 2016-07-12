@@ -233,7 +233,7 @@ abstract class AbstractTokenPool implements TokenPoolImplimentable {
 		Timer timer = new Timer();
 		ConfigDTO configDTO =configReader.getConfigDTO();
 		
-		final long sheduledTime =(System.currentTimeMillis()-newTokenDTO.getCreatedTime())+(newTokenDTO.getTokenValidity()-configDTO.getRefreshWakeUpLeadTime());
+		final long sheduledTime =newTokenDTO.getCreatedTime()+(newTokenDTO.getTokenValidity()-configDTO.getRefreshWakeUpLeadTime());
 		
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
 		Date sheduleTimed = new Date(sheduledTime );
