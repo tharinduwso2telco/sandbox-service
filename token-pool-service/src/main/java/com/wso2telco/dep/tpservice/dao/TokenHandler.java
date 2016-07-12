@@ -32,6 +32,7 @@ abstract class TokenHandler implements GetHandle{
 	@CreateSqlObject
 	abstract PersistableEvent  persistableEvent(); /*= getHandle().attach(PersistableEvent.class);*/
 	final static String CREATE_NEW_TOKEN="CREATE_NEW_TOKEN";
+	final static String EXPIRE_TOKEN="INVALIDATE_TOKEN";
 	
 /**
  *  create record in token table and create event history
@@ -56,6 +57,12 @@ abstract class TokenHandler implements GetHandle{
 		}
 		
 		persistableEvent().insert(CREATE_NEW_TOKEN, newTokenDTO.getAccessToken()+"|"+newTokenDTO.getRefreshToken(), Event.SAVED_TOKEN.getKey(), Status.REGENERATE_TOKEN_SAVE.getKey());
+		
+	}
+	
+	public void invalidateToken(final TokenDTO newTokenDTO){
+		tokenPersister().update(Boolean.FALSE, newTokenDTO.getId()); 
+		persistableEvent().insert(EXPIRE_TOKEN, newTokenDTO.getAccessToken()+"|"+newTokenDTO.getRefreshToken(), Event.INVALIDATE_TOKEN.getKey(), Status.INVALIDATE_SUCCESS.getKey());
 		
 	}
 

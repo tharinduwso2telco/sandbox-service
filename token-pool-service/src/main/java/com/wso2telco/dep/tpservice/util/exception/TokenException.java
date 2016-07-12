@@ -44,7 +44,8 @@ public class TokenException extends BusinessException {
 		NO_VALID_TOKEN_URL("TPS0018", "No valid token url defined at the db"),
 		INVALID_AUTH_HEADER("TPS0019"," Invalid Authentication Header at the db"),
 		TOKEN_REGENERATE_FAIL("TPS0020"," Token Regeneration Failed "),
-		INVALID_REFRESH_CREDENTIALS("TPS0020"," Invalid credentials passed for Token Regeneration "),
+		INVALID_REFRESH_CREDENTIALS("TPS0021"," Invalid credentials passed for Token Regeneration "),
+		SHEDULED_TIME_ALREADY_EXPIERD("TPS0022","Scheduled  time already expired")
 		;
 		
 		TokenError(final String coded,final String msgf){

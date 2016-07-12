@@ -202,11 +202,13 @@ abstract class AbstractTokenPool implements TokenPoolImplimentable {
 	protected void shedule(final TokenDTO newTokenDTO) throws TokenException {
 		Timer timer = new Timer();
 		ConfigDTO configDTO =configReader.getConfigDTO();
-		final long sheduledTime =System.currentTimeMillis()+(newTokenDTO.getTokenValidity()-configDTO.getRefreshWakeUpLeadTime());
+		
+		final long sheduledTime =(System.currentTimeMillis()-newTokenDTO.getCreatedTime())+(newTokenDTO.getTokenValidity()-configDTO.getRefreshWakeUpLeadTime());
 		
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
 		Date sheduleTimed = new Date(sheduledTime );
 		log.debug(newTokenDTO+"Token Refresh will fire on  "+sdf.format(sheduleTimed));
+		
 		// Schedule the re - generate process
 		timer.schedule(new TimerTask() {
 		
@@ -224,7 +226,7 @@ abstract class AbstractTokenPool implements TokenPoolImplimentable {
 
 			}
 
-		},sheduledTime );
+		},sheduleTimed );
 	}
 
 	@Override

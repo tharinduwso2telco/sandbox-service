@@ -126,56 +126,10 @@ public class TokenDAO {
 	
 	//TokenDAO responsible for invalidating token 
 	public void invalidatingToken(TokenDTO obj) throws SQLException{
+		log.debug(" InValidate token :"+obj);
+		DBI dbi = JDBIUtil.getInstance();
+		TokenHandler tokenHandler = dbi.onDemand(TokenHandler.class);
 		
-		DBI inner_dbi = JDBIUtil.getInstance();
-		Handle inner_h = inner_dbi.open();
-		inner_h.getConnection().setAutoCommit(false);
-		inner_h.begin();
-
-		int Id = obj.getId();
-		StringBuilder sql_token = new StringBuilder();
-		
-		sql_token.append("UPDATE ");
-		sql_token.append(Tables.TABLE_TSTTOKEN.toString());
-		sql_token.append(" SET");
-		sql_token.append(" isvalid = :val");
-		sql_token.append(" WHERE");
-		sql_token.append(" tokendid = :id");
-
-		StringBuilder sql_check_token = new StringBuilder();
-		
-		sql_check_token.append("SELECT * ");
-		sql_check_token.append(" FROM ");
-		sql_check_token.append(Tables.TABLE_TSTTOKEN.toString());
-		sql_check_token.append(" WHERE");
-		sql_check_token.append(" tokendid = :id");
-
-		try {
-			
-			List<Map<String, Object>> obj_check_token = inner_h.createQuery(sql_check_token.toString())
-					.bind("id", Id)
-					.list();
-			
-			//validation for token exist
-			if (obj_check_token.size() != 0) {
-				
-				inner_h.createStatement(sql_token.toString()) 
-				   .bind("val", true) 
-				   .bind("id",  Id) 
-				   .execute();
-				 
-			}
-			else{
-				throw new TokenException(TokenError.INVALID_TOKEN);
-			}
-
-		} catch (Exception e) {
-			
-			log.error("TokenDAO", "invalidatingToken()", e);
-			throw new SQLException("Could not invalidate the token");
-			
-		} finally{
-			inner_h.close();
-		}
-}
+		tokenHandler.invalidateToken(obj);
+	}
 }
