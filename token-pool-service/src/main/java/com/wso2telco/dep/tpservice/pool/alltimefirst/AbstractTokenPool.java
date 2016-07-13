@@ -303,7 +303,10 @@ abstract class AbstractTokenPool implements TokenPoolImplimentable {
 
 	}
 
-	
+	/**
+	 * wait until all sessions are getting expired and  remove the Tokens from pool.
+	 * re initialize the token pool.
+	 */
 	@Override
 	final public void reStart(WhoDTO whoDTO, TokenDTO tokenDTO) throws TokenException {
 		this.whoDTO = whoDTO;
