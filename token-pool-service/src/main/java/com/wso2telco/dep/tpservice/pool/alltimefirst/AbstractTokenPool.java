@@ -329,7 +329,7 @@ abstract class AbstractTokenPool implements TokenPoolImplimentable {
 		}
 
 		try {
-			latch.await();
+			latch.await(20,TimeUnit.SECONDS);
 		} catch (InterruptedException e) {
 			log.error("", e);
 			throw new TokenException(GenaralError.INTERNAL_SERVER_ERROR);

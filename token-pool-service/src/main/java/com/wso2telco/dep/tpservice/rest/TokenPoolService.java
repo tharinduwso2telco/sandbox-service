@@ -39,7 +39,7 @@ import com.wso2telco.dep.tpservice.util.exception.TokenException;
 @Path("/tokenservice")
 public class TokenPoolService {
 	Logger log = LoggerFactory.getLogger(TokenPoolService.class);
-	
+
 	@GET
 	@Path("/{ownerID}")
 	@ApiOperation(value = "Get the valid token", notes = "API for return the contact by given the id", response = String.class)
@@ -48,87 +48,89 @@ public class TokenPoolService {
 		// TODO: Implementation for HTTP GET request
 
 		try {
-			TokenPool pool = PoolFactory.getInstance()
-										.getManagager()
-										.getImlimentation(id)
-										.getTokenPool();
+			TokenPool pool = PoolFactory.getInstance().getManagager().getImlimentation(id).getTokenPool();
 			String token = pool.accqureToken().getAccessToken();
 			return Response.status(Response.Status.OK).entity(token).build();
-		} catch (TokenException  e) {
-			log.error("",e);
-			return Response.status(Response.Status.BAD_REQUEST).entity(e.getErrorType().getCode()+":"+e.getErrorType().getMessage()).build();
-		}
-		
-	}
-/*
-	@POST
-	@Path("/{ownerid}")
-	@ApiOperation(value = "New token details", notes = "API for update token create ")
-	@ApiResponses({ 
-				@ApiResponse(code = 201, message = "Successfully created the contact"),
-				@ApiResponse(code = 400, message = "Bad Request ") })
-
-	public void create(@ApiParam(value = "Owner of the token ", required = true) @PathParam("ownerid") String wonerid) {
-		
-		try {
-			PoolFactory.getInstance()
-			.getManagager()
-			.getImlimentation(wonerid);
 		} catch (TokenException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			log.error("", e);
+			return Response.status(Response.Status.BAD_REQUEST)
+					.entity(e.getErrorType().getCode() + ":" + e.getErrorType().getMessage()).build();
 		}
-	}*/
+
+	}
+	/*
+	 * @POST
+	 * 
+	 * @Path("/{ownerid}")
+	 * 
+	 * @ApiOperation(value = "New token details", notes =
+	 * "API for update token create ")
+	 * 
+	 * @ApiResponses({
+	 * 
+	 * @ApiResponse(code = 201, message = "Successfully created the contact"),
+	 * 
+	 * @ApiResponse(code = 400, message = "Bad Request ") })
+	 * 
+	 * public void create(@ApiParam(value = "Owner of the token ", required =
+	 * true) @PathParam("ownerid") String wonerid) {
+	 * 
+	 * try { PoolFactory.getInstance() .getManagager()
+	 * .getImlimentation(wonerid); } catch (TokenException e) { // TODO
+	 * Auto-generated catch block e.printStackTrace(); } }
+	 */
 
 	@PUT
 	@Path("/{ownerId}/{tokenID}")
-	@ApiOperation(value = "Re -fresh  token ", notes = "Re genarate the token using refresh token ", response=String.class)
+	@ApiOperation(value = "Re -fresh  token ", notes = "Re genarate the token using refresh token ", response = String.class)
 	public Response put(@ApiParam(value = "token id to update ", required = true) @PathParam("ownerId") String ownerId,
 			@ApiParam(value = "new refreshTime to update ", required = true) @PathParam("tokenID") String tokenID) {
 		try {
-			log.debug(" calling refresh request for :"+ownerId + " tokenID:"+tokenID);
+			log.debug(" calling refresh request for :" + ownerId + " tokenID:" + tokenID);
 			TokenPoolImplimentable tokenPoolImpl = PoolFactory.getInstance().getManagager().getImlimentation(ownerId);
 			TokenDTO obj = tokenPoolImpl.refreshToken(tokenID);
 			return Response.status(Response.Status.OK).entity(obj.getAccessToken()).build();
-			
+
 		} catch (TokenException e) {
 			// TODO Auto-generated catch block
-			log.error("",e);
-			return Response.status(Response.Status.BAD_REQUEST).entity(e.getErrorType().getCode()+":"+e.getErrorType().getMessage()).build();
-			//e.printStackTrace();
+			log.error("", e);
+			return Response.status(Response.Status.BAD_REQUEST)
+					.entity(e.getErrorType().getCode() + ":" + e.getErrorType().getMessage()).build();
+			// e.printStackTrace();
 		}
 	}
 
 	@PUT
 	@Path("restart/{ownerId}")
-	@ApiOperation(value = "Re start the owner's pool ", notes = "This will restart the pool for given owner.All the values including owner details load from the persistance layer", response=String.class)
-	public Response restart(@ApiParam(value = "token id to update ", required = true) @PathParam("ownerId") String ownerId) {
+	@ApiOperation(value = "Re start the owner's pool ", notes = "This will restart the pool for given owner.All the values including owner details load from the persistance layer", response = String.class)
+	public Response restart(
+			@ApiParam(value = "token id to update ", required = true) @PathParam("ownerId") String ownerId) {
 		try {
-			log.debug(" calling re -start   :"+ownerId );
+			log.debug(" calling re -start   :" + ownerId);
 			PoolFactory.getInstance().getManagager().restart(ownerId);
-			
-			return Response.status(Response.Status.OK).entity("Token pool restartd for :"+ownerId).build();
-			
+
+			return Response.status(Response.Status.OK).entity("Token pool restartd for :" + ownerId).build();
+
 		} catch (TokenException e) {
-			log.error("",e);
-			return Response.status(Response.Status.BAD_REQUEST).
-					entity(e.getErrorType().getCode()+":"+e.getErrorType().getMessage()).build();
+			log.error("", e);
+			return Response.status(Response.Status.BAD_REQUEST)
+					.entity(e.getErrorType().getCode() + ":" + e.getErrorType().getMessage()).build();
 		}
 	}
-	
+
 	@DELETE
 	@Path("/{ownerID}/{tokenID}")
 	@ApiOperation(value = "Delete token ", notes = "Delete token ")
 	public void delete(
-					@ApiParam(value = "owner Id of the token ", required = true) @PathParam("ownerID") String ownerID,
-					@ApiParam(value = "token Id  to delete ", required = true) @PathParam("tokenid") String tokenid) {
-		
+			@ApiParam(value = "owner Id of the token ", required = true) @PathParam("ownerID") String ownerID,
+			@ApiParam(value = "token Id  to delete ", required = true) @PathParam("tokenid") String tokenid) {
+
 		try {
 			TokenPoolImplimentable tokenPoolImpl = PoolFactory.getInstance().getManagager().getImlimentation(ownerID);
 			tokenPoolImpl.removeToken(tokenid);
 		} catch (TokenException e) {
-			log.warn("delete token ",e);
+			log.warn("delete token ", e);
 		}
-		
+
 	}
 }
