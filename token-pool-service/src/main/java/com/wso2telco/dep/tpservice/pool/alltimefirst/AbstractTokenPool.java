@@ -312,33 +312,34 @@ abstract class AbstractTokenPool implements TokenPoolImplimentable {
 		this.whoDTO = whoDTO;
 		// if there are previously added tokens remove from the token pool and
 		// reset into zero
-		ExecutorService executorService = Executors.newFixedThreadPool(tokenList.size());
+		if (!tokenList.isEmpty()) {
+			ExecutorService executorService = Executors.newFixedThreadPool(tokenList.size());
 
-		CountDownLatch latch = new CountDownLatch(tokenList.size());
-		for (TokenInfoWrapperDTO iterable_element : tokenList.values()) {
+			CountDownLatch latch = new CountDownLatch(tokenList.size());
+			for (TokenInfoWrapperDTO iterable_element : tokenList.values()) {
 
-			executorService.execute(new Runnable() {
-				public void run() {
-					try {
-						removeToken(iterable_element);
-					} catch (TokenException e) {
-						log.error("restart fail ", e);
-					} finally {
-						latch.countDown();
+				executorService.execute(new Runnable() {
+					public void run() {
+						try {
+							removeToken(iterable_element);
+						} catch (TokenException e) {
+							log.error("restart fail ", e);
+						} finally {
+							latch.countDown();
+						}
 					}
-				}
-			});
+				});
 
+			}
+
+			try {
+				latch.await(4, TimeUnit.MINUTES);
+			} catch (InterruptedException e) {
+				log.error("", e);
+				throw new TokenException(GenaralError.INTERNAL_SERVER_ERROR);
+
+			}
 		}
-
-		try {
-			latch.await(20,TimeUnit.SECONDS);
-		} catch (InterruptedException e) {
-			log.error("", e);
-			throw new TokenException(GenaralError.INTERNAL_SERVER_ERROR);
-
-		}
-		
 		if (shedulerService != null) {
 			shedulerService.shutdownNow();
 		}
