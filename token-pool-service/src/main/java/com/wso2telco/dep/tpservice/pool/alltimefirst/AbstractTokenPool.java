@@ -234,7 +234,6 @@ abstract class AbstractTokenPool implements TokenPoolImplimentable {
 		ConfigDTO configDTO =configReader.getConfigDTO();
 		
 		final long sheduledTime =newTokenDTO.getCreatedTime()+(newTokenDTO.getTokenValidity()-configDTO.getRefreshWakeUpLeadTime());
-		
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
 		Date sheduleTimed = new Date(sheduledTime );
 		log.debug(newTokenDTO+"Token Refresh will fire on  "+sdf.format(sheduleTimed));
