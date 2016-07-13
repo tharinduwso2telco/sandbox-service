@@ -104,18 +104,18 @@ public class WhoManager {
 
 	}
 
-	public WhoDTO getOwner(String ownerid)throws TokenException  {
-		
-		WhoDTO owner = null;
-		try {
-			// get owner details
-			WhoDAO ownerDetail = new WhoDAO();
-			owner = ownerDetail.getOwner(ownerid);
-			log.debug(owner.toString());
-		} catch (SQLException e) {
-			log.error("WhoManager", "getOwner()", e.getMessage());
-			throw new TokenException(TokenError.NO_VALID_WHO);
-		}
+	/**
+	 * 
+	 * @param ownerid
+	 * @return whoDTO object
+	 */
+	
+	public WhoDTO getOwner(String ownerid){
+			
+		// get owner details
+		WhoDAO ownerDetail = new WhoDAO();
+		WhoDTO owner = ownerDetail.getOwner(ownerid);
+		log.debug(owner.toString());
 		return owner;
 	}
 
