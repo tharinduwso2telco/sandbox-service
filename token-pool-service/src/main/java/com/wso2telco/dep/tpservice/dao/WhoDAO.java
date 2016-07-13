@@ -29,6 +29,8 @@ import org.slf4j.LoggerFactory;
 
 import com.wso2telco.dep.tpservice.util.Constants;
 import com.wso2telco.dep.tpservice.util.Constants.Tables;
+import com.wso2telco.dep.tpservice.util.exception.TokenException;
+import com.wso2telco.dep.tpservice.util.exception.TokenException.TokenError;
 import com.wso2telco.dep.tpservice.model.WhoDTO;
 
 public class WhoDAO {
@@ -71,7 +73,7 @@ public class WhoDAO {
 	 * @return WhoDTO object
 	 * @throws Exception, return when an error is occurred.
 	 */
-	private WhoDTO getWhoDTOFromResultsMap(Map<String, Object> resultsMap) throws SQLException {
+	private WhoDTO getWhoDTOFromResultsMap(Map<String, Object> resultsMap) {
 		WhoDTO whoDTO = null;
 		if (resultsMap != null) {
 			whoDTO = new WhoDTO();
@@ -95,4 +97,37 @@ public class WhoDAO {
 		}
 		return whoDTO;
 	}
+
+	public WhoDTO getOwner(String ownerid) {
+
+		WhoDTO returnWhoDto = null;
+		DBI dbi = JDBIUtil.getInstance();
+		Handle h = dbi.open();
+		
+		try {
+
+			StringBuilder sb = new StringBuilder();
+			sb.append("SELECT * FROM ").append(Tables.TABLE_TSXWHO.toString()).append(" ");
+			sb.append("WHERE ownerid = :ownerid");
+
+			Map<String, Object> resultOwner = h.createQuery(sb.toString())
+					.bind("ownerid", ownerid)
+					.first();
+			if (resultOwner==null){
+				throw new TokenException(TokenError.NO_VALID_WHO);
+			}
+			returnWhoDto = getWhoDTOFromResultsMap(resultOwner);
+
+		} catch (TokenException e) {
+			log.error("getOwner() failed ", e.getMessage());
+		} finally {
+			h.close();
+		}
+		return returnWhoDto;
+	}
 }
+	
+	
+	
+	
+

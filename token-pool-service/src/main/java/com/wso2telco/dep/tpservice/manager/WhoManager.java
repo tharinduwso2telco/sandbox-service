@@ -104,9 +104,19 @@ public class WhoManager {
 
 	}
 
-	public WhoDTO getOwner(String ownerid)throws TokenException  {
-		// TODO Auto-generated method stub
-		return null;
+	/**
+	 * 
+	 * @param ownerid
+	 * @return whoDTO object
+	 */
+	
+	public WhoDTO getOwner(String ownerid){
+			
+		// get owner details
+		WhoDAO ownerDetail = new WhoDAO();
+		WhoDTO owner = ownerDetail.getOwner(ownerid);
+		log.debug(owner.toString());
+		return owner;
 	}
 
 }
