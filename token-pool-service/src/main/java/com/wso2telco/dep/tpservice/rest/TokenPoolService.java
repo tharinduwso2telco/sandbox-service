@@ -81,7 +81,7 @@ public class TokenPoolService {
 	 */
 
 	@PUT
-	@Path("/{ownerId}/{tokenID}")
+	@Path("/refresh/{ownerId}/{tokenID}")
 	@ApiOperation(value = "Re -fresh  token ", notes = "Re genarate the token using refresh token ", response = String.class)
 	public Response put(@ApiParam(value = "token id to update ", required = true) @PathParam("ownerId") String ownerId,
 			@ApiParam(value = "new refreshTime to update ", required = true) @PathParam("tokenID") String tokenID) {
