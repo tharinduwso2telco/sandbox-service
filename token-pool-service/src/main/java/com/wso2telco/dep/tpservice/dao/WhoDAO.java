@@ -111,25 +111,7 @@ public class WhoDAO {
 			Map<String, Object> resultOwner = h.createQuery(sb.toString())
 					.bind("ownerid", ownerid)
 					.first();
-
-			if (resultOwner != null) {
-				returnWhoDto = new WhoDTO();
-				int id = (Integer) resultOwner.get("tsxwhodid");
-				String ownerId = (String) resultOwner.get("ownerid");
-				String tokenUrl = (String) resultOwner.get("tokenurl");
-				long defaultConnectionResetTime = (Long) resultOwner.get("defaultconnectionresettime");
-				boolean isValid = (Boolean) resultOwner.get("isvalid");
-				Timestamp createdDate = (Timestamp) resultOwner.get("createddate");
-				int uc = (Integer) resultOwner.get("uc");
-
-				returnWhoDto.setId(id);
-				returnWhoDto.setOwnerId(ownerId);
-				returnWhoDto.setTokenUrl(tokenUrl);
-				returnWhoDto.setDefaultConnectionRestTime(defaultConnectionResetTime);
-				returnWhoDto.setValid(isValid);
-				returnWhoDto.setCreatedDate(createdDate.getTime());
-				returnWhoDto.setUc(uc);
-			}
+			returnWhoDto = getWhoDTOFromResultsMap(resultOwner);
 
 		} catch (Exception e) {
 			log.error("getOwner() failed ", e);
