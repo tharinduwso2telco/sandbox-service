@@ -338,6 +338,10 @@ abstract class AbstractTokenPool implements TokenPoolImplimentable {
 			throw new TokenException(GenaralError.INTERNAL_SERVER_ERROR);
 
 		}
+		
+		if (shedulerService != null) {
+			shedulerService.shutdownNow();
+		}
 		synchronized (tokenList) {
 			// tokenList.get(key)
 			if (!tokenList.isEmpty()) {
