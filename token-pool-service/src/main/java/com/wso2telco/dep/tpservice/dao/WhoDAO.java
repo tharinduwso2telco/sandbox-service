@@ -95,4 +95,53 @@ public class WhoDAO {
 		}
 		return whoDTO;
 	}
+
+	public WhoDTO getOwner(String ownerid) throws SQLException {
+
+		WhoDTO returnWhoDto = null;
+		DBI dbi = JDBIUtil.getInstance();
+		Handle h = dbi.open();
+		
+		try {
+
+			StringBuilder sb = new StringBuilder();
+			sb.append("SELECT * FROM ").append(Tables.TABLE_TSXWHO.toString()).append(" ");
+			sb.append("WHERE ownerid = :ownerid");
+
+			Map<String, Object> resultOwner = h.createQuery(sb.toString())
+					.bind("ownerid", ownerid)
+					.first();
+
+			if (resultOwner != null) {
+				returnWhoDto = new WhoDTO();
+				int id = (Integer) resultOwner.get("tsxwhodid");
+				String ownerId = (String) resultOwner.get("ownerid");
+				String tokenUrl = (String) resultOwner.get("tokenurl");
+				long defaultConnectionResetTime = (Long) resultOwner.get("defaultconnectionresettime");
+				boolean isValid = (Boolean) resultOwner.get("isvalid");
+				Timestamp createdDate = (Timestamp) resultOwner.get("createddate");
+				int uc = (Integer) resultOwner.get("uc");
+
+				returnWhoDto.setId(id);
+				returnWhoDto.setOwnerId(ownerId);
+				returnWhoDto.setTokenUrl(tokenUrl);
+				returnWhoDto.setDefaultConnectionRestTime(defaultConnectionResetTime);
+				returnWhoDto.setValid(isValid);
+				returnWhoDto.setCreatedDate(createdDate.getTime());
+				returnWhoDto.setUc(uc);
+			}
+
+		} catch (Exception e) {
+			log.error("getOwner() failed ", e);
+			throw new SQLException("Could not get valid owner");
+		} finally {
+			h.close();
+		}
+		return returnWhoDto;
+	}
 }
+	
+	
+	
+	
+

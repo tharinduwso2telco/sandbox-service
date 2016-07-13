@@ -105,8 +105,18 @@ public class WhoManager {
 	}
 
 	public WhoDTO getOwner(String ownerid)throws TokenException  {
-		// TODO Auto-generated method stub
-		return null;
+		
+		WhoDTO owner = null;
+		try {
+			// get owner details
+			WhoDAO ownerDetail = new WhoDAO();
+			owner = ownerDetail.getOwner(ownerid);
+			log.debug(owner.toString());
+		} catch (SQLException e) {
+			log.error("WhoManager", "getOwner()", e.getMessage());
+			throw new TokenException(TokenError.NO_VALID_WHO);
+		}
+		return owner;
 	}
 
 }
