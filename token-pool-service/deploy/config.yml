@@ -20,11 +20,20 @@ tokenReadretrAttempts: #Number of re-try attemts for waiting for getting valid t
 tokenReadretrAfter: 120000 #Number of ms read db for valid token ,default is 1 min.this value is used only in slave mode
 refreshWakeUpLeadTime: 5000 #lead time to wake-up Token refresh process default is 5000 ms
 logging:
-  level: DEBUG
+  level: INFO
+  loggers:
+    io.dropwizard: INFO
+    com.wso2telco: DEBUG
   appenders:
     - type: console
       threshold: ALL
       timeZone: UTC
       target: stdout
-
-
+# Enable following for file appender
+    - type: file
+      currentLogFilename: log/token_service.log #<path to log file>/<filename.log>
+      threshold: ALL
+      archive: true
+      archivedLogFilenamePattern: log/token_service-%d.log #<path to log file >/< archive filename.log>
+      archivedFileCount: 5
+      timeZone: UTC
