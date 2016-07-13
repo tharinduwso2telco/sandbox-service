@@ -32,9 +32,9 @@ import com.wso2telco.dep.tpservice.util.exception.TokenException;
 public class PoolOwnerManager implements TokenPoolManagable {
 	private Logger log = LoggerFactory.getLogger(PoolOwnerManager.class);	
 	
-	private Map<String,TokenPoolImplimentable> tokenPoolMap ;
+	private Map<String,TokenSheduler> tokenPoolMap ;
 	public PoolOwnerManager(){
-		tokenPoolMap = new HashMap<String,TokenPoolImplimentable>();	
+		tokenPoolMap = new HashMap<String,TokenSheduler>();	
 	}
 	
 	
@@ -53,14 +53,24 @@ public class PoolOwnerManager implements TokenPoolManagable {
 			TokenSheduler tS =TokenSheduler.createInstance(whoDTO);
 			tS.initializePool();
 			
-			TokenPoolImplimentable tokenPoolImplimentable =tS.getTokenPoolImpl();
 			
-			tokenPoolMap.put(whoDTO.getOwnerId().trim(), tokenPoolImplimentable);
+			tokenPoolMap.put(whoDTO.getOwnerId().trim(), tS);
 			 
 		}
 		log.info("Token pool initialized");
 	}
 
+	public void restart(final String ownerid) throws TokenException {
+		
+		log.info("Restarting token pool "+ownerid);
+		
+		WhoDTO whoDTO =  new WhoManager().getOwner(ownerid);
+		TokenSheduler tS =  tokenPoolMap.get(ownerid);
+		tS.reStart(whoDTO);
+		
+		log.info("Token pool restated");
+	}
+	
 
 	@Override
 	public TokenPoolImplimentable getImlimentation(final String owner) throws TokenException {
@@ -77,7 +87,7 @@ public class PoolOwnerManager implements TokenPoolManagable {
 		}
 		if(tokenPoolMap.containsKey(owner.trim())){
 			log.debug(" token pool released ");
-			return tokenPoolMap.get(owner.trim());
+			return tokenPoolMap.get(owner.trim()).getTokenPoolImpl();
 		}else{
 			log.warn("Invalid pool owner. ");
 			throw new TokenException(TokenException.TokenError.POOL_NOT_READY);
