@@ -41,8 +41,9 @@ class TokenSheduler  {
 	private WhoManager adminService;
 	private TokenPoolImplimentable poolImpl;
 	private ConfigReader configReader;
-	WhoDTO whoDTO;
-
+	private WhoDTO whoDTO;
+	private List<TokenPoolImplimentable> poolImplList;
+	
 	private TokenSheduler(final WhoDTO whoDTO) throws TokenException {
 		this.configReader = ConfigReader.getInstance();
 		adminService = new WhoManager();
@@ -75,8 +76,6 @@ class TokenSheduler  {
 		}
 	}
 	
-	
-	
 
 	public TokenPoolImplimentable getTokenPoolImpl ()throws TokenException{
 		if(poolImpl==null){
@@ -85,4 +84,13 @@ class TokenSheduler  {
 		return	poolImpl;
 	}
 
+	public void reStart(WhoDTO whoDTO) throws TokenException {
+		this.whoDTO =whoDTO;
+		List<TokenDTO> tokenDTos = adminService.loadTokens(whoDTO.getOwnerId());
+		for (TokenDTO tokenDTO : tokenDTos) {
+			log.debug("reStart the token ");
+			poolImpl.reStart(whoDTO,tokenDTO);
+		}
+	}
+	
 }

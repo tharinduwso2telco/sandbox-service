@@ -104,4 +104,9 @@ public class WhoManager {
 
 	}
 
+	public WhoDTO getOwner(String ownerid)throws TokenException  {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

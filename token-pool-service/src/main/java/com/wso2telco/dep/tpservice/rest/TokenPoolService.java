@@ -99,6 +99,23 @@ public class TokenPoolService {
 		}
 	}
 
+	@PUT
+	@Path("restart/{ownerId}")
+	@ApiOperation(value = "Re start the owner's pool ", notes = "This will restart the pool for given owner.All the values including owner details load from the persistance layer", response=String.class)
+	public Response restart(@ApiParam(value = "token id to update ", required = true) @PathParam("ownerId") String ownerId) {
+		try {
+			log.debug(" calling re -start   :"+ownerId );
+			PoolFactory.getInstance().getManagager().restart(ownerId);
+			
+			return Response.status(Response.Status.OK).entity("Token pool restartd for :"+ownerId).build();
+			
+		} catch (TokenException e) {
+			log.error("",e);
+			return Response.status(Response.Status.BAD_REQUEST).
+					entity(e.getErrorType().getCode()+":"+e.getErrorType().getMessage()).build();
+		}
+	}
+	
 	@DELETE
 	@Path("/{ownerID}/{tokenID}")
 	@ApiOperation(value = "Delete token ", notes = "Delete token ")

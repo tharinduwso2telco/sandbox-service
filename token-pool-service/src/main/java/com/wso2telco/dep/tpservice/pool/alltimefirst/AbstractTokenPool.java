@@ -20,8 +20,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Timer;
-import java.util.TimerTask;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -44,6 +44,10 @@ abstract class AbstractTokenPool implements TokenPoolImplimentable {
 	protected WhoDTO whoDTO;
 	protected TokenManager tokenManager;
 	private Map<String, TokenInfoWrapperDTO> tokenList = new HashMap<String, TokenInfoWrapperDTO>();
+	
+	protected TokenDTO tokenDTO;
+	protected SessionHolder sessionHolderList;
+	
 	private ScheduledExecutorService shedulerService;
 
 	protected AbstractTokenPool(final WhoDTO whoDTO) throws TokenException {
@@ -277,9 +281,13 @@ abstract class AbstractTokenPool implements TokenPoolImplimentable {
 		 */
 	}
 
+	/**
+	 * Call at very beginning as well as pool restart for this owner.
+	 */
 	@Override
 	public void init(TokenDTO tokenDTO) throws TokenException {
 		log.debug(" Initializing token :" + tokenDTO);
+		
 
 		if (tokenDTO.isExpired()) {// if the token is still valid.if the token
 									// is still valid.
@@ -295,6 +303,48 @@ abstract class AbstractTokenPool implements TokenPoolImplimentable {
 
 	}
 
+	
+	@Override
+	final public void reStart(WhoDTO whoDTO, TokenDTO tokenDTO) throws TokenException {
+		this.whoDTO = whoDTO;
+		// if there are previously added tokens remove from the token pool and
+		// reset into zero
+		ExecutorService executorService = Executors.newFixedThreadPool(tokenList.size());
+
+		CountDownLatch latch = new CountDownLatch(tokenList.size());
+		for (TokenInfoWrapperDTO iterable_element : tokenList.values()) {
+
+			executorService.execute(new Runnable() {
+				public void run() {
+					try {
+						removeToken(iterable_element);
+					} catch (TokenException e) {
+						log.error("restart fail ", e);
+					} finally {
+						latch.countDown();
+					}
+				}
+			});
+
+		}
+
+		try {
+			latch.await();
+		} catch (InterruptedException e) {
+			log.error("", e);
+			throw new TokenException(GenaralError.INTERNAL_SERVER_ERROR);
+
+		}
+		synchronized (tokenList) {
+			// tokenList.get(key)
+			if (!tokenList.isEmpty()) {
+				tokenList.clear();
+			}
+		}
+
+		init(tokenDTO);
+	}
+	
 	class TokenInfoWrapperDTO {
 
 		protected TokenDTO tokenDTO;
