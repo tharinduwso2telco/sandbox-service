@@ -16,7 +16,6 @@
 
 package com.wso2telco.dep.tpservice.rest;
 
-import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
@@ -31,8 +30,8 @@ import com.wordnik.swagger.annotations.ApiOperation;
 import com.wordnik.swagger.annotations.ApiParam;
 import com.wso2telco.dep.tpservice.model.TokenDTO;
 import com.wso2telco.dep.tpservice.pool.PoolFactory;
+import com.wso2telco.dep.tpservice.pool.TokenControllable;
 import com.wso2telco.dep.tpservice.pool.TokenPool;
-import com.wso2telco.dep.tpservice.pool.TokenPoolImplimentable;
 import com.wso2telco.dep.tpservice.util.exception.TokenException;
 
 @Api(value = "/tokenservice", description = "This service provide a rest service for providing a valid token")
@@ -48,7 +47,7 @@ public class TokenPoolService {
 		// TODO: Implementation for HTTP GET request
 
 		try {
-			TokenPool pool = PoolFactory.getInstance().getManagager().getImlimentation(id).getTokenPool();
+			TokenPool pool = PoolFactory.getInstance().getManagager().getOwnerController(id).getTokenPool();
 			String token = pool.accqureToken().getAccessToken();
 			return Response.status(Response.Status.OK).entity(token).build();
 		} catch (TokenException e) {
@@ -87,7 +86,10 @@ public class TokenPoolService {
 			@ApiParam(value = "new refreshTime to update ", required = true) @PathParam("tokenID") String tokenID) {
 		try {
 			log.debug(" calling refresh request for :" + ownerId + " tokenID:" + tokenID);
-			TokenPoolImplimentable tokenPoolImpl = PoolFactory.getInstance().getManagager().getImlimentation(ownerId);
+			TokenControllable tokenPoolImpl = PoolFactory.getInstance()
+														.getManagager()
+														.getOwnerController(ownerId)
+														.getTokenController(tokenID);
 			TokenDTO obj = tokenPoolImpl.refreshToken(tokenID);
 			return Response.status(Response.Status.OK).entity(obj.getAccessToken()).build();
 
@@ -118,7 +120,7 @@ public class TokenPoolService {
 		}
 	}
 
-	@DELETE
+	/*@DELETE
 	@Path("/{ownerID}/{tokenID}")
 	@ApiOperation(value = "Delete token ", notes = "Delete token ")
 	public void delete(
@@ -126,11 +128,11 @@ public class TokenPoolService {
 			@ApiParam(value = "token Id  to delete ", required = true) @PathParam("tokenid") String tokenid) {
 
 		try {
-			TokenPoolImplimentable tokenPoolImpl = PoolFactory.getInstance().getManagager().getImlimentation(ownerID);
+			TokenControllable tokenPoolImpl = PoolFactory.getInstance().getManagager().getOwnerController(ownerID);
 			tokenPoolImpl.removeToken(tokenid);
 		} catch (TokenException e) {
 			log.warn("delete token ", e);
 		}
 
-	}
+	}*/
 }

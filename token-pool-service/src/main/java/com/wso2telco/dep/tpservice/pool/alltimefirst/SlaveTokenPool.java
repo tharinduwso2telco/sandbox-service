@@ -25,18 +25,18 @@ import com.wso2telco.dep.tpservice.util.exception.BusinessException;
 import com.wso2telco.dep.tpservice.util.exception.GenaralError;
 import com.wso2telco.dep.tpservice.util.exception.TokenException;
 
-class SlaveTokenPool extends AbstractTokenPool {
+class SlaveTokenPool extends AbstrController {
 	
 	
 	
-	protected SlaveTokenPool(WhoDTO whoDTO) throws TokenException {
-		super(whoDTO);
+	protected SlaveTokenPool(WhoDTO whoDTO,TokenDTO tokenDTO) throws TokenException {
+		super(whoDTO,tokenDTO);
 		log = LoggerFactory.getLogger(SlaveTokenPool.class);
 	}
 
-	
-	protected TokenDTO reGenarate(final TokenDTO token) throws TokenException {
-		log.info(" Try to remove Token : " + token + " from token pool of :" + whoDTO);
+	@Override
+	protected TokenDTO reGenarate() throws TokenException {
+		log.info(" Try to remove Token : " + tokenDTO + " from token pool of :" + whoDTO);
 		TokenDTO newTokenDTO =null;
 		try {
 			
@@ -48,7 +48,7 @@ class SlaveTokenPool extends AbstractTokenPool {
 			
 			//load configuration repeatedly until retry attempt expires or record found
 			while(configDto.getTokenReadretrAttempts() <= waitattempt){
-				newTokenDTO =tokenManager.loadNewChild(whoDTO, token); //load token form db
+				newTokenDTO =tokenManager.loadNewChild(whoDTO, tokenDTO); //load token form db
 				
 				try {
 					Thread.sleep(configDto.getTokenReadretrAfter() );
@@ -58,21 +58,13 @@ class SlaveTokenPool extends AbstractTokenPool {
 			}
 			
 			if(newTokenDTO ==null){
-				log.warn("token refresh faild :"+token);
+				log.warn("token refresh faild :"+tokenDTO);
 				throw new TokenException(GenaralError.INTERNAL_SERVER_ERROR);
 			}
-			
-			addToPool(token);
-			
-			shedule(newTokenDTO);//Schedule for next refresh
 			
 		} catch (BusinessException e) {
 			throw new TokenException(e.getErrorType());
 		}
 		return newTokenDTO; 
 	}
-
-
-	
-
 }

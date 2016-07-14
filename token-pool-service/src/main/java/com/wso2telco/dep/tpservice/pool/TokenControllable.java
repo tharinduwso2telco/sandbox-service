@@ -16,38 +16,17 @@
 
 package com.wso2telco.dep.tpservice.pool;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.wso2telco.dep.tpservice.pool.alltimefirst.PoolManager;
+import com.wso2telco.dep.tpservice.model.TokenDTO;
 import com.wso2telco.dep.tpservice.util.exception.TokenException;
 
-public class PoolFactory {
-	private Logger log = LoggerFactory.getLogger(PoolFactory.class);	
-	private static PoolFactory instance;
-	private TokenPoolManagable manager;
-	
-	PoolFactory(){
-		log.debug(" pool Factory initialized ");
-		manager = new PoolManager();
-	}
-	
-	public synchronized static PoolFactory getInstance(){
-		if(instance==null){
-			instance = new PoolFactory();
-		}
-		return instance;
-		
-	}
-	
-	public TokenPoolManagable getManagager() throws TokenException{
-		if(manager ==null){
-			throw new TokenException(TokenException.TokenError.NO_TOKEN_POOL_MANAGABLE);
-		}
-		return manager;
-		
-	}
+public interface TokenControllable {
+	        TokenDTO refreshToken(final TokenDTO token) throws TokenException ;
+	        void removeToken(final TokenDTO token) throws TokenException ;
+	        void removeToken(final String token) throws TokenException ;
+	    	TokenDTO refreshToken(final String token) throws TokenException ;
+	    	void init() throws TokenException ;
+			void stop()throws TokenException ;
+			TokenDTO getToken()throws TokenException ;
+			void accqureToken() throws TokenException ;
 
-	
-	
 }

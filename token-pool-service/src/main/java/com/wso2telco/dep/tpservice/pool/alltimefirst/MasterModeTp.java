@@ -24,12 +24,12 @@ import com.wso2telco.dep.tpservice.pool.TokenReGenarator;
 import com.wso2telco.dep.tpservice.util.exception.GenaralError;
 import com.wso2telco.dep.tpservice.util.exception.TokenException;
 
-class MasterModeTp extends AbstractTokenPool {
+class MasterModeTp extends AbstrController {
 
 	private TokenReGenarator regenarator;
 	
-	protected MasterModeTp(WhoDTO whoDTO) throws TokenException {
-		super(whoDTO);
+	protected MasterModeTp(WhoDTO whoDTO,TokenDTO tokenDTO) throws TokenException {
+		super(whoDTO,tokenDTO);
 		log = LoggerFactory.getLogger(MasterModeTp.class);
 		this.regenarator = new TokenReGenarator();
 	}
@@ -42,21 +42,16 @@ class MasterModeTp extends AbstractTokenPool {
 	
 	
 	@Override
-	protected TokenDTO reGenarate(final TokenDTO token)throws TokenException{
+	protected TokenDTO reGenarate( )throws TokenException{
 		TokenDTO newTokenDTO=null;
 		try {
 			// generating new token
-			newTokenDTO = regenarator.reGenarate(whoDTO, token);
+			newTokenDTO = regenarator.reGenarate(whoDTO, tokenDTO);
 			if(newTokenDTO ==null){
-				log.warn("token refresh faild :"+token);
+				log.warn("token refresh faild :"+tokenDTO);
 				throw new TokenException(GenaralError.INTERNAL_SERVER_ERROR);
 			}
-			
-			
-			shedule(newTokenDTO);//Schedule for next refresh
 
-			addToPool(newTokenDTO);
-			
 			tokenManager.saveToken(whoDTO, newTokenDTO);
 			
 		} catch (TokenException e) {
@@ -64,8 +59,5 @@ class MasterModeTp extends AbstractTokenPool {
 		}
 		return newTokenDTO;
 	}
-	
-	
-
 
 }

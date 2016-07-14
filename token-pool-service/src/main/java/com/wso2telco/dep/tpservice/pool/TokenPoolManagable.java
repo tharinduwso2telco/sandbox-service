@@ -21,5 +21,5 @@ import com.wso2telco.dep.tpservice.util.exception.TokenException;
 public interface TokenPoolManagable {
 	public void initializePool() throws TokenException;
 	public void restart(final String ownerid) throws TokenException ;
-	public TokenPoolImplimentable getImlimentation(final String OwnerId)throws TokenException;
+	public OwnerControllable getOwnerController(final String owner) throws TokenException ;
 }

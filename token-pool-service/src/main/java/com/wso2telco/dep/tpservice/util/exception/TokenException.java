@@ -45,7 +45,9 @@ public class TokenException extends BusinessException {
 		INVALID_AUTH_HEADER("TPS0019"," Invalid Authentication Header at the db"),
 		TOKEN_REGENERATE_FAIL("TPS0020"," Token Regeneration Failed "),
 		INVALID_REFRESH_CREDENTIALS("TPS0021"," Invalid credentials passed for Token Regeneration "),
-		SHEDULED_TIME_ALREADY_EXPIERD("TPS0022","Scheduled  time already expired")
+		SHEDULED_TIME_ALREADY_EXPIERD("TPS0022","Scheduled  time already expired"),
+		INVALID_OPARATION("TPS0023","Token pool not initialized for this owner"),
+		NULL_TOKEN("TPS0024","Token DTO NOT YET ASSIGNED")
 		;
 		
 		TokenError(final String coded,final String msgf){

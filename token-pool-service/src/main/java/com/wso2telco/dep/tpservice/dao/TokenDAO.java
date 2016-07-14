@@ -122,8 +122,44 @@ public class TokenDAO {
 		//Generated token did set in to new token dto
 		token_obj.setId(newTokenDid);
 		
+		//retrieval of created time for next schedule set
+		TokenDTO tokenDTO = getTokenDetails(newTokenDid);
+		token_obj.setCreatedTime(tokenDTO.getCreatedTime());
+		
 	}
 	
+	/**
+	 * 
+	 * @param ID
+	 * @return TokenDto 
+	 */
+	private TokenDTO getTokenDetails(int ID) {
+		TokenDTO returnTokenDto = null;
+		DBI dbi = JDBIUtil.getInstance();
+		Handle h = dbi.open();
+		try {
+			StringBuilder sb = new StringBuilder();
+			sb.append("SELECT * ");
+			sb.append("FROM ").append(Tables.TABLE_TSTTOKEN.toString()).append(" ");
+			sb.append("WHERE tokendid = :newTokenDid");
+
+			Map<String, Object> resultID = h.createQuery(sb.toString())
+					.bind("newTokenDid", ID)
+					.first();
+
+			if (resultID == null) {
+				throw new TokenException(TokenError.INVALID_TOKEN);
+			}
+			returnTokenDto = getTokenDTOFromResultsMap(resultID);
+
+		} catch (Exception e) {
+			log.error("getTokenDetails() failed ", e);
+		} finally {
+			h.close();
+		}
+		return returnTokenDto;
+
+	}
 	
 	//TokenDAO responsible for invalidating token 
 	public void invalidatingToken(TokenDTO obj) throws SQLException{

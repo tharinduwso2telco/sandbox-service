@@ -25,16 +25,17 @@ import org.slf4j.LoggerFactory;
 
 import com.wso2telco.dep.tpservice.manager.WhoManager;
 import com.wso2telco.dep.tpservice.model.WhoDTO;
-import com.wso2telco.dep.tpservice.pool.TokenPoolImplimentable;
+import com.wso2telco.dep.tpservice.pool.OwnerControllable;
+import com.wso2telco.dep.tpservice.pool.TokenControllable;
 import com.wso2telco.dep.tpservice.pool.TokenPoolManagable;
 import com.wso2telco.dep.tpservice.util.exception.TokenException;
 
-public class PoolOwnerManager implements TokenPoolManagable {
-	private Logger log = LoggerFactory.getLogger(PoolOwnerManager.class);	
+public class PoolManager implements TokenPoolManagable {
+	private Logger log = LoggerFactory.getLogger(PoolManager.class);	
 	
-	private Map<String,TokenSheduler> tokenPoolMap ;
-	public PoolOwnerManager(){
-		tokenPoolMap = new HashMap<String,TokenSheduler>();	
+	private Map<String,OwnerControllable> tokenPoolMap ;
+	public PoolManager(){
+		tokenPoolMap = new HashMap<String,OwnerControllable>();	
 	}
 	
 	
@@ -50,7 +51,7 @@ public class PoolOwnerManager implements TokenPoolManagable {
 		}
 		for (WhoDTO whoDTO : whoDTOs) {
 			
-			TokenSheduler tS =TokenSheduler.createInstance(whoDTO);
+			OwnerController tS =OwnerController.createInstance(whoDTO);
 			tS.initializePool();
 			
 			
@@ -65,7 +66,7 @@ public class PoolOwnerManager implements TokenPoolManagable {
 		log.info("Restarting token pool "+ownerid);
 		
 		WhoDTO whoDTO =  new WhoManager().getOwner(ownerid);
-		TokenSheduler tS =  tokenPoolMap.get(ownerid);
+		OwnerControllable tS =  tokenPoolMap.get(ownerid);
 		tS.reStart(whoDTO);
 		
 		log.info("Token pool restated");
@@ -73,7 +74,7 @@ public class PoolOwnerManager implements TokenPoolManagable {
 	
 
 	@Override
-	public TokenPoolImplimentable getImlimentation(final String owner) throws TokenException {
+	public OwnerControllable getOwnerController(final String owner) throws TokenException {
 		log.debug("Token pool request for owner :"+owner);
 		
 		if(owner==null ||  owner.trim().length()<1  ){
@@ -87,7 +88,7 @@ public class PoolOwnerManager implements TokenPoolManagable {
 		}
 		if(tokenPoolMap.containsKey(owner.trim())){
 			log.debug(" token pool released ");
-			return tokenPoolMap.get(owner.trim()).getTokenPoolImpl();
+			return tokenPoolMap.get(owner.trim());
 		}else{
 			log.warn("Invalid pool owner. ");
 			throw new TokenException(TokenException.TokenError.POOL_NOT_READY);
