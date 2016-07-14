@@ -51,13 +51,13 @@ class MasterModeTp extends AbstractTokenPool {
 				log.warn("token refresh faild :"+token);
 				throw new TokenException(GenaralError.INTERNAL_SERVER_ERROR);
 			}
-			
-			
+			// saving before next schedule trigger to get created time
+			tokenManager.saveToken(whoDTO, newTokenDTO);
+
 			shedule(newTokenDTO);//Schedule for next refresh
 
 			addToPool(newTokenDTO);
 			
-			tokenManager.saveToken(whoDTO, newTokenDTO);
 			
 		} catch (TokenException e) {
 			throw new TokenException(e.getErrorType());
