@@ -104,6 +104,7 @@ abstract class AbstrController implements TokenControllable {
 			try {
 				Thread.sleep(whoDTO.getDefaultConnectionRestTime());
 			} catch (InterruptedException e) {
+				log.error("removeToken intrrupted ",e);
 				throw new TokenException(GenaralError.INTERNAL_SERVER_ERROR);
 			}
 
