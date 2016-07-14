@@ -128,5 +128,13 @@ public class TokenDTO implements Serializable {
 	public void setParentTokenId(int parentTokenId) {
 		this.parentTokenId = parentTokenId;
 	}
+	@Override
+	public String toString() {
+		return "TokenDTO [id=" + id + ", whoId=" + whoId + ", tokenAuth=" + tokenAuth + ", tokenValidity="
+				+ tokenValidity + ", valid=" + valid + ", accessToken=" + accessToken + ", refreshToken=" + refreshToken
+				+ ", uc=" + uc + ", createdTime=" + createdTime + ", parentTokenId=" + parentTokenId + "]";
+	}
+	
+	
 	
 }

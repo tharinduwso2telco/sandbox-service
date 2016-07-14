@@ -25,7 +25,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.gson.Gson;
-import com.wso2telco.dep.tpservice.dao.EventHistoryDAO;
 import com.wso2telco.dep.tpservice.dao.TokenDAO;
 import com.wso2telco.dep.tpservice.model.TokenDTO;
 import com.wso2telco.dep.tpservice.model.WhoDTO;
