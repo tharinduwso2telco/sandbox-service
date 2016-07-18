@@ -112,22 +112,6 @@ public class TokenDAO {
 		return tokenDTO;
 	}
 	
-	// insertion for newly generated access token 
-	public void saveNewToken(WhoDTO who_obj, TokenDTO token_obj) throws SQLException {
-		log.debug(" INsert new Token for :"+who_obj+" old Token :"+token_obj.getParentTokenId() +" New Token :"+token_obj);
-		DBI dbi = JDBIUtil.getInstance();
-		TokenHandler tokenHandler = dbi.onDemand(TokenHandler.class);
-		
-		int newTokenDid = tokenHandler.createNewToken(token_obj, who_obj);
-		//Generated token did set in to new token dto
-		token_obj.setId(newTokenDid);
-		
-		//retrieval of created time for next schedule set
-		TokenDTO tokenDTO = getTokenDetails(newTokenDid);
-		token_obj.setCreatedTime(tokenDTO.getCreatedTime());
-		
-	}
-	
 	/**
 	 * 
 	 * @param ID
@@ -159,6 +143,22 @@ public class TokenDAO {
 		}
 		return returnTokenDto;
 
+	}
+	
+	// insertion for newly generated access token 
+	public void saveNewToken(WhoDTO who_obj, TokenDTO token_obj) throws SQLException {
+		log.debug(" INsert new Token for :"+who_obj+" old Token :"+token_obj.getParentTokenId() +" New Token :"+token_obj);
+		DBI dbi = JDBIUtil.getInstance();
+		TokenHandler tokenHandler = dbi.onDemand(TokenHandler.class);
+		
+		int newTokenDid = tokenHandler.createNewToken(token_obj, who_obj);
+		//Generated token did set in to new token dto
+		token_obj.setId(newTokenDid);
+		
+		//retrieval of created time for next schedule set
+		TokenDTO tokenDTO = getTokenDetails(newTokenDid);
+		token_obj.setCreatedTime(tokenDTO.getCreatedTime());
+		
 	}
 	
 	//TokenDAO responsible for invalidating token 

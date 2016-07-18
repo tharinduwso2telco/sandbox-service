@@ -51,7 +51,6 @@ class MasterModeTp extends AbstrController {
 				log.warn("token refresh faild :"+tokenDTO);
 				throw new TokenException(GenaralError.INTERNAL_SERVER_ERROR);
 			}
-
 			tokenManager.saveToken(whoDTO, newTokenDTO);
 			
 		} catch (TokenException e) {
