@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  
+  <modelVersion>4.0.0</modelVersion>
+	<parent>
+       		<groupId>org.wso2</groupId>
+       		<artifactId>wso2</artifactId>
+       		<version>1</version>
+   	</parent>
+  <groupId>com.wso2telco</groupId>
+  <artifactId>token-pool-service</artifactId>
+
+  <packaging>pom</packaging>
+  <name>token-pool-service</name>
+  <description>token pool service</description>
+  <properties>
+    <CApp.type>jaggery/app</CApp.type>
+  </properties>
+  
+  <build>
+    <plugins>
+     
+      <plugin>
+        <artifactId>maven-assembly-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>token-pool-service</id>
+            <phase>package</phase>
+            <goals>
+              <goal>single</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <appendAssemblyId>false</appendAssemblyId>
+           
+          <descriptor>zip-descriptor.xml</descriptor>
+        </configuration>
+      </plugin>
+    </plugins>
+   <finalName>token-pool-service</finalName>
+  </build>
+</project>
