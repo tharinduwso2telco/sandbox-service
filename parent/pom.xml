@@ -38,5 +38,11 @@
 	<prerequisites>
 		<maven>3.0.0</maven>
 	</prerequisites>
+   <scm>
+                <url>https://github.com/WSO2Telco/services-dep.git</url>
+                <developerConnection>scm:git:https://github.com/WSO2Telco/services-dep.git</developerConnection>
+                <connection>scm:git:https://github.com/WSO2Telco/services-dep.git</connection>
+                <tag>HEAD</tag>
+        </scm>
 	
 </project>
