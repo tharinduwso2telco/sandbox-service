@@ -91,6 +91,9 @@ abstract class AbstrController implements TokenControllable {
 	}
 	/**
 	 * this will invalidate the token so that the the token will not re issue.
+	 * remove all the scheduled task immediately from the scheduler.
+	 * hold the session until all session getting cleared only if token is not expired ,
+	 * if expired no waiting 
 	 * This only done for locally/not in cluster
 	 * @throws TokenException
 	 */
@@ -115,16 +118,20 @@ abstract class AbstrController implements TokenControllable {
 		// cancel
 		shedulerService.shutdownNow();
 		log.debug("Token removed locally");
-		/*
-		 * while (sessionHolderList.isInUse()) { log.debug("Token " + tokenDTO +
-		 * "still in use wait for " + whoDTO.getDefaultConnectionRestTime() +
-		 * " MS " + whoDTO.getDefaultConnectionRestTime()); try {
-		 * Thread.sleep(whoDTO.getDefaultConnectionRestTime()); } catch
-		 * (InterruptedException e) { log.error("removeToken intrrupted ", e);
-		 * throw new TokenException(GenaralError.INTERNAL_SERVER_ERROR); }
-		 * 
-		 * }
-		 */
+		
+		// wait until session pool getting cleared and token is not expired
+		while (sessionHolderList.isInUse() && !tokenDTO.isExpired()) {
+			log.debug("Token " + tokenDTO + "still in use wait for " + whoDTO.getDefaultConnectionRestTime() + " MS "
+					+ whoDTO.getDefaultConnectionRestTime());
+			try {
+				Thread.sleep(whoDTO.getDefaultConnectionRestTime());
+			} catch (InterruptedException e) {
+				log.error("removeToken intrrupted ", e);
+				throw new TokenException(GenaralError.INTERNAL_SERVER_ERROR);
+			}
+
+		}
+		 
 
 	}
 
