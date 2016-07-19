@@ -98,34 +98,34 @@ abstract class AbstrController implements TokenControllable {
 
 		boolean tokenAlreadyInvalidated = false;
 
-		while (sessionHolderList.isInUse()) {
-			log.debug("Token " + tokenDTO + "still in use wait for "+whoDTO.getDefaultConnectionRestTime()+" MS "
-					+ whoDTO.getDefaultConnectionRestTime());
-			try {
-				Thread.sleep(whoDTO.getDefaultConnectionRestTime());
-			} catch (InterruptedException e) {
-				log.error("removeToken intrrupted ",e);
-				throw new TokenException(GenaralError.INTERNAL_SERVER_ERROR);
-			}
-
-		}
-		
 		// Invalidate the token, so that re issuing is restricted
 		synchronized (tokenDTO) {
-			tokenAlreadyInvalidated =  tokenDTO.isValid()?false:true;
-			
+			tokenAlreadyInvalidated = tokenDTO.isValid() ? false : true;
+
 			if (tokenAlreadyInvalidated) {
-				log.warn("Token already removed from the pool :" + whoDTO + " token :" +tokenDTO);
+				log.warn("Token already removed from the pool :" + whoDTO + " token :" + tokenDTO);
 
 				throw new TokenException(TokenException.TokenError.TOKEN_ALREDY_REMOVED);
-			}else{
-				tokenDTO.setValid(false);	
+			} else {
+				tokenDTO.setValid(false);
 			}
-			
+
 		}
-		//Scheduler service shut down ,All the previous scheduled jobs need to cancel 
+		// Scheduler service shut down ,All the previous scheduled jobs need to
+		// cancel
 		shedulerService.shutdownNow();
 		log.debug("Token removed locally");
+		/*
+		 * while (sessionHolderList.isInUse()) { log.debug("Token " + tokenDTO +
+		 * "still in use wait for " + whoDTO.getDefaultConnectionRestTime() +
+		 * " MS " + whoDTO.getDefaultConnectionRestTime()); try {
+		 * Thread.sleep(whoDTO.getDefaultConnectionRestTime()); } catch
+		 * (InterruptedException e) { log.error("removeToken intrrupted ", e);
+		 * throw new TokenException(GenaralError.INTERNAL_SERVER_ERROR); }
+		 * 
+		 * }
+		 */
+
 	}
 
 	
