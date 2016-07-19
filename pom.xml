@@ -87,6 +87,63 @@
             </plugin>
         </plugins>
     </build>
+    <distributionManagement>
+                <snapshotRepository>
+                        <id>wso2Telco.snapshots</id>
+                        <name>Snapshot repo</name>
+                        <url>http://maven.wso2telco.com/nexus/content/repositories/snapshots</url>
+                </snapshotRepository>
+                <!-- Publish the versioned releases here -->
+                <repository>
+                        <id>wso2telco.releases</id>
+                        <name>release repo</name>
+                        <url>http://maven.wso2telco.com/nexus/content/repositories/releases/</url>
+                </repository>
+        </distributionManagement>
+
+
+        <scm>
+                <url>https://github.com/WSO2Telco/services-dep.git</url>
+                <developerConnection>scm:git:https://github.com/WSO2Telco/services-dep.git</developerConnection>
+                <connection>scm:git:https://github.com/WSO2Telco/services-dep.git</connection>
+                <tag>HEAD</tag>
+        </scm>
+
+
+  <pluginRepositories>
+                <pluginRepository>
+                        <id>wso2telco-nexus</id>
+                        <name>WSO2Telco internal Repository</name>
+                        <url>http://maven.wso2telco.com/nexus/content/groups/public/</url>
+                        <releases>
+                                <enabled>true</enabled>
+                                <updatePolicy>daily</updatePolicy>
+                                <checksumPolicy>ignore</checksumPolicy>
+                        </releases>
+                </pluginRepository>
+                <pluginRepository>
+                        <id>wso2telco.releases</id>
+                        <name>WSO2 internal Repository</name>
+                        <url>http://maven.wso2telco.com/nexus/content/repositories/releases/</url>
+                        <releases>
+                                <enabled>true</enabled>
+                                <updatePolicy>daily</updatePolicy>
+                                <checksumPolicy>ignore</checksumPolicy>
+                        </releases>
+                </pluginRepository>
+                <pluginRepository>
+                        <id>wso2Telco.snapshots</id>
+                        <name>WSO2Telco Snapshot Repository</name>
+                        <url>http://maven.wso2telco.com/nexus/content/repositories/snapshots/</url>
+                        <snapshots>
+                                <enabled>true</enabled>
+                                <updatePolicy>daily</updatePolicy>
+                        </snapshots>
+                        <releases>
+                                <enabled>false</enabled>
+                        </releases>
+                </pluginRepository>
+        </pluginRepositories>
 
 
 </project>
