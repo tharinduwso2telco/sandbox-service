@@ -162,18 +162,22 @@ Default value is 5000 ms
 
 
 - GET:	/tokenservice/{ownerID} 
+
 API to retrieve a valid access token of a particular owner by passing the associated owner id
   
 
 - PUT:	/tokenservice/restart/{ownerId} 
+
 This will restart the pool for a particular owner
   
 
 - PUT:	/tokenservice/refresh/{ownerId}/{tokenID} 
+
 This will enable the regeneration process of access token using the existing refresh token 
   
 
 - DELETE: /tokenservice/{ownerID}/{tokenID} 
+
 Delete token 
   
   
@@ -184,4 +188,5 @@ Delete token
 
   
 In order to retrieve Swagger definitions of this microservice, go to http://&lt;host&gt;:&lt;port&gt;/swagger?path=&lt;service_base_path&gt;.
+
 For example [http://localhost:8181/swagger?path=tokenservice](http://localhost:8181/swagger?path=tokenservice)  in default configuration.
