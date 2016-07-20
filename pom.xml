@@ -32,6 +32,11 @@
 	<prerequisites>
 		<maven>3.0.0</maven>
 	</prerequisites>
+
+	<modules>
+		<module>token-pool-service</module>
+		<module>feature/token.pool.service.feature</module>
+	</modules>
 	<scm>
 		<url>https://github.com/WSO2Telco/services-dep.git</url>
 		<developerConnection>scm:git:https://github.com/WSO2Telco/services-dep.git</developerConnection>
