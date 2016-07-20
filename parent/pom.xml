@@ -21,7 +21,7 @@
 	<groupId>com.wso2telco.services.dep</groupId>
 	<artifactId>services-dep-parent</artifactId>
 	<packaging>pom</packaging>
-	<version>1.0.00-SNAPSHOT</version>
+	<version>${com.wso2telco.dep.services.version}</version>
 	<name>WSO2Telco Core - Component</name>
 	<description>WSO2Telco Core Aggregate Pom</description>
 	<url>http://wso2telco.com</url>
@@ -31,9 +31,9 @@
 			<email>core-product-tech@wso2telco.com</email>
 		</developer>
 	</developers>
-	<!--properties>
+	<properties>
         	<com.wso2telco.dep.services.version>1.0.00-SNAPSHOT</com.wso2telco.dep.services.version>
-        </properties-->
+        </properties>
 
 	<prerequisites>
 		<maven>3.0.0</maven>
