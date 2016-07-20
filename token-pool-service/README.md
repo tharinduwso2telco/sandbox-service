@@ -1,4 +1,4 @@
-## Token Pool Service
+# Token Pool Service
 
 ##1. Introduction 
   
@@ -15,7 +15,7 @@ This service will have a pool of tokens in the hub, per GW, which has the abilit
 ##2.  Install 
   
 
-#### 2.1System Requirements
+### 2.1 System Requirements
 
 - Java SE Development Kit 1.8 
 - Apache Maven 3.0.x 
@@ -28,7 +28,7 @@ If you are installing by downloading and extracting the binary distribution (as 
   
   
 
-#### 2.2Database Setup
+### 2.2 Database Setup
 
   
 
@@ -45,7 +45,7 @@ DB can be created through running the script which in result will create schema 
   
   
 
-#### 2.3Metadata 
+### 2.3 Metadata 
 
   
 
@@ -83,13 +83,13 @@ Sample Insertion SQL:
   
   
 
-### 2.4Configuration Setup
+### 2.4 Configuration Setup
 
 Folder path:/deploy/config.yml
 
   
 
-4.1Database Configuration
+#### 4.1 Database Configuration
 
   
 
@@ -101,7 +101,7 @@ url: url for database driver, by default jdbc:mysql://localhost/token_service
 
   
 
-4.2Server Configuration
+#### 4.2 Server Configuration
 
   
 
@@ -131,7 +131,7 @@ The hostname to bind to.
 
   
 
-4.3Log configuration
+#### 4.3 Log configuration
 
   
   
@@ -210,7 +210,7 @@ Logback pattern with which events will be formatted.
 
   
 
-4.4Others:
+#### 4.4 Others:
 
   
 
@@ -260,7 +260,7 @@ Default value is 5000 ms
 
   
 
-3. Features 
+## 3. Features 
 
 API:
 
