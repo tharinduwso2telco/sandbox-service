@@ -158,10 +158,11 @@ Default value is 5000 ms
 
 ## 3. Features 
 
-### 3.1 APIs: 
+### 3.1 APIs & Testing with cURL: 
 
 
 - GET:		 http://&lt;host&gt;:&lt;port&gt;/tokenservice/{ownerID} 
+		 curl -i -H "Accept: application/json" "http://&lt;host&gt;:&lt;port&gt;/tokenservice/&lt;ownerID&gt;"
 
 API to retrieve a valid access token of a particular owner by passing the associated owner id
   
@@ -177,6 +178,7 @@ This will enable the regeneration process of access token using the existing ref
   
 
 - DELETE: 	http://&lt;host&gt;:&lt;port&gt;/tokenservice/{ownerID}/{tokenID} 
+	        curl -i -H "Accept: application/json" -X DELETE "http://&lt;host&gt;:&lt;port&gt;/tokenservice/&lt;ownerID&gt;/&lt;tokenID&gt;"
 
 Delete a particular access token of a given owner 
   
