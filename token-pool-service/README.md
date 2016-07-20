@@ -89,7 +89,7 @@ Folder path:/deploy/config.yml
 
   
 
-#### 4.1 Database Configuration
+#### 2.4.1 Database Configuration
 
   
 
@@ -101,7 +101,7 @@ url: url for database driver, by default jdbc:mysql://localhost/token_service
 
   
 
-#### 4.2 Server Configuration
+#### 2.4.2 Server Configuration
 
   
 
@@ -131,7 +131,7 @@ The hostname to bind to.
 
   
 
-#### 4.3 Log configuration
+#### 2.4.3 Log configuration
 
   
   
@@ -210,7 +210,7 @@ Logback pattern with which events will be formatted.
 
   
 
-#### 4.4 Others:
+#### 2.4.4 Others:
 
   
 
