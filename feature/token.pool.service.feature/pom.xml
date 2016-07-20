@@ -6,7 +6,7 @@
                 <groupId>com.wso2telco.services.dep</groupId>
                 <artifactId>services-dep-parent</artifactId>
                 <version>${com.wso2telco.dep.services.version}</version>
-                <relativePath>../../parent/pom.xml</relativePath>
+                <relativePath>../../pom.xml</relativePath>
         </parent>
   
 
