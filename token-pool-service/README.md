@@ -161,24 +161,24 @@ Default value is 5000 ms
 ### 3.1 APIs: 
 
 
-- GET:	/tokenservice/{ownerID} 
+- GET:		/tokenservice/{ownerID} 
 
 API to retrieve a valid access token of a particular owner by passing the associated owner id
   
 
-- PUT:	/tokenservice/restart/{ownerId} 
+- PUT:		/tokenservice/restart/{ownerId} 
 
 This will restart the pool for a particular owner
   
 
-- PUT:	/tokenservice/refresh/{ownerId}/{tokenID} 
+- PUT:		/tokenservice/refresh/{ownerId}/{tokenID} 
 
-This will enable the regeneration process of access token using the existing refresh token 
+This will enable the regeneration process of access token using the existing refresh token for a given owner
   
 
-- DELETE: /tokenservice/{ownerID}/{tokenID} 
+- DELETE: 	/tokenservice/{ownerID}/{tokenID} 
 
-Delete token 
+Delete a particular access token of a given owner 
   
   
 
