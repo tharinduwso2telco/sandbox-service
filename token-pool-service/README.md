@@ -158,7 +158,30 @@ Default value is 5000 ms
 
 ## 3. Features 
 
-API: 
+### 3.1 APIs: 
 
-Swagger:
-Can be accessed via [http://localhost:8181/swagger](http://localhost:8181/swagger) in default configuration.
+
+- GET:	/tokenservice/{ownerID} 
+API to retrieve a valid access token of a particular owner by passing the associated owner id
+  
+
+- PUT:	/tokenservice/restart/{ownerId} 
+This will restart the pool for a particular owner
+  
+
+- PUT:	/tokenservice/refresh/{ownerId}/{tokenID} 
+This will enable the regeneration process of access token using the existing refresh token 
+  
+
+- DELETE: /tokenservice/{ownerID}/{tokenID} 
+Delete token 
+  
+  
+
+### 3.2 Swagger Annotations:  
+
+[Swagger](http://swagger.io/getting-started/) is a standard, language-agnostic interface to REST APIs which allows both humans and computers to discover and understand the capabilities of the service without access to source code, documentation, or through network traffic inspection.
+
+  
+In order to retrieve Swagger definitions of this microservice, go to http://&lt;host&gt;:&lt;port&gt;/swagger?path=&lt;service_base_path&gt;.
+For example [http://localhost:8181/swagger?path=tokenservice](http://localhost:8181/swagger?path=tokenservice)  in default configuration.
