@@ -1,6 +1,6 @@
 ## Token Pool Service
 
-1. Introduction 
+##1. Introduction 
   
 
 The current Token Regeneration process between two OAuth2 secured entities (Hub-GW, Hub-Hub, etc.) is maintained by the two entities exchanging access tokens and the tokens being refreshed at predefined intervals where the regeneration is done only at the instance of failure. This leads to the unavailability window during the time it takes to refresh on failure. So this Token Pool Service is designed to overcome the above described scenario.
@@ -12,7 +12,7 @@ This service will have a pool of tokens in the hub, per GW, which has the abilit
   
   
 
-2.  Install 
+##2.  Install 
   
 
 #### 2.1System Requirements
