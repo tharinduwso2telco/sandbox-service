@@ -18,7 +18,7 @@ To build the product from the source distribution both JDK and Apache Maven are 
 If you are installing by downloading and extracting the binary distribution (as recommended for most users) instead of building from the source code, you do not need to install Maven.
  
 
-## 3.  Install 
+## 3. Install 
   
 
 ### 2.1 Database Setup
@@ -151,7 +151,7 @@ Used only in slave mode
 The lead time to trigger Token refresh process  before its default validity period expires
 Default value is 5000 ms 
 
-## 4.Build the Service
+## 4. Build the Service
 
 Run the following Maven command. This will create the fat jar token-pool-service-1.0.0-SNAPSHOT.jar in the target directory.
 
@@ -159,7 +159,7 @@ mvn clean install
 
 This fat jar is a jar file that contains token pool microservice as well as all its dependencies.
 
-## 5.Run the Service
+## 5. Run the Service
 
 In order to get the service up and running, execute the following command.
 
