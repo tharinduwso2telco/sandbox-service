@@ -179,7 +179,7 @@ java -jar target/token-pool-service-1.0.0-SNAPSHOT.jar server deploy/config.yml
 http://&lt;host&gt;:&lt;port&gt;/tokenservice/{ownerID}  
 
 ```
-curl -i -H "Accept: application/json" "http://&lt;host&gt;:&lt;port&gt;/tokenservice/&lt;ownerID&gt;"
+curl -i -H "Accept: application/json" "http://<host>:<port>/tokenservice/<ownerID>"
 ```
 
 API to retrieve a valid access token of a particular owner by passing the associated owner id
@@ -190,7 +190,7 @@ API to retrieve a valid access token of a particular owner by passing the associ
 http://&lt;host&gt;:&lt;port&gt;/tokenservice/restart/{ownerId} 
 
 ```
-curl -X PUT "http://&lt;host&gt;:&lt;port&gt;/tokenservice/restart/&lt;ownerID&gt;"
+curl -X PUT "http://<host>:<port>/tokenservice/restart/<ownerId>"
 ```
 
 This will restart the pool for a particular owner
@@ -201,7 +201,7 @@ This will restart the pool for a particular owner
 http://&lt;host&gt;:&lt;port&gt;/tokenservice/refresh/{ownerId}/{tokenID} 
 
 ```
-curl -X PUT "http://&lt;host&gt;:&lt;port&gt;/tokenservice/refresh/&lt;ownerId&gt;/&lt;tokenID&gt;"
+curl -X PUT "http://<host>:<port>/tokenservice/refresh/<ownerId>/<tokenID>"
 ```
 
 This will enable the regeneration process of access token using the existing refresh token for a given owner
@@ -212,7 +212,7 @@ This will enable the regeneration process of access token using the existing ref
 http://&lt;host&gt;:&lt;port&gt;/tokenservice/{ownerID}/{tokenID} 
 
 ```
-curl -i -H "Accept: application/json" -X DELETE "http://&lt;host&gt;:&lt;port&gt;/tokenservice/&lt;ownerID&gt;/&lt;tokenID&gt;"
+curl -i -H "Accept: application/json" -X DELETE "http://<host>:<port>/tokenservice/<ownerID>/<tokenID>"
 ```
 
 Delete a particular access token of a given owner 
