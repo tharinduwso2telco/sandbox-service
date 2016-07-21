@@ -5,7 +5,7 @@
   <parent>
                 <groupId>com.wso2telco.services.dep</groupId>
                 <artifactId>services-dep-parent</artifactId>
-                <version>${com.wso2telco.dep.services.version}</version>
+                <version>1.0.0-SNAPSHOT</version>
                 <relativePath>../../pom.xml</relativePath>
         </parent>
   
@@ -13,8 +13,8 @@
   <artifactId>token-pool-service-feature</artifactId>
 
   <packaging>pom</packaging>
-  <name>token-pool-service</name>
-  <description>token pool service</description>
+  <name>token-pool-service-feature</name>
+  <description>token pool service feature</description>
   <properties>
     <CApp.type>jaggery/app</CApp.type>
   </properties>
