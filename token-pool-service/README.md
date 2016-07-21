@@ -97,33 +97,33 @@ com.wso2telco for DEBUG
 Locations to where the logging messages should be displayed or written
 
 -- type:
-Console / File
+	Console / File
 
-- Threshold: 
-The lowest level of events to print to the console/ write to the file.
+-- threshold: 
+	The lowest level of events to print to the console/ write to the file.
 
 -- timeZone: 
 The time zone to which event timestamps will be converted.
  
--- Target: 
-The name of the standard stream to which events will be written.
-Can be stdout or stderr. 
+-- target: 
+	The name of the standard stream to which events will be written.
+	Can be stdout or stderr. 
 
 -- currentLogFilename: 
-The filename where current events are logged.
+T	he filename where current events are logged.
 
 -- archive: 
-Whether or not to archive old events in separate files.
+	Whether or not to archive old events in separate files.
   
 -- archivedLogFilenamePattern: 
-Required if archive is true.The filename pattern for archived files.%d is replaced with the date in yyyy-MM-dd format, and the fact that it ends with.gz indicates the file will be gzipped as it’s archived.Likewise, filename patterns which end in .zip will be filled as they are archived.
+  	 Required if archive is true.The filename pattern for archived files.%d is replaced with the date in yyyy-MM-dd format, and the fact that it ends 		 with.gz indicates the file will be gzipped as it’s archived.Likewise, filename patterns which end in .zip will be filled as they are archived.
 
 -- archivedFileCount: 
-The number of archived files to keep.
-Must be between 1 and 50. 
+	The number of archived files to keep.
+	Must be between 1 and 50. 
 
 -- logFormat: 
-Logback pattern with which events will be formatted.  
+	Logback pattern with which events will be formatted.  
 
 
 #### 2.3.4 Others:
