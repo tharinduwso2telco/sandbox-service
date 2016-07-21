@@ -7,22 +7,21 @@ The current Token Regeneration process between two OAuth2 secured entities (Hub-
 
 This service will have a pool of tokens in the hub, per GW, which has the ability for continuous monitoring of token pool to refresh any token that has an expiration time closer to or above the token refresh interval.
 
-  
 
-## 2.  Install 
-  
-
-### 2.1 System Requirements
+## 2. System Requirements
 
 - Java SE Development Kit 1.8 
 - Apache Maven 3.0.x 
 
 To build the product from the source distribution both JDK and Apache Maven are required. 
 
-If you are installing by downloading and extracting the binary distribution (as recommended for most users) instead of building from the source code, you do not need to install Maven.
+No need to install Maven if you install by downloading and extracting the binary distribution (as recommended for most users) instead of building from the source code.
+ 
 
+## 3. Install 
+  
 
-### 2.2 Database Setup
+### 2.1 Database Setup
  
 
 MySQL Server’s time zone setting should be set to UTC time zone as ‘+00:00'
@@ -33,7 +32,7 @@ DB can be created through running the script which in result will create schema 
 
 
 
-### 2.3 Metadata  
+### 2.2 Metadata  
 
 DB consists mainly of owner and token details with event tracking. The description for each attribute can be found at  /design/ERD_doc.pdf
 
@@ -47,23 +46,23 @@ There should be at least one record in ‘tsxwho’ table in order to start this
 
 Sample Insertion SQL:
 
+```
 “ INSERT INTO `tsxwho` (`ownerid`, `tokenurl`, `defaultconnectionresettime`, `isvalid`) VALUES ('owner2', 'https://localhost:8243/token', '4000', 1);”
-  
+``` 
 
-### 2.4 Configuration Setup
+### 2.3 Configuration Setup
 
-Folder path:/deploy/config.yml
+Folder path:	/deploy/config.yml
+ 
 
-  
-
-#### 2.4.1 Database Configuration 
+#### 2.3.1 Database Configuration 
 
 user: database username
 password: database password
 url: url for database driver, by default jdbc:mysql://localhost/token_service
  
 
-#### 2.4.2 Server Configuration
+#### 2.3.2 Server Configuration
 
 
 - applicationConnectors: 
@@ -80,58 +79,54 @@ Built-in default is an HTTP connector listening on port 8181, override if needed
 The hostname to bind to.
  
 
-#### 2.4.3 Log configuration
-
-  
+#### 2.3.3 Log configuration  
   
 
-Level:
+- Level:
 
-Logback logging level. ‘INFO’ Designates informational messages that highlight the progress of the application at coarse-grained level.
+Logback logging level. ‘INFO’ Designates informational messages that highlight the progress of the application at coarse-grained level. 
 
-  
-
-Loggers:
+- Loggers:
 
 io.dropwizard for INFO
 
 com.wso2telco for DEBUG
 
-Appenders:
+- Appenders:
 
 Locations to where the logging messages should be displayed or written
 
-- type:
+-- type:
 Console / File
 
-- Threshold: 
+-- threshold: 
 The lowest level of events to print to the console/ write to the file.
 
-- timeZone: 
+-- timeZone: 
 The time zone to which event timestamps will be converted.
  
-- Target: 
+-- target: 
 The name of the standard stream to which events will be written.
 Can be stdout or stderr. 
 
-- currentLogFilename: 
+-- currentLogFilename: 
 The filename where current events are logged.
 
-- archive: 
+-- archive: 
 Whether or not to archive old events in separate files.
   
-- archivedLogFilenamePattern: 
+-- archivedLogFilenamePattern: 
 Required if archive is true.The filename pattern for archived files.%d is replaced with the date in yyyy-MM-dd format, and the fact that it ends with.gz indicates the file will be gzipped as it’s archived.Likewise, filename patterns which end in .zip will be filled as they are archived.
 
-- archivedFileCount: 
+-- archivedFileCount: 
 The number of archived files to keep.
 Must be between 1 and 50. 
 
-- logFormat: 
+-- logFormat: 
 Logback pattern with which events will be formatted.  
 
 
-#### 2.4.4 Others:
+#### 2.3.4 Others:
   
 - waitingTimeForToken: 
 Maximum waiting time to obtain a token from the pool in milliseconds.
@@ -156,9 +151,79 @@ Used only in slave mode
 The lead time to trigger Token refresh process  before its default validity period expires
 Default value is 5000 ms 
 
-## 3. Features 
+## 4. Build the Service
 
-API: 
+Run the following Maven command. This will create the fat jar token-pool-service-1.0.0-SNAPSHOT.jar in the target directory.
 
-Swagger:
-Can be accessed via [http://localhost:8181/swagger](http://localhost:8181/swagger) in default configuration.
+```
+mvn clean install
+```
+
+This fat jar is a jar file that contains token pool microservice as well as all its dependencies.
+
+## 5. Run the Service
+
+In order to get the service up and running, execute the following command.
+
+```
+java -jar target/token-pool-service-1.0.0-SNAPSHOT.jar server deploy/config.yml
+```
+
+## 6. Features 
+
+### 6.1 APIs with cURL Testing: 
+
+
+- GET:
+
+http://&lt;host&gt;:&lt;port&gt;/tokenservice/{ownerID}  
+
+```
+curl -i -H "Accept: application/json" "http://<host>:<port>/tokenservice/<ownerID>"
+```
+
+API to retrieve a valid access token of a particular owner by passing the associated owner id
+  
+
+- PUT:	
+
+http://&lt;host&gt;:&lt;port&gt;/tokenservice/restart/{ownerId} 
+
+```
+curl -X PUT "http://<host>:<port>/tokenservice/restart/<ownerId>"
+```
+
+This will restart the pool for a particular owner
+  
+
+- PUT:	
+
+http://&lt;host&gt;:&lt;port&gt;/tokenservice/refresh/{ownerId}/{tokenID} 
+
+```
+curl -X PUT "http://<host>:<port>/tokenservice/refresh/<ownerId>/<tokenID>"
+```
+
+This will enable the regeneration process of access token using the existing refresh token for a given owner
+  
+
+- DELETE: 
+
+http://&lt;host&gt;:&lt;port&gt;/tokenservice/{ownerID}/{tokenID} 
+
+```
+curl -i -H "Accept: application/json" -X DELETE "http://<host>:<port>/tokenservice/<ownerID>/<tokenID>"
+```
+
+Delete a particular access token of a given owner 
+  
+  
+
+### 6.2 Swagger Annotations:  
+
+[Swagger](http://swagger.io/getting-started/) is a standard, language-agnostic interface to REST APIs which allows both humans and computers to discover and understand the capabilities of the service without access to source code, documentation, or through network traffic inspection.
+
+  
+In order to retrieve Swagger definitions of this microservice, go to http://&lt;host&gt;:&lt;port&gt;/swagger?path=&lt;service_base_path&gt;.
+
+For example [http://localhost:8181/swagger?path=tokenservice](http://localhost:8181/swagger?path=tokenservice)  in default configuration.
