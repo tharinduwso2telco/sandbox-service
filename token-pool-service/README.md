@@ -15,7 +15,7 @@ This service will have a pool of tokens in the hub, per GW, which has the abilit
 
 To build the product from the source distribution both JDK and Apache Maven are required. 
 
-If you are installing by downloading and extracting the binary distribution (as recommended for most users) instead of building from the source code, you do not need to install Maven.
+No need to install Maven if you install by downloading and extracting the binary distribution (as recommended for most users) instead of building from the source code.
  
 
 ## 3. Install 
@@ -52,9 +52,8 @@ Sample Insertion SQL:
 
 ### 2.3 Configuration Setup
 
-Folder path:/deploy/config.yml
-
-  
+Folder path:	/deploy/config.yml
+ 
 
 #### 2.3.1 Database Configuration 
 
@@ -83,47 +82,47 @@ The hostname to bind to.
 #### 2.3.3 Log configuration  
   
 
-Level:
+- Level:
 
 Logback logging level. ‘INFO’ Designates informational messages that highlight the progress of the application at coarse-grained level. 
 
-Loggers:
+- Loggers:
 
 io.dropwizard for INFO
 
 com.wso2telco for DEBUG
 
-Appenders:
+- Appenders:
 
 Locations to where the logging messages should be displayed or written
 
-- type:
+-- type:
 Console / File
 
 - Threshold: 
 The lowest level of events to print to the console/ write to the file.
 
-- timeZone: 
+-- timeZone: 
 The time zone to which event timestamps will be converted.
  
-- Target: 
+-- Target: 
 The name of the standard stream to which events will be written.
 Can be stdout or stderr. 
 
-- currentLogFilename: 
+-- currentLogFilename: 
 The filename where current events are logged.
 
-- archive: 
+-- archive: 
 Whether or not to archive old events in separate files.
   
-- archivedLogFilenamePattern: 
+-- archivedLogFilenamePattern: 
 Required if archive is true.The filename pattern for archived files.%d is replaced with the date in yyyy-MM-dd format, and the fact that it ends with.gz indicates the file will be gzipped as it’s archived.Likewise, filename patterns which end in .zip will be filled as they are archived.
 
-- archivedFileCount: 
+-- archivedFileCount: 
 The number of archived files to keep.
 Must be between 1 and 50. 
 
-- logFormat: 
+-- logFormat: 
 Logback pattern with which events will be formatted.  
 
 
