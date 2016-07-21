@@ -41,7 +41,7 @@
 		<url>https://github.com/WSO2Telco/services-dep.git</url>
 		<developerConnection>scm:git:https://github.com/WSO2Telco/services-dep.git</developerConnection>
 		<connection>scm:git:https://github.com/WSO2Telco/services-dep.git</connection>
-		<tag>HEAD</tag>
+		<tag>v1_0_0-rc1</tag>
 	</scm>
 	<repositories>
 		<repository>
