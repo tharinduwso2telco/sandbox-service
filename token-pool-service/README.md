@@ -155,7 +155,9 @@ Default value is 5000 ms
 
 Run the following Maven command. This will create the fat jar token-pool-service-1.0.0-SNAPSHOT.jar in the target directory.
 
+```
 mvn clean install
+```
 
 This fat jar is a jar file that contains token pool microservice as well as all its dependencies.
 
@@ -163,8 +165,9 @@ This fat jar is a jar file that contains token pool microservice as well as all 
 
 In order to get the service up and running, execute the following command.
 
+```
 java -jar target/token-pool-service-1.0.0-SNAPSHOT.jar server deploy/config.yml
-
+```
 
 ## 6. Features 
 
