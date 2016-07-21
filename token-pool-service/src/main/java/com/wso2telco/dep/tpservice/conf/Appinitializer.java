@@ -74,7 +74,7 @@ public class Appinitializer extends Application<ConfigDTO> {
 		try {
 			new Appinitializer().run(args);
 		} catch (TokenException e) {
-			System.out.println(	"Unable to start the server " + e.getErrorType().getCode() + " :" + e.getErrorType().getMessage());
+			System.out.println(	"Unable to start the server " + e.getErrorType().getCode() + " TokenManager.java:" + e.getErrorType().getMessage());
 		} catch (Exception e) {
 			System.out.println("Unable to start the server " + e.getMessage());
 		}

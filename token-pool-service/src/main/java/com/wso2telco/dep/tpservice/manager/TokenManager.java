@@ -36,11 +36,11 @@ import com.wso2telco.dep.tpservice.util.exception.TokenException;
 public class TokenManager {
 
 	private static Logger log = LoggerFactory.getLogger(TokenManager.class);
-
 	/**
 	 * Get all valid tokens for given owner id
-	 * @return ArrayList of TokenDTO
-	 * @throws Exception, return when an error is occurred.
+	 * @param ownerId this could be either operator or hub depending on installation
+	 * @return list of type TokenDTO
+	 * @throws BusinessException invalid owner id thrown if the given owner is empty/null
 	 */
 	public List<TokenDTO> getAllTokensForOwner(String ownerId) throws BusinessException {
 		List<TokenDTO> tokenList = null;
@@ -59,9 +59,10 @@ public class TokenManager {
 	}
 	
 	/**
-	 * Get all valid tokens for given owner id JSON
-	 * @return JSONObject {"tokens":[]}
-	 * @throws Exception, return when an error is occurred.
+	 * 
+	 * @param ownerId  this could be either operator or hub depending on installation
+	 * @return jsonobject containing json array of tokens
+	 * @throws BusinessException invalid owner id thrown if the given owner is empty/null
 	 */
 	public JSONObject getAllTokensForOwnerJSON(String ownerId) throws BusinessException {
 		ArrayList<TokenDTO> tokenList = null;
@@ -88,7 +89,11 @@ public class TokenManager {
 		}
 		return result;
 	}
-	
+	/**
+	 * invalidate and persists given token 
+	 * @param tokenDto token going to invalidate
+	 * @throws TokenException the token is validate and throw TokenException
+	 */
 	public void invalidate(final TokenDTO tokenDto)throws TokenException {
 		
 		log.debug("InValidating the token " +tokenDto );
@@ -104,7 +109,12 @@ public class TokenManager {
 		}
 		
 	}
-	
+	/**
+	 * persists the given token for owner
+	 * @param whoDTO owner of the token
+	 * @param tokenDto new token going to saved
+	 * @throws TokenException validation exception thrown if token/owner is invalid
+	 */
 	public void saveToken(final WhoDTO whoDTO, final TokenDTO tokenDto ) throws TokenException {
 
 		log.debug("save the token for " + whoDTO + " with token " + tokenDto);

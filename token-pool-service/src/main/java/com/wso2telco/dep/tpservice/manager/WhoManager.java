@@ -18,7 +18,6 @@ package com.wso2telco.dep.tpservice.manager;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import org.json.JSONArray;
@@ -34,7 +33,6 @@ import com.wso2telco.dep.tpservice.model.WhoDTO;
 import com.wso2telco.dep.tpservice.util.exception.BusinessException;
 import com.wso2telco.dep.tpservice.util.exception.GenaralError;
 import com.wso2telco.dep.tpservice.util.exception.TokenException;
-import com.wso2telco.dep.tpservice.util.exception.TokenException.TokenError;
 
 public class WhoManager {
 
@@ -42,10 +40,8 @@ public class WhoManager {
 
 	/**
 	 * Get All Owners
-	 * 
-	 * @return ArrayList of WhoDTO
-	 * @throws Exception,
-	 *             return when an error is occurred.
+	 * @return list of owners as whodto
+	 * @throws TokenException INTERNAL_SERVER_ERROR server error thrown  
 	 */
 	public List<WhoDTO> getAllOwners() throws TokenException {
 		List<WhoDTO> ownersList = null;
@@ -59,13 +55,6 @@ public class WhoManager {
 		return ownersList;
 	}
 
-	/**
-	 * Get All Owners JSON
-	 * 
-	 * @return JSONObject {"owners":[]}
-	 * @throws Exception,
-	 *             return when an error is occurred.
-	 */
 	public JSONObject getAllOwnersJSON() throws BusinessException {
 		ArrayList<WhoDTO> ownersList = null;
 		JSONObject result = new JSONObject();
@@ -87,7 +76,12 @@ public class WhoManager {
 		}
 		return result;
 	}
-
+	/**
+	 * load all the token for given owner
+	 * @param ownerID for filter
+	 * @return list of token dtos
+	 * @throws TokenException INTERNAL_SERVER_ERROR thrown if unable to load all tokens
+	 */ 
 	public List<TokenDTO> loadTokens(final String ownerID) throws TokenException {
 		
 		List<TokenDTO> response;
@@ -97,7 +91,7 @@ public class WhoManager {
 			response = tokenLoad.getAllTokensForOwner(ownerID);
 		} catch (SQLException e) {
 			log.error("WhoManager","loadTokens()",e.getMessage());
-			throw new TokenException(TokenError.TOKENPOOL_EMPTY);
+			throw new TokenException(GenaralError.INTERNAL_SERVER_ERROR);
 		}
 		
 	    return response;
@@ -105,11 +99,10 @@ public class WhoManager {
 	}
 
 	/**
-	 * 
-	 * @param ownerid
-	 * @return whoDTO object
+	 * load owner dto for given ownerid
+	 * @param ownerid to be filtered
+	 * @return valid owner DTO
 	 */
-	
 	public WhoDTO getOwner(String ownerid){
 			
 		// get owner details

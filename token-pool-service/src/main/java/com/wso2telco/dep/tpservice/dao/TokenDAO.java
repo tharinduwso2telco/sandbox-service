@@ -38,11 +38,7 @@ public class TokenDAO {
 
 	private static Logger log = LoggerFactory.getLogger(TokenDAO.class);
 
-	/**
-	 * Get all valid tokens for given owner id
-	 * @return ArrayList of TokenDTO
-	 * @throws Exception, return when an error is occurred.
-	 */
+
 	public ArrayList<TokenDTO> getAllTokensForOwner(String ownerId) throws SQLException {
 		if (Validator.isInvalidString(ownerId)) {
 			log.debug("ownerId cannot be null or empty");
@@ -78,11 +74,7 @@ public class TokenDAO {
 		return tokenList;
 	}
 
-	/**
-	 * Get TokenDTO object from results map
-	 * @return TokenDTO object
-	 * @throws Exception, return when an error is occurred.
-	 */
+ 
 	private TokenDTO getTokenDTOFromResultsMap(Map<String, Object> resultsMap) throws SQLException {
 		TokenDTO tokenDTO = null;
 		if (resultsMap != null) {
@@ -111,12 +103,7 @@ public class TokenDAO {
 		} //end if (resultsMap != null)
 		return tokenDTO;
 	}
-	
-	/**
-	 * 
-	 * @param ID
-	 * @return TokenDto 
-	 */
+
 	private TokenDTO getTokenDetails(int ID) {
 		TokenDTO returnTokenDto = null;
 		DBI dbi = JDBIUtil.getInstance();

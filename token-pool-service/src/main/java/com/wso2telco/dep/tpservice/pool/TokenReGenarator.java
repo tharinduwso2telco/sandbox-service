@@ -81,16 +81,6 @@ public class TokenReGenarator {
 		}
 	}
 
-	/*
-	 * static { javax.net.ssl.HttpsURLConnection.setDefaultHostnameVerifier( new
-	 * javax.net.ssl.HostnameVerifier(){
-	 * 
-	 * public boolean verify(String hostname, javax.net.ssl.SSLSession
-	 * sslSession) { return true;
-	 * 
-	 * } }); }
-	 */
-
 	private static Logger log = LoggerFactory.getLogger(TokenReGenarator.class);
 
 	// regenerate new access token process
@@ -146,14 +136,6 @@ public class TokenReGenarator {
 
 	}
 
-	/**
-	 * 
-	 * @param tokenurl
-	 * @param urlParameters
-	 * @param authheader
-	 * @return
-	 * @throws BusinessException
-	 */
 	protected String makeTokenrequest(String tokenurl, String urlParameters, String authheader) throws TokenException {
 		StringBuffer retStr = new StringBuffer();
 		HttpsURLConnection connection = null;

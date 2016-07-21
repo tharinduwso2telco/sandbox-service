@@ -37,11 +37,7 @@ public class SessionHolder {
 	private  TokenDTO tokenDTO;
 	
 	
-	/**
-	 * cache map is initialized with expiry time defined at the tpxwho . 
-	 * @param ownerID
-	 * @param sesionExpioryTime
-	 */
+ 
 	private SessionHolder(final  WhoDTO whoDTO ,final TokenDTO tokenDTO){
 		log.debug("New token Session created for :"+whoDTO);
 		this.whoDTO =whoDTO;
@@ -52,12 +48,8 @@ public class SessionHolder {
 				.expireAfterWrite(whoDTO.getDefaultConnectionRestTime(), TimeUnit.MILLISECONDS)
 				.build();*/
 	}
-	/**
-	 * token owner id and the default session expire time is mandatory to create session instance
-	 * @param whoDTO
-	 * @return
-	 * @throws TokenException
-	 */
+	
+	//token owner id and the default session expire time is mandatory to create session instance
 	public static SessionHolder createInstance(final WhoDTO whoDTO,final TokenDTO tokenDTO) throws TokenException{
 		if(whoDTO==null||whoDTO.getOwnerId()== null){
 			throw new TokenException(TokenException.TokenError.NO_VALID_WHO);
@@ -70,11 +62,9 @@ public class SessionHolder {
 	}
 	
 	
-	/**
-	 * keep a token usage entry 
-	 * once the session added to the session pool it will remove from the session 
-	 * @param tokenId
-	 */
+	
+	// keep a token usage entry 
+	// once the session added to the session pool it will remove from the session 
 	public synchronized void  acquireSession(){
 		log.debug(" acquire new Session "+tokenDTO.getId());
 		
@@ -106,7 +96,7 @@ public class SessionHolder {
 	
 		
 	}
-	
+	//check the given token in use or not
 	public boolean isInUse()throws TokenException{
 		log.debug("check for usability of :"+tokenDTO);
 		boolean isInuse =true;

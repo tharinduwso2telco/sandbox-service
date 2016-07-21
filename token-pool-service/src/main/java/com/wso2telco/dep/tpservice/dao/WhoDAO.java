@@ -27,21 +27,16 @@ import org.skife.jdbi.v2.Handle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.wso2telco.dep.tpservice.util.Constants;
+import com.wso2telco.dep.tpservice.model.WhoDTO;
 import com.wso2telco.dep.tpservice.util.Constants.Tables;
 import com.wso2telco.dep.tpservice.util.exception.TokenException;
 import com.wso2telco.dep.tpservice.util.exception.TokenException.TokenError;
-import com.wso2telco.dep.tpservice.model.WhoDTO;
 
 public class WhoDAO {
 
 	private static Logger log = LoggerFactory.getLogger(WhoDAO.class);
 
-	/**
-	 * Get All Owners
-	 * @return ArrayList of WhoDTO
-	 * @throws Exception, return when an error is occurred.
-	 */
+	 
 	public ArrayList<WhoDTO> getAllOwners() throws SQLException {
 		ArrayList<WhoDTO> ownersList = new ArrayList<WhoDTO>();
 		DBI dbi = JDBIUtil.getInstance();
@@ -68,11 +63,6 @@ public class WhoDAO {
 		return ownersList;
 	}
 
-	/**
-	 * Get WhoDTO object from results map
-	 * @return WhoDTO object
-	 * @throws Exception, return when an error is occurred.
-	 */
 	private WhoDTO getWhoDTOFromResultsMap(Map<String, Object> resultsMap) {
 		WhoDTO whoDTO = null;
 		if (resultsMap != null) {
