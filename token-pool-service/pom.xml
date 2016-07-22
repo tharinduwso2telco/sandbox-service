@@ -11,7 +11,7 @@
 	<parent>
 		<groupId>com.wso2telco.services.dep</groupId>
 	        <artifactId>services-dep-parent</artifactId>
-       		<version>1.0.0-RC2</version>
+       		<version>1.0.0-SNAPSHOT</version>
  		<relativePath>../pom.xml</relativePath>
    	</parent>
 	<artifactId>token-pool-service</artifactId>
