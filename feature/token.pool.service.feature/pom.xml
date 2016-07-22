@@ -13,7 +13,7 @@
   <artifactId>token-pool-service-feature</artifactId>
 
   <packaging>pom</packaging>
-  <name>token-pool-service-feature</name>
+  <name>token-pool-service-bin</name>
   <description>token pool service feature</description>
   <properties>
     <CApp.type>jaggery/app</CApp.type>
