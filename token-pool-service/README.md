@@ -12,6 +12,7 @@ This service will have a pool of tokens in the hub, per GW, which has the abilit
 
 - Java SE Development Kit 1.8 
 - Apache Maven 3.0.x 
+- MySQL (5.6.5+)
 
 To build the product from the source distribution both JDK and Apache Maven are required. 
 
