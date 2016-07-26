@@ -48,7 +48,7 @@ class OwnerController implements OwnerControllable  {
 //	private TokenPoolImplimentable poolImpl;
 	private ConfigReader configReader;
 	private WhoDTO whoDTO;
-	private Map<String,TokenControllable> poolImplList;
+	private List<TokenControllable> poolImplList;
 	private ConfigDTO configDTO;
 	
 	
@@ -64,7 +64,7 @@ class OwnerController implements OwnerControllable  {
 			protected TokenDTO waitUntilPoolfill(int waitattempt) throws TokenException {
 				log.debug("Calling waitUntilPoolfill " + whoDTO + " retry attempt :" + waitattempt);
 
-				for (TokenControllable controller : poolImplList.values()) {
+				for (TokenControllable controller : poolImplList ) {
 					TokenDTO token = controller.getToken();
 					//only valid and not expired token are allow to release
 					if (token.isValid() && !token.isExpired()) {
@@ -123,7 +123,7 @@ class OwnerController implements OwnerControllable  {
 		this.configReader = ConfigReader.getInstance();
 		this.adminService = new WhoManager();
 		this.configDTO = configReader.getConfigDTO();
-		this.poolImplList = new HashMap<String,TokenControllable>();
+		this.poolImplList = new ArrayList<TokenControllable>();
 		this.whoDTO = whoDTO;
 		 
 	}
@@ -150,7 +150,7 @@ class OwnerController implements OwnerControllable  {
 			log.debug("Initialize the token ");
 			TokenControllable poolImpl = createImplimenter(tokenDTO);
 			poolImpl.init();
-			this.poolImplList.put(tokenDTO.getAccessToken(),poolImpl);
+			this.poolImplList.add( poolImpl);
 			
 		}
 	}
@@ -169,10 +169,11 @@ class OwnerController implements OwnerControllable  {
 			throw new TokenException( TokenException.TokenError.INVALID_OPARATION);
 		}
 		
-		this.whoDTO =whoDTO;
+		this.whoDTO.setDefaultConnectionRestTime( whoDTO.getDefaultConnectionRestTime());
+		this.whoDTO.setTokenUrl(whoDTO.getTokenUrl());
 		
 		//Stop the existing token controllers
-		for (TokenControllable tokenPoolImplimentable : poolImplList.values()) {
+		for (TokenControllable tokenPoolImplimentable : poolImplList) {
 			tokenPoolImplimentable.stop();
 		}
 		//Clear old token controllers
@@ -183,7 +184,7 @@ class OwnerController implements OwnerControllable  {
 			log.debug("reStart the token ");
 			TokenControllable poolImpl = createImplimenter(tokenDTO);
 			poolImpl.init();
-			this.poolImplList.put(tokenDTO.getAccessToken(),poolImpl);
+			this.poolImplList.add( poolImpl);
 		}
 	}
 
@@ -193,11 +194,20 @@ class OwnerController implements OwnerControllable  {
 			log.debug(" getTokenController triggerd :"+accessToken);
 			throw new  TokenException(TokenException.TokenError.NO_TOKEN_POOL_IMLIMENTATION); 
 		}
+		TokenControllable returnVal =null;
 		
-		if(poolImplList.containsKey(accessToken.trim())){
-			return poolImplList.get(accessToken.trim());
-		}else{
+		for (TokenControllable controller : poolImplList ) {
+			if(controller.getToken().getAccessToken().equalsIgnoreCase(accessToken.trim())){
+				returnVal =controller;
+				break;
+			}
+		}
+		
+		if(returnVal ==null){
 			throw new TokenException(TokenException.TokenError.INVALID_TOKEN);
+		}else{
+			
+			return returnVal;
 		}
 	}
 	

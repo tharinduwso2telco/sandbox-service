@@ -24,10 +24,12 @@ import java.util.Map;
 
 import org.skife.jdbi.v2.DBI;
 import org.skife.jdbi.v2.Handle;
+import org.skife.jdbi.v2.Query;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.wso2telco.dep.tpservice.model.TokenDTO;
+import com.wso2telco.dep.tpservice.model.TokenSearchDTO;
 import com.wso2telco.dep.tpservice.model.WhoDTO;
 import com.wso2telco.dep.tpservice.util.Constants.Tables;
 import com.wso2telco.dep.tpservice.util.Validator;
@@ -44,23 +46,31 @@ public class TokenDAO {
 			log.debug("ownerId cannot be null or empty");
 			throw new IllegalArgumentException("ownerId cannot be null or empty");
 		}
+		return (ArrayList<TokenDTO>) loadTokenDTOs(ownerId,null);
+	}
+
+	private List<TokenDTO> loadTokenDTOs(final String ownerId, final String parentToken) throws SQLException {
 		ArrayList<TokenDTO> tokenList = new ArrayList<TokenDTO>();
 		DBI dbi = JDBIUtil.getInstance();
 		Handle h = dbi.open();
 		try {
-			StringBuilder sb = new StringBuilder();			
+			StringBuilder sb = new StringBuilder();
 			sb.append("SELECT T.* ");
 			sb.append("FROM ").append(Tables.TABLE_TSTTOKEN.toString()).append(" T ");
 			sb.append("INNER JOIN ").append(Tables.TABLE_TSXWHO.toString()).append(" W ");
 			sb.append("ON T.tsxwhodid = W.tsxwhodid ");
 			sb.append("WHERE W.ownerid = :ownerId ");
 			sb.append("AND T.isvalid = :valid ");
-	
-			List<Map<String, Object>> resultSet = h.createQuery(sb.toString())
-					.bind("valid", 1)
-					.bind("ownerId", ownerId)
-					.list();
-	
+			if (!Validator.isInvalidString(parentToken)) {
+				sb.append("AND T.parentTokendid = :parentToken ");
+			}
+
+			Query<Map<String, Object>> query = h.createQuery(sb.toString()).bind("valid", 1).bind("ownerId", ownerId);
+			if (!Validator.isInvalidString(parentToken)) {
+				query = query.bind("parentToken", parentToken);
+			}
+			List<Map<String, Object>> resultSet = query.list();
+
 			for (int i = 0; i < resultSet.size(); i++) {
 				TokenDTO tokenDTO = getTokenDTOFromResultsMap(resultSet.get(i));
 				tokenList.add(tokenDTO);
@@ -72,8 +82,18 @@ public class TokenDAO {
 			h.close();
 		}
 		return tokenList;
+
+	}
+	
+	public List<TokenDTO> getGenaratedToken(TokenSearchDTO searchDTO) throws SQLException {
+		if (Validator.isInvalidString(searchDTO.getOwnerId())) {
+			log.debug("ownerId cannot be null or empty");
+			throw new IllegalArgumentException("ownerId cannot be null or empty");
+		}
+		return (ArrayList<TokenDTO>) loadTokenDTOs(searchDTO.getOwnerId(),searchDTO.getAccessToken());
 	}
 
+	
  
 	private TokenDTO getTokenDTOFromResultsMap(Map<String, Object> resultsMap) throws SQLException {
 		TokenDTO tokenDTO = null;

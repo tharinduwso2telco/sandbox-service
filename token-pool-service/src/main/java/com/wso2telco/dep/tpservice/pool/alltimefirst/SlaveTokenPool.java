@@ -49,7 +49,9 @@ class SlaveTokenPool extends AbstrController {
 			//load configuration repeatedly until retry attempt expires or record found
 			while(configDto.getTokenReadretrAttempts() <= waitattempt){
 				newTokenDTO =tokenManager.loadNewChild(whoDTO, tokenDTO); //load token form db
-				
+				if(newTokenDTO !=null){
+					break;
+				}
 				try {
 					Thread.sleep(configDto.getTokenReadretrAfter() );
 				} catch (InterruptedException e) {

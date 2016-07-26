@@ -65,7 +65,8 @@ abstract class AbstrController implements TokenControllable {
 
 		removeToken( );
 		TokenDTO newtokenDTo = reGenarate();
-		this.tokenDTO =newtokenDTo;
+		//Swap oldtoken with newly generated one
+		setNewToken(newtokenDTo);
 
 		return newtokenDTo;
 	}
@@ -76,11 +77,25 @@ abstract class AbstrController implements TokenControllable {
 		validateToken(token);
 		removeToken( );
 		TokenDTO newtokenDTo = reGenarate();
-		this.tokenDTO =newtokenDTo;
+		//Swap oldtoken with newly generated one
+		setNewToken(newtokenDTo);
 		return newtokenDTo;
 	}
-
-
+	//Swap oldtoken with newly generated one
+	protected void setNewToken(final TokenDTO newtokenDTo) throws TokenException{
+		this.tokenDTO.setAccessToken(newtokenDTo.getAccessToken() );
+		this.tokenDTO.setCreatedTime(newtokenDTo.getCreatedTime());
+		this.tokenDTO.setId(newtokenDTo.getId());
+		this.tokenDTO.setParentTokenId(newtokenDTo.getParentTokenId());
+		this.tokenDTO.setRefreshToken(newtokenDTo.getRefreshToken());
+		this.tokenDTO.setTokenAuth(newtokenDTo.getTokenAuth());
+		this.tokenDTO.setTokenValidity(newtokenDTo.getTokenValidity());
+		this.tokenDTO.setValid(newtokenDTo.isValid());
+		this.tokenDTO.setWhoId(newtokenDTo.getWhoId());
+		
+	}
+	
+	
 
 	public void removeToken(final TokenDTO token) throws TokenException {
 		log.info(" Try to remove Token : " + token + " from token pool of :" + whoDTO);
@@ -179,7 +194,7 @@ abstract class AbstrController implements TokenControllable {
 					log.debug("sheduler started ");
 					// remove the token
 					removeToken();
-					tokenDTO = reGenarate();
+					setNewToken(reGenarate());
 					shedule();// Schedule for next refresh
 
 				} catch (TokenException e) {
@@ -208,7 +223,7 @@ abstract class AbstrController implements TokenControllable {
 									// is still valid.
 			log.debug("Initialization token - token is expired :" + tokenDTO);
 			TokenDTO newtokenDTO = reGenarate();
-			this.tokenDTO =newtokenDTO;
+			setNewToken(newtokenDTO);
 			shedule();// Schedule for next refresh
 
 		} else {// if the token is still valid.

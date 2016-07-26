@@ -26,7 +26,6 @@ import org.slf4j.LoggerFactory;
 import com.wso2telco.dep.tpservice.manager.WhoManager;
 import com.wso2telco.dep.tpservice.model.WhoDTO;
 import com.wso2telco.dep.tpservice.pool.OwnerControllable;
-import com.wso2telco.dep.tpservice.pool.TokenControllable;
 import com.wso2telco.dep.tpservice.pool.TokenPoolManagable;
 import com.wso2telco.dep.tpservice.util.exception.TokenException;
 
