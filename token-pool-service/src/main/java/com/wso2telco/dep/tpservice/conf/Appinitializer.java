@@ -20,9 +20,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.wso2telco.dep.tpservice.model.ConfigDTO;
 import com.wso2telco.dep.tpservice.pool.PoolFactory;
 import com.wso2telco.dep.tpservice.rest.TokenPoolService;

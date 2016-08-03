@@ -41,7 +41,7 @@ public class TokenPoolService {
 
 	@GET
 	@Path("/{ownerID}")
-	@ApiOperation(value = "Get the valid token", notes = "API for return the contact by given the id", response = String.class)
+	@ApiOperation(value = "Get the valid token", notes = "API for return the contact by given the id", response = Response.class)
 	public Response get(
 			@ApiParam(value = "owner Id of token to fetch", required = true) @PathParam("ownerID") String id) {
 		// TODO: Implementation for HTTP GET request
@@ -81,7 +81,7 @@ public class TokenPoolService {
 
 	@PUT
 	@Path("/refresh/{ownerId}/{tokenID}")
-	@ApiOperation(value = "Re -fresh  token ", notes = "Re genarate the token using refresh token ", response = String.class)
+	@ApiOperation(value = "Re -fresh  token ", notes = "Re genarate the token using refresh token ", response = Response.class)
 	public Response put(@ApiParam(value = "token id to update ", required = true) @PathParam("ownerId") String ownerId,
 			@ApiParam(value = "new refreshTime to update ", required = true) @PathParam("tokenID") String tokenID) {
 		try {
@@ -104,7 +104,7 @@ public class TokenPoolService {
 
 	@PUT
 	@Path("restart/{ownerId}")
-	@ApiOperation(value = "Re start the owner's pool ", notes = "This will restart the pool for given owner.All the values including owner details load from the persistance layer", response = String.class)
+	@ApiOperation(value = "Re start the owner's pool ", notes = "This will restart the pool for given owner.All the values including owner details load from the persistance layer", response = Response.class)
 	public Response restart(
 			@ApiParam(value = "token id to update ", required = true) @PathParam("ownerId") String ownerId) {
 		try {
