@@ -44,11 +44,27 @@ One owner can have only one valid token per each tokenauth in ‘tsttoken’ tab
 
 There should be at least one record in ‘tsxwho’ table in order to start this server. Or otherwise the server will terminate along with exception throwing namely “Unable to start the server. TPS0006:No Valid token owner defined at the db”
 
+defaultconnectionresettime is the token release time in milliseconds, once a token released it release this token back to pool at the end of this time interval
+
 Sample Insertion SQL:
 
 ```
 “ INSERT INTO `tsxwho` (`ownerid`, `tokenurl`, `defaultconnectionresettime`, `isvalid`) VALUES ('owner2', 'https://localhost:8243/token', '4000', 1);”
 ``` 
+
+
+Token :
+
+After each manual insertion of token record in 'tsttoken' for new apllication of an owner, the token pool should be restarted for that particular owner in order to get the updated available access tokens in the pool.
+
+Default validity period for access token is taken from key manager's  <KeyManagerHOME>/repository/conf/identity/identity.xml file which can be either IS or APIM.
+
+
+Condition:
+
+tokenvalidity > refreshWakeUpLeadTime > defaultconnectionresettime
+for example,
+3600000 > 5000 > 4000
 
 ### 2.3 Configuration Setup
 
@@ -149,7 +165,8 @@ Used only in slave mode
 
 - refreshWakeUpLeadTime: 
 The lead time to trigger Token refresh process  before its default validity period expires
-Default value is 5000 ms 
+Default value is 5000 ms
+
 
 ## 4. Build the Service
 
@@ -205,17 +222,6 @@ curl -X PUT "http://<host>:<port>/tokenservice/refresh/<ownerId>/<tokenID>"
 ```
 
 This will enable the regeneration process of access token using the existing refresh token for a given owner
-  
-
-- DELETE: 
-
-http://&lt;host&gt;:&lt;port&gt;/tokenservice/{ownerID}/{tokenID} 
-
-```
-curl -i -H "Accept: application/json" -X DELETE "http://<host>:<port>/tokenservice/<ownerID>/<tokenID>"
-```
-
-Delete a particular access token of a given owner 
   
   
 
