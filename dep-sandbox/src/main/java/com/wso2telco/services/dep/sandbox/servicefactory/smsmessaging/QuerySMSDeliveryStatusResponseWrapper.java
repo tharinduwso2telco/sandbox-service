@@ -15,7 +15,7 @@
  ******************************************************************************/
 package com.wso2telco.services.dep.sandbox.servicefactory.smsmessaging;
 
-import com.wso2telco.oneapivalidation.exceptions.RequestError;
+import com.wso2telco.dep.oneapivalidation.exceptions.RequestError;
 import com.wso2telco.services.dep.sandbox.servicefactory.AbstractReturnWrapperDTO;
 
 public class QuerySMSDeliveryStatusResponseWrapper extends AbstractReturnWrapperDTO {

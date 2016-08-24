@@ -6,7 +6,7 @@ import javax.ws.rs.core.Response.Status;
 import org.apache.commons.logging.LogFactory;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.wso2telco.oneapivalidation.service.impl.sms.ValidateDeliveryStatus;
+import com.wso2telco.dep.oneapivalidation.service.impl.smsmessaging.ValidateDeliveryStatus;
 import com.wso2telco.services.dep.sandbox.dao.SMSMessagingDAO;
 import com.wso2telco.services.dep.sandbox.dao.model.custom.QuerySMSDeliveryStatusRequestWrapperDTO;
 import com.wso2telco.services.dep.sandbox.dao.model.domain.SMSDeliveryStatus;

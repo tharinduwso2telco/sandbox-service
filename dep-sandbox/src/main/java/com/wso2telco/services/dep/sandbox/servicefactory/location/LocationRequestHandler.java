@@ -9,7 +9,7 @@ import javax.ws.rs.core.Response.Status;
 
 import org.apache.commons.logging.LogFactory;
 
-import com.wso2telco.oneapivalidation.service.impl.location.ValidateLocation;
+import com.wso2telco.dep.oneapivalidation.service.impl.location.ValidateLocation;
 import com.wso2telco.services.dep.sandbox.dao.LocationDAO;
 import com.wso2telco.services.dep.sandbox.dao.model.custom.LocationRequestWrapperDTO;
 import com.wso2telco.services.dep.sandbox.dao.model.domain.Locationparam;
