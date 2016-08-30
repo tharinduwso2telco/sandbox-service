@@ -50,7 +50,8 @@ Sample Insertion SQL:
 ```
 “ INSERT INTO `tsxwho` (`ownerid`, `tokenurl`, `defaultconnectionresettime`, `isvalid`) VALUES ('owner2', 'https://localhost:8243/token', '4000', 1);”
 ``` 
-2.2.2 token
+2.2.2 token :
+
 All exsisting token need to insert into the "tsttoken".
 
 Sample Insertion SQL:
