@@ -205,19 +205,7 @@ http://&lt;host&gt;:&lt;port&gt;/tokenservice/refresh/{ownerId}/{tokenID}
 curl -X PUT "http://<host>:<port>/tokenservice/refresh/<ownerId>/<tokenID>"
 ```
 
-This will enable the regeneration process of access token using the existing refresh token for a given owner
-  
-
-- DELETE: 
-
-http://&lt;host&gt;:&lt;port&gt;/tokenservice/{ownerID}/{tokenID} 
-
-```
-curl -i -H "Accept: application/json" -X DELETE "http://<host>:<port>/tokenservice/<ownerID>/<tokenID>"
-```
-
-Delete a particular access token of a given owner 
-  
+This will enable the regeneration process of access token using the existing refresh token for a given owner 
   
 
 ### 6.2 Swagger Annotations:  
