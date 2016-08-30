@@ -37,7 +37,7 @@ DB can be created through running the script which in result will create schema 
 
 DB consists mainly of owner and token details with event tracking. The description for each attribute can be found at  /design/ERD_doc.pdf
 
-Owner :
+2.2.1 Owner :
 
 In a scenario of “Hub” needs to trigger api calls at operator it need to have a valid operator generated access-token/refresh token at hub. Then using the above access token hub can trigger southbound /operator apis.In this scenario the “who” is operator name.
 
@@ -50,6 +50,15 @@ Sample Insertion SQL:
 ```
 “ INSERT INTO `tsxwho` (`ownerid`, `tokenurl`, `defaultconnectionresettime`, `isvalid`) VALUES ('owner2', 'https://localhost:8243/token', '4000', 1);”
 ``` 
+2.2.2 token
+All exsisting token need to insert into the "tsttoken".
+
+Sample Insertion SQL:
+
+```
+“ insert into tsttoken ( tsxwhodid, tokenauth, tokenvalidity, accesstoken, refreshtoken , isvalid ) values (<owner did>, <tokenauth>, <validity period in ml>, <access token>, <refresh token >,1);”
+``` 
+
 
 ### 2.3 Configuration Setup
 
