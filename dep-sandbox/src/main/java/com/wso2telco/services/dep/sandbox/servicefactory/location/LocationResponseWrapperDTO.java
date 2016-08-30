@@ -1,6 +1,6 @@
 package com.wso2telco.services.dep.sandbox.servicefactory.location;
 
-import com.wso2telco.oneapivalidation.exceptions.RequestError;
+import com.wso2telco.dep.oneapivalidation.exceptions.RequestError;
 import com.wso2telco.services.dep.sandbox.servicefactory.AbstractReturnWrapperDTO;
 
 class LocationResponseWrapperDTO extends AbstractReturnWrapperDTO {

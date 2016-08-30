@@ -13,9 +13,9 @@ import org.apache.commons.logging.Log;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.wso2telco.oneapivalidation.exceptions.PolicyException;
-import com.wso2telco.oneapivalidation.exceptions.RequestError;
-import com.wso2telco.oneapivalidation.exceptions.ServiceException;
+import com.wso2telco.dep.oneapivalidation.exceptions.PolicyException;
+import com.wso2telco.dep.oneapivalidation.exceptions.RequestError;
+import com.wso2telco.dep.oneapivalidation.exceptions.ServiceException;
 import com.wso2telco.services.dep.sandbox.dao.AbstractDAO;
 import com.wso2telco.services.dep.sandbox.dao.model.custom.RequestDTO;
 import com.wso2telco.services.dep.sandbox.dao.model.domain.ManageNumber;
