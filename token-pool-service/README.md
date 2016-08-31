@@ -226,3 +226,5 @@ This will enable the regeneration process of access token using the existing ref
 In order to retrieve Swagger definitions of this microservice, go to http://&lt;host&gt;:&lt;port&gt;/swagger?path=&lt;service_base_path&gt;.
 
 For example [http://localhost:8181/swagger?path=tokenservice](http://localhost:8181/swagger?path=tokenservice)  in default configuration.
+### 7 Limitations
+ HA not supported. Only single master node allowed to start.
