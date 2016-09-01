@@ -3,10 +3,9 @@ package com.wso2telco.services.dep.sandbox.servicefactory;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Base64.Decoder;
+import java.util.List;
 
 import javax.ws.rs.core.Response.Status;
-
-import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
@@ -16,15 +15,19 @@ import org.json.JSONObject;
 import com.wso2telco.dep.oneapivalidation.exceptions.PolicyException;
 import com.wso2telco.dep.oneapivalidation.exceptions.RequestError;
 import com.wso2telco.dep.oneapivalidation.exceptions.ServiceException;
-import com.wso2telco.services.dep.sandbox.dao.AbstractDAO;
+import com.wso2telco.services.dep.sandbox.dao.DaoFactory;
+import com.wso2telco.services.dep.sandbox.dao.GenaricDAO;
 import com.wso2telco.services.dep.sandbox.dao.model.custom.RequestDTO;
 import com.wso2telco.services.dep.sandbox.dao.model.domain.ManageNumber;
 import com.wso2telco.services.dep.sandbox.dao.model.domain.User;
 
 public abstract class AbstractRequestHandler<E2 extends RequestDTO> implements RequestHandleable<RequestDTO> {
 	protected Log LOG;
-	protected AbstractDAO dao;
+	protected GenaricDAO dao;
 
+	{
+		dao =DaoFactory.getGenaricDAO();
+	}
 	/**
 	 * internally used to indicate the type of exception being stored is a
 	 * ServiceException

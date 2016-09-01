@@ -1,0 +1,18 @@
+package com.wso2telco.services.dep.sandbox.dao;
+
+import com.wso2telco.services.dep.sandbox.dao.hibernate.HibernateFactory;
+
+public class DaoFactory {
+
+	public static GenaricDAO getGenaricDAO(){
+		return new HibernateFactory().getHibernateCommonDAO();
+	}
+	
+	public static LocationDAO getLocationDAO(){
+		return new HibernateFactory().getHibernateLocationDAO();
+	}
+	
+	public static SMSMessagingDAO getSMSMessagingDAO(){
+		return new HibernateFactory().getHibernateSMSMessagingDAO();
+	}
+}

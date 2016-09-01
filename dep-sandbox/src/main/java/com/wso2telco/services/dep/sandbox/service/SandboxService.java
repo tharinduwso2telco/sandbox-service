@@ -16,6 +16,7 @@
 
 package com.wso2telco.services.dep.sandbox.service;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -30,6 +31,7 @@ import javax.ws.rs.core.Response;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import com.wordnik.swagger.annotations.ApiOperation;
 import com.wso2telco.services.dep.sandbox.dao.model.custom.LocationRequestWrapperDTO;
 import com.wso2telco.services.dep.sandbox.dao.model.custom.OutboundSMSMessageRequestBean;
 import com.wso2telco.services.dep.sandbox.dao.model.custom.QuerySMSDeliveryStatusRequestWrapperDTO;
@@ -39,7 +41,6 @@ import com.wso2telco.services.dep.sandbox.servicefactory.RequestHandleable;
 import com.wso2telco.services.dep.sandbox.servicefactory.Returnable;
 import com.wso2telco.services.dep.sandbox.util.RequestType;
 
-import io.netty.handler.codec.http.HttpRequest;
 
 /**
  * This is the Microservice resource class. See
@@ -56,8 +57,9 @@ public class SandboxService {
 
 	@GET
 	@Path("/location/{v1}/queries/location")
+	@ApiOperation(value = "get Location ", notes = "get Location ", response = Response.class)
 	public Response getLocation(@QueryParam("address") String address,
-			@QueryParam("requestedAccuracy") String requestedAccuracy, @Context HttpRequest httpRequest) {
+			@QueryParam("requestedAccuracy") String requestedAccuracy, @Context HttpServletRequest httpRequest) {
 		LOG.debug("/location/{v1}/queries/location invorked :" + address + requestedAccuracy + httpRequest);
 
 		LocationRequestWrapperDTO requestDTO = new LocationRequestWrapperDTO();
@@ -80,7 +82,7 @@ public class SandboxService {
 
 	@POST
 	@Path("/smsmessaging/{apiVersion}/outbound/{shortCode}/requests")
-	public Response handleSendMTSMSRequest(@Context HttpRequest httpRequest, @PathParam("apiVersion") String apiVersion,
+	public Response handleSendMTSMSRequest(@Context HttpServletRequest httpRequest, @PathParam("apiVersion") String apiVersion,
 			@PathParam("shortCode") String shortCode, OutboundSMSMessageRequestBean outboundSMSMessageRequestBean) {
 
 		SendMTSMSRequestWrapperDTO requestDTO = new SendMTSMSRequestWrapperDTO();
@@ -106,7 +108,7 @@ public class SandboxService {
 
 	@GET
 	@Path("/smsmessaging/{apiVersion}/outbound/{shortCode}/requests/{mtSMSTransactionId}/deliveryInfos")
-	public Response handleQuerySMSDeliveryStatusRequest(@Context HttpRequest httpRequest,
+	public Response handleQuerySMSDeliveryStatusRequest(@Context HttpServletRequest httpRequest,
 			@PathParam("apiVersion") String apiVersion, @PathParam("shortCode") String shortCode,
 			@PathParam("mtSMSTransactionId") String mtSMSTransactionId) {
 

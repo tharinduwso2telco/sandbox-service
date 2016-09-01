@@ -10,6 +10,7 @@ import javax.ws.rs.core.Response.Status;
 import org.apache.commons.logging.LogFactory;
 
 import com.wso2telco.dep.oneapivalidation.service.impl.location.ValidateLocation;
+import com.wso2telco.services.dep.sandbox.dao.DaoFactory;
 import com.wso2telco.services.dep.sandbox.dao.LocationDAO;
 import com.wso2telco.services.dep.sandbox.dao.model.custom.LocationRequestWrapperDTO;
 import com.wso2telco.services.dep.sandbox.dao.model.domain.Locationparam;
@@ -26,11 +27,10 @@ class LocationRequestHandler  extends AbstractRequestHandler<LocationRequestWrap
 	  LocationResponseWrapperDTO responseWrapperDTO =null;
 	  LocationRequestWrapperDTO extendedRequestDTO=null;
 	
-	private LocationDAO locationDao=null;
+	private  LocationDAO locationDao=null;
 	{
 		LOG = LogFactory.getLog(LocationRequestHandler.class);
-		locationDao=  new LocationDAO();
-		dao =locationDao;
+		locationDao=  DaoFactory.getLocationDAO();
 	}
 	
 	@Override
@@ -48,7 +48,7 @@ class LocationRequestHandler  extends AbstractRequestHandler<LocationRequestWrap
             if (locparam.getLocationRetrieveStatus().equals(RETRIEVED)) {
             	LOG.debug("Location retrieve status : "+ RETRIEVED);
             	
-                locationDao.saveTransaction(extendedRequestDTO.getAddress(), 
+            	locationDao.saveTransaction(extendedRequestDTO.getAddress(), 
                 						Double.valueOf(extendedRequestDTO.getRequestedAccuracy()), 
                 						"Retrieved", user);
 

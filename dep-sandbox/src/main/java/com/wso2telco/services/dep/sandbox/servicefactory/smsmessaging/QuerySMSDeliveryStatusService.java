@@ -2,11 +2,15 @@ package com.wso2telco.services.dep.sandbox.servicefactory.smsmessaging;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import javax.ws.rs.core.Response.Status;
+
 import org.apache.commons.logging.LogFactory;
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.wso2telco.dep.oneapivalidation.service.impl.smsmessaging.ValidateDeliveryStatus;
+import com.wso2telco.services.dep.sandbox.dao.DaoFactory;
 import com.wso2telco.services.dep.sandbox.dao.SMSMessagingDAO;
 import com.wso2telco.services.dep.sandbox.dao.model.custom.QuerySMSDeliveryStatusRequestWrapperDTO;
 import com.wso2telco.services.dep.sandbox.dao.model.domain.SMSDeliveryStatus;
@@ -24,8 +28,7 @@ class QuerySMSDeliveryStatusService extends AbstractRequestHandler<QuerySMSDeliv
 
 	{
 		LOG = LogFactory.getLog(QuerySMSDeliveryStatusService.class);
-		smsMessagingDAO = new SMSMessagingDAO();
-		dao = smsMessagingDAO;
+		smsMessagingDAO =DaoFactory.getSMSMessagingDAO();
 	}
 
 	@Override
@@ -78,7 +81,7 @@ class QuerySMSDeliveryStatusService extends AbstractRequestHandler<QuerySMSDeliv
 					responseWrapperDTO.setRequestError(constructRequestError(SERVICEEXCEPTION, "SVC0002",
 							"Invalid input value for message part %1", extendedRequestDTO.getMtSMSTransactionId()));
 					responseWrapperDTO.setHttpStatus(Status.BAD_REQUEST);
-				} else if (!smsMessagingDAO.isWhiteListedSenderAddress(user.getId(), senderAddress)) {
+				} else if (!dao.isWhiteListedSenderAddress(user.getId(), senderAddress)) {
 
 					responseWrapperDTO.setRequestError(constructRequestError(SERVICEEXCEPTION, "SVC0001",
 							"A service error occurred. Error code is %1",

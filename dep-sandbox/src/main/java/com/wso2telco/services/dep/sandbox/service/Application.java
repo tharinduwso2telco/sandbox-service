@@ -16,17 +16,36 @@
 
 package com.wso2telco.services.dep.sandbox.service;
 
-import org.wso2.msf4j.MicroservicesRunner;
+import java.util.ArrayList;
+import java.util.List;
 
-/**
- * Application entry point.
- *
- * @since 1.8.0-SNAPSHOT
- */
-public class Application {
+import com.wso2telco.core.mi.AbstractApplication;
+import com.wso2telco.core.mi.ConfigDTO;
+
+import io.dropwizard.setup.Environment;
+
+public class Application extends AbstractApplication<ConfigDTO> {
+
+	@Override
+	protected List<Object> getRestFulComponents() {
+		List<Object>  listOfObject =new ArrayList<Object>();
+		listOfObject.add(new SandboxService());
+		return listOfObject;
+	}
+
+	@Override
+	protected void runInit(ConfigDTO e, Environment env) {
+		// TODO Auto-generated method stub
+		
+	}
+
 
 	public static void main(String[] args) {
-
-		new MicroservicesRunner().deploy(new SandboxService()).start();
+		try {
+			new Application().run(args);
+		}   catch (Exception e) {
+			System.out.println("Unable to start the server " + e.getMessage());
+		}
 	}
+	 
 }

@@ -1,21 +1,36 @@
 package com.wso2telco.services.dep.sandbox.dao.model.custom;
 
 import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.HttpMethod;
+
+import org.apache.http.HttpRequest;
+
 import com.wso2telco.services.dep.sandbox.dao.model.domain.User;
 import com.wso2telco.services.dep.sandbox.util.RequestType;
-import io.netty.handler.codec.http.HttpMethod;
-import io.netty.handler.codec.http.HttpRequest;
 
 public class RequestDTO implements Serializable {
 
 	private static final long serialVersionUID = -57225936985453608L;
-
+	
+	private static Map<String,HttpMethod> httpMethodMap =new HashMap<String,HttpMethod>();
+	
+	 
 	private RequestType requestType;
-	protected HttpRequest httpRequest;
+	protected HttpServletRequest httpRequest;
 	final String JWT_TOKEN = "x-jwt-assertion";
 	private String apiVersion;
 	// TODO:This need to replace with custom dto,instead of domain object
 	private User user;
+
+	
+	
+	public void setHttpRequest(HttpServletRequest httpRequest) {
+		this.httpRequest = httpRequest;
+	}
 
 	public RequestType getRequestType() {
 		return requestType;
@@ -26,28 +41,30 @@ public class RequestDTO implements Serializable {
 	}
 
 	public String getRequestPath() {
-		return httpRequest.getUri();
+		
+		return httpRequest.getRequestURI();
 	}
 
-	public HttpMethod getHttpMethod() {
-		return httpRequest.getMethod();
+	public boolean isPost(){
+		return HttpMethod.POST.equals(httpRequest.getMethod());
 	}
-
-	public HttpRequest getHttpRequest() {
-		return httpRequest;
+	public boolean isGet(){
+		return HttpMethod.GET.equals(httpRequest.getMethod());
 	}
-
-	public void setHttpRequest(HttpRequest httpRequest) {
-		this.httpRequest = httpRequest;
+	public boolean isPut(){
+		return HttpMethod.PUT.equals(httpRequest.getMethod());
+	}
+	public boolean isDelete(){
+		return HttpMethod.DELETE.equals(httpRequest.getMethod());
 	}
 
 	public String getSandbox() {
-		return httpRequest.headers().get("sandbox");
+		return httpRequest.getHeader("sandbox");
 	}
 
 	public String getJWTToken() {
 
-		return httpRequest.headers().get(JWT_TOKEN);
+		return httpRequest.getHeader(JWT_TOKEN);
 
 	}
 

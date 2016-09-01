@@ -12,9 +12,10 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
 	<parent>
-		<groupId>org.wso2.msf4j</groupId>
-		<artifactId>msf4j-service</artifactId>
-		<version>1.0.0</version>
+		<groupId>com.wso2telco.services.dep</groupId>
+	        <artifactId>services-dep-parent</artifactId>
+       		<version>1.0.1-SNAPSHOT</version>
+ 		<relativePath>../pom.xml</relativePath>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 
@@ -65,7 +66,12 @@
 			<artifactId>commons-lang</artifactId>
 			<version>2.6</version>
 		</dependency>
-
+	<dependency>
+			<groupId>com.wso2telco.core</groupId>
+			<artifactId>mi-util</artifactId>
+			<version>2.0.03-SNAPSHOT</version>
+		</dependency>
+		
 	</dependencies>
 
 	<properties>
@@ -118,26 +124,47 @@
 		</repository>
 	</repositories>
 
-	<build>
+		<build>
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-antrun-plugin</artifactId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.1</version>
+				<configuration>
+					<source>1.8</source>
+					<target>1.8</target>
+					<encoding>UTF-8</encoding>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-shade-plugin</artifactId>
+				<version>1.6</version>
+				<configuration>
+					<filters>
+						<filter>
+							<artifact>*:*</artifact>
+							<excludes>
+								<exclude>META-INF/*.SF</exclude>
+								<exclude>META-INF/*.DSA</exclude>
+								<exclude>META-INF/*.RSA</exclude>
+							</excludes>
+						</filter>
+					</filters>
+				</configuration>
 				<executions>
 					<execution>
-						<phase>test</phase>
+						<phase>package</phase>
 						<goals>
-							<goal>run</goal>
+							<goal>shade</goal>
 						</goals>
 						<configuration>
-							<tasks>
-								<echo>Copying netty-transports.yml to the target directory</echo>
-								<copy file="conf/netty-transports.yml" tofile="${basedir}/target/netty-transports.yml" />
-								<echo>Copying wso2carbon.jks to the target directory</echo>
-								<copy file="conf/wso2carbon.jks" tofile="${basedir}/target/wso2carbon.jks" />
-								<echo>Copying hibernate.cfg.xml to the target directory</echo>
-								<copy file="conf/hibernate.cfg.xml" tofile="${basedir}/target/hibernate.cfg.xml" />
-							</tasks>
+							<transformers>
+								<transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer" />
+								<transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+									<mainClass>com.wso2telco.services.dep.sandbox.service.Application</mainClass>
+								</transformer>
+							</transformers>
 						</configuration>
 					</execution>
 				</executions>
