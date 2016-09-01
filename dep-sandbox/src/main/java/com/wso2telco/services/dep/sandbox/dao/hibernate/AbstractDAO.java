@@ -32,8 +32,8 @@ public abstract class AbstractDAO {
 
 	/**
 	 * 
-	 * @return
-	 * @throws HibernateException
+	 * @return Session
+	 * @throws HibernateException exception
 	 */
 	protected static Session getSession() throws HibernateException {
 

@@ -15,10 +15,9 @@ import com.wso2telco.services.dep.sandbox.util.RequestType;
 public class RequestDTO implements Serializable {
 
 	private static final long serialVersionUID = -57225936985453608L;
-	
-	private static Map<String,HttpMethod> httpMethodMap =new HashMap<String,HttpMethod>();
-	
-	 
+
+	private static Map<String, HttpMethod> httpMethodMap = new HashMap<String, HttpMethod>();
+
 	private RequestType requestType;
 	protected HttpServletRequest httpRequest;
 	final String JWT_TOKEN = "x-jwt-assertion";
@@ -26,8 +25,13 @@ public class RequestDTO implements Serializable {
 	// TODO:This need to replace with custom dto,instead of domain object
 	private User user;
 
-	
-	
+	/**
+	 * @return the httpRequest
+	 */
+	public HttpServletRequest getHttpRequest() {
+		return httpRequest;
+	}
+
 	public void setHttpRequest(HttpServletRequest httpRequest) {
 		this.httpRequest = httpRequest;
 	}
@@ -41,20 +45,23 @@ public class RequestDTO implements Serializable {
 	}
 
 	public String getRequestPath() {
-		
+
 		return httpRequest.getRequestURI();
 	}
 
-	public boolean isPost(){
+	public boolean isPost() {
 		return HttpMethod.POST.equals(httpRequest.getMethod());
 	}
-	public boolean isGet(){
+
+	public boolean isGet() {
 		return HttpMethod.GET.equals(httpRequest.getMethod());
 	}
-	public boolean isPut(){
+
+	public boolean isPut() {
 		return HttpMethod.PUT.equals(httpRequest.getMethod());
 	}
-	public boolean isDelete(){
+
+	public boolean isDelete() {
 		return HttpMethod.DELETE.equals(httpRequest.getMethod());
 	}
 

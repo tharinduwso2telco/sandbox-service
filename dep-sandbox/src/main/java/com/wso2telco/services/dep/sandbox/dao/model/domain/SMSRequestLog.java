@@ -207,14 +207,14 @@ public class SMSRequestLog {
     }
 
     /**
-     * @return the Date
+     * @return the date
      */
     public Date getDate() {
         return date;
     }
 
     /**
-     * @param Date the Date to set
+     * @param date the Date to set
      */
     public void setDate(Date date) {
         this.date = date;

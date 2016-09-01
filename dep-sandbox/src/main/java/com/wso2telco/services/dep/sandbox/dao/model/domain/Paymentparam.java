@@ -23,7 +23,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 /**
- * <TO-DO> <code>Paymentparam</code>
+ * (TO-DO) <code>Paymentparam</code>
  * @version $Id: Paymentparam.java,v 1.00.000
  */
 @Entity

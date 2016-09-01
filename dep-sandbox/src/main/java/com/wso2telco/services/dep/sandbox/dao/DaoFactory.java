@@ -15,4 +15,8 @@ public class DaoFactory {
 	public static SMSMessagingDAO getSMSMessagingDAO(){
 		return new HibernateFactory().getHibernateSMSMessagingDAO();
 	}
+	
+	public static ProvisioningDAO getProvisioningDAO() {
+		return new HibernateFactory().getHibernateProvisioningDAO();
+	}
 }
