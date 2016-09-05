@@ -30,6 +30,7 @@ public class Application extends AbstractApplication<ConfigDTO> {
 	protected List<Object> getRestFulComponents() {
 		List<Object>  listOfObject =new ArrayList<Object>();
 		listOfObject.add(new SandboxService());
+		listOfObject.add(new ProvisionService());
 		return listOfObject;
 	}
 

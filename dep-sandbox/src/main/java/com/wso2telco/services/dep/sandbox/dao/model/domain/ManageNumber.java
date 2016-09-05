@@ -81,7 +81,7 @@ public class ManageNumber implements Serializable {
     }
 
     /**
-     * @param ManageNumber the ManageNumber to set
+     * @param Number the Number to set
      */
     public void setNumber(String Number) {
         this.Number = Number;

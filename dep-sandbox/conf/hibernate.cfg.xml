@@ -92,5 +92,9 @@
 			class="com.wso2telco.services.dep.sandbox.dao.model.domain.MobileIdApiRequest" />
 		<mapping
 			class="com.wso2telco.services.dep.sandbox.dao.model.domain.MobileApiEncodeRequest" />
+		<mapping
+			class="com.wso2telco.services.dep.sandbox.dao.model.domain.ProvisionRequestLog" />
+		<mapping 
+			class="com.wso2telco.services.dep.sandbox.dao.model.domain.Service" />
 	</session-factory>
 </hibernate-configuration>

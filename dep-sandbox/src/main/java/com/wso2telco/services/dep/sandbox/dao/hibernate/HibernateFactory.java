@@ -13,4 +13,8 @@ public class HibernateFactory {
 	public HibernateSMSMessagingDAO getHibernateSMSMessagingDAO(){
 		return new HibernateSMSMessagingDAO();
 	}
+	
+	public HibernateProvisioningDAO getHibernateProvisioningDAO() {
+		return new HibernateProvisioningDAO();
+	}
 }
