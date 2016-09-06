@@ -12,6 +12,7 @@ import com.wso2telco.services.dep.sandbox.dao.model.domain.User;
 
 class HibernateLocationDAO extends AbstractDAO implements LocationDAO{
 
+
 	/**
 	 * 
 	 * @param userId

@@ -13,9 +13,9 @@
 
 	<parent>
 		<groupId>com.wso2telco.services.dep</groupId>
-	        <artifactId>services-dep-parent</artifactId>
-       		<version>1.0.1-SNAPSHOT</version>
- 		<relativePath>../pom.xml</relativePath>
+		<artifactId>services-dep-parent</artifactId>
+		<version>1.0.2-SNAPSHOT</version>
+		<relativePath>../pom.xml</relativePath>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 
@@ -76,12 +76,12 @@
 			<artifactId>commons-lang</artifactId>
 			<version>2.6</version>
 		</dependency>
-	<dependency>
+		<dependency>
 			<groupId>com.wso2telco.core</groupId>
 			<artifactId>mi-util</artifactId>
 			<version>2.0.03-SNAPSHOT</version>
 		</dependency>
-		
+
 	</dependencies>
 
 	<properties>
@@ -135,7 +135,17 @@
 		</repository>
 	</repositories>
 
-		<build>
+	<build>
+
+		<resources>
+			<resource>
+				<directory>src/main/java</directory>
+				<includes>
+					<include>hibernate.cfg.xml</include>
+				</includes>
+			</resource>
+		</resources>
+
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -171,8 +181,10 @@
 						</goals>
 						<configuration>
 							<transformers>
-								<transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer" />
-								<transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+								<transformer
+									implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer" />
+								<transformer
+									implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
 									<mainClass>com.wso2telco.services.dep.sandbox.service.Application</mainClass>
 								</transformer>
 							</transformers>

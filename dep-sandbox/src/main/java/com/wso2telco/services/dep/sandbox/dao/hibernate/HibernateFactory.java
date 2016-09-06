@@ -1,5 +1,7 @@
 package com.wso2telco.services.dep.sandbox.dao.hibernate;
 
+import com.wso2telco.core.mi.ConfigReader;
+
 public class HibernateFactory {
 
 	public HibernateCommonDAO getHibernateCommonDAO(){
