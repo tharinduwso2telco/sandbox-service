@@ -357,8 +357,10 @@ CREATE TABLE `sbt_provision_expected_message` (
   PRIMARY KEY (`id`),
   KEY `fk_1_message` (`message_id`),
   KEY `fk_2_numbers` (`number_id`),
+  KEY `fk_3_provision_all_services_id` (`provision_all_services_id`),
   CONSTRAINT `fk_1_message` FOREIGN KEY (`message_id`) REFERENCES `sbx_message` (`id`),
-  CONSTRAINT `fk_2_numbers` FOREIGN KEY (`number_id`) REFERENCES `numbers` (`id`)
+  CONSTRAINT `fk_2_numbers` FOREIGN KEY (`number_id`) REFERENCES `numbers` (`id`),
+  CONSTRAINT `fk_3_provision_all_services` FOREIGN KEY (`provision_all_services_id`) REFERENCES `sbx_provision_all_services` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -949,4 +951,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2016-09-09 13:55:00
+-- Dump completed on 2016-09-09 14:02:32
