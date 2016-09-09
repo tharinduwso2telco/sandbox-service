@@ -16,7 +16,6 @@
 package com.wso2telco.services.dep.sandbox.service;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -29,6 +28,9 @@ import javax.ws.rs.core.Response;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import com.wordnik.swagger.annotations.Api;
+import com.wordnik.swagger.annotations.ApiOperation;
+import com.wordnik.swagger.annotations.ApiParam;
 import com.wso2telco.services.dep.sandbox.dao.model.custom.QueryProvisioningServicesRequestWrapper;
 import com.wso2telco.services.dep.sandbox.servicefactory.RequestBuilderFactory;
 import com.wso2telco.services.dep.sandbox.servicefactory.RequestHandleable;
@@ -36,17 +38,20 @@ import com.wso2telco.services.dep.sandbox.servicefactory.Returnable;
 import com.wso2telco.services.dep.sandbox.util.RequestType;
 
 
-@Path("/v1/provision")
+@Path("/{v1}/provision")
 //@Consumes({ MediaType.APPLICATION_JSON })
 @Produces({ MediaType.APPLICATION_JSON })
+@Api(value = "/{v1}/provision", description = "Rest Service for provisionning API")
 public class ProvisionService {
 
 	Log LOG = LogFactory.getLog(ProvisionService.class);
 
 	@GET
 	@Path("/{msisdn}/list/applicable")
-	public Response getApplicableServices(@PathParam("msisdn") String msisdn, @QueryParam("offset") String offSet,
-			@QueryParam("limit") String limit, @Context HttpServletRequest request) {
+	 @ApiOperation(value = "getApplicableServices", notes = "getApplicableServices", response = Response.class)
+	public Response getApplicableServices( @ApiParam(value = "msisdn", required = true) @PathParam("msisdn") String msisdn, 
+			@ApiParam(value = "offset", required = true) @QueryParam("offset") String offSet,
+			@ApiParam(value = "limit", required = true)  @QueryParam("limit") String limit, @Context HttpServletRequest request) {
 		LOG.debug("/{msisdn}/list/applicable invorked :" + msisdn + offSet + limit);
 		QueryProvisioningServicesRequestWrapper requestDTO = new QueryProvisioningServicesRequestWrapper();
 		requestDTO.setHttpRequest(request);
@@ -64,7 +69,7 @@ public class ProvisionService {
 			LOG.debug("QUERY APPLICABLE SERVICE RESPONSE : " + response);
 			return response;
 		} catch (Exception ex) {
-			LOG.info("QUERY SERVICE ERROR : " + ex);
+			LOG.error("QUERY SERVICE ERROR : " , ex);
 			return Response.status(Response.Status.BAD_REQUEST).entity(ex.getMessage()).build();
 		}
 

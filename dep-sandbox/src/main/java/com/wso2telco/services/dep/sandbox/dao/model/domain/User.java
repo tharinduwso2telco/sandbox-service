@@ -2,6 +2,7 @@ package com.wso2telco.services.dep.sandbox.dao.model.domain;
 
 import java.io.Serializable;
 import java.util.List;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;

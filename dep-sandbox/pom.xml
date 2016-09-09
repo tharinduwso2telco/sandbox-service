@@ -30,11 +30,7 @@
 			<artifactId>hibernate-core</artifactId>
 			<version>${org.hibernate.version}</version>
 		</dependency>
-		<dependency>
-			<groupId>org.hibernate</groupId>
-			<artifactId>hibernate-c3p0</artifactId>
-			<version>${org.hibernate.version}</version>
-		</dependency>
+		 
 		<dependency>
 			<groupId>mysql</groupId>
 			<artifactId>mysql-connector-java</artifactId>
@@ -86,8 +82,8 @@
 
 	<properties>
 		<microservice.mainClass>com.wso2telco.services.dep.sandbox.service.Application</microservice.mainClass>
-		<org.hibernate.version>4.3.11.Final</org.hibernate.version>
-		<mysql.version>5.1.6</mysql.version>
+		<org.hibernate.version>5.2.1.Final</org.hibernate.version>
+		<mysql.version>6.0.2</mysql.version>
 		<org.json.wso2.version>3.0.0.wso2v1</org.json.wso2.version>
 		<com.wso2telco.dep.version>1.8.0-SNAPSHOT</com.wso2telco.dep.version>
 		<com.wso2telco.core.version>2.0.03-SNAPSHOT</com.wso2telco.core.version>
