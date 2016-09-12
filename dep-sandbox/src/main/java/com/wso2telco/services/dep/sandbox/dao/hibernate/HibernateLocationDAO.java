@@ -2,6 +2,7 @@ package com.wso2telco.services.dep.sandbox.dao.hibernate;
 
 import java.util.Date;
 
+import org.apache.commons.logging.LogFactory;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 
@@ -11,7 +12,10 @@ import com.wso2telco.services.dep.sandbox.dao.model.domain.Locationparam;
 import com.wso2telco.services.dep.sandbox.dao.model.domain.User;
 
 class HibernateLocationDAO extends AbstractDAO implements LocationDAO{
-
+	
+	{
+		LOG = LogFactory.getLog(HibernateLocationDAO.class);
+	}
 
 	/**
 	 * 
