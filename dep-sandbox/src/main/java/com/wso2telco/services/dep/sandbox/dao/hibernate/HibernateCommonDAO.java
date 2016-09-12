@@ -44,7 +44,7 @@ class HibernateCommonDAO extends AbstractDAO implements GenaricDAO {
 	        } catch (Exception e) {
 	           LOG.error("getUser",e);
 	        } finally {
-	           // sess.close();
+	           sess.close();
 	        }
 
 	        return usr;
