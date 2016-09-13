@@ -517,6 +517,8 @@ DROP TABLE IF EXISTS `sbxstatus`;
 CREATE TABLE `sbxstatus` (
   `id` int(11) NOT NULL,
   `status` varchar(45) DEFAULT NULL,
+  `code` varchar(40) DEFAULT NULL,
+  `description` varchar(100) DEFAULT NULL,
   CONSTRAINT `pksbxstatus` PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -527,7 +529,7 @@ CREATE TABLE `sbxstatus` (
 
 LOCK TABLES `sbxstatus` WRITE;
 /*!40000 ALTER TABLE `sbxstatus` DISABLE KEYS */;
-INSERT INTO `sbxstatus` VALUES (1,'Pending'),(2,'Failed'),(3,'Success'),(4,'NotActive');
+INSERT INTO `sbxstatus` VALUES (1,'Pending','PRV_PROVISION_PENDING','Provision Transaction is pendign with subsystem'),(2,'Failed','PRV_PROVISION_FAILED','Provisioning failed due to subsystem error'),(3,'Success','PRV_PROVISION_SUCCESS','Successfully provisioned'),(4,'NotActive','PRV_DELETE_NOT_ACTIVE','Service not provisioned for user'),(5,'AlreadyActive','PRV_PROVISION_ALREADY_ACTIVE','Service already active'),(6,'Pending','PRV_DELETE_PENDING','Delete Transaction is pending with subsystem'),(7,'Failed','PRV_DELETE_FAILED','Removal failed due to subsystem error'),(8,'Success','PRV_DELETE_SUCCESS','Successfully removed');
 /*!40000 ALTER TABLE `sbxstatus` ENABLE KEYS */;
 UNLOCK TABLES;
 
