@@ -323,7 +323,7 @@ CREATE TABLE `sbtprprovisionedservices` (
   `notifyurl` varchar(255) DEFAULT NULL,
   `callbackdata` varchar(45) DEFAULT NULL,
   `statusid` int(11) DEFAULT NULL,
-  `createddate` varchar(45) DEFAULT NULL,
+  `createddate` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   CONSTRAINT `pksbtprprovisionedservices` PRIMARY KEY (`id`), 
   CONSTRAINT `fk01sbtprsbtprprovisionedservices` FOREIGN KEY (`statusid`) REFERENCES `sbxstatus` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `fk02sbtprsbtprprovisionedservices` FOREIGN KEY (`msisdnservicesmapid`) REFERENCES `sbtprmsisdnservicessmap` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION

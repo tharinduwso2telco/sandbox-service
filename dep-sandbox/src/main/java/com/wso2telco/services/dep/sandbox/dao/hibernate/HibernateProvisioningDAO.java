@@ -17,15 +17,21 @@ package com.wso2telco.services.dep.sandbox.dao.hibernate;
 
 import java.util.List;
 
+import org.apache.commons.logging.LogFactory;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 
 import com.wso2telco.services.dep.sandbox.dao.ProvisioningDAO;
 import com.wso2telco.services.dep.sandbox.dao.model.domain.ProvisionRequestLog;
-import com.wso2telco.services.dep.sandbox.dao.model.domain.Service;
+import com.wso2telco.services.dep.sandbox.dao.model.domain.ProvisionAllService;
 
 public class HibernateProvisioningDAO extends AbstractDAO implements ProvisioningDAO{
+	
+	{
+		LOG = LogFactory.getLog(HibernateProvisioningDAO.class);
+	}
+
 	
 	public void saveProvisionRequestLog(ProvisionRequestLog provisionRequestLog) throws Exception {
 		Session session = getSession();
@@ -41,10 +47,10 @@ public class HibernateProvisioningDAO extends AbstractDAO implements Provisionin
 
 	}
 
-	public List<Service> getApplicableProvisionServices(int offset, int limit) {
+	public List<ProvisionAllService> getApplicableProvisionServices(int offset, int limit) {
 		Session session = getSession();
 
-		Query query = session.createQuery("from Service where status= :status");
+		Query query = session.createQuery("from ProvisionAllService where status= :status");
 		query.setParameter("status", "ACT");
 		if (offset > 0) {
 			query.setFirstResult(offset);
@@ -54,7 +60,7 @@ public class HibernateProvisioningDAO extends AbstractDAO implements Provisionin
 			query.setMaxResults(limit);
 		}
 
-		return (List<Service>)query.list();
+		return (List<ProvisionAllService>)query.list();
 	}
 
 }

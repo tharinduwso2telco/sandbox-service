@@ -2,6 +2,7 @@ package com.wso2telco.services.dep.sandbox.dao.hibernate;
 
 import java.util.Date;
 
+import org.apache.commons.logging.LogFactory;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 
@@ -13,6 +14,11 @@ import com.wso2telco.services.dep.sandbox.dao.model.domain.User;
 
 class HibernateSMSMessagingDAO extends HibernateCommonDAO  implements SMSMessagingDAO{
 
+	{
+		LOG = LogFactory.getLog(HibernateSMSMessagingDAO.class);
+	}
+	
+	
 	public SMSMessagingParam getSMSMessagingParam(int userId) {
 
 		SMSMessagingParam smsMessagingParam = null;

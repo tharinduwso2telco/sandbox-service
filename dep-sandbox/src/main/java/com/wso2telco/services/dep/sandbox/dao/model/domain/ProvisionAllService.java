@@ -24,32 +24,34 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
-
 @Entity
-@Table(name = "sbtservices")
-public class Service {
+@Table(name = "sbxprservices")
+public class ProvisionAllService {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int id;
 
-	@Column(name = "service_name")
-	private String serviceName;
-
-	@Column(name = "service_code")
+	@Column(name = "code")
 	private String serviceCode;
 
-	@Column(name = "service_type")
+	@Column(name = "name")
+	private String serviceName;
+
+	@Column(name = "type")
 	private String serviceType;
 
 	@Column(name = "description")
 	private String description;
 
-	@Column(name = "service_charge")
+	@Column(name = "charge")
 	private BigDecimal serviceCharge;
 
-	@Column(name = "status")
-	private String status;
+	@Column(name = "tag")
+	private String tag;
+
+	@Column(name = "value")
+	private String value;
 
 	/**
 	 * @return the id
@@ -59,7 +61,8 @@ public class Service {
 	}
 
 	/**
-	 * @param id the id to set
+	 * @param id
+	 *            the id to set
 	 */
 	public void setId(int id) {
 		this.id = id;
@@ -73,7 +76,8 @@ public class Service {
 	}
 
 	/**
-	 * @param serviceName the serviceName to set
+	 * @param serviceName
+	 *            the serviceName to set
 	 */
 	public void setServiceName(String serviceName) {
 		this.serviceName = serviceName;
@@ -87,7 +91,8 @@ public class Service {
 	}
 
 	/**
-	 * @param serviceCode the serviceCode to set
+	 * @param serviceCode
+	 *            the serviceCode to set
 	 */
 	public void setServiceCode(String serviceCode) {
 		this.serviceCode = serviceCode;
@@ -101,7 +106,8 @@ public class Service {
 	}
 
 	/**
-	 * @param serviceType the serviceType to set
+	 * @param serviceType
+	 *            the serviceType to set
 	 */
 	public void setServiceType(String serviceType) {
 		this.serviceType = serviceType;
@@ -115,7 +121,8 @@ public class Service {
 	}
 
 	/**
-	 * @param description the description to set
+	 * @param description
+	 *            the description to set
 	 */
 	public void setDescription(String description) {
 		this.description = description;
@@ -129,24 +136,44 @@ public class Service {
 	}
 
 	/**
-	 * @param serviceCharge the serviceCharge to set
+	 * @param serviceCharge
+	 *            the serviceCharge to set
 	 */
 	public void setServiceCharge(BigDecimal serviceCharge) {
 		this.serviceCharge = serviceCharge;
 	}
 
 	/**
-	 * @return the status
+	 * 
+	 * @return the tag
 	 */
-	public String getStatus() {
-		return status;
+	public String getTag() {
+		return tag;
 	}
 
 	/**
-	 * @param status the status to set
+	 * 
+	 * @param tag to set
 	 */
-	public void setStatus(String status) {
-		this.status = status;
+	public void setTag(String tag) {
+		this.tag = tag;
+	}
+
+	/**
+	 * 
+	 * @return the value
+	 */
+	public String getTagValue() {
+		return value;
+
+	}
+
+	/**
+	 * 
+	 * @param value to set
+	 */
+	public void setTagValue(String value) {
+		this.value = value;
 	}
 
 }

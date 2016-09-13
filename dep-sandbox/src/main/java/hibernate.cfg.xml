@@ -18,51 +18,40 @@
 
 		 <property name="current_session_context_class">thread</property>
    	  <property name="transaction.factory_class">org.hibernate.transaction.JDBCTransactionFactory</property>
+		
 		<!--<property name="hibernate.current_session_context_class">thread</property> -->
 
 		<!-- Mapping entitiy classes -->
 		<mapping class="com.wso2telco.services.dep.sandbox.dao.model.domain.Payment" />
 		<mapping class="com.wso2telco.services.dep.sandbox.dao.model.domain.Sms" />
-		<mapping
-			class="com.wso2telco.services.dep.sandbox.dao.model.domain.ManageNumber" />
-		<mapping
-			class="com.wso2telco.services.dep.sandbox.dao.model.domain.SMSSubscription" />
-		<mapping
-			class="com.wso2telco.services.dep.sandbox.dao.model.domain.SenderAddress" />
+		<mapping class="com.wso2telco.services.dep.sandbox.dao.model.domain.ManageNumber" />
+		<mapping class="com.wso2telco.services.dep.sandbox.dao.model.domain.SMSSubscription" />
+		<mapping class="com.wso2telco.services.dep.sandbox.dao.model.domain.SenderAddress" />
 		<mapping class="com.wso2telco.services.dep.sandbox.dao.model.domain.User" />
-		<mapping
-			class="com.wso2telco.services.dep.sandbox.dao.model.domain.ChargeAmountRequest" />
-		<mapping
-			class="com.wso2telco.services.dep.sandbox.dao.model.domain.PaymentTransaction" />
-		<mapping
-			class="com.wso2telco.services.dep.sandbox.dao.model.domain.SMSRequestLog" />
-		<mapping
-			class="com.wso2telco.services.dep.sandbox.dao.model.domain.SubscribeSMSRequest" />
-		<mapping
-			class="com.wso2telco.services.dep.sandbox.dao.model.domain.Paymentparam" />
-		<mapping
-			class="com.wso2telco.services.dep.sandbox.dao.model.domain.SMSMessagingParam" />
-		<mapping
-			class="com.wso2telco.services.dep.sandbox.dao.model.domain.SendSMSToApplication" />
-		<mapping
-			class="com.wso2telco.services.dep.sandbox.dao.model.domain.LocationRequestLog" />
-		<mapping
-			class="com.wso2telco.services.dep.sandbox.dao.model.domain.Locationparam" />
-		<mapping
-			class="com.wso2telco.services.dep.sandbox.dao.model.domain.DeliverySubscription" />
-		<mapping
-			class="com.wso2telco.services.dep.sandbox.dao.model.domain.UssdSubscriptions" />
-		<mapping
-			class="com.wso2telco.services.dep.sandbox.dao.model.domain.UssdTransaction" />
-		<mapping
-			class="com.wso2telco.services.dep.sandbox.dao.model.domain.SMSDeliveryStatus" />
-		<mapping
-			class="com.wso2telco.services.dep.sandbox.dao.model.domain.MobileIdApiRequest" />
-		<mapping
-			class="com.wso2telco.services.dep.sandbox.dao.model.domain.MobileApiEncodeRequest" />
-		<mapping
-			class="com.wso2telco.services.dep.sandbox.dao.model.domain.ProvisionRequestLog" />
-		<mapping 
-			class="com.wso2telco.services.dep.sandbox.dao.model.domain.Service" />
+		<mapping class="com.wso2telco.services.dep.sandbox.dao.model.domain.ChargeAmountRequest" />
+		<mapping class="com.wso2telco.services.dep.sandbox.dao.model.domain.PaymentTransaction" />
+		<mapping class="com.wso2telco.services.dep.sandbox.dao.model.domain.SMSRequestLog" />
+		<mapping class="com.wso2telco.services.dep.sandbox.dao.model.domain.SubscribeSMSRequest" />
+		<mapping class="com.wso2telco.services.dep.sandbox.dao.model.domain.Paymentparam" />
+		<mapping class="com.wso2telco.services.dep.sandbox.dao.model.domain.SMSMessagingParam" />
+		<mapping class="com.wso2telco.services.dep.sandbox.dao.model.domain.SendSMSToApplication" />
+		<mapping class="com.wso2telco.services.dep.sandbox.dao.model.domain.LocationRequestLog" />
+		<mapping class="com.wso2telco.services.dep.sandbox.dao.model.domain.Locationparam" />
+		<mapping class="com.wso2telco.services.dep.sandbox.dao.model.domain.DeliverySubscription" />
+		<mapping class="com.wso2telco.services.dep.sandbox.dao.model.domain.UssdSubscriptions" />
+		<mapping class="com.wso2telco.services.dep.sandbox.dao.model.domain.UssdTransaction" />
+		<mapping class="com.wso2telco.services.dep.sandbox.dao.model.domain.SMSDeliveryStatus" />
+		<mapping class="com.wso2telco.services.dep.sandbox.dao.model.domain.MobileIdApiRequest" />
+		<mapping class="com.wso2telco.services.dep.sandbox.dao.model.domain.MobileApiEncodeRequest" />
+		<mapping class="com.wso2telco.services.dep.sandbox.dao.model.domain.ProvisionRequestLog" />
+		<mapping class="com.wso2telco.services.dep.sandbox.dao.model.domain.ProvisionedServices" />
+		<mapping class="com.wso2telco.services.dep.sandbox.dao.model.domain.ProvisionMSISDNServicesMap" />
+		<mapping class="com.wso2telco.services.dep.sandbox.dao.model.domain.ProvisionAllService" />
+		<mapping class="com.wso2telco.services.dep.sandbox.dao.model.domain.Status" />
+		<mapping class="com.wso2telco.services.dep.sandbox.dao.model.domain.APITypes" />
+		<mapping class="com.wso2telco.services.dep.sandbox.dao.model.domain.ProvisionResponseMessage" />
+		<mapping class="com.wso2telco.services.dep.sandbox.dao.model.domain.ProvisionResponseMessageCatergory" />
+		<mapping class="com.wso2telco.services.dep.sandbox.dao.model.domain.ProvisionExpectedMessage" />
+
 	</session-factory>
 </hibernate-configuration>
