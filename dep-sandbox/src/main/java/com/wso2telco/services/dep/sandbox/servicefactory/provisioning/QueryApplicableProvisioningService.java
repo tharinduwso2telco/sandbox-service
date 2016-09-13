@@ -29,7 +29,7 @@ import com.wso2telco.services.dep.sandbox.dao.model.custom.QueryProvisioningServ
 import com.wso2telco.services.dep.sandbox.dao.model.custom.ServiceInfo;
 import com.wso2telco.services.dep.sandbox.dao.model.custom.ServiceList;
 import com.wso2telco.services.dep.sandbox.dao.model.custom.ServiceListDTO;
-import com.wso2telco.services.dep.sandbox.dao.model.domain.Service;
+import com.wso2telco.services.dep.sandbox.dao.model.domain.ProvisionAllService;
 import com.wso2telco.services.dep.sandbox.dao.model.domain.User;
 import com.wso2telco.services.dep.sandbox.servicefactory.AbstractRequestHandler;
 import com.wso2telco.services.dep.sandbox.servicefactory.Returnable;
@@ -82,12 +82,12 @@ public class QueryApplicableProvisioningService
 			Integer offset = CommonUtil.convertStringToInteger(extendedRequestDTO.getOffSet());
 			Integer limit = CommonUtil.convertStringToInteger(extendedRequestDTO.getLimit());
 
-			List<Service> applicableServices = provisioningDao.getApplicableProvisionServices(offset, limit);
+			List<ProvisionAllService> applicableServices = provisioningDao.getApplicableProvisionServices(offset, limit);
 
 			ServiceList serviceList = new ServiceList();
 
 			if (applicableServices != null && !applicableServices.isEmpty()) {
-				for (Service service : applicableServices) {
+				for (ProvisionAllService service : applicableServices) {
 					ServiceInfo serviceInfo = serviceList.addNewServiceInfo();
 					serviceInfo.setServiceType(service.getServiceType());
 					serviceInfo.setServiceCode(service.getServiceCode());
