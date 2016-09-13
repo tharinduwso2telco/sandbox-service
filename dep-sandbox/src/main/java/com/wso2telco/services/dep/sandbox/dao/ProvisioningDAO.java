@@ -17,13 +17,13 @@ package com.wso2telco.services.dep.sandbox.dao;
 
 import java.util.List;
 
+import com.wso2telco.services.dep.sandbox.dao.model.domain.ProvisionAllService;
 import com.wso2telco.services.dep.sandbox.dao.model.domain.ProvisionRequestLog;
-import com.wso2telco.services.dep.sandbox.dao.model.domain.Service;
 
 public interface ProvisioningDAO {
 
 	public void saveProvisionRequestLog(ProvisionRequestLog provisionRequestLog) throws Exception;
 
-	public List<Service> getApplicableProvisionServices(int offset, int limit);
+	public List<ProvisionAllService> getApplicableProvisionServices(int offset, int limit);
 
 }
