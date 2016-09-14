@@ -24,6 +24,8 @@ public class QueryProvisioningServicesRequestWrapper extends RequestDTO {
 	private String offSet;
 
 	private String limit;
+	
+	private String phoneNumber;
 
 	/**
 	 * @return the msisdn
@@ -68,6 +70,20 @@ public class QueryProvisioningServicesRequestWrapper extends RequestDTO {
 	 */
 	public void setLimit(String limit) {
 		this.limit = limit;
+	}
+
+	/**
+	 * @return the phoneNumber
+	 */
+	public String getPhoneNumber() {
+		return phoneNumber;
+	}
+
+	/**
+	 * @param phoneNumber the phoneNumber to set
+	 */
+	public void setPhoneNumber(String phoneNumber) {
+		this.phoneNumber = phoneNumber;
 	}
 
 }

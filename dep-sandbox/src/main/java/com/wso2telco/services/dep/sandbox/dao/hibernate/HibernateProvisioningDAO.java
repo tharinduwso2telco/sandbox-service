@@ -15,16 +15,17 @@
  ******************************************************************************/
 package com.wso2telco.services.dep.sandbox.dao.hibernate;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.logging.LogFactory;
-import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import org.hibernate.query.Query;
 
 import com.wso2telco.services.dep.sandbox.dao.ProvisioningDAO;
-import com.wso2telco.services.dep.sandbox.dao.model.domain.ProvisionRequestLog;
 import com.wso2telco.services.dep.sandbox.dao.model.domain.ProvisionAllService;
+import com.wso2telco.services.dep.sandbox.dao.model.domain.ProvisionRequestLog;
 
 public class HibernateProvisioningDAO extends AbstractDAO implements ProvisioningDAO{
 	
@@ -41,26 +42,48 @@ public class HibernateProvisioningDAO extends AbstractDAO implements Provisionin
 			session.save(provisionRequestLog);
 			tx.commit();
 		} catch (Exception ex) {
+			LOG.error(ex);
 			tx.rollback();
 			throw ex;
 		}
 
 	}
 
-	public List<ProvisionAllService> getApplicableProvisionServices(int offset, int limit) {
+	public List<ProvisionAllService> getApplicableProvisionServices(String number, String username, int offset,
+			int limit) throws Exception{
 		Session session = getSession();
+		List<ProvisionAllService> applicableServiceList = new ArrayList<ProvisionAllService>();
 
-		Query query = session.createQuery("from ProvisionAllService where status= :status");
-		query.setParameter("status", "ACT");
-		if (offset > 0) {
-			query.setFirstResult(offset);
+		try {
+			StringBuilder hqlQueryBuilder = new StringBuilder();
+			hqlQueryBuilder.append("select pas ");
+			hqlQueryBuilder
+					.append("from ProvisionAllService pas,ProvisionMSISDNServicesMap pmsm,ManageNumber mn,User u ");
+			hqlQueryBuilder.append("where u.userName = :userName ");
+			hqlQueryBuilder.append("and u.id = mn.user.id ");
+			hqlQueryBuilder.append("and mn.id = pmsm.msisdnId.id ");
+			hqlQueryBuilder.append("and pmsm.servicesId.id = pas.id ");
+			hqlQueryBuilder.append("and mn.Number = :number ");
+
+			Query query = session.createQuery(hqlQueryBuilder.toString());
+
+			query.setParameter("userName", username);
+			query.setParameter("number", number);
+			if (offset > 0) {
+				query.setFirstResult(offset);
+			}
+
+			if (limit > 0) {
+				query.setMaxResults(limit);
+			}
+
+			applicableServiceList = (List<ProvisionAllService>) query.getResultList();
+		} catch (Exception ex) {
+			LOG.error("###PROVISION### Error in getApplicableProvisionServices " + ex);
+			throw ex;
 		}
 
-		if (limit > 0) {
-			query.setMaxResults(limit);
-		}
-
-		return (List<ProvisionAllService>)query.list();
+		return applicableServiceList;
 	}
 
 }
