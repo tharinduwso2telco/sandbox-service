@@ -90,11 +90,15 @@ public abstract class AbstractRequestHandler<E2 extends RequestDTO> implements R
 	private List<String> getNotWhitelistedNumbers(User user) throws Exception {
 		List<String> userNumList = new ArrayList<String>();
 		List<String> enterdList = getAddress();
+		List<ManageNumber> wlnumber = new ArrayList<ManageNumber>();
 		for (String address : enterdList) {
 			userNumList.add(getLastMobileNumber(address).trim());
 		}
 
-		List<ManageNumber> wlnumber = dao.getWhitelisted(user.getId(), userNumList);
+		if (!userNumList.isEmpty()) {
+			wlnumber = dao.getWhitelisted(user.getId(), userNumList);
+		}
+		
 
 		if (wlnumber != null) {
 			for (ManageNumber manageNumber : wlnumber) {
