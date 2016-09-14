@@ -28,38 +28,38 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 
 @Entity
-@Table(name = "provision_request_log")
+@Table(name = "sbxprrequesstlog")
 public class ProvisionRequestLog {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "provision_log_id")
+	@Column(name = "provision_request_log_id")
 	private int provisionRequestLogId;
 
-	@Column(name = "request_type")
+	@Column(name = "requesttype")
 	private String requestType;
 
 	@Column(name = "msisdn")
 	private String msisdn;
 
-	@Column(name = "client_correlator")
+	@Column(name = "clientcorrelator")
 	private String clientCorrelator;
 
-	@Column(name = "client_reference_code")
+	@Column(name = "clientreferencecode")
 	private String clientReferenceCode;
 
 	@ManyToOne
-	@JoinColumn(name = "user_id", referencedColumnName = "id")
+	@JoinColumn(name = "userid", referencedColumnName = "id")
 	private User user;
 
-	@Column(name = "notify_url")
+	@Column(name = "notifyurl")
 	private String notifyURL;
 
-	@Column(name = "callback_data")
+	@Column(name = "callbackdata")
 	private String callbackData;
 	
 	@Temporal(javax.persistence.TemporalType.DATE)
-    @Column(name="request_timestamp")
+    @Column(name="timestamp")
     private Date requestTimestamp;
 
 	/**
