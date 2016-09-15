@@ -58,7 +58,7 @@ public class ProvisionRequestLog {
 	@Column(name = "callbackdata")
 	private String callbackData;
 	
-	@Temporal(javax.persistence.TemporalType.DATE)
+	@Temporal(javax.persistence.TemporalType.TIMESTAMP)
     @Column(name="timestamp")
     private Date requestTimestamp;
 

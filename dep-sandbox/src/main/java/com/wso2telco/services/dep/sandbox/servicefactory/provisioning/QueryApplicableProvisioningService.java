@@ -23,6 +23,10 @@ import javax.ws.rs.core.Response;
 
 import org.apache.commons.logging.LogFactory;
 
+import com.wso2telco.core.dbutils.exception.ThrowableError;
+import com.wso2telco.dep.oneapivalidation.exceptions.CustomException;
+import com.wso2telco.dep.oneapivalidation.util.Validation;
+import com.wso2telco.dep.oneapivalidation.util.ValidationRule;
 import com.wso2telco.services.dep.sandbox.dao.DaoFactory;
 import com.wso2telco.services.dep.sandbox.dao.ProvisioningDAO;
 import com.wso2telco.services.dep.sandbox.dao.model.custom.QueryProvisioningServicesRequestWrapper;
@@ -31,6 +35,8 @@ import com.wso2telco.services.dep.sandbox.dao.model.custom.ServiceList;
 import com.wso2telco.services.dep.sandbox.dao.model.custom.ServiceListDTO;
 import com.wso2telco.services.dep.sandbox.dao.model.domain.ProvisionAllService;
 import com.wso2telco.services.dep.sandbox.dao.model.domain.User;
+import com.wso2telco.services.dep.sandbox.exception.SandboxException;
+import com.wso2telco.services.dep.sandbox.exception.SandboxException.SandboxErrorType;
 import com.wso2telco.services.dep.sandbox.servicefactory.AbstractRequestHandler;
 import com.wso2telco.services.dep.sandbox.servicefactory.Returnable;
 import com.wso2telco.services.dep.sandbox.util.CommonUtil;
@@ -64,9 +70,37 @@ public class QueryApplicableProvisioningService
 	@Override
 	protected boolean validate(QueryProvisioningServicesRequestWrapper wrapperDTO) throws Exception {
 
-		CommonUtil.validateMsisdn(wrapperDTO.getMsisdn());
-		CommonUtil.validatePositiveNumber(wrapperDTO.getOffSet(), "offset");
-		CommonUtil.validatePositiveNumber(wrapperDTO.getLimit(), "limit");
+		String msisdn = CommonUtil.getNullOrTrimmedValue(wrapperDTO.getMsisdn());
+		String offset = CommonUtil.getNullOrTrimmedValue(wrapperDTO.getOffSet());
+		String limit = CommonUtil.getNullOrTrimmedValue(wrapperDTO.getLimit());
+
+		try {
+			ValidationRule[] validationRules = {
+					new ValidationRule(ValidationRule.VALIDATION_TYPE_MANDATORY_TEL_END_USER_ID, "msisdn", msisdn),
+					new ValidationRule(ValidationRule.VALIDATION_TYPE_OPTIONAL_INT_GE_ZERO, "offset", offset),
+					new ValidationRule(ValidationRule.VALIDATION_TYPE_OPTIONAL_INT_GE_ZERO, "limit", limit) };
+
+			Validation.checkRequestParams(validationRules);
+		} catch (CustomException ex) {
+			LOG.error("###PROVISION### Error in Validation : " + ex);
+			throw new SandboxException(new ThrowableError() {
+
+				@Override
+				public String getMessage() {
+					return ex.getErrmsg();
+				}
+
+				@Override
+				public String getCode() {
+					return ex.getErrcode();
+				}
+			});
+		} catch (Exception ex) {
+			LOG.error("###PROVISION### Error in Validation : " + ex);
+			throw new SandboxException(SandboxErrorType.SERVICE_ERROR);
+		}
+
+		wrapperDTO.setPhoneNumber(CommonUtil.extractNumberFromMsisdn(wrapperDTO.getMsisdn()));
 
 		return true;
 	}
@@ -81,8 +115,10 @@ public class QueryApplicableProvisioningService
 
 			Integer offset = CommonUtil.convertStringToInteger(extendedRequestDTO.getOffSet());
 			Integer limit = CommonUtil.convertStringToInteger(extendedRequestDTO.getLimit());
-
-			List<ProvisionAllService> applicableServices = provisioningDao.getApplicableProvisionServices(offset, limit);
+			String msisdn = extendedRequestDTO.getMsisdn();
+			String phoneNumber = extendedRequestDTO.getPhoneNumber();
+			
+			List<ProvisionAllService> applicableServices = provisioningDao.getApplicableProvisionServices(phoneNumber,user.getUserName(),offset, limit);
 
 			ServiceList serviceList = new ServiceList();
 
@@ -94,6 +130,9 @@ public class QueryApplicableProvisioningService
 					serviceInfo.setDescription(service.getDescription());
 					serviceInfo.setServiceCharge(service.getServiceCharge());
 				}
+			} else {
+				LOG.error("###PROVISION### Valid Provision Services Not Available for msisdn: " + msisdn);
+				throw new SandboxException(SandboxErrorType.NO_VALID_SERVICES_AVAILABLE);
 			}
 
 			serviceList.setCurrencyCode(ProvisioningUtil.DEFAULT_CURRENCY_CODE);
@@ -105,7 +144,8 @@ public class QueryApplicableProvisioningService
 			responseWrapper.setServiceListDTO(serviceListDTO);
 
 		} catch (Exception ex) {
-			LOG.info(ex);
+			LOG.error("###PROVISION### Error Occured in Query Applicable Service. " + ex);
+			throw new SandboxException(SandboxErrorType.SERVICE_ERROR);
 		}
 		return responseWrapper;
 	}
