@@ -26,6 +26,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 
@@ -42,7 +43,7 @@ public class ProvisionedServices implements Serializable {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int id;
 
-	@ManyToOne
+	@OneToOne
 	@JoinColumn(name = "msisdnservicesmapid", referencedColumnName = "id")
 	private ProvisionMSISDNServicesMap msisdnServiceMap;
 
