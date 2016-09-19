@@ -24,10 +24,13 @@ import com.wso2telco.core.msisdnvalidator.InvalidMSISDNException;
 import com.wso2telco.core.msisdnvalidator.MSISDN;
 import com.wso2telco.core.msisdnvalidator.MSISDNUtil;
 import com.wso2telco.services.dep.sandbox.exception.SandboxException;
+import com.wso2telco.services.dep.sandbox.exception.SandboxException.SandboxErrorType;
 
 public class CommonUtil {
 
 	static Log LOG = LogFactory.getLog(CommonUtil.class);
+	
+	private static final String MSISDN_SPLITTER = ":|\\+";
 
 	public static void validateMsisdn(String msisdn) throws SandboxException {
 
@@ -37,14 +40,14 @@ public class CommonUtil {
 		} catch (InvalidMSISDNException ex) {
 			LOG.info(ex);
 			String errorMessage = "Invalid MSISDN";
-			throw new SandboxException(errorMessage);
+			throw new SandboxException(SandboxErrorType.INVALID_MSISDN);
 		}
 
 	}
 
 	public static void validatePositiveNumber(String number, String parameterName) throws SandboxException {
 		if (!StringUtils.isEmpty(number) && !NumberUtils.isDigits(number)) {
-			throw new SandboxException("Invalid Number : " + parameterName);
+			throw new SandboxException(SandboxErrorType.INVALIN_INPUT_VALUE);
 		}
 	}
 
@@ -56,6 +59,27 @@ public class CommonUtil {
 		}
 
 		return value;
+	}
+	
+	public static String getNullOrTrimmedValue(String value) {
+		String outputValue = null;
+
+		if (value != null && value.trim().length() > 0) {
+			outputValue = value.trim();
+		}
+
+		return outputValue;
+	}
+	
+	public static String extractNumberFromMsisdn(String msisdn) {
+		String phoneNumber = "";
+		String[] splittedMsisdn = msisdn.trim().split(MSISDN_SPLITTER);
+
+		if (splittedMsisdn != null && splittedMsisdn.length > 0) {
+			phoneNumber = splittedMsisdn[splittedMsisdn.length - 1];
+		}
+
+		return phoneNumber;
 	}
 
 }

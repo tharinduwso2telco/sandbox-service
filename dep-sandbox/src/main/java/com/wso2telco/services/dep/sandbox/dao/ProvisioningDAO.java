@@ -26,8 +26,7 @@ public interface ProvisioningDAO {
 
 	public void saveProvisionRequestLog(ProvisionRequestLog provisionRequestLog) throws Exception;
 
-	public List<ProvisionAllService> getApplicableProvisionServices(int offset, int limit);
-	
+	public List<ProvisionAllService> getApplicableProvisionServices(String number, String username, int offset,
+			int limit) throws Exception;
 	public List<ListProvisionedDTO> getActiveProvisionedServices(String msisdn,int offset, int limit) throws Exception;
-
 }

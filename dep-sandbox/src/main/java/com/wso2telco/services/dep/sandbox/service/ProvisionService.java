@@ -33,6 +33,7 @@ import com.wordnik.swagger.annotations.ApiOperation;
 import com.wordnik.swagger.annotations.ApiParam;
 import com.wso2telco.services.dep.sandbox.dao.model.custom.ListProvisionedRequestWrapperDTO;
 import com.wso2telco.services.dep.sandbox.dao.model.custom.QueryProvisioningServicesRequestWrapper;
+import com.wso2telco.services.dep.sandbox.exception.SandboxException;
 import com.wso2telco.services.dep.sandbox.servicefactory.RequestBuilderFactory;
 import com.wso2telco.services.dep.sandbox.servicefactory.RequestHandleable;
 import com.wso2telco.services.dep.sandbox.servicefactory.Returnable;
@@ -69,6 +70,9 @@ public class ProvisionService {
 			Response response = Response.status(returnable.getHttpStatus()).entity(returnable.getResponse()).build();
 			LOG.debug("QUERY APPLICABLE SERVICE RESPONSE : " + response);
 			return response;
+		} catch (SandboxException ex) {
+			LOG.error("QUERY SERVICE ERROR : " , ex);
+			return Response.status(Response.Status.BAD_REQUEST).entity(ex.getErrorType().getCode() + " " + ex.getErrorType().getMessage()).build();
 		} catch (Exception ex) {
 			LOG.error("QUERY SERVICE ERROR : " , ex);
 			return Response.status(Response.Status.BAD_REQUEST).entity(ex.getMessage()).build();
