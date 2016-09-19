@@ -109,19 +109,20 @@ public class HibernateProvisioningDAO extends AbstractDAO implements Provisionin
 		hql.append(" AND services.id = map.servicesId");
 		hql.append(" AND stat.id = prservice.status");
 		
+		Query query = session.createQuery(hql.toString());
+		
+		query.setParameter("status", ProvisioningStatusCodes.PRV_PROVISION_SUCCESS.toString());
+		query.setParameter("number", msisdn);
+		
 		if (offset > 0) {
-			hql.append(" OFFSET ");
-			hql.append(offset );
+			query.setFirstResult(offset);
 		}
 
 		if (limit > 0) {
-			hql.append(" LIMIT ");
-			hql.append(limit );
+			query.setMaxResults(limit);
 		}
-		resultSet = session.createQuery(hql.toString())
-							.setParameter("status", ProvisioningStatusCodes.PRV_PROVISION_SUCCESS.toString())
-							.setParameter("number", msisdn).setResultTransformer( Transformers.aliasToBean(ListProvisionedDTO.class))
-							.list();
+		
+		resultSet = query.setResultTransformer( Transformers.aliasToBean(ListProvisionedDTO.class)).getResultList();
 		return resultSet;
 	}
 

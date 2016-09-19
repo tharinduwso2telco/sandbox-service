@@ -24,6 +24,10 @@ import javax.ws.rs.core.Response;
 
 import org.apache.commons.logging.LogFactory;
 
+import com.wso2telco.core.dbutils.exception.ThrowableError;
+import com.wso2telco.dep.oneapivalidation.exceptions.CustomException;
+import com.wso2telco.dep.oneapivalidation.util.Validation;
+import com.wso2telco.dep.oneapivalidation.util.ValidationRule;
 import com.wso2telco.services.dep.sandbox.dao.DaoFactory;
 import com.wso2telco.services.dep.sandbox.dao.ProvisioningDAO;
 import com.wso2telco.services.dep.sandbox.dao.model.custom.ListProvisionedDTO;
@@ -33,6 +37,8 @@ import com.wso2telco.services.dep.sandbox.dao.model.custom.ServiceListProvisione
 import com.wso2telco.services.dep.sandbox.dao.model.custom.ServiceListProvisionedDTO;
 import com.wso2telco.services.dep.sandbox.dao.model.custom.ServiceMetaInfoListProvisionedDTO;
 import com.wso2telco.services.dep.sandbox.dao.model.domain.User;
+import com.wso2telco.services.dep.sandbox.exception.SandboxException;
+import com.wso2telco.services.dep.sandbox.exception.SandboxException.SandboxErrorType;
 import com.wso2telco.services.dep.sandbox.servicefactory.AbstractRequestHandler;
 import com.wso2telco.services.dep.sandbox.servicefactory.Returnable;
 import com.wso2telco.services.dep.sandbox.util.CommonUtil;
@@ -70,9 +76,35 @@ public class ListActiveProvisionedServices extends AbstractRequestHandler<ListPr
 	@Override
 	protected boolean validate(ListProvisionedRequestWrapperDTO wrapperDTO) throws Exception {
 
-		CommonUtil.validateMsisdn(wrapperDTO.getMsisdn());
-		CommonUtil.validatePositiveNumber(wrapperDTO.getOffSet(), "offset");
-		CommonUtil.validatePositiveNumber(wrapperDTO.getLimit(), "limit");
+		String msisdn = CommonUtil.getNullOrTrimmedValue(wrapperDTO.getMsisdn());
+		String offset = CommonUtil.getNullOrTrimmedValue(wrapperDTO.getOffSet());
+		String limit = CommonUtil.getNullOrTrimmedValue(wrapperDTO.getLimit());
+
+		try {
+			ValidationRule[] validationRules = {
+					new ValidationRule(ValidationRule.VALIDATION_TYPE_MANDATORY_TEL_END_USER_ID, "msisdn", msisdn),
+					new ValidationRule(ValidationRule.VALIDATION_TYPE_OPTIONAL_INT_GE_ZERO, "offset", offset),
+					new ValidationRule(ValidationRule.VALIDATION_TYPE_OPTIONAL_INT_GE_ZERO, "limit", limit) };
+
+			Validation.checkRequestParams(validationRules);
+		} catch (CustomException ex) {
+			LOG.error("###PROVISION### Error in Validation : " + ex);
+			throw new SandboxException(new ThrowableError() {
+
+				@Override
+				public String getMessage() {
+					return ex.getErrmsg();
+				}
+
+				@Override
+				public String getCode() {
+					return ex.getErrcode();
+				}
+			});
+		} catch (Exception ex) {
+			LOG.error("###PROVISION### Error in Validation : " + ex);
+			throw new SandboxException(SandboxErrorType.SERVICE_ERROR);
+		}
 
 		return true;
 	}
@@ -87,11 +119,6 @@ public class ListActiveProvisionedServices extends AbstractRequestHandler<ListPr
 			LOG.debug(extendedRequestDTO.getMsisdn());
 			
 			String msisdn =getLastMobileNumber(extendedRequestDTO.getMsisdn());
-			
-			/*if(msisdn.contains("+")){
-				msisdn=(msisdn.replace('+',' ')).trim();
-				LOG.debug(msisdn);
-			}*/
 			Integer offset = CommonUtil.convertStringToInteger(extendedRequestDTO.getOffSet());
 			Integer limit = CommonUtil.convertStringToInteger(extendedRequestDTO.getLimit());
 
@@ -117,6 +144,9 @@ public class ListActiveProvisionedServices extends AbstractRequestHandler<ListPr
 					serviceInfo.setTimeStamp(service.getCreatedDate());
 					serviceInfo.setServiceInfo(metaServiceInfoList);
 				}
+			}else {
+				LOG.error("###PROVISION### Valid Provisioned Services Not Available for msisdn: " + msisdn);
+				throw new SandboxException(SandboxErrorType.NO_VALID_SERVICES_AVAILABLE);
 			}
 
 			serviceList.setResourceURL(ProvisioningUtil.getResourceUrl(extendedRequestDTO));
@@ -129,9 +159,8 @@ public class ListActiveProvisionedServices extends AbstractRequestHandler<ListPr
 			responseWrapper.setServiceListDTO(serviceListDTO);
 
 		} catch (Exception ex) {
-			LOG.error(ex.getMessage());
-			
-			responseWrapper.setHttpStatus(Response.Status.BAD_REQUEST);
+			LOG.error("###PROVISION### Error Occured in List Provisioned Service. " + ex);
+			throw new SandboxException(SandboxErrorType.SERVICE_ERROR);
 		}
 		return responseWrapper;
 	}
