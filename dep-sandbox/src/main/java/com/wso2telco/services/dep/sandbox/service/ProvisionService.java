@@ -31,6 +31,7 @@ import org.apache.commons.logging.LogFactory;
 import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
 import com.wordnik.swagger.annotations.ApiParam;
+import com.wso2telco.services.dep.sandbox.dao.model.custom.ListProvisionedRequestWrapperDTO;
 import com.wso2telco.services.dep.sandbox.dao.model.custom.QueryProvisioningServicesRequestWrapper;
 import com.wso2telco.services.dep.sandbox.servicefactory.RequestBuilderFactory;
 import com.wso2telco.services.dep.sandbox.servicefactory.RequestHandleable;
@@ -70,6 +71,35 @@ public class ProvisionService {
 			return response;
 		} catch (Exception ex) {
 			LOG.error("QUERY SERVICE ERROR : " , ex);
+			return Response.status(Response.Status.BAD_REQUEST).entity(ex.getMessage()).build();
+		}
+
+	}
+	
+	@GET
+	@Path("/{msisdn}/list/active")
+	@ApiOperation(value = "getActiveProvisionedServices", notes = "getActiveProvisionedServices", response = Response.class)
+	public Response getActiveProvisionedServices( @ApiParam(value = "msisdn", required = true) @PathParam("msisdn") String msisdn, 
+			@ApiParam(value = "offset", required = true) @QueryParam("offset") String offSet,
+			@ApiParam(value = "limit", required = true)  @QueryParam("limit") String limit, @Context HttpServletRequest request) {
+		LOG.debug("/{msisdn}/list/active invoked :" + msisdn + offSet + limit);
+		ListProvisionedRequestWrapperDTO requestDTO = new ListProvisionedRequestWrapperDTO();
+		requestDTO.setHttpRequest(request);
+		requestDTO.setOffSet(offSet);
+		requestDTO.setLimit(limit);
+		requestDTO.setMsisdn(msisdn);
+		requestDTO.setRequestType(RequestType.PROVISIONING);
+
+		RequestHandleable handler = RequestBuilderFactory.getInstance(requestDTO);
+		Returnable returnable = null;
+
+		try {
+			returnable = handler.execute(requestDTO);
+			Response response = Response.status(returnable.getHttpStatus()).entity(returnable.getResponse()).build();
+			LOG.debug("ACTIVE PROVISIONED SERVICES RESPONSE : " + response);
+			return response;
+		} catch (Exception ex) {
+			LOG.error("ACTIVE PROVISIONED SERVICES ERROR : " , ex);
 			return Response.status(Response.Status.BAD_REQUEST).entity(ex.getMessage()).build();
 		}
 

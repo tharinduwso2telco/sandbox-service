@@ -35,6 +35,10 @@ public class ProvisioningServiceFactory {
 				&& requestDTO.isGet()) {
 			LOG.debug("LOADING QUERY APPLICABLE PROVISIONING SERVICES");
 			return new QueryApplicableProvisioningService();
+		}else if (requestDTO.getRequestPath().toLowerCase().contains(LIST_SERVICE_BY_CUSTOMER)
+				&& requestDTO.isGet()) {
+			LOG.debug("LOADING LIST OF PROVISIONED SERVICES");
+			return new ListActiveProvisionedServices();
 		}
 
 		return null;

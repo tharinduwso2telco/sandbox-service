@@ -24,6 +24,11 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+/**
+ * 
+ * @author WSO2Telco
+ *
+ */
 @Entity
 @Table(name = "sbxprservices")
 public class ProvisionAllService {
@@ -153,7 +158,8 @@ public class ProvisionAllService {
 
 	/**
 	 * 
-	 * @param tag to set
+	 * @param tag
+	 *            to set
 	 */
 	public void setTag(String tag) {
 		this.tag = tag;
@@ -163,16 +169,17 @@ public class ProvisionAllService {
 	 * 
 	 * @return the value
 	 */
-	public String getTagValue() {
+	public String getValue() {
 		return value;
 
 	}
 
 	/**
 	 * 
-	 * @param value to set
+	 * @param value
+	 *            to set
 	 */
-	public void setTagValue(String value) {
+	public void setValue(String value) {
 		this.value = value;
 	}
 

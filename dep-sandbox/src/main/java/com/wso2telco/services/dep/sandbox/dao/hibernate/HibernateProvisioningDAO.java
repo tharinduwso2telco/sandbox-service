@@ -18,13 +18,17 @@ package com.wso2telco.services.dep.sandbox.dao.hibernate;
 import java.util.List;
 
 import org.apache.commons.logging.LogFactory;
-import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import org.hibernate.query.Query;
+import org.hibernate.transform.Transformers;
 
 import com.wso2telco.services.dep.sandbox.dao.ProvisioningDAO;
+import com.wso2telco.services.dep.sandbox.dao.model.custom.ListProvisionedDTO;
 import com.wso2telco.services.dep.sandbox.dao.model.domain.ProvisionRequestLog;
 import com.wso2telco.services.dep.sandbox.dao.model.domain.ProvisionAllService;
+import com.wso2telco.services.dep.sandbox.dao.model.domain.ProvisionedServices;
+import com.wso2telco.services.dep.sandbox.util.ProvisioningStatusCodes;
 
 public class HibernateProvisioningDAO extends AbstractDAO implements ProvisioningDAO{
 	
@@ -35,13 +39,13 @@ public class HibernateProvisioningDAO extends AbstractDAO implements Provisionin
 	
 	public void saveProvisionRequestLog(ProvisionRequestLog provisionRequestLog) throws Exception {
 		Session session = getSession();
-		Transaction tx = session.beginTransaction();
+		//Transaction tx = session.beginTransaction();
 
 		try {
 			session.save(provisionRequestLog);
-			tx.commit();
+			//tx.commit();
 		} catch (Exception ex) {
-			tx.rollback();
+			//tx.rollback();
 			throw ex;
 		}
 
@@ -61,6 +65,42 @@ public class HibernateProvisioningDAO extends AbstractDAO implements Provisionin
 		}
 
 		return (List<ProvisionAllService>)query.list();
+	}
+	
+	public List<ListProvisionedDTO> getActiveProvisionedServices(String msisdn,int offset, int limit) throws Exception {
+		Session session = getSession();
+		List<ListProvisionedDTO> resultSet=null;
+		StringBuilder hql=new StringBuilder();
+		
+		hql.append(" SELECT");
+		hql.append(" services.serviceCode AS serviceCode,services.description AS description,prservice.createdDate AS createdDate,services.tag AS tag,services.value AS value");
+		hql.append(" FROM");
+		hql.append(" ManageNumber AS num,");
+		hql.append(" ProvisionMSISDNServicesMap AS map,");
+		hql.append(" ProvisionedServices AS prservice,");
+		hql.append(" Status AS stat,");
+		hql.append(" ProvisionAllService AS services");
+		hql.append(" WHERE num.Number = :number");
+		hql.append(" AND stat.code= :status");
+		hql.append(" AND  num.id = map.msisdnId");
+		hql.append(" AND prservice.msisdnServiceMap = map.id");
+		hql.append(" AND services.id = map.servicesId");
+		hql.append(" AND stat.id = prservice.status");
+		
+		if (offset > 0) {
+			hql.append(" OFFSET ");
+			hql.append(offset );
+		}
+
+		if (limit > 0) {
+			hql.append(" LIMIT ");
+			hql.append(limit );
+		}
+		resultSet = session.createQuery(hql.toString())
+							.setParameter("status", ProvisioningStatusCodes.PRV_PROVISION_SUCCESS.toString())
+							.setParameter("number", msisdn).setResultTransformer( Transformers.aliasToBean(ListProvisionedDTO.class))
+							.list();
+		return resultSet;
 	}
 
 }

@@ -9,7 +9,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
-
 @Entity
 @Table(name = "sbxstatus")
 public class Status implements Serializable {
@@ -21,6 +20,12 @@ public class Status implements Serializable {
 	@Column(name = "status")
 	private String status;
 
+	@Column(name = "code")
+	private String code;
+
+	@Column(name = "description")
+	private String description;
+
 	/**
 	 * 
 	 * @return the id
@@ -31,7 +36,8 @@ public class Status implements Serializable {
 
 	/**
 	 * 
-	 * @param id to set
+	 * @param id
+	 *            to set
 	 */
 
 	public void setId(int id) {
@@ -49,11 +55,28 @@ public class Status implements Serializable {
 
 	/**
 	 * 
-	 * @param status to set
+	 * @param status
+	 *            to set
 	 */
 	public void setStatus(String status) {
 		this.status = status;
 	}
+
+	public String getCode() {
+		return code;
+	}
+
+	public void setCode(String code) {
+		this.code = code;
+	}
+	
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+	
+	
 }
-
-
