@@ -50,10 +50,19 @@ public class ProvisionResponseMessage implements Serializable {
 		this.id = id;
 	}
 
+	/**
+	 * 
+	 * @return the responseMessageCatergory
+	 */
 	public ProvisionResponseMessageCatergory getResponseMessageCatergory() {
 		return responseMessageCatergory;
 	}
 
+	/**
+	 * 
+	 * @param responseMessageCatergory
+	 *            to set
+	 */
 	public void setResponseMessageCatergory(
 			ProvisionResponseMessageCatergory responseMessageCatergory) {
 		this.responseMessageCatergory = responseMessageCatergory;
@@ -69,8 +78,7 @@ public class ProvisionResponseMessage implements Serializable {
 
 	/**
 	 * 
-	 * @param responseCode
-	 *            to set
+	 * @param code to set
 	 */
 	public void setResponseCode(String code) {
 		this.responseCode = code;
@@ -93,10 +101,19 @@ public class ProvisionResponseMessage implements Serializable {
 		this.responseMessage = responseMessage;
 	}
 
+	/**
+	 * 
+	 * @return the apiType
+	 */
 	public APITypes getApiType() {
 		return apiType;
 	}
 
+	/**
+	 * 
+	 * @param apiTypes
+	 *            to set
+	 */
 	public void setApiType(APITypes apiTypes) {
 		this.apiType = apiTypes;
 	}

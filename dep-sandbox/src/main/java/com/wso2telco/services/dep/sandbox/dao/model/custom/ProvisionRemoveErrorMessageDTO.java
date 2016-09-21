@@ -8,7 +8,7 @@ public class ProvisionRemoveErrorMessageDTO {
 
 	/**
 	 * 
-	 * @return the responseCode
+	 * @return responseCode
 	 */
 	public String getResponseCode() {
 		return responseCode;
@@ -16,8 +16,7 @@ public class ProvisionRemoveErrorMessageDTO {
 
 	/**
 	 * 
-	 * @param responseCode
-	 *            to set
+	 * @param code to set
 	 */
 	public void setResponseCode(String code) {
 		this.responseCode = code;
@@ -41,7 +40,7 @@ public class ProvisionRemoveErrorMessageDTO {
 	}
 	/**
 	 * 
-	 * @return the messageCategory
+	 * @return the messageCategoryid
 	 */
 	public int getMessageCategory() {
 		return messageCategoryid;
@@ -49,7 +48,7 @@ public class ProvisionRemoveErrorMessageDTO {
 
 	/**
 	 * 
-	 * @param messageCategory to set
+	 * @param messageCategoryid to set
 	 *            
 	 */
 	public void setMessageCategory(int messageCategoryid) {
