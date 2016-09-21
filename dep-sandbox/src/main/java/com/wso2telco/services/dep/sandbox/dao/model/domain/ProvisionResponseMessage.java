@@ -13,46 +13,69 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name = "sbxresponsemessage")
-public class ProvisionResponseMessage implements Serializable{
+public class ProvisionResponseMessage implements Serializable {
 
 	@Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
-	
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private int id;
+
 	@ManyToOne
-    @JoinColumn(name="categoryid", referencedColumnName="id")
-    private ProvisionResponseMessageCatergory responseMessageCatergory;
-	
-	@Column(name="message") 
-    private String responseMessage;
-	
+	@JoinColumn(name = "categoryid", referencedColumnName = "id")
+	private ProvisionResponseMessageCatergory responseMessageCatergory;
+
+	@Column(name = "code")
+	private String responseCode;
+
+	@Column(name = "message")
+	private String responseMessage;
+
 	@ManyToOne
-    @JoinColumn(name="apitypeid", referencedColumnName="id")
-    private APITypes apiType;
-	
-	 /**
-     * @return the id
-     */
-	
+	@JoinColumn(name = "apitypeid", referencedColumnName = "id")
+	private APITypes apiType;
+
+	/**
+	 * @return the id
+	 */
+
 	public int getId() {
 		return id;
 	}
-	 /**
-     * @param id the id to set
-     */
-	
+
+	/**
+	 * @param id
+	 *            the id to set
+	 */
+
 	public void setId(int id) {
 		this.id = id;
 	}
-	
-	public ProvisionResponseMessageCatergory getResponseMessageCatergory(){
+
+	public ProvisionResponseMessageCatergory getResponseMessageCatergory() {
 		return responseMessageCatergory;
 	}
-	
-	public void setResponseMessageCatergory(ProvisionResponseMessageCatergory responseMessageCatergory){
-		this.responseMessageCatergory=responseMessageCatergory;
+
+	public void setResponseMessageCatergory(
+			ProvisionResponseMessageCatergory responseMessageCatergory) {
+		this.responseMessageCatergory = responseMessageCatergory;
 	}
-	
+
+	/**
+	 * 
+	 * @return the responseCode
+	 */
+	public String getResponseCode() {
+		return responseCode;
+	}
+
+	/**
+	 * 
+	 * @param responseCode
+	 *            to set
+	 */
+	public void setResponseCode(String code) {
+		this.responseCode = code;
+	}
+
 	/**
 	 * 
 	 * @return the responseMessage
@@ -63,19 +86,19 @@ public class ProvisionResponseMessage implements Serializable{
 
 	/**
 	 * 
-	 * @param responseMessage to set
+	 * @param responseMessage
+	 *            to set
 	 */
 	public void setResponseMessage(String responseMessage) {
 		this.responseMessage = responseMessage;
 	}
-	
-	
-	public APITypes getApiType(){
+
+	public APITypes getApiType() {
 		return apiType;
 	}
-	
-	public void setApiType(APITypes apiTypes){
-		this.apiType=apiTypes;
+
+	public void setApiType(APITypes apiTypes) {
+		this.apiType = apiTypes;
 	}
-	
+
 }

@@ -62,8 +62,7 @@ public class ListActiveProvisionedServices extends AbstractRequestHandler<ListPr
 
 	@Override
 	protected Returnable getResponseDTO() {
-		// TODO Auto-generated method stub
-		return null;
+		return responseWrapper;
 	}
 
 	@Override
@@ -122,7 +121,7 @@ public class ListActiveProvisionedServices extends AbstractRequestHandler<ListPr
 			Integer offset = CommonUtil.convertStringToInteger(extendedRequestDTO.getOffSet());
 			Integer limit = CommonUtil.convertStringToInteger(extendedRequestDTO.getLimit());
 
-			List<ListProvisionedDTO> provisionedServices = provisioningDao.getActiveProvisionedServices(msisdn,offset, limit);
+			List<ListProvisionedDTO> provisionedServices = provisioningDao.getActiveProvisionedServices(msisdn,user.getUserName(),offset, limit);
 			
 			
 			ServiceListProvisioned serviceList = new ServiceListProvisioned();

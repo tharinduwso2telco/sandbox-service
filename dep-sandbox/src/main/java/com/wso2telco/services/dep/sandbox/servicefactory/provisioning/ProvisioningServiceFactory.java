@@ -39,6 +39,10 @@ public class ProvisioningServiceFactory {
 				&& requestDTO.isGet()) {
 			LOG.debug("LOADING LIST OF PROVISIONED SERVICES");
 			return new ListActiveProvisionedServices();
+		}else if (requestDTO.getRequestPath().toLowerCase().contains(REMOVE_SERVICE)
+				&& requestDTO.isDelete()) {
+			LOG.debug("REMOVING GIVEN PROVISIONED SERVICE");
+			return new RemoveProvisionedServices();
 		}
 
 		return null;
