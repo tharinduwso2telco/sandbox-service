@@ -44,10 +44,10 @@ import com.wso2telco.services.dep.sandbox.servicefactory.Returnable;
 import com.wso2telco.services.dep.sandbox.util.RequestType;
 
 
-@Path("/{v1}/provision")
+@Path("/provision/{v1}")
 @Consumes({ MediaType.APPLICATION_JSON })
 @Produces({ MediaType.APPLICATION_JSON })
-@Api(value = "/{v1}/provision", description = "Rest Service for provisionning API")
+@Api(value = "/provision/{v1}", description = "Rest Service for provisionning API")
 public class ProvisionService {
 
 	Log LOG = LogFactory.getLog(ProvisionService.class);

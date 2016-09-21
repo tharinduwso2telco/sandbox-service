@@ -50,7 +50,7 @@ public class HibernateProvisioningDAO extends AbstractDAO implements Provisionin
 		} catch (Exception ex) {
 			LOG.error(ex);
 			tx.rollback();
-			throw ex;
+			LOG.error("###PROVISION### Error in saveProvisionRequestLog " + ex);
 		}
 
 	}

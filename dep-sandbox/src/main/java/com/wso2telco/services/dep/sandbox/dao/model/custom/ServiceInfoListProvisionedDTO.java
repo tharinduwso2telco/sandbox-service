@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Date;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.wso2telco.services.dep.sandbox.util.ProvisioningUtil;
 /**
  * 
  * @author WSO2Telco
@@ -89,7 +90,7 @@ public class ServiceInfoListProvisionedDTO {
 	 */
 	public void setTimeStamp(Date timestamp) {
 		
-		this.timestamp = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'").format(timestamp);;
+		this.timestamp = new SimpleDateFormat(ProvisioningUtil.DEFAULT_DATE_FORMATE).format(timestamp);;
 	}
 
 	/**

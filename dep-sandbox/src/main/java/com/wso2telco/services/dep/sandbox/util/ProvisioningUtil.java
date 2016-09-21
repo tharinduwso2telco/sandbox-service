@@ -29,6 +29,8 @@ public class ProvisioningUtil {
 	
 	public static final String DEFAULT_CURRENCY_CODE = "USD";
 	
+	public static final String DEFAULT_DATE_FORMATE = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'";
+	
 	public static final String QUERY_STRING_SEPARATOR = "?";
 
 	static {
