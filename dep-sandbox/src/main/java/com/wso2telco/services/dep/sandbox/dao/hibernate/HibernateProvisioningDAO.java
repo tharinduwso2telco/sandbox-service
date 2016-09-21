@@ -26,11 +26,9 @@ import org.hibernate.transform.Transformers;
 
 import com.wso2telco.services.dep.sandbox.dao.ProvisioningDAO;
 import com.wso2telco.services.dep.sandbox.dao.model.custom.ListProvisionedDTO;
-import com.wso2telco.services.dep.sandbox.dao.model.custom.ProvisionRemoveErrorMessageDTO;
 import com.wso2telco.services.dep.sandbox.dao.model.domain.ProvisionAllService;
 import com.wso2telco.services.dep.sandbox.dao.model.domain.ProvisionRequestLog;
 import com.wso2telco.services.dep.sandbox.dao.model.domain.ProvisionResponseMessage;
-import com.wso2telco.services.dep.sandbox.dao.model.domain.ProvisionResponseMessageCatergory;
 import com.wso2telco.services.dep.sandbox.util.ProvisioningStatusCodes;
 
 public class HibernateProvisioningDAO extends AbstractDAO implements ProvisioningDAO{
@@ -109,6 +107,7 @@ public class HibernateProvisioningDAO extends AbstractDAO implements Provisionin
 		hql.append(" WHERE num.Number = :number");
 		hql.append(" AND user.userName= :username");
 		hql.append(" AND user.id = num.user");
+		hql.append(" AND user.id = services.user");
 		hql.append(" AND map.msisdnId = num.id");
 		hql.append(" AND map.id = prservice.msisdnServiceMap");
 		hql.append(" AND map.servicesId = services.id");
@@ -151,6 +150,7 @@ public class HibernateProvisioningDAO extends AbstractDAO implements Provisionin
 		hql.append(" number.Number = :msisdn AND");
 		hql.append(" user.userName= :username AND");
 		hql.append(" user.id = number.user AND");
+		hql.append(" user.id = service.user AND");
 		hql.append(" service.serviceCode = :code AND");
 		hql.append(" number.id = expect.msisdnId AND");
 		hql.append(" service.id = expect.servicesId AND");

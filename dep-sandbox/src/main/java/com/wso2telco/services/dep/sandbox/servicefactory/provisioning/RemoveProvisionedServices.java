@@ -31,8 +31,6 @@ import com.wso2telco.dep.oneapivalidation.util.ValidationRule;
 import com.wso2telco.services.dep.sandbox.dao.DaoFactory;
 import com.wso2telco.services.dep.sandbox.dao.ProvisioningDAO;
 import com.wso2telco.services.dep.sandbox.dao.model.custom.CallbackReference;
-import com.wso2telco.services.dep.sandbox.dao.model.custom.ListProvisionedDTO;
-import com.wso2telco.services.dep.sandbox.dao.model.custom.ProvisionRemoveErrorMessageDTO;
 import com.wso2telco.services.dep.sandbox.dao.model.custom.RemoveProvisionRequestBean.ServiceRemoveRequest;
 import com.wso2telco.services.dep.sandbox.dao.model.custom.RemoveProvisionedRequestWrapperDTO;
 import com.wso2telco.services.dep.sandbox.dao.model.domain.ProvisionResponseMessage;

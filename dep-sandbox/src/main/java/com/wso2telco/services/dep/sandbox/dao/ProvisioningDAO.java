@@ -18,7 +18,6 @@ package com.wso2telco.services.dep.sandbox.dao;
 import java.util.List;
 
 import com.wso2telco.services.dep.sandbox.dao.model.custom.ListProvisionedDTO;
-import com.wso2telco.services.dep.sandbox.dao.model.custom.ProvisionRemoveErrorMessageDTO;
 import com.wso2telco.services.dep.sandbox.dao.model.domain.ProvisionAllService;
 import com.wso2telco.services.dep.sandbox.dao.model.domain.ProvisionRequestLog;
 import com.wso2telco.services.dep.sandbox.dao.model.domain.ProvisionResponseMessage;
