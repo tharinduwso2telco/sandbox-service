@@ -37,6 +37,7 @@ class HibernateLocationDAO extends AbstractDAO implements LocationDAO{
 
 	public boolean saveTransaction(String address, Double requestedAccuracy, String tranStatus, User user)
 			throws Exception {
+		LOG.debug("saveTransaction");
 		LocationRequestLog locationRequestLog = new LocationRequestLog();
 		locationRequestLog.setAddress(address);
 		locationRequestLog.setRequestedAccuracy(requestedAccuracy);
@@ -45,16 +46,20 @@ class HibernateLocationDAO extends AbstractDAO implements LocationDAO{
 		locationRequestLog.setUser(user);
 
 		Session session = getSession();
-		Transaction tx = session.beginTransaction();
-		try {
-			tx.begin();
-			session.beginTransaction();
-			session.save(locationRequestLog);
-			tx.commit();
-		} catch (Exception e) {
-			tx.rollback();
-			throw e;
-		}
+		session.save(locationRequestLog);
+		
+//		LOG.debug("before session.beginTransaction();");
+//		Transaction tx = session.beginTransaction();
+//		try {
+//			tx.begin();
+//			session.beginTransaction();
+//			session.save(locationRequestLog);
+//			tx.commit();
+//		} catch (Exception e) {
+//			LOG.debug("saveTransaction" + e);
+//			tx.rollback();
+//			throw e;
+//		}
 
 		return true;
 	}

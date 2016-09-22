@@ -17,8 +17,10 @@ package com.wso2telco.services.dep.sandbox.dao;
 
 import java.util.List;
 
+import com.wso2telco.services.dep.sandbox.dao.model.custom.ListProvisionedDTO;
 import com.wso2telco.services.dep.sandbox.dao.model.domain.ProvisionAllService;
 import com.wso2telco.services.dep.sandbox.dao.model.domain.ProvisionRequestLog;
+import com.wso2telco.services.dep.sandbox.dao.model.domain.ProvisionResponseMessage;
 
 public interface ProvisioningDAO {
 
@@ -26,5 +28,7 @@ public interface ProvisioningDAO {
 
 	public List<ProvisionAllService> getApplicableProvisionServices(String number, String username, int offset,
 			int limit) throws Exception;
+	public List<ListProvisionedDTO> getActiveProvisionedServices(String msisdn,String username,int offset, int limit) throws Exception;
 
+	public List<ProvisionResponseMessage> getErrorResponse(String msisdn,String username, String serviceCode) throws Exception;
 }

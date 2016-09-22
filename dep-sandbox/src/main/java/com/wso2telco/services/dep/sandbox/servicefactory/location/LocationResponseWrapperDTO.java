@@ -1,7 +1,9 @@
 package com.wso2telco.services.dep.sandbox.servicefactory.location;
 
-import com.wso2telco.dep.oneapivalidation.exceptions.RequestError;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.wso2telco.services.dep.sandbox.servicefactory.AbstractReturnWrapperDTO;
+import com.wso2telco.services.dep.sandbox.util.RequestError;
 
 class LocationResponseWrapperDTO extends AbstractReturnWrapperDTO {
 
@@ -34,7 +36,7 @@ class LocationResponseWrapperDTO extends AbstractReturnWrapperDTO {
 	}
 
 
-
+	@JsonInclude(value=Include.NON_NULL)
 	class LocationResponse{
 		
 		private RequestError requestError;

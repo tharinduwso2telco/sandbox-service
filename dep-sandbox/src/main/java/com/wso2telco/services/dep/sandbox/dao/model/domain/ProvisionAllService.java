@@ -22,8 +22,15 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+/**
+ * 
+ * @author WSO2Telco
+ *
+ */
 @Entity
 @Table(name = "sbxprservices")
 public class ProvisionAllService {
@@ -53,6 +60,9 @@ public class ProvisionAllService {
 	@Column(name = "value")
 	private String value;
 
+	@ManyToOne
+	@JoinColumn(name = "userid", referencedColumnName = "id")
+	private User user;
 	/**
 	 * @return the id
 	 */
@@ -153,7 +163,8 @@ public class ProvisionAllService {
 
 	/**
 	 * 
-	 * @param tag to set
+	 * @param tag
+	 *            to set
 	 */
 	public void setTag(String tag) {
 		this.tag = tag;
@@ -163,17 +174,31 @@ public class ProvisionAllService {
 	 * 
 	 * @return the value
 	 */
-	public String getTagValue() {
+	public String getValue() {
 		return value;
 
 	}
 
 	/**
 	 * 
-	 * @param value to set
+	 * @param value
+	 *            to set
 	 */
-	public void setTagValue(String value) {
+	public void setValue(String value) {
 		this.value = value;
 	}
+	/**
+     * @return the user
+     */
+    public User getUser() {
+        return user;
+    }
+
+    /**
+     * @param user the user to set
+     */
+    public void setUser(User user) {
+        this.user = user;
+    }
 
 }

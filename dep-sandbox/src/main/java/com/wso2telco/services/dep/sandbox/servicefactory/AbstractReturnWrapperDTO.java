@@ -2,7 +2,8 @@ package com.wso2telco.services.dep.sandbox.servicefactory;
 
 import javax.ws.rs.core.Response.Status;
 
-import com.wso2telco.dep.oneapivalidation.exceptions.RequestError;
+import com.wso2telco.services.dep.sandbox.util.RequestError;
+
 
 public abstract class AbstractReturnWrapperDTO implements Returnable {
 	private Status httpStatus;
