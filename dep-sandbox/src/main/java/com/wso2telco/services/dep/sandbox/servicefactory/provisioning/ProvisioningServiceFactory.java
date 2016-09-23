@@ -31,18 +31,18 @@ public class ProvisioningServiceFactory {
 		final String REMOVE_SERVICE = "remove";
 		final String LIST_SERVICE_BY_CUSTOMER = "list/active";
 
-		if (requestDTO.getRequestPath().toLowerCase().contains(QUERY_APPLICABLE_SERVICES)
-				&& requestDTO.isGet()) {
+		if (requestDTO.getRequestPath().toLowerCase().contains(QUERY_APPLICABLE_SERVICES) && requestDTO.isGet()) {
 			LOG.debug("LOADING QUERY APPLICABLE PROVISIONING SERVICES");
 			return new QueryApplicableProvisioningService();
-		}else if (requestDTO.getRequestPath().toLowerCase().contains(LIST_SERVICE_BY_CUSTOMER)
-				&& requestDTO.isGet()) {
+		} else if (requestDTO.getRequestPath().toLowerCase().contains(LIST_SERVICE_BY_CUSTOMER) && requestDTO.isGet()) {
 			LOG.debug("LOADING LIST OF PROVISIONED SERVICES");
 			return new ListActiveProvisionedServices();
-		}else if (requestDTO.getRequestPath().toLowerCase().contains(REMOVE_SERVICE)
-				&& requestDTO.isDelete()) {
+		} else if (requestDTO.getRequestPath().toLowerCase().contains(REMOVE_SERVICE) && requestDTO.isDelete()) {
 			LOG.debug("REMOVING GIVEN PROVISIONED SERVICE");
 			return new RemoveProvisionedServices();
+		} else if (requestDTO.getRequestPath().toLowerCase().contains(PROVISION_SERVICE) && requestDTO.isPost()) {
+			LOG.debug("###PROVISION### LOADING PROVISION REQUESTED SERVICE");
+			return new ProvisionRequestedServiceHandler();
 		}
 
 		return null;

@@ -17,9 +17,11 @@ package com.wso2telco.services.dep.sandbox.dao.model.custom;
 
 public class CallbackReference {
 	private String notifyURL;
-	
+
 	private String callbackData;
-	
+
+	private String resourceURL;
+
 	/**
 	 * @return the notifyURL
 	 */
@@ -28,7 +30,8 @@ public class CallbackReference {
 	}
 
 	/**
-	 * @param notifyURL the notifyURL to set
+	 * @param notifyURL
+	 *            the notifyURL to set
 	 */
 	public void setNotifyURL(String notifyURL) {
 		this.notifyURL = notifyURL;
@@ -42,7 +45,8 @@ public class CallbackReference {
 	}
 
 	/**
-	 * @param callbackData the callbackData to set
+	 * @param callbackData
+	 *            the callbackData to set
 	 */
 	public void setCallbackData(String callbackData) {
 		this.callbackData = callbackData;
@@ -56,11 +60,21 @@ public class CallbackReference {
 	}
 
 	/**
-	 * @param resourceURL the resourceURL to set
+	 * @param resourceURL
+	 *            the resourceURL to set
 	 */
 	public void setResourceURL(String resourceURL) {
 		this.resourceURL = resourceURL;
 	}
+	
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
 
-	private String resourceURL;
+		builder.append(" notify URL : " + notifyURL);
+		builder.append(" callback Data : " + callbackData);
+		builder.append(" resource URL : " + resourceURL);
+
+		return builder.toString();
+	}
+
 }

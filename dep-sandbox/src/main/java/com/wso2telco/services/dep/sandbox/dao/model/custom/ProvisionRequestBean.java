@@ -35,15 +35,15 @@ public class ProvisionRequestBean {
 	}
 
 	public static class ServiceProvisionRequest {
-
+		
 		private String serviceCode;
 
 		private String serviceName;
-
+		
 		private String clientCorrelator;
-
+		
 		private String clientReferenceCode;
-
+		
 		private CallbackReference callbackReference;
 
 		/**
@@ -54,11 +54,52 @@ public class ProvisionRequestBean {
 		}
 
 		/**
-		 * @param serviceCode
-		 *            the serviceCode to set
+		 * @param serviceCode the serviceCode to set
 		 */
 		public void setServiceCode(String serviceCode) {
 			this.serviceCode = serviceCode;
+		}
+
+		/**
+		 * @return the clientCorrelator
+		 */
+		public String getClientCorrelator() {
+			return clientCorrelator;
+		}
+
+		/**
+		 * @param clientCorrelator the clientCorrelator to set
+		 */
+		public void setClientCorrelator(String clientCorrelator) {
+			this.clientCorrelator = clientCorrelator;
+		}
+
+		/**
+		 * @return the clientReferenceCode
+		 */
+		public String getClientReferenceCode() {
+			return clientReferenceCode;
+		}
+
+		/**
+		 * @param clientReferenceCode the clientReferenceCode to set
+		 */
+		public void setClientReferenceCode(String clientReferenceCode) {
+			this.clientReferenceCode = clientReferenceCode;
+		}
+
+		/**
+		 * @return the callbackReference
+		 */
+		public CallbackReference getCallbackReference() {
+			return callbackReference;
+		}
+
+		/**
+		 * @param callbackReference the callbackReference to set
+		 */
+		public void setCallbackReference(CallbackReference callbackReference) {
+			this.callbackReference = callbackReference;
 		}
 
 		/**
@@ -76,49 +117,18 @@ public class ProvisionRequestBean {
 			this.serviceName = serviceName;
 		}
 
-		/**
-		 * @return the clientCorrelator
-		 */
-		public String getClientCorrelator() {
-			return clientCorrelator;
-		}
+		public String toString() {
+			StringBuilder builder = new StringBuilder();
+			builder.append("Service Code : " + getServiceCode());
+			builder.append(" Service Name : " + serviceName);
+			builder.append(" Client Correlator : " + getClientCorrelator());
+			builder.append(" Client Reference Code : " + getClientReferenceCode());
 
-		/**
-		 * @param clientCorrelator
-		 *            the clientCorrelator to set
-		 */
-		public void setClientCorrelator(String clientCorrelator) {
-			this.clientCorrelator = clientCorrelator;
-		}
+			if (getCallbackReference() != null) {
+				builder.append(" " + getCallbackReference().toString());
+			}
 
-		/**
-		 * @return the clientReferenceCode
-		 */
-		public String getClientReferenceCode() {
-			return clientReferenceCode;
-		}
-
-		/**
-		 * @param clientReferenceCode
-		 *            the clientReferenceCode to set
-		 */
-		public void setClientReferenceCode(String clientReferenceCode) {
-			this.clientReferenceCode = clientReferenceCode;
-		}
-
-		/**
-		 * @return the callbackReference
-		 */
-		public CallbackReference getCallbackReference() {
-			return callbackReference;
-		}
-
-		/**
-		 * @param callbackReference
-		 *            the callbackReference to set
-		 */
-		public void setCallbackReference(CallbackReference callbackReference) {
-			this.callbackReference = callbackReference;
+			return builder.toString();
 		}
 	}
 }

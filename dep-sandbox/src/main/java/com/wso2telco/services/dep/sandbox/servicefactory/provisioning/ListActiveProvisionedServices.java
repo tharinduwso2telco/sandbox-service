@@ -43,6 +43,7 @@ import com.wso2telco.services.dep.sandbox.servicefactory.AbstractRequestHandler;
 import com.wso2telco.services.dep.sandbox.servicefactory.Returnable;
 import com.wso2telco.services.dep.sandbox.util.CommonUtil;
 import com.wso2telco.services.dep.sandbox.util.ProvisioningUtil;
+import com.wso2telco.services.dep.sandbox.util.ProvisioningUtil.ProvisionRequestTypes;
 /**
  * 
  * @author WSO2Telco
@@ -113,7 +114,7 @@ public class ListActiveProvisionedServices extends AbstractRequestHandler<ListPr
 		try {
 			User user = extendedRequestDTO.getUser();
 
-			ProvisioningUtil.saveProvisioningRequestDataLog("LIST_ACTIVE_PROVISIONED_SERVICES", extendedRequestDTO.getMsisdn(), user,
+			ProvisioningUtil.saveProvisioningRequestDataLog(ProvisionRequestTypes.LIST_ACTIVE_PROVISIONED_SERVICES.toString(), extendedRequestDTO.getMsisdn(), user,
 					null, null, null, null, new Date());
 			LOG.debug(extendedRequestDTO.getMsisdn());
 			

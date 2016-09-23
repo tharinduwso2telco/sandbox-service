@@ -21,14 +21,34 @@ import com.wso2telco.core.dbutils.exception.ThrowableError;
 public class SandboxException extends BusinessException {
 
 	private static final long serialVersionUID = 7715516857484240221L;
+	
+	private String fieldName;
 
 	public SandboxException(ThrowableError error) {
 		super(error);
 	}
+	
+	public SandboxException(ThrowableError error, String fieldName) {
+		super(error);
+	}
+
+	/**
+	 * @return the fieldName
+	 */
+	public String getFieldName() {
+		return fieldName;
+	}
+
+	/**
+	 * @param fieldName the fieldName to set
+	 */
+	public void setFieldName(String fieldName) {
+		this.fieldName = fieldName;
+	}
 
 	public enum SandboxErrorType implements ThrowableError {
 		INVALID_MSISDN("SVC0004","endUserId format invalid."),
-		INVALIN_INPUT_VALUE("SVC0002","Invalid input value for message part"),
+		INVALID_INPUT_VALUE("SVC0002","Invalid input value for message part"),
 		SERVICE_ERROR("SVC0001","A service error occurred"),
 		NO_VALID_SERVICES_AVAILABLE("POL0014","No Valid Services Available");
 		

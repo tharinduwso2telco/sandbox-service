@@ -32,9 +32,17 @@ public class ProvisioningUtil {
 	public static final String DEFAULT_DATE_FORMATE = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'";
 	
 	public static final String QUERY_STRING_SEPARATOR = "?";
+	
+	public static final ProvisioningStatusCodes DEFAULT_PROVISION_STATUS = ProvisioningStatusCodes.PRV_PROVISION_PENDING;
+	
+	public static final String SERVER_REFERENCE_CODE = "SERVER0001";
 
 	static {
 		provisioningDAO = DaoFactory.getProvisioningDAO();
+	}
+	
+	public enum ProvisionRequestTypes {
+		QUERY_APPLICABLE_PROVISION_SERVICE, LIST_ACTIVE_PROVISIONED_SERVICES, PROVISION_REQUESTED_SERVICE, DELETE_PROVISION_SERVICE
 	}
 
 	public static void saveProvisioningRequestDataLog(String requestType, String msisdn, User user,
