@@ -19,6 +19,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -26,6 +27,7 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -37,7 +39,12 @@ import com.wso2telco.services.dep.sandbox.dao.model.custom.ListProvisionedReques
 import com.wso2telco.services.dep.sandbox.dao.model.custom.QueryProvisioningServicesRequestWrapper;
 import com.wso2telco.services.dep.sandbox.dao.model.custom.RemoveProvisionRequestBean;
 import com.wso2telco.services.dep.sandbox.dao.model.custom.RemoveProvisionedRequestWrapperDTO;
+import com.wso2telco.services.dep.sandbox.dao.model.custom.ProvisionRequestBean;
+import com.wso2telco.services.dep.sandbox.dao.model.custom.QueryProvisioningServicesRequestWrapper;
+import com.wso2telco.services.dep.sandbox.dao.model.custom.RequestDTO;
+import com.wso2telco.services.dep.sandbox.dao.model.custom.ServiceProvisionRequestWrapper;
 import com.wso2telco.services.dep.sandbox.exception.SandboxException;
+import com.wso2telco.services.dep.sandbox.exception.SandboxException.SandboxErrorType;
 import com.wso2telco.services.dep.sandbox.servicefactory.RequestBuilderFactory;
 import com.wso2telco.services.dep.sandbox.servicefactory.RequestHandleable;
 import com.wso2telco.services.dep.sandbox.servicefactory.Returnable;
@@ -108,7 +115,7 @@ public class ProvisionService {
 			return response;
 		} catch (Exception ex) {
 			LOG.error("LIST ACTIVE PROVISIONED SERVICESE ERROR : " , ex);
-			return Response.status(Response.Status.BAD_REQUEST).entity(ex.getMessage()).build();
+			return Response.status(Response.Status.BAD_REQUEST).entity(SandboxErrorType.SERVICE_ERROR.getCode() + " " + SandboxErrorType.SERVICE_ERROR.getMessage()).build();
 		}
 
 	}
@@ -120,7 +127,9 @@ public class ProvisionService {
 			@Context HttpServletRequest httpRequest, RemoveProvisionRequestBean removeProvisionRequestBean) {
 		
 		LOG.debug("/{msisdn}/remove invoked :" + msisdn);
-		
+		if (removeProvisionRequestBean != null) {
+			LOG.debug(removeProvisionRequestBean);
+		}
 		RemoveProvisionedRequestWrapperDTO requestDTO = new RemoveProvisionedRequestWrapperDTO();
 		requestDTO.setHttpRequest(httpRequest);
 		requestDTO.setMsisdn(msisdn);
@@ -137,9 +146,38 @@ public class ProvisionService {
 			return response;
 		}catch (Exception ex) {
 			LOG.error("REMOVE PROVISIONED SERVICESE ERROR : " , ex);
-			return Response.status(Response.Status.BAD_REQUEST).entity(ex.getMessage()).build();
+			return Response.status(Response.Status.BAD_REQUEST).entity(SandboxErrorType.SERVICE_ERROR.getCode() + " " + SandboxErrorType.SERVICE_ERROR.getMessage()).build();
 		}
+	}
 		
+	@POST
+	@Path("/{msisdn}")
+	@ApiOperation(value = "provisionForRequestedService", notes = "provision requested service", response = Response.class)
+	public Response provisionForRequestedService(
+			@ApiParam(value = "msisdn", required = true) @PathParam("msisdn") String msisdn,
+			ProvisionRequestBean provisionRequest, @Context HttpServletRequest request) {
+		LOG.debug("###PROVISION### /{msisdn} invoked : msisdn - " + msisdn);
+		if (provisionRequest != null) {
+			LOG.debug(provisionRequest);
+		}
+		ServiceProvisionRequestWrapper requestDTO = new ServiceProvisionRequestWrapper();
+		requestDTO.setHttpRequest(request);
+		requestDTO.setMsisdn(msisdn);
+		requestDTO.setProvisionRequestBean(provisionRequest);
+		requestDTO.setRequestType(RequestType.PROVISIONING);
+		
+		RequestHandleable<RequestDTO> handler = RequestBuilderFactory.getInstance(requestDTO);
+		Returnable returnable = null;
+		
+		try {
+			returnable = handler.execute(requestDTO);
+			Response response = Response.status(returnable.getHttpStatus()).entity(returnable.getResponse()).build();
+			return response;
+		} catch (Exception ex) {
+			LOG.error("###PROVISION### Error in Provision Service", ex);
+			Response response = Response.status(Status.BAD_REQUEST).entity(SandboxErrorType.SERVICE_ERROR.getCode() + " " + SandboxErrorType.SERVICE_ERROR.getMessage()).build();
+			return response;
+		}
 	}
 
 }
