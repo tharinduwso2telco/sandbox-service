@@ -47,7 +47,7 @@ public class CommonUtil {
 
 	public static void validatePositiveNumber(String number, String parameterName) throws SandboxException {
 		if (!StringUtils.isEmpty(number) && !NumberUtils.isDigits(number)) {
-			throw new SandboxException(SandboxErrorType.INVALIN_INPUT_VALUE);
+			throw new SandboxException(SandboxErrorType.INVALID_INPUT_VALUE);
 		}
 	}
 

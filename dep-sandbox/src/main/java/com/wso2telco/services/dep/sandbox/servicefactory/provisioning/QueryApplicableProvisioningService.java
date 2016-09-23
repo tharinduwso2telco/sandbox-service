@@ -41,6 +41,7 @@ import com.wso2telco.services.dep.sandbox.servicefactory.AbstractRequestHandler;
 import com.wso2telco.services.dep.sandbox.servicefactory.Returnable;
 import com.wso2telco.services.dep.sandbox.util.CommonUtil;
 import com.wso2telco.services.dep.sandbox.util.ProvisioningUtil;
+import com.wso2telco.services.dep.sandbox.util.ProvisioningUtil.ProvisionRequestTypes;
 
 public class QueryApplicableProvisioningService
 		extends AbstractRequestHandler<QueryProvisioningServicesRequestWrapper> {
@@ -58,7 +59,7 @@ public class QueryApplicableProvisioningService
 	@Override
 	protected Returnable getResponseDTO() {
 		// TODO Auto-generated method stub
-		return null;
+		return responseWrapper;
 	}
 
 	@Override
@@ -110,7 +111,7 @@ public class QueryApplicableProvisioningService
 		try {
 			User user = extendedRequestDTO.getUser();
 
-			ProvisioningUtil.saveProvisioningRequestDataLog("QUERY_APPLICABLE", extendedRequestDTO.getMsisdn(), user,
+			ProvisioningUtil.saveProvisioningRequestDataLog(ProvisionRequestTypes.QUERY_APPLICABLE_PROVISION_SERVICE.toString(), extendedRequestDTO.getMsisdn(), user,
 					null, null, null, null, new Date());
 
 			Integer offset = CommonUtil.convertStringToInteger(extendedRequestDTO.getOffSet());
@@ -143,6 +144,9 @@ public class QueryApplicableProvisioningService
 			serviceListDTO.setServiceList(serviceList);
 			responseWrapper.setServiceListDTO(serviceListDTO);
 
+		} catch(SandboxException ex) {
+			LOG.error("###PROVISION### Error Occured in Query Applicable Service. " + ex);
+			throw ex;
 		} catch (Exception ex) {
 			LOG.error("###PROVISION### Error Occured in Query Applicable Service. " + ex);
 			throw new SandboxException(SandboxErrorType.SERVICE_ERROR);

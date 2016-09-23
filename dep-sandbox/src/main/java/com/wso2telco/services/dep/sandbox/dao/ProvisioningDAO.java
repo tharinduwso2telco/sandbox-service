@@ -18,9 +18,15 @@ package com.wso2telco.services.dep.sandbox.dao;
 import java.util.List;
 
 import com.wso2telco.services.dep.sandbox.dao.model.custom.ListProvisionedDTO;
+import com.wso2telco.services.dep.sandbox.dao.model.domain.ManageNumber;
 import com.wso2telco.services.dep.sandbox.dao.model.domain.ProvisionAllService;
+import com.wso2telco.services.dep.sandbox.dao.model.domain.ProvisionMSISDNServicesMap;
 import com.wso2telco.services.dep.sandbox.dao.model.domain.ProvisionRequestLog;
 import com.wso2telco.services.dep.sandbox.dao.model.domain.ProvisionResponseMessage;
+import com.wso2telco.services.dep.sandbox.dao.model.domain.ProvisionedServices;
+import com.wso2telco.services.dep.sandbox.dao.model.domain.Status;
+import com.wso2telco.services.dep.sandbox.dao.model.domain.User;
+import com.wso2telco.services.dep.sandbox.util.ProvisioningStatusCodes;
 
 public interface ProvisioningDAO {
 
@@ -28,7 +34,21 @@ public interface ProvisioningDAO {
 
 	public List<ProvisionAllService> getApplicableProvisionServices(String number, String username, int offset,
 			int limit) throws Exception;
+	
 	public List<ListProvisionedDTO> getActiveProvisionedServices(String msisdn,String username,int offset, int limit) throws Exception;
+	
+	public ManageNumber getNumber(String number, String username) throws Exception;
+	
+	public ProvisionAllService getProvisionService(String serviceCode, String ServiceName, User user) throws Exception;
+	
+	public ProvisionedServices getAlreadyProvisionedService (User user, List<String> statusCodes, ProvisionAllService provisionService, String phoneNumber) throws Exception;
 
 	public List<ProvisionResponseMessage> getErrorResponse(String msisdn,String username, String serviceCode) throws Exception;
+	
+	public Status getStatusFromStatusCode (ProvisioningStatusCodes statusCode) throws Exception;
+	
+	public ProvisionMSISDNServicesMap getProvisionMsisdnService(ManageNumber number, ProvisionAllService service)
+			throws Exception;
+	
+	public void saveProvisionedService(ProvisionedServices provisionedService) throws Exception;
 }
