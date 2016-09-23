@@ -234,10 +234,8 @@ public class HibernateProvisioningDAO extends AbstractDAO implements Provisionin
 		Session session = getSession();
 		Transaction tx = session.beginTransaction();
 
-		try {
-			
-			super.saveOrUpdate(prvDeletePending);
-			
+		try {		
+			super.saveOrUpdate(prvDeletePending);		
 			tx.commit();
 		} catch (Exception ex) {
 			LOG.error(ex);
