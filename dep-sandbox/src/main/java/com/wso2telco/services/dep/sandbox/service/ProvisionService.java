@@ -106,12 +106,9 @@ public class ProvisionService {
 			Response response = Response.status(returnable.getHttpStatus()).entity(returnable.getResponse()).build();
 			LOG.debug("LIST ACTIVE PROVISIONED SERVICES RESPONSE : " + response);
 			return response;
-		}/*catch (SandboxException ex) {
+		} catch (Exception ex) {
 			LOG.error("LIST ACTIVE PROVISIONED SERVICESE ERROR : " , ex);
-			return Response.status(Response.Status.BAD_REQUEST).entity(ex.getErrorType().getCode() + " " + ex.getErrorType().getMessage()).build();
-		}*/ catch (Exception ex) {
-			LOG.error("LIST ACTIVE PROVISIONED SERVICESE ERROR : " , ex);
-			return Response.status(Response.Status.BAD_REQUEST).entity(returnable.getResponse()).build();
+			return Response.status(Response.Status.BAD_REQUEST).entity(ex.getMessage()).build();
 		}
 
 	}
@@ -136,13 +133,10 @@ public class ProvisionService {
 		try {
 			returnable = handler.execute(requestDTO);
 			Response response = Response.status(returnable.getHttpStatus()).entity(returnable.getResponse()).build();
-			LOG.debug("DELETE PROVISIONED SERVICES RESPONSE : " + response);
+			LOG.debug("REMOVE PROVISIONED SERVICES RESPONSE : " + response);
 			return response;
-		}catch (SandboxException ex) {
-			LOG.error("DELETE PROVISIONED SERVICESE ERROR : " , ex);
-			return Response.status(Response.Status.BAD_REQUEST).entity(ex.getErrorType().getCode() + " " + ex.getErrorType().getMessage()).build();
-		} catch (Exception ex) {
-			LOG.error("DELETE PROVISIONED SERVICESE ERROR : " , ex);
+		}catch (Exception ex) {
+			LOG.error("REMOVE PROVISIONED SERVICESE ERROR : " , ex);
 			return Response.status(Response.Status.BAD_REQUEST).entity(ex.getMessage()).build();
 		}
 		

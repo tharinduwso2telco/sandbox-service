@@ -19,8 +19,12 @@ import java.util.List;
 
 import com.wso2telco.services.dep.sandbox.dao.model.custom.ListProvisionedDTO;
 import com.wso2telco.services.dep.sandbox.dao.model.domain.ProvisionAllService;
+import com.wso2telco.services.dep.sandbox.dao.model.domain.ProvisionMSISDNServicesMap;
 import com.wso2telco.services.dep.sandbox.dao.model.domain.ProvisionRequestLog;
 import com.wso2telco.services.dep.sandbox.dao.model.domain.ProvisionResponseMessage;
+import com.wso2telco.services.dep.sandbox.dao.model.domain.ProvisionedServices;
+import com.wso2telco.services.dep.sandbox.util.ProvisioningStatusCodes;
+import com.wso2telco.services.dep.sandbox.dao.model.domain.Status;
 
 public interface ProvisioningDAO {
 
@@ -31,4 +35,15 @@ public interface ProvisioningDAO {
 	public List<ListProvisionedDTO> getActiveProvisionedServices(String msisdn,String username,int offset, int limit) throws Exception;
 
 	public List<ProvisionResponseMessage> getErrorResponse(String msisdn,String username, String serviceCode) throws Exception;
+
+	public ProvisionedServices getAlreadyProvisioned(String msisdn, String userName,String serviceCode) throws Exception;
+
+	public List<Status> getTransactionStatus() throws Exception;
+
+	public void updateDeleteStatus(ProvisionedServices provisionedCheckList)throws Exception;
+
+	public ProvisionedServices checkClientCorrelator(String msisdn,
+			String userName, String serviceCode, String clientCorrelator)throws Exception;
+
+	public ProvisionMSISDNServicesMap checkService(String msisdn, String userName, String serviceCode)throws Exception;
 }

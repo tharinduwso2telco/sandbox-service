@@ -24,6 +24,7 @@ import javax.ws.rs.core.Response;
 
 import org.apache.commons.logging.LogFactory;
 
+import com.wso2telco.core.dbutils.exception.ServiceError;
 import com.wso2telco.core.dbutils.exception.ThrowableError;
 import com.wso2telco.dep.oneapivalidation.exceptions.CustomException;
 import com.wso2telco.dep.oneapivalidation.util.Validation;
@@ -88,21 +89,8 @@ public class ListActiveProvisionedServices extends AbstractRequestHandler<ListPr
 			Validation.checkRequestParams(validationRules);
 		} catch (CustomException ex) {
 			LOG.error("###PROVISION### Error in Validation : " + ex);
-			throw new SandboxException(new ThrowableError() {
-
-				@Override
-				public String getMessage() {
-					return ex.getErrmsg();
-				}
-
-				@Override
-				public String getCode() {
-					return ex.getErrcode();
-				}
-			});
-		} catch (Exception ex) {
-			LOG.error("###PROVISION### Error in Validation : " + ex);
-			throw new SandboxException(SandboxErrorType.SERVICE_ERROR);
+			responseWrapper.setRequestError(constructRequestError(SERVICEEXCEPTION, ex.getErrcode(), ex.getErrmsg(),wrapperDTO.getMsisdn()));
+			responseWrapper.setHttpStatus(Response.Status.BAD_REQUEST);
 		}
 
 		return true;
@@ -110,56 +98,60 @@ public class ListActiveProvisionedServices extends AbstractRequestHandler<ListPr
 
 	@Override
 	protected Returnable process(ListProvisionedRequestWrapperDTO extendedRequestDTO) throws Exception {
-		try {
-			User user = extendedRequestDTO.getUser();
-
-			ProvisioningUtil.saveProvisioningRequestDataLog("LIST_ACTIVE_PROVISIONED_SERVICES", extendedRequestDTO.getMsisdn(), user,
-					null, null, null, null, new Date());
-			LOG.debug(extendedRequestDTO.getMsisdn());
-			
-			String msisdn =getLastMobileNumber(extendedRequestDTO.getMsisdn());
-			Integer offset = CommonUtil.convertStringToInteger(extendedRequestDTO.getOffSet());
-			Integer limit = CommonUtil.convertStringToInteger(extendedRequestDTO.getLimit());
-
-			List<ListProvisionedDTO> provisionedServices = provisioningDao.getActiveProvisionedServices(msisdn,user.getUserName(),offset, limit);
-			
-			
-			ServiceListProvisioned serviceList = new ServiceListProvisioned();
 		
-			if (provisionedServices != null && !provisionedServices.isEmpty()) {
+		if (responseWrapper.getRequestError() == null) {
+			try {
+				User user = extendedRequestDTO.getUser();
+
+				ProvisioningUtil.saveProvisioningRequestDataLog("LIST_ACTIVE_PROVISIONED_SERVICES", extendedRequestDTO.getMsisdn(), user,
+						null, null, null, null, new Date());
 				
-				for (ListProvisionedDTO service : provisionedServices) {
-					
-					ArrayList<ServiceMetaInfoListProvisionedDTO> metaServiceInfoList = new ArrayList<ServiceMetaInfoListProvisionedDTO>();
+				String msisdn =getLastMobileNumber(extendedRequestDTO.getMsisdn());
+				Integer offset = CommonUtil.convertStringToInteger(extendedRequestDTO.getOffSet());
+				Integer limit = CommonUtil.convertStringToInteger(extendedRequestDTO.getLimit());
+	
+				List<ListProvisionedDTO> provisionedServices = provisioningDao.getActiveProvisionedServices(msisdn,user.getUserName(),offset, limit);	
 				
-					ServiceMetaInfoListProvisionedDTO metaServiceInfoMap =new ServiceMetaInfoListProvisionedDTO();
-					metaServiceInfoMap.setTag(service.getTag());
-					metaServiceInfoMap.setValue(service.getValue());
-					metaServiceInfoList.add(metaServiceInfoMap);
+				ServiceListProvisioned serviceList = new ServiceListProvisioned();
+		
+				if (provisionedServices != null && !provisionedServices.isEmpty()) {
 					
-					ServiceInfoListProvisionedDTO serviceInfo = serviceList.addNewServiceInfo();
-					serviceInfo.setServiceCode(service.getServiceCode());
-					serviceInfo.setDescription(service.getDescription());
-					serviceInfo.setTimeStamp(service.getCreatedDate());
-					serviceInfo.setServiceInfo(metaServiceInfoList);
+					for (ListProvisionedDTO service : provisionedServices) {
+						
+						ArrayList<ServiceMetaInfoListProvisionedDTO> metaServiceInfoList = new ArrayList<ServiceMetaInfoListProvisionedDTO>();
+					
+						ServiceMetaInfoListProvisionedDTO metaServiceInfoMap =new ServiceMetaInfoListProvisionedDTO();
+						metaServiceInfoMap.setTag(service.getTag());
+						metaServiceInfoMap.setValue(service.getValue());
+						metaServiceInfoList.add(metaServiceInfoMap);
+						
+						ServiceInfoListProvisionedDTO serviceInfo = serviceList.addNewServiceInfo();
+						serviceInfo.setServiceCode(service.getServiceCode());
+						serviceInfo.setDescription(service.getDescription());
+						serviceInfo.setTimeStamp(service.getCreatedDate());
+						serviceInfo.setServiceInfo(metaServiceInfoList);
+					}
+				} else {
+					LOG.error("###PROVISION### Valid Provisioned Services Not Available for msisdn: " + msisdn);
+					responseWrapper.setRequestError(constructRequestError(SERVICEEXCEPTION, ServiceError.INVALID_INPUT_VALUE, "Valid Provisioned Services Not Available for " +extendedRequestDTO.getMsisdn()));
+					responseWrapper.setHttpStatus(Response.Status.BAD_REQUEST);
+					return responseWrapper;
 				}
-			}else {
-				LOG.error("###PROVISION### Valid Provisioned Services Not Available for msisdn: " + msisdn);
-				throw new SandboxException(SandboxErrorType.NO_VALID_SERVICES_AVAILABLE);
+
+				serviceList.setResourceURL(ProvisioningUtil.getResourceUrl(extendedRequestDTO));
+	
+				responseWrapper.setHttpStatus(Response.Status.OK);
+				
+				ServiceListProvisionedDTO serviceListDTO = new ServiceListProvisionedDTO();
+				serviceListDTO.setServiceList(serviceList);
+				
+				responseWrapper.setServiceListDTO(serviceListDTO);
+
+			} catch (Exception ex) {
+				LOG.error("###PROVISION### Error Occured in List Provisioned Service. " + ex);
+				responseWrapper.setRequestError(constructRequestError(SERVICEEXCEPTION, ServiceError.SERVICE_ERROR_OCCURED, "Error Occured in List Provisioned Service for " +extendedRequestDTO.getMsisdn()));
+				responseWrapper.setHttpStatus(Response.Status.BAD_REQUEST);
 			}
-
-			serviceList.setResourceURL(ProvisioningUtil.getResourceUrl(extendedRequestDTO));
-
-			responseWrapper.setHttpStatus(Response.Status.OK);
-			
-			ServiceListProvisionedDTO serviceListDTO = new ServiceListProvisionedDTO();
-			serviceListDTO.setServiceList(serviceList);
-			
-			responseWrapper.setServiceListDTO(serviceListDTO);
-
-		} catch (Exception ex) {
-			LOG.error("###PROVISION### Error Occured in List Provisioned Service. " + ex);
-			throw new SandboxException(SandboxErrorType.SERVICE_ERROR);
 		}
 		return responseWrapper;
 	}

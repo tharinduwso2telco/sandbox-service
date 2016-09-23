@@ -12,6 +12,7 @@ import org.apache.commons.logging.Log;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.wso2telco.core.dbutils.exception.ThrowableError;
 import com.wso2telco.dep.oneapivalidation.exceptions.PolicyException;
 import com.wso2telco.dep.oneapivalidation.exceptions.ServiceException;
 import com.wso2telco.services.dep.sandbox.dao.DaoFactory;
@@ -159,6 +160,18 @@ public abstract class AbstractRequestHandler<E2 extends RequestDTO> implements R
 
 		} else if (type == POLICYEXCEPTION) {
 			PolicyException policyException = new PolicyException(messageId, text, variable);
+			error.setPolicyException(policyException);
+		}
+		return error;
+	}
+
+	protected RequestError constructRequestError(int type,ThrowableError throwableError, String variable) {
+		RequestError error = new RequestError();
+		if (type == SERVICEEXCEPTION) {
+			ServiceException serviceException = new ServiceException(throwableError.getCode(),throwableError.getMessage(), variable);
+			error.setServiceException(serviceException);
+		} else if (type == POLICYEXCEPTION) {
+			PolicyException policyException = new PolicyException(throwableError.getCode(),throwableError.getMessage(), variable);
 			error.setPolicyException(policyException);
 		}
 		return error;

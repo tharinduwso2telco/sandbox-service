@@ -27,8 +27,11 @@ import org.hibernate.transform.Transformers;
 import com.wso2telco.services.dep.sandbox.dao.ProvisioningDAO;
 import com.wso2telco.services.dep.sandbox.dao.model.custom.ListProvisionedDTO;
 import com.wso2telco.services.dep.sandbox.dao.model.domain.ProvisionAllService;
+import com.wso2telco.services.dep.sandbox.dao.model.domain.ProvisionMSISDNServicesMap;
 import com.wso2telco.services.dep.sandbox.dao.model.domain.ProvisionRequestLog;
 import com.wso2telco.services.dep.sandbox.dao.model.domain.ProvisionResponseMessage;
+import com.wso2telco.services.dep.sandbox.dao.model.domain.ProvisionedServices;
+import com.wso2telco.services.dep.sandbox.dao.model.domain.Status;
 import com.wso2telco.services.dep.sandbox.util.ProvisioningStatusCodes;
 
 public class HibernateProvisioningDAO extends AbstractDAO implements ProvisioningDAO{
@@ -106,29 +109,34 @@ public class HibernateProvisioningDAO extends AbstractDAO implements Provisionin
 		hql.append(" User AS user");
 		hql.append(" WHERE num.Number = :number");
 		hql.append(" AND user.userName= :username");
-		hql.append(" AND user.id = num.user");
-		hql.append(" AND user.id = services.user");
-		hql.append(" AND map.msisdnId = num.id");
-		hql.append(" AND map.id = prservice.msisdnServiceMap");
-		hql.append(" AND map.servicesId = services.id");
-		hql.append(" AND stat.id = prservice.status");
+		hql.append(" AND user.id = num.user.id");
+		hql.append(" AND user.id = services.user.id");
+		hql.append(" AND map.msisdnId.id = num.id");
+		hql.append(" AND map.id = prservice.msisdnServiceMap.id");
+		hql.append(" AND map.servicesId.id = services.id");
+		hql.append(" AND stat.id = prservice.status.id");
 		hql.append(" AND stat.code= :status");
 
-		Query query = session.createQuery(hql.toString());
-		
-		query.setParameter("status", ProvisioningStatusCodes.PRV_PROVISION_SUCCESS.toString());
-		query.setParameter("number", msisdn);
-		query.setParameter("username", username);
-		
-		if (offset > 0) {
-			query.setFirstResult(offset);
-		}
+		try {
+			Query query = session.createQuery(hql.toString());
 
-		if (limit > 0) {
-			query.setMaxResults(limit);
+			query.setParameter("status",ProvisioningStatusCodes.PRV_PROVISION_SUCCESS.toString());
+			query.setParameter("number", msisdn);
+			query.setParameter("username", username);
+
+			if (offset > 0) {
+				query.setFirstResult(offset);
+			}
+
+			if (limit > 0) {
+				query.setMaxResults(limit);
+			}
+
+			resultSet = query.setResultTransformer(Transformers.aliasToBean(ListProvisionedDTO.class)).getResultList();
+		} catch (Exception ex) {
+			LOG.error("###PROVISION### Error in getActiveProvisionedServices " + ex);
+			throw ex;
 		}
-		
-		resultSet = query.setResultTransformer( Transformers.aliasToBean(ListProvisionedDTO.class)).getResultList();
 		return resultSet;
 	}
 	
@@ -137,7 +145,7 @@ public class HibernateProvisioningDAO extends AbstractDAO implements Provisionin
 		Session session = getSession();
 		List <ProvisionResponseMessage> expectedErrorList = new ArrayList<ProvisionResponseMessage>();;
 		StringBuilder hql=new StringBuilder();
-		
+	
 		hql.append(" SELECT");
 		hql.append(" response");
 		hql.append(" FROM");
@@ -157,19 +165,183 @@ public class HibernateProvisioningDAO extends AbstractDAO implements Provisionin
 		hql.append(" expect.requestType = :type AND");
 		hql.append(" expect.messageId = response.id");
 		
-		Query query = session.createQuery(hql.toString());
+		try {
+			
+			Query query = session.createQuery(hql.toString());
 
-		query.setParameter("msisdn", msisdn);
-		query.setParameter("username", username);
-		query.setParameter("code", serviceCode);
-		query.setParameter("type", "DELETE");
-		
+			query.setParameter("msisdn", msisdn);
+			query.setParameter("username", username);
+			query.setParameter("code", serviceCode);
+			query.setParameter("type", "DELETE");
 
-		expectedErrorList = (List<ProvisionResponseMessage>) query.getResultList();
-
+			expectedErrorList = (List<ProvisionResponseMessage>) query.getResultList();
+		} catch (Exception ex) {
+		LOG.error("###PROVISION### Error in getErrorResponse " + ex);
+		throw ex;
+	}
 		return expectedErrorList;
 	}
 
-	
+	public ProvisionedServices getAlreadyProvisioned(String msisdn, String userName,String serviceCode) throws Exception{
+		
+		Session session = getSession();
+		ProvisionedServices provisionedCheckList = null;
+		StringBuilder hql=new StringBuilder();
+		
+		hql.append(" SELECT");
+		hql.append(" prservice");
+		hql.append(" FROM");
+		hql.append(" ProvisionedServices AS prservice,");
+		hql.append(" ManageNumber AS number,");
+		hql.append(" ProvisionAllService AS service,");
+		hql.append(" User AS user,");
+		hql.append(" ProvisionMSISDNServicesMap AS map,");
+		hql.append(" Status AS stat");
+		hql.append(" WHERE");
+		hql.append(" number.Number = :msisdn AND");
+		hql.append(" user.userName= :username AND");
+		hql.append(" user.id = number.user AND");
+		hql.append(" user.id = service.user AND");
+		hql.append(" service.serviceCode = :code AND");
+		hql.append(" map.servicesId = service.id AND");
+		hql.append(" map.msisdnId = number.id AND");
+		hql.append(" map.id = prservice.msisdnServiceMap AND");
+		hql.append(" stat.id = prservice.status AND");
+		hql.append(" stat.code= :status");
+		
+		try {
+			
+			Query query = session.createQuery(hql.toString());
 
+			query.setParameter("status",ProvisioningStatusCodes.PRV_PROVISION_SUCCESS.toString());
+			query.setParameter("msisdn", msisdn);
+			query.setParameter("username", userName);
+			query.setParameter("code", serviceCode);
+
+			provisionedCheckList = (ProvisionedServices) query.uniqueResult();
+			
+		} catch (Exception ex) {
+			LOG.error("###PROVISION### Error in getAlreadyProvisioned " + ex);
+			throw ex;
+		}
+		
+		return provisionedCheckList;
+		
+		
+	}
+
+	public void updateDeleteStatus( ProvisionedServices prvDeletePending) throws Exception{
+		Session session = getSession();
+		Transaction tx = session.beginTransaction();
+
+		try {
+			
+			super.saveOrUpdate(prvDeletePending);
+			
+			tx.commit();
+		} catch (Exception ex) {
+			LOG.error(ex);
+			tx.rollback();
+			LOG.error("###PROVISION### Error in updateDeleteStatus " + ex);
+		}
+		
+		
+	}
+	
+	public List<Status> getTransactionStatus() throws Exception {
+
+		Session session = getSession();
+		List<Status> statusList = null;
+		try {
+			statusList = (List<Status>) session.createQuery("from Status ")
+					.getResultList();
+
+		} catch (Exception ex) {
+			LOG.error("###PROVISION### Error in getTransactionStatus " + ex);
+			throw ex;
+		}
+		return statusList;
+
+	}
+	
+	public ProvisionedServices checkClientCorrelator(String msisdn,
+			String userName, String serviceCode, String clientCorrelator)throws Exception {
+		Session session = getSession();
+		ProvisionedServices provisionedCheckList = null;
+		StringBuilder hql=new StringBuilder();
+		
+		hql.append(" SELECT");
+		hql.append(" prservice");
+		hql.append(" FROM");
+		hql.append(" ProvisionedServices AS prservice,");
+		hql.append(" ManageNumber AS number,");
+		hql.append(" ProvisionAllService AS service,");
+		hql.append(" User AS user,");
+		hql.append(" ProvisionMSISDNServicesMap AS map,");
+		hql.append(" Status AS stat");
+		hql.append(" WHERE");
+		hql.append(" number.Number = :msisdn AND");
+		hql.append(" user.userName= :username AND");
+		hql.append(" user.id = number.user.id AND");
+		hql.append(" user.id = service.user.id AND");
+		hql.append(" service.serviceCode = :code AND");
+		hql.append(" map.servicesId.id = service.id AND");
+		hql.append(" map.msisdnId.id = number.id AND");
+		hql.append(" map.id = prservice.msisdnServiceMap.id AND");
+		hql.append(" stat.id = prservice.status.id AND");	
+		hql.append(" prservice.clientCorrelator= :clientCorrelator AND");
+		hql.append(" ( stat.code= :status1 OR stat.code= :status2 )");
+		
+		try {
+			Query query = session.createQuery(hql.toString());
+			query.setParameter("status1", ProvisioningStatusCodes.PRV_DELETE_SUCCESS.toString());
+			query.setParameter("status2", ProvisioningStatusCodes.PRV_DELETE_PENDING.toString());
+			query.setParameter("msisdn", msisdn);
+			query.setParameter("username", userName);
+			query.setParameter("code", serviceCode);
+			query.setParameter("clientCorrelator", clientCorrelator);	
+
+			provisionedCheckList = (ProvisionedServices) query.uniqueResult();
+		}catch (Exception ex) {
+			LOG.error("###PROVISION### Error in checkClientCorrelator " + ex);
+			throw ex;
+		}
+		return provisionedCheckList;
+	}
+	
+	public ProvisionMSISDNServicesMap checkService(String msisdn, String userName, String serviceCode)throws Exception{
+		
+		Session session = getSession();
+		ProvisionMSISDNServicesMap serviceCheckList = null;
+		StringBuilder hql=new StringBuilder();
+		
+		hql.append(" SELECT");
+		hql.append(" map");
+		hql.append(" FROM");
+		hql.append(" ProvisionMSISDNServicesMap AS map,");
+		hql.append(" ManageNumber AS number,");
+		hql.append(" ProvisionAllService AS service,");
+		hql.append(" User AS user");
+		hql.append(" WHERE");
+		hql.append(" number.Number = :msisdn AND");
+		hql.append(" user.userName= :username AND");
+		hql.append(" user.id = number.user.id AND");
+		hql.append(" user.id = service.user.id AND");
+		hql.append(" service.serviceCode = :code AND");
+		hql.append(" map.servicesId.id = service.id AND");
+		hql.append(" map.msisdnId.id = number.id ");
+		
+		try {	
+			Query query = session.createQuery(hql.toString());
+			query.setParameter("msisdn", msisdn);
+			query.setParameter("username", userName);
+			query.setParameter("code", serviceCode);
+			
+			serviceCheckList = (ProvisionMSISDNServicesMap) query.uniqueResult();
+		}catch (Exception ex) {
+			LOG.error("###PROVISION### Error in checkService " + ex);
+			throw ex;
+		}
+		return serviceCheckList;
+	}
 }
