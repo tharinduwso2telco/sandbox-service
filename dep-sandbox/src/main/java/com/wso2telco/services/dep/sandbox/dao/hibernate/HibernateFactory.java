@@ -19,4 +19,9 @@ public class HibernateFactory {
 	public HibernateProvisioningDAO getHibernateProvisioningDAO() {
 		return new HibernateProvisioningDAO();
 	}
+	
+	public HibernateUserDAO getHibernateUserDAO() {
+		return new HibernateUserDAO();
+	}
+	
 }

@@ -2,7 +2,7 @@
  * Copyright  (c) 2015-2016, WSO2.Telco Inc. (http://www.wso2telco.com) All Rights Reserved.
  * 
  * WSO2.Telco Inc. licences this file to you under  the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.U
+ * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  * 
  *   http://www.apache.org/licenses/LICENSE-2.0
@@ -14,20 +14,25 @@
  * limitations under the License.
  ******************************************************************************/
 
-package com.wso2telco.services.dep.sandbox.dao;
+package com.wso2telco.services.dep.sandbox.servicefactory.admin;
 
-import javax.persistence.PersistenceException;
+import javax.ws.rs.core.Response.Status;
 
-import org.hibernate.Session;
-import org.hibernate.Transaction;
+import com.wso2telco.services.dep.sandbox.servicefactory.AbstractReturnWrapperDTO;
 
-import com.wso2telco.services.dep.sandbox.dao.hibernate.AbstractDAO;
-import com.wso2telco.services.dep.sandbox.dao.model.domain.Locationparam;
-import com.wso2telco.services.dep.sandbox.dao.model.domain.User;
+public class RegisterUserServiceResponseWrapper extends AbstractReturnWrapperDTO {
+    
+    public String responseMessage;
+    
+    @Override
+    public Object getResponse() {
+	return responseMessage;
+    }
 
-public interface UserDAO {
-	public User getUser(final String username) throws Exception;
-	public boolean saveUser(final User usr) throws Exception;
+    public void setResponseMessage(String message) {
+	this.responseMessage = message;
+    }
+
+   
 
 }
-

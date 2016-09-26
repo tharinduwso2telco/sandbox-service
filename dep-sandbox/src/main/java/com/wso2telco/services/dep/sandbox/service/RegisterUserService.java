@@ -16,43 +16,61 @@
 
 package com.wso2telco.services.dep.sandbox.service;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
+import com.wordnik.swagger.annotations.Api;
 import com.wso2telco.services.dep.sandbox.dao.UserDAO;
+import com.wso2telco.services.dep.sandbox.dao.model.custom.QueryProvisioningServicesRequestWrapper;
+import com.wso2telco.services.dep.sandbox.dao.model.custom.RegisterUserServiceRequestWrapperDTO;
 import com.wso2telco.services.dep.sandbox.dao.model.domain.User;
+import com.wso2telco.services.dep.sandbox.exception.SandboxException;
+import com.wso2telco.services.dep.sandbox.servicefactory.RequestBuilderFactory;
+import com.wso2telco.services.dep.sandbox.servicefactory.RequestHandleable;
+import com.wso2telco.services.dep.sandbox.servicefactory.Returnable;
+import com.wso2telco.services.dep.sandbox.util.RequestType;
 
 @Path("/")
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
-
+@Api(value = "/", description = "Rest Service for registering new user to sandbox")
 public class RegisterUserService {
+
+    Log LOG = LogFactory.getLog(RegisterUserService.class);
 
     @POST
     @Path("/user/{userName}/register")
-    public Response registerUser(@PathParam("userName") String userName) {
-	UserDAO usrD = new UserDAO();
-	User usr;
-	try {
-	    usr = usrD.getUser(userName);
-	} catch (Exception e) {
-	    return Response.status(Response.Status.BAD_REQUEST).entity("User Registration Failed..!").build();
-	    
-	}
-	if (usr == null) {
-	    User user = new User();
-	    user.setUserName(userName);
-	    user.setUserStatus(1);
-	    usrD.saveUser(user);
-	    return Response.status(Response.Status.OK).entity("User Successfully Registered..!").build();
-	} else {
-	    return Response.status(Response.Status.BAD_REQUEST).entity("User Already Registered..!").build();
+    public Response registerUser(@PathParam("userName") String userName, @Context HttpServletRequest httpRequest) {
+	RegisterUserServiceRequestWrapperDTO requestDTO = new RegisterUserServiceRequestWrapperDTO();
+	requestDTO.setUserName(userName);
+	requestDTO.setRequestType(RequestType.ADMIN);
+	requestDTO.setHttpRequest(httpRequest);
+	RequestHandleable handler = RequestBuilderFactory.getInstance(requestDTO);
+	Returnable returnable = null;
 
+	try {
+	    returnable = handler.execute(requestDTO);
+	    Response response = Response.status(returnable.getHttpStatus()).entity(returnable.getResponse()).build();
+	    LOG.debug("REGISTER USER SERVICE RESPONSE : " + response);
+	    return response;
+	} catch (SandboxException ex) {
+	    LOG.error("REGISTER USER SERVICE ERROR : ", ex);
+	    return Response.status(Response.Status.BAD_REQUEST)
+		    .entity(ex.getErrorType().getCode() + " " + ex.getErrorType().getMessage()).build();
+	} catch (Exception ex) {
+	    LOG.error("REGISTER USER SERVICE ERROR : ", ex);
+	    return Response.status(Response.Status.BAD_REQUEST).entity(ex.getMessage()).build();
 	}
+
     }
 }
