@@ -41,12 +41,24 @@ import com.wso2telco.services.dep.sandbox.dao.model.domain.Status;
 import com.wso2telco.services.dep.sandbox.dao.model.domain.User;
 import com.wso2telco.services.dep.sandbox.util.ProvisioningStatusCodes;
 
+/**
+ * @author WSO2.Telco
+ *
+ */
+
 public class HibernateProvisioningDAO extends AbstractDAO implements ProvisioningDAO {
 
 	{
 		LOG = LogFactory.getLog(HibernateProvisioningDAO.class);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see com.wso2telco.services.dep.sandbox.dao.ProvisioningDAO#
+	 * saveProvisionRequestLog
+	 * (com.wso2telco.services.dep.sandbox.dao.model.domain.ProvisionRequestLog)
+	 */
 	public void saveProvisionRequestLog(ProvisionRequestLog provisionRequestLog) throws Exception {
 		try {
 			saveOrUpdate(provisionRequestLog);
@@ -57,6 +69,13 @@ public class HibernateProvisioningDAO extends AbstractDAO implements Provisionin
 
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see com.wso2telco.services.dep.sandbox.dao.ProvisioningDAO#
+	 * getApplicableProvisionServices(java.lang.String, java.lang.String, int,
+	 * int)
+	 */
 	public List<ProvisionAllService> getApplicableProvisionServices(String number, String username, int offset,
 			int limit) throws Exception {
 		Session session = getSession();
@@ -94,6 +113,13 @@ public class HibernateProvisioningDAO extends AbstractDAO implements Provisionin
 		return applicableServiceList;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see com.wso2telco.services.dep.sandbox.dao.ProvisioningDAO#
+	 * getActiveProvisionedServices(java.lang.String, java.lang.String, int,
+	 * int)
+	 */
 	public List<ListProvisionedDTO> getActiveProvisionedServices(String msisdn, String username, int offset, int limit)
 			throws Exception {
 		Session session = getSession();
@@ -101,8 +127,7 @@ public class HibernateProvisioningDAO extends AbstractDAO implements Provisionin
 		StringBuilder hql = new StringBuilder();
 
 		hql.append(" SELECT");
-		hql.append(
-				" services.serviceCode AS serviceCode,services.description AS description,prservice.createdDate AS createdDate,services.tag AS tag,services.value AS value");
+		hql.append(" services.serviceCode AS serviceCode,services.description AS description,prservice.createdDate AS createdDate,services.tag AS tag,services.value AS value");
 		hql.append(" FROM");
 		hql.append(" ManageNumber AS num,");
 		hql.append(" ProvisionMSISDNServicesMap AS map,");
@@ -112,40 +137,50 @@ public class HibernateProvisioningDAO extends AbstractDAO implements Provisionin
 		hql.append(" User AS user");
 		hql.append(" WHERE num.Number = :number");
 		hql.append(" AND user.userName= :username");
-		hql.append(" AND user.id = num.user");
-		hql.append(" AND user.id = services.user");
-		hql.append(" AND map.msisdnId = num.id");
-		hql.append(" AND map.id = prservice.msisdnServiceMap");
-		hql.append(" AND map.servicesId = services.id");
-		hql.append(" AND stat.id = prservice.status");
+		hql.append(" AND user.id = num.user.id");
+		hql.append(" AND user.id = services.user.id");
+		hql.append(" AND map.msisdnId.id = num.id");
+		hql.append(" AND map.id = prservice.msisdnServiceMap.id");
+		hql.append(" AND map.servicesId.id = services.id");
+		hql.append(" AND stat.id = prservice.status.id");
 		hql.append(" AND stat.code= :status");
 
-		Query query = session.createQuery(hql.toString());
+		try {
+			Query query = session.createQuery(hql.toString());
 
-		query.setParameter("status", ProvisioningStatusCodes.PRV_PROVISION_SUCCESS.toString());
-		query.setParameter("number", msisdn);
-		query.setParameter("username", username);
+			query.setParameter("status",ProvisioningStatusCodes.PRV_PROVISION_SUCCESS.toString());
+			query.setParameter("number", msisdn);
+			query.setParameter("username", username);
 
-		if (offset > 0) {
-			query.setFirstResult(offset);
+			if (offset > 0) {
+				query.setFirstResult(offset);
+			}
+
+			if (limit > 0) {
+				query.setMaxResults(limit);
+			}
+
+			resultSet = query.setResultTransformer(Transformers.aliasToBean(ListProvisionedDTO.class)).getResultList();
+		} catch (Exception ex) {
+			LOG.error("###PROVISION### Error in getActiveProvisionedServices " + ex);
+			throw ex;
 		}
-
-		if (limit > 0) {
-			query.setMaxResults(limit);
-		}
-
-		resultSet = query.setResultTransformer(Transformers.aliasToBean(ListProvisionedDTO.class)).getResultList();
 		return resultSet;
 	}
 
-	public List<ProvisionResponseMessage> getErrorResponse(String msisdn, String username, String serviceCode)
-			throws Exception {
-
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * com.wso2telco.services.dep.sandbox.dao.ProvisioningDAO#getErrorResponse
+	 * (java.lang.String, java.lang.String, java.lang.String)
+	 */
+	public ProvisionResponseMessage getErrorResponse(String msisdn, String username,String serviceCode) throws Exception {
+		
 		Session session = getSession();
-		List<ProvisionResponseMessage> expectedErrorList = new ArrayList<ProvisionResponseMessage>();
-		;
-		StringBuilder hql = new StringBuilder();
-
+		ProvisionResponseMessage expectedErrorList = null;
+		StringBuilder hql=new StringBuilder();
+	
 		hql.append(" SELECT");
 		hql.append(" response");
 		hql.append(" FROM");
@@ -164,19 +199,119 @@ public class HibernateProvisioningDAO extends AbstractDAO implements Provisionin
 		hql.append(" service.id = expect.servicesId AND");
 		hql.append(" expect.requestType = :type AND");
 		hql.append(" expect.messageId = response.id");
+		
+		try {
+			
+			Query query = session.createQuery(hql.toString());
 
-		Query query = session.createQuery(hql.toString());
+			query.setParameter("msisdn", msisdn);
+			query.setParameter("username", username);
+			query.setParameter("code", serviceCode);
+			query.setParameter("type", "DELETE");
 
-		query.setParameter("msisdn", msisdn);
-		query.setParameter("username", username);
-		query.setParameter("code", serviceCode);
-		query.setParameter("type", "DELETE");
-
-		expectedErrorList = (List<ProvisionResponseMessage>) query.getResultList();
-
+			expectedErrorList = (ProvisionResponseMessage) query.uniqueResult();
+		} catch (Exception ex) {
+		LOG.error("###PROVISION### Error in getErrorResponse " + ex);
+		throw ex;
+	}
 		return expectedErrorList;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * com.wso2telco.services.dep.sandbox.dao.ProvisioningDAO#getAlreadyProvisioned
+	 * (java.lang.String, java.lang.String, java.lang.String)
+	 */
+	public ProvisionedServices getAlreadyProvisioned(String msisdn, String userName,String serviceCode) throws Exception{
+		
+		Session session = getSession();
+		ProvisionedServices provisionedCheckList = null;
+		StringBuilder hql=new StringBuilder();
+		
+		hql.append(" SELECT");
+		hql.append(" prservice");
+		hql.append(" FROM");
+		hql.append(" ProvisionedServices AS prservice,");
+		hql.append(" ManageNumber AS number,");
+		hql.append(" ProvisionAllService AS service,");
+		hql.append(" User AS user,");
+		hql.append(" ProvisionMSISDNServicesMap AS map,");
+		hql.append(" Status AS stat");
+		hql.append(" WHERE");
+		hql.append(" number.Number = :msisdn AND");
+		hql.append(" user.userName= :username AND");
+		hql.append(" user.id = number.user AND");
+		hql.append(" user.id = service.user AND");
+		hql.append(" service.serviceCode = :code AND");
+		hql.append(" map.servicesId = service.id AND");
+		hql.append(" map.msisdnId = number.id AND");
+		hql.append(" map.id = prservice.msisdnServiceMap AND");
+		hql.append(" stat.id = prservice.status AND");
+		hql.append(" stat.code= :status");
+		
+		try {
+			
+			Query query = session.createQuery(hql.toString());
+
+			query.setParameter("status",ProvisioningStatusCodes.PRV_PROVISION_SUCCESS.toString());
+			query.setParameter("msisdn", msisdn);
+			query.setParameter("username", userName);
+			query.setParameter("code", serviceCode);
+
+			provisionedCheckList = (ProvisionedServices) query.uniqueResult();
+			
+		} catch (Exception ex) {
+			LOG.error("###PROVISION### Error in getAlreadyProvisioned " + ex);
+			throw ex;
+		}
+		
+		return provisionedCheckList;
+		
+		
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * com.wso2telco.services.dep.sandbox.dao.ProvisioningDAO#updateDeleteStatus
+	 * (com.wso2telco.services.dep.sandbox.dao.model.domain.ProvisionedServices)
+	 */
+	public void updateDeleteStatus( ProvisionedServices prvDeletePending) throws Exception{
+		try {		
+			super.saveOrUpdate(prvDeletePending);		
+		} catch (Exception ex) {
+			LOG.error(ex);
+			LOG.error("###PROVISION### Error in updateDeleteStatus " + ex);
+		}
+		
+		
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * com.wso2telco.services.dep.sandbox.dao.ProvisioningDAO#getTransactionStatus
+	 * ()
+	 */
+	public List<Status> getTransactionStatus() throws Exception {
+
+		Session session = getSession();
+		List<Status> statusList = null;
+		try {
+			statusList = (List<Status>) session.createQuery("from Status ")
+					.getResultList();
+
+		} catch (Exception ex) {
+			LOG.error("###PROVISION### Error in getTransactionStatus " + ex);
+			throw ex;
+		}
+		return statusList;
+
+	}
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -314,6 +449,13 @@ public class HibernateProvisioningDAO extends AbstractDAO implements Provisionin
 		return provisionedService;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see com.wso2telco.services.dep.sandbox.dao.ProvisioningDAO#
+	 * getStatusFromStatusCode
+	 * (com.wso2telco.services.dep.sandbox.util.ProvisioningStatusCodes)
+	 */
 	public Status getStatusFromStatusCode(ProvisioningStatusCodes statusCode) throws Exception {
 		Session session = getSession();
 		Status status = null;
@@ -393,5 +535,55 @@ public class HibernateProvisioningDAO extends AbstractDAO implements Provisionin
 		}
 
 	}
+	
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * com.wso2telco.services.dep.sandbox.dao.ProvisioningDAO#checkClientCorrelator
+	 * (java.lang.String, java.lang.String, java.lang.String, java.lang.String)
+	 */
+	public ProvisionedServices checkClientCorrelator(String msisdn, String userName, String serviceCode, String clientCorrelator)throws Exception {
+		Session session = getSession();
+		ProvisionedServices provisionedCheckList = null;
+		StringBuilder hql=new StringBuilder();
+		
+		hql.append(" SELECT");
+		hql.append(" prservice");
+		hql.append(" FROM");
+		hql.append(" ProvisionedServices AS prservice,");
+		hql.append(" ManageNumber AS number,");
+		hql.append(" ProvisionAllService AS service,");
+		hql.append(" User AS user,");
+		hql.append(" ProvisionMSISDNServicesMap AS map,");
+		hql.append(" Status AS stat");
+		hql.append(" WHERE");
+		hql.append(" number.Number = :msisdn AND");
+		hql.append(" user.userName= :username AND");
+		hql.append(" user.id = number.user.id AND");
+		hql.append(" user.id = service.user.id AND");
+		hql.append(" service.serviceCode = :code AND");
+		hql.append(" map.servicesId.id = service.id AND");
+		hql.append(" map.msisdnId.id = number.id AND");
+		hql.append(" map.id = prservice.msisdnServiceMap.id AND");
+		hql.append(" stat.id = prservice.status.id AND");	
+		hql.append(" prservice.clientCorrelator= :clientCorrelator AND");
+		hql.append(" ( stat.code= :status1 OR stat.code= :status2 )");
+		
+		try {
+			Query query = session.createQuery(hql.toString());
+			query.setParameter("status1", ProvisioningStatusCodes.PRV_DELETE_SUCCESS.toString());
+			query.setParameter("status2", ProvisioningStatusCodes.PRV_DELETE_PENDING.toString());
+			query.setParameter("msisdn", msisdn);
+			query.setParameter("username", userName);
+			query.setParameter("code", serviceCode);
+			query.setParameter("clientCorrelator", clientCorrelator);	
 
+			provisionedCheckList = (ProvisionedServices) query.uniqueResult();
+		}catch (Exception ex) {
+			LOG.error("###PROVISION### Error in checkClientCorrelator " + ex);
+			throw ex;
+		}
+		return provisionedCheckList;
+	}
 }

@@ -44,7 +44,10 @@ public class ProvisionMSISDNServicesMap implements Serializable {
 	public void setId(int id) {
 		this.id = id;
 	}
-	
+	/**
+	 * 
+	 * @return the msisdnId
+	 */
 	public ManageNumber getMsisdnId() {
         return msisdnId;
     }
@@ -55,6 +58,10 @@ public class ProvisionMSISDNServicesMap implements Serializable {
     public void setMsisdnId(ManageNumber msisdnId) {
         this.msisdnId = msisdnId;
     }
+    /**
+     * 
+     * @return the servicesId
+     */
     public ProvisionAllService getServiceId() {
         return servicesId;
     }

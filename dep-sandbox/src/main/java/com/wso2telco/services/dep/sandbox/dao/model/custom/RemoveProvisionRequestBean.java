@@ -105,6 +105,20 @@ public class RemoveProvisionRequestBean {
 		public void setCallbackReference(CallbackReference callbackReference) {
 			this.callbackReference = callbackReference;
 		}
+		
+		public String toString() {
+			StringBuilder builder = new StringBuilder();
+			builder.append("Service Code : " + getServiceCode());
+			builder.append(" Client Correlator : " + getClientCorrelator());
+			builder.append(" Client Reference Code : " + getClientReferenceCode());
+
+			if (getCallbackReference() != null) {
+				builder.append(" " + getCallbackReference().toString());
+			}
+
+			return builder.toString();
+		}
+		
 	}
 
 }

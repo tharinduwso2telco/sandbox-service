@@ -113,12 +113,9 @@ public class ProvisionService {
 			Response response = Response.status(returnable.getHttpStatus()).entity(returnable.getResponse()).build();
 			LOG.debug("LIST ACTIVE PROVISIONED SERVICES RESPONSE : " + response);
 			return response;
-		}/*catch (SandboxException ex) {
+		} catch (Exception ex) {
 			LOG.error("LIST ACTIVE PROVISIONED SERVICESE ERROR : " , ex);
-			return Response.status(Response.Status.BAD_REQUEST).entity(ex.getErrorType().getCode() + " " + ex.getErrorType().getMessage()).build();
-		}*/ catch (Exception ex) {
-			LOG.error("LIST ACTIVE PROVISIONED SERVICESE ERROR : " , ex);
-			return Response.status(Response.Status.BAD_REQUEST).entity(returnable.getResponse()).build();
+			return Response.status(Response.Status.BAD_REQUEST).entity(SandboxErrorType.SERVICE_ERROR.getCode() + " " + SandboxErrorType.SERVICE_ERROR.getMessage()).build();
 		}
 
 	}
@@ -130,7 +127,9 @@ public class ProvisionService {
 			@Context HttpServletRequest httpRequest, RemoveProvisionRequestBean removeProvisionRequestBean) {
 		
 		LOG.debug("/{msisdn}/remove invoked :" + msisdn);
-		
+		if (removeProvisionRequestBean != null) {
+			LOG.debug(removeProvisionRequestBean);
+		}
 		RemoveProvisionedRequestWrapperDTO requestDTO = new RemoveProvisionedRequestWrapperDTO();
 		requestDTO.setHttpRequest(httpRequest);
 		requestDTO.setMsisdn(msisdn);
@@ -143,14 +142,11 @@ public class ProvisionService {
 		try {
 			returnable = handler.execute(requestDTO);
 			Response response = Response.status(returnable.getHttpStatus()).entity(returnable.getResponse()).build();
-			LOG.debug("DELETE PROVISIONED SERVICES RESPONSE : " + response);
+			LOG.debug("REMOVE PROVISIONED SERVICES RESPONSE : " + response);
 			return response;
-		}catch (SandboxException ex) {
-			LOG.error("DELETE PROVISIONED SERVICESE ERROR : " , ex);
-			return Response.status(Response.Status.BAD_REQUEST).entity(ex.getErrorType().getCode() + " " + ex.getErrorType().getMessage()).build();
-		} catch (Exception ex) {
-			LOG.error("DELETE PROVISIONED SERVICESE ERROR : " , ex);
-			return Response.status(Response.Status.BAD_REQUEST).entity(ex.getMessage()).build();
+		}catch (Exception ex) {
+			LOG.error("REMOVE PROVISIONED SERVICESE ERROR : " , ex);
+			return Response.status(Response.Status.BAD_REQUEST).entity(SandboxErrorType.SERVICE_ERROR.getCode() + " " + SandboxErrorType.SERVICE_ERROR.getMessage()).build();
 		}
 	}
 		

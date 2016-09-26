@@ -164,14 +164,14 @@ public abstract class AbstractRequestHandler<E2 extends RequestDTO> implements R
 		}
 		return error;
 	}
-	
-	protected RequestError constructRequestError(int type, ThrowableError throwableError, String variable) {
+
+	protected RequestError constructRequestError(int type,ThrowableError throwableError, String variable) {
 		RequestError error = new RequestError();
 		if (type == SERVICEEXCEPTION) {
-			ServiceException serviceException = new ServiceException(throwableError.getCode(), throwableError.getMessage(), variable);
+			ServiceException serviceException = new ServiceException(throwableError.getCode(),throwableError.getMessage(), variable);
 			error.setServiceException(serviceException);
 		} else if (type == POLICYEXCEPTION) {
-			PolicyException policyException = new PolicyException(throwableError.getCode(), throwableError.getMessage(), variable);
+			PolicyException policyException = new PolicyException(throwableError.getCode(),throwableError.getMessage(), variable);
 			error.setPolicyException(policyException);
 		}
 		return error;

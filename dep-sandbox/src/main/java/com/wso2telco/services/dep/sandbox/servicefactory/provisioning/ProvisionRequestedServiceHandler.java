@@ -245,14 +245,13 @@ public class ProvisionRequestedServiceHandler extends AbstractRequestHandler<Ser
 					return responseWrapperDTO;
 				}
 
-				List<ProvisionResponseMessage> expectedResponseList = provisioningDao.getErrorResponse(phoneNumber,
+				ProvisionResponseMessage expectedResponseList = provisioningDao.getErrorResponse(phoneNumber,
 						user.getUserName(), availableService.getServiceCode());
 
-				if (!expectedResponseList.isEmpty()) {
-					ProvisionResponseMessage errorResponse = expectedResponseList.get(0);
+				if (expectedResponseList != null) {
 
 					responseWrapperDTO.setRequestError(constructRequestError(SERVICEEXCEPTION,
-							errorResponse.getResponseCode(), errorResponse.getResponseMessage(), null));
+							expectedResponseList.getResponseCode(), expectedResponseList.getResponseMessage(), null));
 					responseWrapperDTO.setHttpStatus(Status.BAD_REQUEST);
 					return responseWrapperDTO;
 				}

@@ -24,6 +24,8 @@ import com.wso2telco.services.dep.sandbox.dao.model.domain.ProvisionMSISDNServic
 import com.wso2telco.services.dep.sandbox.dao.model.domain.ProvisionRequestLog;
 import com.wso2telco.services.dep.sandbox.dao.model.domain.ProvisionResponseMessage;
 import com.wso2telco.services.dep.sandbox.dao.model.domain.ProvisionedServices;
+import com.wso2telco.services.dep.sandbox.util.ProvisioningStatusCodes;
+import com.wso2telco.services.dep.sandbox.dao.model.domain.Status;
 import com.wso2telco.services.dep.sandbox.dao.model.domain.Status;
 import com.wso2telco.services.dep.sandbox.dao.model.domain.User;
 import com.wso2telco.services.dep.sandbox.util.ProvisioningStatusCodes;
@@ -32,8 +34,7 @@ public interface ProvisioningDAO {
 
 	public void saveProvisionRequestLog(ProvisionRequestLog provisionRequestLog) throws Exception;
 
-	public List<ProvisionAllService> getApplicableProvisionServices(String number, String username, int offset,
-			int limit) throws Exception;
+	public List<ProvisionAllService> getApplicableProvisionServices(String number, String username, int offset, int limit) throws Exception;
 	
 	public List<ListProvisionedDTO> getActiveProvisionedServices(String msisdn,String username,int offset, int limit) throws Exception;
 	
@@ -43,12 +44,19 @@ public interface ProvisioningDAO {
 	
 	public ProvisionedServices getAlreadyProvisionedService (User user, List<String> statusCodes, ProvisionAllService provisionService, String phoneNumber) throws Exception;
 
-	public List<ProvisionResponseMessage> getErrorResponse(String msisdn,String username, String serviceCode) throws Exception;
+	public ProvisionResponseMessage getErrorResponse(String msisdn,String username, String serviceCode) throws Exception;
+
+	public ProvisionedServices getAlreadyProvisioned(String msisdn, String userName,String serviceCode) throws Exception;
+
+	public List<Status> getTransactionStatus() throws Exception;
+
+	public void updateDeleteStatus(ProvisionedServices provisionedCheckList)throws Exception;
+
+	public ProvisionedServices checkClientCorrelator(String msisdn,String userName, String serviceCode, String clientCorrelator) throws Exception;
 	
 	public Status getStatusFromStatusCode (ProvisioningStatusCodes statusCode) throws Exception;
 	
-	public ProvisionMSISDNServicesMap getProvisionMsisdnService(ManageNumber number, ProvisionAllService service)
-			throws Exception;
+	public ProvisionMSISDNServicesMap getProvisionMsisdnService(ManageNumber number, ProvisionAllService service) throws Exception;
 	
 	public void saveProvisionedService(ProvisionedServices provisionedService) throws Exception;
 }
