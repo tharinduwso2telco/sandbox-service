@@ -1,7 +1,7 @@
 /*******************************************************************************
  * Copyright  (c) 2015-2016, WSO2.Telco Inc. (http://www.wso2telco.com) All Rights Reserved.
  * 
- * WSO2.Telco Inc. licences this file to you under  the Apache License, Version 2.0 (the "License");
+ * WSO2.Telco Inc. licenses this file to you under  the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.U
  * You may obtain a copy of the License at
  * 
@@ -16,18 +16,11 @@
 
 package com.wso2telco.services.dep.sandbox.dao;
 
-import javax.persistence.PersistenceException;
-
-import org.hibernate.Session;
-import org.hibernate.Transaction;
-
-import com.wso2telco.services.dep.sandbox.dao.hibernate.AbstractDAO;
-import com.wso2telco.services.dep.sandbox.dao.model.domain.Locationparam;
 import com.wso2telco.services.dep.sandbox.dao.model.domain.User;
 
 public interface UserDAO {
-	public User getUser(final String username) throws Exception;
-	public boolean saveUser(final User usr) throws Exception;
+    public User getUser(final String username) throws Exception;
+
+    public boolean saveUser(final User usr) throws Exception;
 
 }
-

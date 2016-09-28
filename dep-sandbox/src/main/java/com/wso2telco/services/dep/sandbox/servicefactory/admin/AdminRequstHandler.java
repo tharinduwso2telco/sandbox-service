@@ -1,7 +1,7 @@
 /*******************************************************************************
  * Copyright  (c) 2015-2016, WSO2.Telco Inc. (http://www.wso2telco.com) All Rights Reserved.
  * 
- * WSO2.Telco Inc. licences this file to you under  the Apache License, Version 2.0 (the "License");
+ * WSO2.Telco Inc. licenses this file to you under  the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  * 
@@ -18,19 +18,15 @@ package com.wso2telco.services.dep.sandbox.servicefactory.admin;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.ServiceConfigurationError;
-
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
-import javax.xml.ws.soap.AddressingFeature.Responses;
-import com.wso2telco.core.dbutils.exception.ThrowableError;
+import com.wso2telco.core.dbutils.exception.ServiceError;
 import com.wso2telco.dep.oneapivalidation.exceptions.CustomException;
 import com.wso2telco.dep.oneapivalidation.util.Validation;
 import com.wso2telco.dep.oneapivalidation.util.ValidationRule;
 import com.wso2telco.services.dep.sandbox.dao.DaoFactory;
 import com.wso2telco.services.dep.sandbox.dao.UserDAO;
 import com.wso2telco.services.dep.sandbox.dao.model.custom.RegisterUserServiceRequestWrapperDTO;
-import com.wso2telco.services.dep.sandbox.dao.model.custom.RequestDTO;
 import com.wso2telco.services.dep.sandbox.dao.model.domain.User;
 import com.wso2telco.services.dep.sandbox.exception.SandboxException;
 import com.wso2telco.services.dep.sandbox.exception.SandboxException.SandboxErrorType;
@@ -73,9 +69,12 @@ class AdminRequstHandler extends AbstractRequestHandler<RegisterUserServiceReque
 	    Validation.checkRequestParams(validationRules);
 	} catch (CustomException ex) {
 	    responseWrapper.setHttpStatus(Status.BAD_REQUEST);
-//	    responseWrapper.setRequestError(constructRequestError(SERVICEEXCEPTION, , variable));
+	    responseWrapper.setRequestError(constructRequestError(SERVICEEXCEPTION, ex.getErrcode(), ex.getErrmsg() , ex.getErrvar().toString()));
+	    LOG.error("###REGISTER_USER### Validation Failed...!",ex);
 	} catch (Exception ex) {
-	    throw new SandboxException(SandboxErrorType.SERVICE_ERROR);
+	    responseWrapper.setHttpStatus(Status.BAD_REQUEST);
+	    responseWrapper.setRequestError(constructRequestError(SERVICEEXCEPTION, ServiceError.SERVICE_ERROR_OCCURED , null));
+	    LOG.error("###REGISTER_USER### Validation Failed...!",ex);
 	}
 	return true;
     }
@@ -100,7 +99,7 @@ class AdminRequstHandler extends AbstractRequestHandler<RegisterUserServiceReque
 	    }
 	    responseWrapper.setHttpStatus(Response.Status.OK);
 	} catch (Exception ex) {
-	    LOG.error(ex);
+	    LOG.error("###REGISTER_USER### Error in User Registration...!",ex);
 	    responseWrapper.setHttpStatus(Response.Status.BAD_REQUEST);
 	}
 	return responseWrapper;

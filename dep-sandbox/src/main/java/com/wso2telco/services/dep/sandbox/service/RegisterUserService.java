@@ -1,7 +1,7 @@
 /*******************************************************************************
  * Copyright  (c) 2015-2016, WSO2.Telco Inc. (http://www.wso2telco.com) All Rights Reserved.
  * 
- * WSO2.Telco Inc. licences this file to you under  the Apache License, Version 2.0 (the "License");
+ * WSO2.Telco Inc. licenses this file to you under  the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  * 
@@ -64,11 +64,11 @@ public class RegisterUserService {
 	    LOG.debug("REGISTER USER SERVICE RESPONSE : " + response);
 	    return response;
 	} catch (SandboxException ex) {
-	    LOG.error("REGISTER USER SERVICE ERROR : ", ex);
+	    LOG.error("###REGISTER_USER### Error encountered in RegisterUserService : ", ex);
 	    return Response.status(Response.Status.BAD_REQUEST)
 		    .entity(ex.getErrorType().getCode() + " " + ex.getErrorType().getMessage()).build();
 	} catch (Exception ex) {
-	    LOG.error("REGISTER USER SERVICE ERROR : ", ex);
+	    LOG.error("###REGISTER_USER### Error encountered in RegisterUserService : ", ex);
 	    return Response.status(Response.Status.BAD_REQUEST).entity(ex.getMessage()).build();
 	}
 
