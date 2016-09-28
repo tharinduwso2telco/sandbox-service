@@ -23,12 +23,10 @@ import java.util.List;
 import java.util.Map;
 
 import javax.ws.rs.core.Response;
-import javax.xml.ws.soap.AddressingFeature.Responses;
 
 import org.apache.commons.logging.LogFactory;
 
 import com.wso2telco.core.dbutils.exception.ServiceError;
-import com.wso2telco.core.dbutils.exception.ThrowableError;
 import com.wso2telco.dep.oneapivalidation.exceptions.CustomException;
 import com.wso2telco.dep.oneapivalidation.util.Validation;
 import com.wso2telco.dep.oneapivalidation.util.ValidationRule;
@@ -43,18 +41,17 @@ import com.wso2telco.services.dep.sandbox.dao.model.domain.ProvisionAllService;
 import com.wso2telco.services.dep.sandbox.dao.model.domain.ProvisionMSISDNServicesMap;
 import com.wso2telco.services.dep.sandbox.dao.model.domain.ProvisionResponseMessage;
 import com.wso2telco.services.dep.sandbox.dao.model.domain.ProvisionedServices;
+import com.wso2telco.services.dep.sandbox.dao.model.domain.Status;
+//import com.wso2telco.core.dbutils.exception.;
 import com.wso2telco.services.dep.sandbox.dao.model.domain.User;
 import com.wso2telco.services.dep.sandbox.exception.SandboxException;
-import com.wso2telco.services.dep.sandbox.exception.SandboxException.SandboxErrorType;
 import com.wso2telco.services.dep.sandbox.servicefactory.AbstractRequestHandler;
 import com.wso2telco.services.dep.sandbox.servicefactory.Returnable;
-import com.wso2telco.services.dep.sandbox.servicefactory.provisioning.RemoveProvisionedResponseBean.ServiceRemovalResponse;
+import com.wso2telco.services.dep.sandbox.servicefactory.provisioning.RemoveProvisionedResponseBean.ServiceRemoveResponse;
 import com.wso2telco.services.dep.sandbox.util.CommonUtil;
 import com.wso2telco.services.dep.sandbox.util.ProvisioningStatusCodes;
 import com.wso2telco.services.dep.sandbox.util.ProvisioningUtil;
 import com.wso2telco.services.dep.sandbox.util.ProvisioningUtil.ProvisionRequestTypes;
-import com.wso2telco.services.dep.sandbox.dao.model.domain.Status;
-//import com.wso2telco.core.dbutils.exception.;
 
 public class RemoveProvisionedServices extends AbstractRequestHandler<RemoveProvisionedRequestWrapperDTO> {
 
@@ -106,7 +103,7 @@ public class RemoveProvisionedServices extends AbstractRequestHandler<RemoveProv
 	protected boolean validate(RemoveProvisionedRequestWrapperDTO wrapperDTO) throws Exception {
 
 		RemoveProvisionRequestBean requestBean =wrapperDTO.getRemoveProvisionRequestBean();
-		ServiceRemoveRequest request = requestBean.getServiceRemovalRequest();
+		ServiceRemoveRequest request = requestBean.getServiceRemoveRequest();
 		
 		if (requestBean != null && request != null ) {
 			
@@ -162,7 +159,7 @@ public class RemoveProvisionedServices extends AbstractRequestHandler<RemoveProv
 		}
 			
 		RemoveProvisionRequestBean requestBean =extendedRequestDTO.getRemoveProvisionRequestBean();
-		ServiceRemoveRequest request = requestBean.getServiceRemovalRequest();
+		ServiceRemoveRequest request = requestBean.getServiceRemoveRequest();
 		
 		User user = extendedRequestDTO.getUser();
 		String serviceCode = CommonUtil.getNullOrTrimmedValue(request.getServiceCode());
@@ -205,7 +202,7 @@ public class RemoveProvisionedServices extends AbstractRequestHandler<RemoveProv
 					ref.setCallbackData(callbackData);
 					ref.setNotifyURL(notifyURL);
 					ref.setResourceURL(ProvisioningUtil.getResourceUrl(extendedRequestDTO));
-					ServiceRemovalResponse serviceRemovalResponse = new ServiceRemovalResponse();
+					ServiceRemoveResponse serviceRemovalResponse = new ServiceRemoveResponse();
 					serviceRemovalResponse.setCallbackReference(ref);
 					serviceRemovalResponse.setServiceCode(serviceCode);
 					serviceRemovalResponse.setClientCorrelator(clientCorrelator);
@@ -213,7 +210,7 @@ public class RemoveProvisionedServices extends AbstractRequestHandler<RemoveProv
 					serviceRemovalResponse.setClientReferenceCode(clientReferenceCode);
 					serviceRemovalResponse.setTransactionStatus(statusMap.get(ProvisioningStatusCodes.PRV_DELETE_NOT_ACTIVE).getStatus());
 					RemoveProvisionedResponseBean removeProvisionResponseBean = new RemoveProvisionedResponseBean();
-					removeProvisionResponseBean.setServiceRemovalResponse(serviceRemovalResponse);
+					removeProvisionResponseBean.setServiceRemoveResponse(serviceRemovalResponse);
 					responseWrapper.setRemoveProvisionedResponseBean(removeProvisionResponseBean);
 					responseWrapper.setHttpStatus(Response.Status.BAD_REQUEST);
 				}
@@ -262,7 +259,7 @@ public class RemoveProvisionedServices extends AbstractRequestHandler<RemoveProv
 		ref.setCallbackData(deletedServiceList.getCallbackData());
 		ref.setNotifyURL(deletedServiceList.getNotifyURL());
 		ref.setResourceURL(ProvisioningUtil.getResourceUrl(requestWrapperDTO));
-		ServiceRemovalResponse serviceRemovalResponse = new ServiceRemovalResponse();
+		ServiceRemoveResponse serviceRemovalResponse = new ServiceRemoveResponse();
 		serviceRemovalResponse.setCallbackReference(ref);
 		serviceRemovalResponse.setServiceCode(deletedServiceList.getMSISDNServicesMapId().getServiceId().getServiceCode());
 		serviceRemovalResponse.setClientCorrelator(deletedServiceList.getClientCorrelator());
@@ -270,7 +267,7 @@ public class RemoveProvisionedServices extends AbstractRequestHandler<RemoveProv
 		serviceRemovalResponse.setClientReferenceCode(deletedServiceList.getClientReferenceCode());
 		serviceRemovalResponse.setTransactionStatus(deletedServiceList.getStatus().getStatus());	
 		RemoveProvisionedResponseBean removeProvisionResponseBean = new RemoveProvisionedResponseBean();
-		removeProvisionResponseBean.setServiceRemovalResponse(serviceRemovalResponse);
+		removeProvisionResponseBean.setServiceRemoveResponse(serviceRemovalResponse);
 		responseWrapper.setRemoveProvisionedResponseBean(removeProvisionResponseBean);
 		}
 

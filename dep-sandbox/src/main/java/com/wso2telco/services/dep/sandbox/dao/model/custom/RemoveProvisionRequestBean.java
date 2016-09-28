@@ -18,22 +18,22 @@ package com.wso2telco.services.dep.sandbox.dao.model.custom;
 
 public class RemoveProvisionRequestBean {
 
-	private ServiceRemoveRequest serviceRemovalRequest;
+	private ServiceRemoveRequest serviceRemoveRequest;
 
 	/**
 	 * @return the serviceRemoveRequest
 	 */
-	public ServiceRemoveRequest getServiceRemovalRequest() {
-		return serviceRemovalRequest;
+	public ServiceRemoveRequest getServiceRemoveRequest() {
+		return serviceRemoveRequest;
 	}
 
 	/**
 	 * 
-	 * @param serviceRemovalRequest
+	 * @param serviceRemoveRequest
 	 *            to set
 	 */
-	public void setServiceRemovalRequest(ServiceRemoveRequest serviceRemovalRequest) {
-		this.serviceRemovalRequest = serviceRemovalRequest;
+	public void setServiceRemoveRequest(ServiceRemoveRequest serviceRemoveRequest) {
+		this.serviceRemoveRequest = serviceRemoveRequest;
 	}
 
 	public static class ServiceRemoveRequest {
