@@ -20,16 +20,16 @@ import com.wso2telco.services.dep.sandbox.dao.model.custom.ProvisionCommonRespon
 
 public class RemoveProvisionedResponseBean {
 
-	private ServiceRemovalResponse serviceRemovalResponse = null;
+	private ServiceRemoveResponse serviceRemoveResponse = null;
 
-	public ServiceRemovalResponse getServiceRemovalResponse() {
-		return serviceRemovalResponse;
+	public ServiceRemoveResponse getServiceRemoveResponse() {
+		return serviceRemoveResponse;
 	}
 
-	public void setServiceRemovalResponse(ServiceRemovalResponse serviceRemovalResponse) {
-		this.serviceRemovalResponse = serviceRemovalResponse;
+	public void setServiceRemoveResponse (ServiceRemoveResponse serviceRemoveResponse) {
+		this.serviceRemoveResponse = serviceRemoveResponse;
 	}
 
-	public static class ServiceRemovalResponse extends ProvisionCommonResponseDTO{}
+	public static class ServiceRemoveResponse extends ProvisionCommonResponseDTO{}
 
 }

@@ -33,6 +33,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import com.wordnik.swagger.annotations.Api;
+import com.wordnik.swagger.annotations.ApiImplicitParam;
+import com.wordnik.swagger.annotations.ApiImplicitParams;
 import com.wordnik.swagger.annotations.ApiOperation;
 import com.wordnik.swagger.annotations.ApiParam;
 import com.wso2telco.services.dep.sandbox.dao.model.custom.ListProvisionedRequestWrapperDTO;
@@ -61,10 +63,14 @@ public class ProvisionService {
 
 	@GET
 	@Path("/{msisdn}/list/applicable")
-	 @ApiOperation(value = "getApplicableServices", notes = "getApplicableServices", response = Response.class)
+	@ApiOperation(value = "getApplicableServices", notes = "getApplicableServices", response = Response.class)
+	@ApiImplicitParams({
+	    @ApiImplicitParam(name = "sandbox", value = "Authorization token", 
+	                     required = true, dataType = "string", paramType = "header")
+	})
 	public Response getApplicableServices( @ApiParam(value = "msisdn", required = true) @PathParam("msisdn") String msisdn, 
-			@ApiParam(value = "offset", required = true) @QueryParam("offset") String offSet,
-			@ApiParam(value = "limit", required = true)  @QueryParam("limit") String limit, @Context HttpServletRequest request) {
+			@ApiParam(value = "offset", required = false) @QueryParam("offset") String offSet,
+			@ApiParam(value = "limit", required = false)  @QueryParam("limit") String limit, @Context HttpServletRequest request) {
 		LOG.debug("/{msisdn}/list/applicable invorked :" + msisdn + offSet + limit);
 		QueryProvisioningServicesRequestWrapper requestDTO = new QueryProvisioningServicesRequestWrapper();
 		requestDTO.setHttpRequest(request);
@@ -94,9 +100,13 @@ public class ProvisionService {
 	@GET
 	@Path("/{msisdn}/list/active")
 	@ApiOperation(value = "getActiveProvisionedServices", notes = "getActiveProvisionedServices", response = Response.class)
+	@ApiImplicitParams({
+	    @ApiImplicitParam(name = "sandbox", value = "Authorization token", 
+	                     required = true, dataType = "string", paramType = "header")
+	})
 	public Response getActiveProvisionedServices( @ApiParam(value = "msisdn", required = true) @PathParam("msisdn") String msisdn, 
-			@ApiParam(value = "offset", required = true) @QueryParam("offset") String offSet,
-			@ApiParam(value = "limit", required = true)  @QueryParam("limit") String limit, @Context HttpServletRequest request) {
+			@ApiParam(value = "offset", required = false) @QueryParam("offset") String offSet,
+			@ApiParam(value = "limit", required = false)  @QueryParam("limit") String limit, @Context HttpServletRequest request) {
 		LOG.debug("/{msisdn}/list/active invoked :" + msisdn + offSet + limit);
 		ListProvisionedRequestWrapperDTO requestDTO = new ListProvisionedRequestWrapperDTO();
 		requestDTO.setHttpRequest(request);
@@ -120,9 +130,13 @@ public class ProvisionService {
 
 	}
 	
-	@DELETE
+	@POST
 	@Path("/{msisdn}/remove")
 	@ApiOperation(value = "removeProvisionedServices", notes = "removeProvisionedServices", response = Response.class)
+	@ApiImplicitParams({
+	    @ApiImplicitParam(name = "sandbox", value = "Authorization token", 
+	                     required = true, dataType = "string", paramType = "header")
+	})
 	public Response removeProvisionedServices(@ApiParam(value = "msisdn", required = true) @PathParam("msisdn") String msisdn, 
 			@Context HttpServletRequest httpRequest, RemoveProvisionRequestBean removeProvisionRequestBean) {
 		
@@ -153,6 +167,10 @@ public class ProvisionService {
 	@POST
 	@Path("/{msisdn}")
 	@ApiOperation(value = "provisionForRequestedService", notes = "provision requested service", response = Response.class)
+	@ApiImplicitParams({
+	    @ApiImplicitParam(name = "sandbox", value = "Authorization token", 
+	                     required = true, dataType = "string", paramType = "header")
+	})
 	public Response provisionForRequestedService(
 			@ApiParam(value = "msisdn", required = true) @PathParam("msisdn") String msisdn,
 			ProvisionRequestBean provisionRequest, @Context HttpServletRequest request) {
