@@ -31,6 +31,7 @@ public class Application extends AbstractApplication<ConfigDTO> {
 		List<Object>  listOfObject =new ArrayList<Object>();
 		listOfObject.add(new SandboxService());
 		listOfObject.add(new ProvisionService());
+		listOfObject.add(new RegisterUserService());
 		return listOfObject;
 	}
 

@@ -19,4 +19,8 @@ public class DaoFactory {
 	public static ProvisioningDAO getProvisioningDAO() {
 		return new HibernateFactory().getHibernateProvisioningDAO();
 	}
+	
+	public static UserDAO getUserDAO(){
+	    	return new HibernateFactory().getHibernateUserDAO();
+	}
 }
