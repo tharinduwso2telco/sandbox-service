@@ -168,7 +168,7 @@ public class RemoveProvisionedServices extends AbstractRequestHandler<RemoveProv
 		String clientReferenceCode = CommonUtil.getNullOrTrimmedValue(request.getClientReferenceCode());
 		String notifyURL = CommonUtil.getNullOrTrimmedValue(request.getCallbackReference().getNotifyURL());
 		String callbackData = CommonUtil.getNullOrTrimmedValue(request.getCallbackReference().getCallbackData());
-		
+		Map<ProvisioningStatusCodes, Status> statusMap = new HashMap<ProvisioningStatusCodes, Status>();
 		
 		try{	
 			
@@ -182,7 +182,7 @@ public class RemoveProvisionedServices extends AbstractRequestHandler<RemoveProv
 			// check whether the SP desire any Fail Error Messages
 			checkIfErrorMessageSet(msisdn, user.getUserName(),serviceCode);
 			// Returns map of all available transaction status
-			Map<ProvisioningStatusCodes, Status> statusMap = getAllTransactionStatus();
+			statusMap = getAllTransactionStatus();
 			// this returns the servie which is eligible for removing
 			ProvisionedServices provisionedCheckList = provisioningDao.getAlreadyProvisioned(msisdn, user.getUserName(),serviceCode);
 			
@@ -198,7 +198,9 @@ public class RemoveProvisionedServices extends AbstractRequestHandler<RemoveProv
 				boolean isDuplicate = checkRequestDuplication(msisdn, user.getUserName(),serviceCode, clientCorrelator);
 				// non matching client correlator
 				if(!isDuplicate){
-					CallbackReference ref = new CallbackReference();
+					buildJsonResponseBody(serviceCode,clientCorrelator,clientReferenceCode,callbackData,notifyURL,statusMap.get(ProvisioningStatusCodes.PRV_DELETE_NOT_ACTIVE).getStatus());
+					return responseWrapper;
+					/*CallbackReference ref = new CallbackReference();
 					ref.setCallbackData(callbackData);
 					ref.setNotifyURL(notifyURL);
 					ref.setResourceURL(ProvisioningUtil.getResourceUrl(extendedRequestDTO));
@@ -212,7 +214,7 @@ public class RemoveProvisionedServices extends AbstractRequestHandler<RemoveProv
 					RemoveProvisionedResponseBean removeProvisionResponseBean = new RemoveProvisionedResponseBean();
 					removeProvisionResponseBean.setServiceRemoveResponse(serviceRemovalResponse);
 					responseWrapper.setRemoveProvisionedResponseBean(removeProvisionResponseBean);
-					responseWrapper.setHttpStatus(Response.Status.BAD_REQUEST);
+					responseWrapper.setHttpStatus(Response.Status.BAD_REQUEST);*/
 				}
 			}
 		} catch(Exception ex) {
@@ -220,13 +222,36 @@ public class RemoveProvisionedServices extends AbstractRequestHandler<RemoveProv
 			if (responseWrapper.getRequestError() != null) {
 				return responseWrapper;
 			}
+			buildJsonResponseBody(serviceCode,clientCorrelator,clientReferenceCode,callbackData,notifyURL,statusMap.get(ProvisioningStatusCodes.PRV_DELETE_FAILED).getStatus());
+
+			/*
 			responseWrapper.setRequestError(constructRequestError(SERVICEEXCEPTION, ServiceError.SERVICE_ERROR_OCCURED, null));
-			responseWrapper.setHttpStatus(Response.Status.BAD_REQUEST);
+			responseWrapper.setHttpStatus(Response.Status.BAD_REQUEST);*/
 			return responseWrapper;
 		}
 		return responseWrapper;
 	}
 	
+	private void buildJsonResponseBody(String serviceCode,String clientCorrelator, String clientReferenceCode,String callbackData, String notifyURL, String status) {
+		
+		CallbackReference ref = new CallbackReference();
+		ref.setCallbackData(callbackData);
+		ref.setNotifyURL(notifyURL);
+		ref.setResourceURL(ProvisioningUtil.getResourceUrl(requestWrapperDTO));
+		ServiceRemoveResponse serviceRemovalResponse = new ServiceRemoveResponse();
+		serviceRemovalResponse.setCallbackReference(ref);
+		serviceRemovalResponse.setServiceCode(serviceCode);
+		serviceRemovalResponse.setClientCorrelator(clientCorrelator);
+		serviceRemovalResponse.setServerReferenceCode(ProvisioningUtil.SERVER_REFERENCE_CODE);
+		serviceRemovalResponse.setClientReferenceCode(clientReferenceCode);
+		serviceRemovalResponse.setTransactionStatus(status);
+		RemoveProvisionedResponseBean removeProvisionResponseBean = new RemoveProvisionedResponseBean();
+		removeProvisionResponseBean.setServiceRemoveResponse(serviceRemovalResponse);
+		responseWrapper.setRemoveProvisionedResponseBean(removeProvisionResponseBean);
+		responseWrapper.setHttpStatus(Response.Status.BAD_REQUEST);
+		
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -254,7 +279,7 @@ public class RemoveProvisionedServices extends AbstractRequestHandler<RemoveProv
 	}
 
 	private void buildJsonResponseBody(ProvisionedServices deletedServiceList) {
-		
+
 		CallbackReference ref = new CallbackReference();
 		ref.setCallbackData(deletedServiceList.getCallbackData());
 		ref.setNotifyURL(deletedServiceList.getNotifyURL());
@@ -265,11 +290,11 @@ public class RemoveProvisionedServices extends AbstractRequestHandler<RemoveProv
 		serviceRemovalResponse.setClientCorrelator(deletedServiceList.getClientCorrelator());
 		serviceRemovalResponse.setServerReferenceCode(ProvisioningUtil.SERVER_REFERENCE_CODE);
 		serviceRemovalResponse.setClientReferenceCode(deletedServiceList.getClientReferenceCode());
-		serviceRemovalResponse.setTransactionStatus(deletedServiceList.getStatus().getStatus());	
+		serviceRemovalResponse.setTransactionStatus(deletedServiceList.getStatus().getStatus());
 		RemoveProvisionedResponseBean removeProvisionResponseBean = new RemoveProvisionedResponseBean();
 		removeProvisionResponseBean.setServiceRemoveResponse(serviceRemovalResponse);
 		responseWrapper.setRemoveProvisionedResponseBean(removeProvisionResponseBean);
-		}
+	}
 
 
 	private ProvisionedServices removeProvisionedService(ProvisionedServices provisionedCheckList, String clientCorrelator, String clientReferenceCode, String notifyURL, String callbackData,

@@ -53,7 +53,7 @@ import com.wso2telco.services.dep.sandbox.servicefactory.Returnable;
 import com.wso2telco.services.dep.sandbox.util.RequestType;
 
 
-@Path("/provisioning/{v1}")
+@Path("/provision/{v1}")
 @Consumes({ MediaType.APPLICATION_JSON })
 @Produces({ MediaType.APPLICATION_JSON })
 @Api(value = "/provision/{v1}", description = "Rest Service for provisionning API")
