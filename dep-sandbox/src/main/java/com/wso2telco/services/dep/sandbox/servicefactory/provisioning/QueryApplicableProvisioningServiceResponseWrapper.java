@@ -24,7 +24,9 @@ public class QueryApplicableProvisioningServiceResponseWrapper extends AbstractR
 
 	@Override
 	public Object getResponse() {
-		// TODO Auto-generated method stub
+		if (getRequestError() != null) {
+			return getRequestError();
+		}
 		return serviceListDTO;
 	}
 

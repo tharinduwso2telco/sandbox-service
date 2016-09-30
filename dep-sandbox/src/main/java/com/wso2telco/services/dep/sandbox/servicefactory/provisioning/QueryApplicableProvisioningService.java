@@ -20,9 +20,12 @@ import java.util.Date;
 import java.util.List;
 
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 
 import org.apache.commons.logging.LogFactory;
 
+import com.wso2telco.core.dbutils.exception.PolicyError;
+import com.wso2telco.core.dbutils.exception.ServiceError;
 import com.wso2telco.core.dbutils.exception.ThrowableError;
 import com.wso2telco.dep.oneapivalidation.exceptions.CustomException;
 import com.wso2telco.dep.oneapivalidation.util.Validation;
@@ -84,21 +87,14 @@ public class QueryApplicableProvisioningService
 			Validation.checkRequestParams(validationRules);
 		} catch (CustomException ex) {
 			LOG.error("###PROVISION### Error in Validation : " + ex);
-			throw new SandboxException(new ThrowableError() {
-
-				@Override
-				public String getMessage() {
-					return ex.getErrmsg();
-				}
-
-				@Override
-				public String getCode() {
-					return ex.getErrcode();
-				}
-			});
+			responseWrapper.setHttpStatus(Status.BAD_REQUEST);
+			responseWrapper.setRequestError(constructRequestError(SERVICEEXCEPTION, ex.getErrcode(), ex.getErrmsg(),
+					ex.getErrvar().toString()));
 		} catch (Exception ex) {
 			LOG.error("###PROVISION### Error in Validation : " + ex);
-			throw new SandboxException(SandboxErrorType.SERVICE_ERROR);
+			responseWrapper.setHttpStatus(Status.BAD_REQUEST);
+			responseWrapper
+					.setRequestError(constructRequestError(SERVICEEXCEPTION, ServiceError.SERVICE_ERROR_OCCURED, null));
 		}
 
 		wrapperDTO.setPhoneNumber(CommonUtil.extractNumberFromMsisdn(wrapperDTO.getMsisdn()));
@@ -108,6 +104,11 @@ public class QueryApplicableProvisioningService
 
 	@Override
 	protected Returnable process(QueryProvisioningServicesRequestWrapper extendedRequestDTO) throws Exception {
+		
+		if (responseWrapper.getRequestError() != null) {
+			return responseWrapper;
+		}
+		
 		try {
 			User user = extendedRequestDTO.getUser();
 
@@ -133,7 +134,10 @@ public class QueryApplicableProvisioningService
 				}
 			} else {
 				LOG.error("###PROVISION### Valid Provision Services Not Available for msisdn: " + msisdn);
-				throw new SandboxException(SandboxErrorType.NO_VALID_SERVICES_AVAILABLE);
+				responseWrapper.setHttpStatus(Status.BAD_REQUEST);
+				responseWrapper.setRequestError(constructRequestError(POLICYEXCEPTION,
+						PolicyError.NO_VALID_SERVICES_AVAILABLE, "Valid Provision Services Not Available"));
+				return responseWrapper;
 			}
 
 			serviceList.setCurrencyCode(ProvisioningUtil.DEFAULT_CURRENCY_CODE);
@@ -144,12 +148,11 @@ public class QueryApplicableProvisioningService
 			serviceListDTO.setServiceList(serviceList);
 			responseWrapper.setServiceListDTO(serviceListDTO);
 
-		} catch(SandboxException ex) {
-			LOG.error("###PROVISION### Error Occured in Query Applicable Service. " + ex);
-			throw ex;
 		} catch (Exception ex) {
 			LOG.error("###PROVISION### Error Occured in Query Applicable Service. " + ex);
-			throw new SandboxException(SandboxErrorType.SERVICE_ERROR);
+			responseWrapper.setHttpStatus(Status.BAD_REQUEST);
+			responseWrapper
+					.setRequestError(constructRequestError(SERVICEEXCEPTION, ServiceError.SERVICE_ERROR_OCCURED, null));
 		}
 		return responseWrapper;
 	}
