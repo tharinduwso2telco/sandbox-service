@@ -43,13 +43,11 @@ public abstract class AbstractRequestHandler<E2 extends RequestDTO> implements R
 	public final Returnable execute(final RequestDTO requestDTO) throws Exception {
 		E2 wrapperDTO = (E2) requestDTO;
 		init(wrapperDTO);
-
 		/**
 		 * load user from httpheader .get("sandbox")
 		 */
 		String sandboxusr = requestDTO.getSandbox();
 		LOG.debug("Sandbox user : " + sandboxusr);
-
 		/**
 		 * load user based on JWT_TOKEN
 		 */
@@ -61,20 +59,16 @@ public abstract class AbstractRequestHandler<E2 extends RequestDTO> implements R
 		 * load user domain object from db
 		 */
 		final User user = dao.getUser(sandboxusr);
-
 		requestDTO.setUser(user);
-
 		validate(wrapperDTO);
-		
 		/**
 		 * if the current instance does not contain address
 		 */
 		if (!(this instanceof AddressIgnorerable)) {
-			
 			List<String> userNotWhiteListed = getNotWhitelistedNumbers(user);
 			if (userNotWhiteListed != null && !userNotWhiteListed.isEmpty()) {
 				Returnable responseDTO = getResponseDTO();
-
+				
 				LOG.debug("Location parameters are empty");
 				responseDTO.setRequestError(
 						constructRequestError(SERVICEEXCEPTION, "SVC0001", "A service error occurred. Error code is %1",
@@ -83,7 +77,6 @@ public abstract class AbstractRequestHandler<E2 extends RequestDTO> implements R
 				return responseDTO;
 			}
 		}
-
 		return process(wrapperDTO);
 
 	}
@@ -95,18 +88,15 @@ public abstract class AbstractRequestHandler<E2 extends RequestDTO> implements R
 		for (String address : enterdList) {
 			userNumList.add(getLastMobileNumber(address).trim());
 		}
-
 		if (!userNumList.isEmpty()) {
 			wlnumber = dao.getWhitelisted(user.getId(), userNumList);
 		}
 		
-
 		if (wlnumber != null) {
 			for (ManageNumber manageNumber : wlnumber) {
 				userNumList.remove(manageNumber.getNumber().trim());
 			}
 		}
-
 		return userNumList;
 	}
 

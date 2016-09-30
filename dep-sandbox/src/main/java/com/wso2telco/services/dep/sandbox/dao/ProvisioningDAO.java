@@ -42,7 +42,9 @@ public interface ProvisioningDAO {
 	
 	public ProvisionAllService getProvisionService(String serviceCode, String ServiceName, User user) throws Exception;
 	
-	public ProvisionedServices getAlreadyProvisionedService (User user, List<String> statusCodes, ProvisionAllService provisionService, String phoneNumber) throws Exception;
+	public void saveProvisionService(ProvisionAllService provisionAllService) throws Exception;
+	
+	public List<ProvisionAllService> getProvisionServices(int userid);
 
 	public ProvisionResponseMessage getErrorResponse(String msisdn,String username, String serviceCode) throws Exception;
 
@@ -59,4 +61,6 @@ public interface ProvisioningDAO {
 	public ProvisionMSISDNServicesMap getProvisionMsisdnService(ManageNumber number, ProvisionAllService service) throws Exception;
 	
 	public void saveProvisionedService(ProvisionedServices provisionedService) throws Exception;
+	
+	public ProvisionedServices getAlreadyProvisionedService(User user, List<String> statusCodes, ProvisionAllService provisionService, String phoneNumber) throws Exception;
 }
