@@ -200,6 +200,7 @@ public class ProvisionRequestedServiceHandler extends AbstractRequestHandler<Ser
 				.getNullOrTrimmedValue(requestBean.getServiceProvisionRequest().getCallbackReference().getNotifyURL());
 		String callbackData = CommonUtil.getNullOrTrimmedValue(
 				requestBean.getServiceProvisionRequest().getCallbackReference().getCallbackData());
+		CallbackReference callbackReference = requestBean.getServiceProvisionRequest().getCallbackReference();
 
 		ProvisioningUtil.saveProvisioningRequestDataLog(ProvisionRequestTypes.PROVISION_REQUESTED_SERVICE.toString(),
 				extendedRequestDTO.getMsisdn(), user, clientCorrelator, clientReferenceCode, notifyUrl, callbackData,
@@ -224,13 +225,13 @@ public class ProvisionRequestedServiceHandler extends AbstractRequestHandler<Ser
 						&& provisionedService.getClientCorrelator().equalsIgnoreCase(clientCorrelator)) {
 					com.wso2telco.services.dep.sandbox.dao.model.domain.Status responseStatus = provisionedService
 							.getStatus();
-					buildProvisionResponse(provisionedService, responseStatus);
+					buildProvisionResponse(provisionedService, responseStatus, clientReferenceCode, callbackReference);
 					responseWrapperDTO.setHttpStatus(Status.OK);
 					return responseWrapperDTO;
 				} else {
 					com.wso2telco.services.dep.sandbox.dao.model.domain.Status responseStatus = provisioningDao
 							.getStatusFromStatusCode(ProvisioningStatusCodes.PRV_PROVISION_ALREADY_ACTIVE);
-					buildProvisionResponse(provisionedService, responseStatus);
+					buildProvisionResponse(provisionedService, responseStatus, clientReferenceCode, callbackReference);
 					responseWrapperDTO.setHttpStatus(Status.BAD_REQUEST);
 					return responseWrapperDTO;
 				}
@@ -258,7 +259,7 @@ public class ProvisionRequestedServiceHandler extends AbstractRequestHandler<Ser
 
 				ProvisionedServices serviceResponse = provisionRequestedService(serviceMapEntry, clientCorrelator,
 						clientReferenceCode, notifyUrl, callbackData);
-				buildProvisionResponse(serviceResponse, null);
+				buildProvisionResponse(serviceResponse, null, clientReferenceCode, callbackReference);
 				responseWrapperDTO.setHttpStatus(Status.OK);
 
 			}
@@ -335,18 +336,18 @@ public class ProvisionRequestedServiceHandler extends AbstractRequestHandler<Ser
 	}
 
 	private void buildProvisionResponse(ProvisionedServices provisionedService,
-			com.wso2telco.services.dep.sandbox.dao.model.domain.Status status) {
+			com.wso2telco.services.dep.sandbox.dao.model.domain.Status status, String clientReferenceCode, CallbackReference reference) {
 		ProvisionResponseBean responseBean = new ProvisionResponseBean();
 		ServiceProvisionResponse serviceProvisionResponse = new ServiceProvisionResponse();
 		serviceProvisionResponse
 				.setServiceCode(provisionedService.getMSISDNServicesMapId().getServiceId().getServiceCode());
 		serviceProvisionResponse.setClientCorrelator(provisionedService.getClientCorrelator());
-		serviceProvisionResponse.setClientReferenceCode(provisionedService.getClientReferenceCode());
+		serviceProvisionResponse.setClientReferenceCode(clientReferenceCode);
 		serviceProvisionResponse.setServerReferenceCode(ProvisioningUtil.SERVER_REFERENCE_CODE);
 
 		CallbackReference callbackReference = new CallbackReference();
-		callbackReference.setCallbackData(provisionedService.getClientReferenceCode());
-		callbackReference.setNotifyURL(provisionedService.getNotifyURL());
+		callbackReference.setCallbackData(reference.getCallbackData());
+		callbackReference.setNotifyURL(reference.getNotifyURL());
 		callbackReference.setResourceURL(ProvisioningUtil.getResourceUrl(requestWrapperDTO));
 
 		serviceProvisionResponse.setCallbackReference(callbackReference);
