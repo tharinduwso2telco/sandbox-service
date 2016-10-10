@@ -34,7 +34,7 @@ public class ServiceListProvisioned {
 	/**
 	 * @return the serviceInfo
 	 */
-	public List<ServiceInfoListProvisionedDTO> getServiceInfo() {
+	public List<ServiceInfoListProvisionedDTO> getServiceInfoList() {
 		return serviceInfo;
 	}
 
@@ -42,7 +42,7 @@ public class ServiceListProvisioned {
 	 * @param serviceInfo
 	 *            to set
 	 */
-	public void setServiceInfo(List<ServiceInfoListProvisionedDTO> serviceInfo) {
+	public void setServiceInfoList(List<ServiceInfoListProvisionedDTO> serviceInfo) {
 		this.serviceInfo = serviceInfo;
 	}
 
