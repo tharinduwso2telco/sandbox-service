@@ -18,31 +18,11 @@ package com.wso2telco.services.dep.sandbox.dao.model.custom;
 import java.util.ArrayList;
 import java.util.List;
 
+public class CustomerInfo {
 
-public class ServiceList {
-
-	private List<ServiceInfo> serviceInfo = new ArrayList<>();
-	
 	private List<CustomerInfo> customerInfo = new ArrayList<>();
-
-	private String currencyCode;
-
+	
 	private String resourceURL;
-
-	/**
-	 * @return the serviceInfo
-	 */
-	public List<ServiceInfo> getServiceInfo() {
-		return serviceInfo;
-	}
-
-	/**
-	 * @param serviceInfo
-	 *            the serviceInfo to set
-	 */
-	public void setServiceInfo(List<ServiceInfo> serviceInfo) {
-		this.serviceInfo = serviceInfo;
-	}
 
 	/**
 	 * @return the customerInfo
@@ -57,21 +37,6 @@ public class ServiceList {
 	 */
 	public void setCustomerInfo(List<CustomerInfo> customerInfo) {
 		this.customerInfo = customerInfo;
-	}
-	
-	/**
-	 * @return the currencyCode
-	 */
-	public String getCurrencyCode() {
-		return currencyCode;
-	}
-
-	/**
-	 * @param currencyCode
-	 *            the currencyCode to set
-	 */
-	public void setCurrencyCode(String currencyCode) {
-		this.currencyCode = currencyCode;
 	}
 
 	/**
@@ -89,17 +54,9 @@ public class ServiceList {
 		this.resourceURL = resourceURL;
 	}
 
-	public ServiceInfo addNewServiceInfo() {
-		ServiceInfo serviceInfo = new ServiceInfo();
-		this.serviceInfo.add(serviceInfo);
-		return serviceInfo;
-	}
-	
 	public CustomerInfo addNewCustomerInfo() {
 		CustomerInfo customerInfo = new CustomerInfo();
 		this.customerInfo.add(customerInfo);
 		return customerInfo;
 	}
-
-
 }

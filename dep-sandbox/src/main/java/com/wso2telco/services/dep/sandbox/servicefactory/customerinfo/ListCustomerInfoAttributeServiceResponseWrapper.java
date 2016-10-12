@@ -15,26 +15,38 @@
  ******************************************************************************/
 package com.wso2telco.services.dep.sandbox.servicefactory.customerinfo;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import com.wso2telco.services.dep.sandbox.dao.model.custom.CustomerInfo;
+import com.wso2telco.services.dep.sandbox.dao.model.custom.ListCustomerInfoDTO;
+import com.wso2telco.services.dep.sandbox.dao.model.custom.ServiceListDTO;
+import com.wso2telco.services.dep.sandbox.servicefactory.AbstractReturnWrapperDTO;
 
-import com.wso2telco.services.dep.sandbox.dao.model.custom.RequestDTO;
-import com.wso2telco.services.dep.sandbox.servicefactory.RequestHandleable;
+public class ListCustomerInfoAttributeServiceResponseWrapper extends AbstractReturnWrapperDTO {
 
 
-public class CustomerInfoServiceFactory {
-    
-    private static Log LOG = LogFactory.getLog(CustomerInfoServiceFactory.class);
-    public static RequestHandleable getInstance(final RequestDTO requestDTO) {
+	private ListCustomerInfoDTO attributeListDTO;
 
-    final String GET_ATTRIBUTES = "attributes";
-	final String GET_PROFILE = "profile";
-	
+	@Override
+	public Object getResponse() {
+		if (getRequestError() != null) {
+			return getRequestError();
+		}
+		return attributeListDTO;
+	}
 
-	if (requestDTO.getRequestPath().toLowerCase().contains(GET_ATTRIBUTES) && requestDTO.isGet()) {
-	    LOG.debug("LOADING GET ATTRIBUTE SERVICES");
-	    return new ListCustomerInfoAttributes();
-	} 
-	else return null;
-  }
+	/**
+	 * @return the attributeListDTO
+	 */
+	public ListCustomerInfoDTO getCustomer() {
+		return attributeListDTO;
+	}
+
+	/**
+	 * @param attributeListDTO
+	 *            the attributeListDTO to set
+	 */
+	public void setCustomer(ListCustomerInfoDTO attributeListDTO) {
+		this.attributeListDTO = attributeListDTO;
+	}
+
+
 }
