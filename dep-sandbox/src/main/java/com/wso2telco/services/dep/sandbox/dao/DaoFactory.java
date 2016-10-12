@@ -23,4 +23,8 @@ public class DaoFactory {
 	public static UserDAO getUserDAO(){
 	    	return new HibernateFactory().getHibernateUserDAO();
 	}
+	
+	public static CustomerInfoDAO getCustomerInfoDAO(){
+	    	return new HibernateFactory().getHibernateCustomerInfoDAO();
+	}
 }

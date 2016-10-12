@@ -4,11 +4,11 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import com.wso2telco.services.dep.sandbox.dao.model.custom.RequestDTO;
-import com.wso2telco.services.dep.sandbox.servicefactory.admin.AdminRequestFactory;
 import com.wso2telco.services.dep.sandbox.servicefactory.location.LocationRequestFactory;
 import com.wso2telco.services.dep.sandbox.servicefactory.payment.PaymentRequestFactory;
 import com.wso2telco.services.dep.sandbox.servicefactory.provisioning.ProvisioningServiceFactory;
 import com.wso2telco.services.dep.sandbox.servicefactory.smsmessaging.SMSRequestFactory;
+import com.wso2telco.services.dep.sandbox.servicefactory.user.UserServiceFactory;
 
 public class RequestBuilderFactory {
 
@@ -43,8 +43,8 @@ public class RequestBuilderFactory {
 			requestHandler = ProvisioningServiceFactory.getInstance(requestDTO);
 			break;
 		case ADMIN:
-			LOG.debug("LOADING ADMIN FACTORY");
-			requestHandler = AdminRequestFactory.getInstance(requestDTO);
+			LOG.debug("LOADING USER FACTORY");
+			requestHandler = UserServiceFactory.getInstance(requestDTO);
 			break;
 		default:
 			break;

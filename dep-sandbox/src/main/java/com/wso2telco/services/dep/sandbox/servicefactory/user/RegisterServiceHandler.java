@@ -14,7 +14,7 @@
  * limitations under the License.
  ******************************************************************************/
 
-package com.wso2telco.services.dep.sandbox.servicefactory.admin;
+package com.wso2telco.services.dep.sandbox.servicefactory.user;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,14 +35,14 @@ import com.wso2telco.services.dep.sandbox.servicefactory.Returnable;
 import com.wso2telco.services.dep.sandbox.util.CommonUtil;
 import org.apache.commons.logging.LogFactory;
 
-class AdminRequstHandler extends AbstractRequestHandler<RegisterUserServiceRequestWrapperDTO> {
+class RegisterServiceHandler extends AbstractRequestHandler<RegisterUserServiceRequestWrapperDTO> {
 
     private UserDAO userDAO;
     private RegisterUserServiceRequestWrapperDTO requestWrapper;
-    private RegisterUserServiceResponseWrapper responseWrapper;
+    private RegisterServiceResponseWrapper responseWrapper;
 
     {
-	LOG = LogFactory.getLog(AdminRequstHandler.class);
+	LOG = LogFactory.getLog(RegisterServiceHandler.class);
 	userDAO = DaoFactory.getUserDAO();
 	dao = DaoFactory.getGenaricDAO();
     }
@@ -108,7 +108,7 @@ class AdminRequstHandler extends AbstractRequestHandler<RegisterUserServiceReque
     @Override
     protected void init(RegisterUserServiceRequestWrapperDTO extendedRequestDTO) throws Exception {
 	requestWrapper = extendedRequestDTO;
-	responseWrapper = new RegisterUserServiceResponseWrapper();
+	responseWrapper = new RegisterServiceResponseWrapper();
     }
 
 }
