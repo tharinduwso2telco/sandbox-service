@@ -15,6 +15,7 @@ public class Attributes implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "sbxattributedid")
     private int attributeId;
 
     @Column(name = "name")

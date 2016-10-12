@@ -17,6 +17,7 @@ public class APIServiceCalls implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "sbxapiservicecallsdid")   
     private int apiServiceCallId;
 
     @ManyToOne
