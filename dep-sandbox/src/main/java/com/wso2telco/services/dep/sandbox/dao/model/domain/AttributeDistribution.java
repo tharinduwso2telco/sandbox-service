@@ -17,6 +17,7 @@ public class AttributeDistribution implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "sbtattributedistributiondid")
     private int distributionId;
 
     @ManyToOne

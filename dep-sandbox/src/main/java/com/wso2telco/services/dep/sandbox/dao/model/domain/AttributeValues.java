@@ -15,10 +15,11 @@ public class AttributeValues {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "sbxattributevaluedid")
     private int attributevalueId;
 
     @ManyToOne
-    @JoinColumn(name = "attributedistributiondid", referencedColumnName = "attributedid")
+    @JoinColumn(name = "attributedistributiondid", referencedColumnName = "sbtattributedistributiondid")
     private AttributeDistribution attributeDistributionId;
 
     @Column(name = "tobject")
