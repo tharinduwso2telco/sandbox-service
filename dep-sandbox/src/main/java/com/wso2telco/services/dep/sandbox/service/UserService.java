@@ -30,7 +30,12 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import com.wordnik.swagger.annotations.Api;
+import com.wordnik.swagger.annotations.ApiImplicitParam;
+import com.wordnik.swagger.annotations.ApiImplicitParams;
+import com.wordnik.swagger.annotations.ApiOperation;
 import com.wso2telco.services.dep.sandbox.dao.UserDAO;
+import com.wso2telco.services.dep.sandbox.dao.model.custom.AttributeRequestBean;
+import com.wso2telco.services.dep.sandbox.dao.model.custom.AttributeRequestWrapperDTO;
 import com.wso2telco.services.dep.sandbox.dao.model.custom.QueryProvisioningServicesRequestWrapper;
 import com.wso2telco.services.dep.sandbox.dao.model.custom.RegisterUserServiceRequestWrapperDTO;
 import com.wso2telco.services.dep.sandbox.dao.model.domain.User;
@@ -40,16 +45,21 @@ import com.wso2telco.services.dep.sandbox.servicefactory.RequestHandleable;
 import com.wso2telco.services.dep.sandbox.servicefactory.Returnable;
 import com.wso2telco.services.dep.sandbox.util.RequestType;
 
-@Path("/")
+@Path("/user")
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
-@Api(value = "/", description = "Rest Service for registering new user to sandbox")
-public class RegisterUserService {
+@Api(value = "/user", description = "Rest Service for user Configurations in sandbox")
+public class UserService {
 
-    Log LOG = LogFactory.getLog(RegisterUserService.class);
+    Log LOG = LogFactory.getLog(UserService.class);
 
     @POST
-    @Path("/user/{userName}/register")
+    @Path("/{userName}/register")
+    @ApiOperation(value = "registerUser", notes = "register New User", response = Response.class)
+    @ApiImplicitParams({
+	    @ApiImplicitParam(name = "sandbox", value = "Authorization token", 
+	                     required = true, dataType = "string", paramType = "header")
+	})
     public Response registerUser(@PathParam("userName") String userName, @Context HttpServletRequest httpRequest) {
 	RegisterUserServiceRequestWrapperDTO requestDTO = new RegisterUserServiceRequestWrapperDTO();
 	requestDTO.setUserName(userName);
@@ -64,11 +74,42 @@ public class RegisterUserService {
 	    LOG.debug("REGISTER USER SERVICE RESPONSE : " + response);
 	    return response;
 	} catch (SandboxException ex) {
-	    LOG.error("###REGISTER_USER### Error encountered in RegisterUserService : ", ex);
+	    LOG.error("###REGISTER_USER### Error encountered in UserService : ", ex);
 	    return Response.status(Response.Status.BAD_REQUEST)
 		    .entity(ex.getErrorType().getCode() + " " + ex.getErrorType().getMessage()).build();
 	} catch (Exception ex) {
-	    LOG.error("###REGISTER_USER### Error encountered in RegisterUserService : ", ex);
+	    LOG.error("###REGISTER_USER### Error encountered in UserService : ", ex);
+	    return Response.status(Response.Status.BAD_REQUEST).entity(ex.getMessage()).build();
+	}
+
+    }
+    
+    @POST
+    @Path("/addattribute")
+    @ApiOperation(value = "addAttribute", notes = "add new attributes for user", response = Response.class)
+    @ApiImplicitParams({
+	    @ApiImplicitParam(name = "sandbox", value = "Authorization token", 
+	                     required = true, dataType = "string", paramType = "header")
+	})
+    public Response addAttribute(@Context HttpServletRequest httpRequest, AttributeRequestBean request) {
+	AttributeRequestWrapperDTO requestDTO = new AttributeRequestWrapperDTO();
+	requestDTO.setRequestType(RequestType.ADMIN);
+	requestDTO.setHttpRequest(httpRequest);
+	requestDTO.setAttribute(request);;
+	RequestHandleable handler = RequestBuilderFactory.getInstance(requestDTO);
+	Returnable returnable = null;
+
+	try {
+	    returnable = handler.execute(requestDTO);
+	    Response response = Response.status(returnable.getHttpStatus()).entity(returnable.getResponse()).build();
+	    LOG.debug("ADD ATTRIBUTE USER SERVICE RESPONSE : " + response);
+	    return response;
+	} catch (SandboxException ex) {
+	    LOG.error("###ADD_ATTRIBUTE### Error encountered in UserService : ", ex);
+	    return Response.status(Response.Status.BAD_REQUEST)
+		    .entity(ex.getErrorType().getCode() + " " + ex.getErrorType().getMessage()).build();
+	} catch (Exception ex) {
+	    LOG.error("###ADD_ATTRIBUTE### Error encountered in UserService : ", ex);
 	    return Response.status(Response.Status.BAD_REQUEST).entity(ex.getMessage()).build();
 	}
 

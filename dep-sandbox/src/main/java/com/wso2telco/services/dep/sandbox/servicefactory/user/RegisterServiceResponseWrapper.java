@@ -14,10 +14,10 @@
  * limitations under the License.
  ******************************************************************************/
 
-package com.wso2telco.services.dep.sandbox.servicefactory.admin;
+package com.wso2telco.services.dep.sandbox.servicefactory.user;
 import com.wso2telco.services.dep.sandbox.servicefactory.AbstractReturnWrapperDTO;
 
-public class RegisterUserServiceResponseWrapper extends AbstractReturnWrapperDTO {
+public class RegisterServiceResponseWrapper extends AbstractReturnWrapperDTO {
     
     public String responseMessage;
     
