@@ -15,6 +15,15 @@
  ******************************************************************************/
 package com.wso2telco.services.dep.sandbox.dao;
 
+
+
 public interface CustomerInfoDAO {
+	
+	/*public void saveAttributeMap(AttributeMap attributeMap) throws Exception;
+	
+	public List<AttributeMap> getAttributeMaps(String tobject, String ownerdid, Attribute attribute) throws Exception;
+	
+	public Attribute getAttribute(String attributeName) throws Exception;*/
+
 
 }
