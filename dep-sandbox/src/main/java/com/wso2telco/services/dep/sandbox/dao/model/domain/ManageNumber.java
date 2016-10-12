@@ -29,6 +29,15 @@ public class ManageNumber implements Serializable {
     @Column(name="number")
     private String Number;
     
+    @Column(name="imsi")
+    private String imsi;
+    
+    @Column(name="mcc")
+    private int mcc;
+    
+    @Column(name="mnc")
+    private int mnc;
+    
     @Column(name="num_description")
     private String description;
     
@@ -85,6 +94,30 @@ public class ManageNumber implements Serializable {
      */
     public void setNumber(String Number) {
         this.Number = Number;
+    }
+    
+    public String getIMSI() {
+        return imsi;
+    }
+
+    public void setIMSI(String imsi) {
+        this.imsi = imsi;
+    }
+    
+    public int getMNC() {
+        return mnc;
+    }
+   
+    public void setMNC(int mnc) {
+        this.mnc = mnc;
+    }
+    
+    public int getMCC() {
+        return mcc;
+    }
+
+    public void setMCC(int mcc) {
+        this.mcc = mcc;
     }
 
     /**
