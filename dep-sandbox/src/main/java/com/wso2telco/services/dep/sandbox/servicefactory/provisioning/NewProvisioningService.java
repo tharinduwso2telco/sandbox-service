@@ -4,22 +4,19 @@ import java.util.ArrayList;
 import java.util.List;
 import java.math.BigDecimal;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 
 import org.apache.commons.logging.LogFactory;
 
 import com.wso2telco.core.dbutils.exception.ServiceError;
-import com.wso2telco.core.dbutils.exception.ThrowableError;
 import com.wso2telco.dep.oneapivalidation.exceptions.CustomException;
 import com.wso2telco.dep.oneapivalidation.util.Validation;
 import com.wso2telco.dep.oneapivalidation.util.ValidationRule;
 import com.wso2telco.services.dep.sandbox.dao.DaoFactory;
 import com.wso2telco.services.dep.sandbox.dao.ProvisioningDAO;
 import com.wso2telco.services.dep.sandbox.dao.model.custom.ProvisioningServicesRequestWrapperDTO;
-import com.wso2telco.services.dep.sandbox.dao.model.custom.QueryProvisioningServicesRequestWrapper;
 import com.wso2telco.services.dep.sandbox.dao.model.custom.ServiceDetail;
 import com.wso2telco.services.dep.sandbox.dao.model.domain.ProvisionAllService;
-import com.wso2telco.services.dep.sandbox.exception.SandboxException;
-import com.wso2telco.services.dep.sandbox.exception.SandboxException.SandboxErrorType;
 import com.wso2telco.services.dep.sandbox.servicefactory.AbstractRequestHandler;
 import com.wso2telco.services.dep.sandbox.servicefactory.Returnable;
 import com.wso2telco.services.dep.sandbox.util.CommonUtil;
@@ -69,21 +66,13 @@ public class NewProvisioningService extends AbstractRequestHandler<ProvisioningS
 			Validation.checkRequestParams(validationRules);
 		} catch (CustomException ex) {
 			LOG.error("###PROVISION### Error in Validation : " + ex);
-			throw new SandboxException(new ThrowableError() {
-
-				@Override
-				public String getMessage() {
-					return ex.getErrmsg();
-				}
-
-				@Override
-				public String getCode() {
-					return ex.getErrcode();
-				}
-			});
+			responseWrapperDTO.setHttpStatus(Status.BAD_REQUEST);
+			responseWrapperDTO.setRequestError(constructRequestError(SERVICEEXCEPTION, ex.getErrcode(), ex.getErrmsg(),
+					ex.getErrvar().toString()));
 		} catch (Exception ex) {
 			LOG.error("###PROVISION### Error in Validation : " + ex);
-			throw new SandboxException(SandboxErrorType.SERVICE_ERROR);
+			responseWrapperDTO.setHttpStatus(Status.BAD_REQUEST);
+			responseWrapperDTO.setRequestError(constructRequestError(SERVICEEXCEPTION, ServiceError.SERVICE_ERROR_OCCURED, null));
 		}
 
 		return true;
@@ -104,7 +93,9 @@ public class NewProvisioningService extends AbstractRequestHandler<ProvisioningS
 			
 			List<ProvisionAllService> serviceList = provisioningDao.getProvisionServices(provisionAllService.getUser().getId());
 			List<String> serviceNames = new ArrayList<String>();
-			List<String> serviceCodes = new ArrayList<String>(); 
+			List<String> serviceCodes = new ArrayList<String>();
+		
+			
 			for(ProvisionAllService allService : serviceList){
 				serviceCodes.add(allService.getServiceCode());
 				serviceNames.add(allService.getServiceName());
@@ -124,6 +115,7 @@ public class NewProvisioningService extends AbstractRequestHandler<ProvisioningS
 		}catch(Exception ex){
 			LOG.info(ex);
 			responseWrapperDTO.setHttpStatus(Response.Status.BAD_REQUEST);
+			responseWrapperDTO.setRequestError(constructRequestError(SERVICEEXCEPTION, ServiceError.SERVICE_ERROR_OCCURED, null));
 		}
 		return responseWrapperDTO;
 	}

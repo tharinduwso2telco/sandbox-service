@@ -44,7 +44,7 @@ public interface ProvisioningDAO {
 	
 	public void saveProvisionService(ProvisionAllService provisionAllService) throws Exception;
 	
-	public List<ProvisionAllService> getProvisionServices(int userid);
+	public List<ProvisionAllService> getProvisionServices(int userid) throws Exception;
 
 	public ProvisionResponseMessage getErrorResponse(String msisdn,String username, String serviceCode) throws Exception;
 

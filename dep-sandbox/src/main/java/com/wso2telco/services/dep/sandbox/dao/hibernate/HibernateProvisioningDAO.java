@@ -290,32 +290,21 @@ public class HibernateProvisioningDAO extends AbstractDAO implements Provisionin
 	}
 
 	public void saveProvisionService(ProvisionAllService provisionAllService) throws Exception {
-		/*List<ProvisionAllService> serviceList = getProvisionServices(provisionAllService.getUser().getId());
-		List<String> serviceNames = new ArrayList<String>();
-		List<String> serviceCodes = new ArrayList<String>(); 
-		for(ProvisionAllService allService : serviceList){
-			serviceCodes.add(allService.getServiceCode());
-			serviceNames.add(allService.getServiceName());
-		}
-		if(!serviceCodes.contains(provisionAllService.getServiceCode()) && !serviceNames.contains(provisionAllService.getServiceName())){*/
 			try {
 				saveOrUpdate(provisionAllService);
 			} catch (Exception ex) {
+				LOG.error("###PROVISION### Error in saveProvisionService " + ex);
 				throw ex;
 			}
-		//}
 		
 		
 	}
 	
-	public List<ProvisionAllService> getProvisionServices(int userid) {
+	public List<ProvisionAllService> getProvisionServices(int userid) throws Exception {
 		Session session = getSession();
-		//String hql = "select S.serviceCode from ProvisionAllService S where S.userid=" + userid;
-		//Query query = session.createQuery(hql);
 		List<ProvisionAllService> serviceList = new ArrayList<ProvisionAllService>();
 		try {
 			StringBuilder hqlQueryBuilder = new StringBuilder();
-			//hqlQueryBuilder.append("select pas ");
 			hqlQueryBuilder
 					.append("from ProvisionAllService pas ");
 			hqlQueryBuilder.append("where pas.user.id = :id");
