@@ -34,8 +34,8 @@
 	</prerequisites>
 
 	<modules>
-		<module>token-pool-service</module>
-		<module>feature/token.pool.service.feature</module>
+		<module>dep-sandbox</module>
+		<module>feature/sandbox</module>
 	</modules>
 	<scm>
 		<url>https://github.com/WSO2Telco/services-dep.git</url>

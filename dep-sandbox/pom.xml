@@ -75,7 +75,7 @@
 		<dependency>
 			<groupId>com.wso2telco.core</groupId>
 			<artifactId>mi-util</artifactId>
-			<version>2.0.03-SNAPSHOT</version>
+			<version>${com.wso2telco.core.version}</version>
 		</dependency>
 
 	</dependencies>
