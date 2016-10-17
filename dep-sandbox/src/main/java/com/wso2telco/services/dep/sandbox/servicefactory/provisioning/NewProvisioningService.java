@@ -113,7 +113,7 @@ public class NewProvisioningService extends AbstractRequestHandler<ProvisioningS
 			
 			
 		}catch(Exception ex){
-			LOG.info(ex);
+			LOG.error("###PROVISION### Error in Process : " + ex);
 			responseWrapperDTO.setHttpStatus(Response.Status.BAD_REQUEST);
 			responseWrapperDTO.setRequestError(constructRequestError(SERVICEEXCEPTION, ServiceError.SERVICE_ERROR_OCCURED, null));
 		}

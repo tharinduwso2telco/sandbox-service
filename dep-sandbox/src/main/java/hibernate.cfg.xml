@@ -5,21 +5,20 @@
 <hibernate-configuration>
 	<session-factory>
 		<!-- 2014-10-22 -->
-		 <property name="hibernate.connection.url">jdbc:mysql://127.0.0.1/dss?useSSL=false</property>
-    	<property name="hibernate.connection.username">postgres</property>
-    	<property name="hibernate.connection.password">p</property>
+		 <property name="hibernate.connection.url">jdbc:mysql://127.0.0.1/dev2_mife_sandbox_hub?useSSL=false</property>
+    	<property name="hibernate.connection.username">root</property>
+    	<property name="hibernate.connection.password">1qaz2wsx@</property>
    		<property name="hibernate.connection.driver_class">com.mysql.cj.jdbc.Driver</property>
   		<property name="hibernate.dialect">org.hibernate.dialect.MySQLInnoDBDialect</property>
 
 
 		<!-- Disable the second-level cache -->
-		<property name="hibernate.show_sql">false</property>
+		<property name="hibernate.show_sql">true</property>
 		<property name="hibernate.format_sql">true</property>
 
 		 <property name="current_session_context_class">thread</property>
    	  <property name="transaction.factory_class">org.hibernate.transaction.JDBCTransactionFactory</property>
 				<!--<property name="hibernate.current_session_context_class">thread</property>
- Mapping entitiy classes -->
   <mapping class="com.wso2telco.services.dep.sandbox.dao.model.domain.Payment"/>
   <mapping class="com.wso2telco.services.dep.sandbox.dao.model.domain.Sms"/>
   <mapping class="com.wso2telco.services.dep.sandbox.dao.model.domain.ManageNumber"/>
@@ -54,5 +53,6 @@
   <mapping class="com.wso2telco.services.dep.sandbox.dao.model.domain.AttributeDistribution"/>
   <mapping class="com.wso2telco.services.dep.sandbox.dao.model.domain.Attributes"/>
   <mapping class="com.wso2telco.services.dep.sandbox.dao.model.domain.AttributeValues"/>
+  <mapping class="com.wso2telco.services.dep.sandbox.dao.model.domain.MessageLog" />
  </session-factory>
 </hibernate-configuration>
