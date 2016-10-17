@@ -23,7 +23,6 @@ import org.apache.commons.logging.LogFactory;
 import com.wso2telco.core.msisdnvalidator.InvalidMSISDNException;
 import com.wso2telco.core.msisdnvalidator.MSISDN;
 import com.wso2telco.core.msisdnvalidator.MSISDNUtil;
-import com.wso2telco.services.dep.sandbox.dao.model.custom.ServiceDetail;
 import com.wso2telco.services.dep.sandbox.exception.SandboxException;
 import com.wso2telco.services.dep.sandbox.exception.SandboxException.SandboxErrorType;
 
