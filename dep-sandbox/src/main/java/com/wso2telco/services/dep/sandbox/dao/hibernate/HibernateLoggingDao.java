@@ -37,7 +37,6 @@ public class HibernateLoggingDao extends HibernateAbstractDAO implements Logging
 
 	public List<MessageLog> getMessageLogs(int userid, List<Integer> serviceNameIds, String ref, String val, Date startTimeStamp,
 			Date endTimeStamp) throws Exception {
-		LOG.debug("TEST1");
 		Session session = getSession();
 		Map<String, Object> parameterMap = new HashMap<String, Object>();
 		List<MessageLog> messageLogs = new ArrayList<MessageLog>();
@@ -101,7 +100,7 @@ public class HibernateLoggingDao extends HibernateAbstractDAO implements Logging
 						parameterMap.put("endTimeStamp", endTimeStamp);
 					}
 				}else if(endTimeStamp != null){
-					hqlQueryBuilder.append("ml.messageTimestamp >= :endTimeStamp");
+					hqlQueryBuilder.append("ml.messageTimestamp <= :endTimeStamp");
 					parameterMap.put("endTimeStamp", endTimeStamp);
 				}
 				
