@@ -15,83 +15,176 @@
  ******************************************************************************/
 package com.wso2telco.services.dep.sandbox.dao.hibernate;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
+
+import javax.persistence.NoResultException;
+
+import org.apache.commons.logging.LogFactory;
+import org.hibernate.Criteria;
+import org.hibernate.SQLQuery;
+import org.hibernate.Session;
+import org.hibernate.query.Query;
+
 import com.wso2telco.services.dep.sandbox.dao.CustomerInfoDAO;
+import com.wso2telco.services.dep.sandbox.dao.model.custom.CustomerInfoDTO;
+import com.wso2telco.services.dep.sandbox.dao.model.domain.ManageNumber;
+import com.wso2telco.services.dep.sandbox.dao.model.domain.User;
+import com.wso2telco.services.dep.sandbox.servicefactory.customerinfo.CustomerInfoRequestType;
+import com.wso2telco.services.dep.sandbox.util.CommonUtil;
+import com.wso2telco.services.dep.sandbox.util.RequestType;
+import com.wso2telco.services.dep.sandbox.util.TableName;
 
-
-public class HibernateCustomerInfoDAO extends AbstractDAO implements CustomerInfoDAO {/*
+public class HibernateCustomerInfoDAO extends AbstractDAO implements CustomerInfoDAO {
     {
 	LOG = LogFactory.getLog(HibernateCustomerInfoDAO.class);
     }
 
-	@Override
-	public void saveAttributeMap(AttributeMap attributeMap) throws Exception {
-		try {
-			saveOrUpdate(attributeMap);
-		} catch (Exception ex) {
-			LOG.error("Error in SaveAttributeMap " + ex);
-			throw ex;
+    @Override
+    public ManageNumber getMSISDN(String msisdn, String imsi, String mcc, String mnc) throws Exception {
+	Session session = getSession();
+	ManageNumber number = null;
+	Map<String, String> parameterMap = new HashMap<>();
+
+	try {
+	    StringBuilder hqlBuilder = new StringBuilder();
+	    hqlBuilder.append("from ManageNumber number where ");
+	    if (msisdn != null && imsi != null) {
+		hqlBuilder.append(" number.Number = : msisdn ");
+		hqlBuilder.append(" and ");
+		hqlBuilder.append(" number.imsi = :imsi");
+		parameterMap.put("msisdn", msisdn);
+		parameterMap.put("imsi", imsi);
+	    } else if (msisdn != null) {
+		hqlBuilder.append(" number.Number = :msisdn ");
+		parameterMap.put("msisdn", msisdn);
+	    } else if (imsi != null) {
+		hqlBuilder.append(" number.imsi = :imsi");
+		parameterMap.put("imsi", imsi);
+	    }
+
+	    if (mcc != null) {
+		hqlBuilder.append(" and ");
+		hqlBuilder.append(" number.mcc=:mcc ");
+		parameterMap.put("mcc", mcc);
+	    }
+
+	    if (mnc != null) {
+		hqlBuilder.append(" and ");
+		hqlBuilder.append(" number.mnc=:mnc ");
+		parameterMap.put("mnc", mnc);
+	    }
+
+	    Query query = session.createQuery(hqlBuilder.toString());
+
+	    Set<Entry<String, String>> entrySet = parameterMap.entrySet();
+
+	    for (Entry<String, String> parameterEntry : entrySet) {
+		if (parameterEntry.getKey().equals("mcc") || parameterEntry.getKey().equals("mnc")) {
+		    query.setParameter(parameterEntry.getKey(), Integer.parseInt(parameterEntry.getValue()));
+		} else {
+		    query.setParameter(parameterEntry.getKey(), parameterEntry.getValue());
 		}
-		
+
+	    }
+
+	    number = (ManageNumber) query.getSingleResult();
+	} catch (NoResultException e) {
+	    return null;
+	} catch (Exception ex) {
+	    LOG.error("###CUSTOMERINFO### Error While Retriving MSISDN", ex);
+	    throw ex;
 	}
 
-	@Override
-	public List<AttributeMap> getAttributeMaps(String tobject, String ownerdid, Attribute attribute) throws Exception {
-		
-		Session session = getSession();
-		Map<String, Object> parameterMap = new HashMap<String, Object>();
-		List<AttributeMap> attributeMaps = new ArrayList<AttributeMap>();
-		try{
-			StringBuilder hqlQueryBuilder = new StringBuilder();
-			if(tobject != null && ownerdid != null){
-				hqlQueryBuilder.append("from AttributeMap am ");
-				hqlQueryBuilder.append("where ");
-				hqlQueryBuilder.append("am.tobject = :tobject");
-				hqlQueryBuilder.append(" AND am.ownerdid = :ownerdid");
-				parameterMap.put("tobject", tobject);
-				parameterMap.put("ownerdid", ownerdid);
-				
-				if(attribute != null){
-					hqlQueryBuilder.append(" AND am.attribute = :attribute");
-					parameterMap.put("attribute", attribute);
-				}
-				
-				Query query = session.createQuery(hqlQueryBuilder.toString());
-				
-				Set<Entry<String, Object>> entrySet = parameterMap.entrySet();
-				
-				for (Entry<String, Object> entry : entrySet) {
-					query.setParameter(entry.getKey(), entry.getValue());
-				}
-				
-				attributeMaps = (List<AttributeMap>) query.getResultList();
-			}
-			
-		}catch(Exception ex){
-			LOG.error("Error in getAttributeMaps " + ex);
-			throw ex;
+	return number;
+    }
+
+    @Override
+    public CustomerInfoDTO getProfileData(String msisdn, User user) throws Exception {
+	Session session = getSession();
+	CustomerInfoDTO customerInfoDTO = null;
+
+	try {
+	    StringBuilder hqlBuilder = new StringBuilder();
+
+	    hqlBuilder.append("SELECT msisdn,");
+	    hqlBuilder.append(" MAX(IF(column_name = 'title', value, NULL)) title, ");
+	    hqlBuilder.append(" MAX(IF(column_name = 'firstname',value,NULL)) firstName, ");
+	    hqlBuilder.append(" MAX(IF(column_name = 'lastname',value,NULL)) lastName,");
+	    hqlBuilder.append(" MAX(IF(column_name = 'dob', value, NULL)) dob, ");
+	    hqlBuilder.append(" MAX(IF(column_name = 'id_type', value, NULL)) identificationType, ");
+	    hqlBuilder.append(" MAX(IF(column_name = 'id_number',value,NULL)) identificationNumber, ");
+	    hqlBuilder.append(" MAX(IF(column_name = 'address', value, NULL)) address, ");
+	    hqlBuilder.append(" MAX(IF(column_name = 'additional_info',value,NULL)) additionalInfo, ");
+	    hqlBuilder.append(" MAX(IF(column_name = 'owner_type',value,NULL)) ownerType, ");
+	    hqlBuilder.append(" MAX(IF(column_name = 'account_type',value,NULL)) accountType, ");
+	    hqlBuilder.append(" MAX(IF(column_name = 'status', value, NULL)) status ");
+	    hqlBuilder.append(" FROM ");
+	    hqlBuilder.append(" (SELECT numbers.number AS msisdn, ");
+	    hqlBuilder.append(" attr.name AS column_name, ");
+	    hqlBuilder.append(" attval.value AS value ");
+	    hqlBuilder.append(" FROM ");
+	    hqlBuilder.append(" sbxapitypes api, sbxapiservicecalls serviceCalls, ");
+	    hqlBuilder.append(" sbtattributedistribution attdis, sbxattribute attr, ");
+	    hqlBuilder.append(" sbxattributevalue attval, user usr, numbers numbers ");
+	    hqlBuilder.append(" WHERE ");
+	    hqlBuilder.append(" api.apiname = '" + RequestType.CUSTOMERINFO.toString() + "'");
+	    hqlBuilder.append(" AND serviceCalls.service = '" + CustomerInfoRequestType.GETPROFILE.toString() + "'");
+	    hqlBuilder.append(" AND api.id = serviceCalls.apitypesdid ");
+	    hqlBuilder.append(" AND serviceCalls.sbxapiservicecallsdid= attdis.apiservicecallsdid ");
+	    hqlBuilder.append(" AND attdis.attributedid = attr.sbxattributedid ");
+	    hqlBuilder.append(" AND attval.attributedistributiondid = attdis.sbtattributedistributiondid ");
+	    hqlBuilder.append(" AND usr.user_name =:userName");
+	    hqlBuilder.append(" AND usr.id = attval.ownerdid ");
+	    hqlBuilder.append(" AND attval.tobject = '" + TableName.USER.toString() + "'");
+	    hqlBuilder.append(" AND numbers.user_id = usr.id ");
+	    hqlBuilder.append(" AND numbers.number =:msisdn ");
+	    hqlBuilder.append(") d GROUP BY msisdn");
+
+	    SQLQuery query = session.createSQLQuery(hqlBuilder.toString());
+	    query.setResultTransformer(Criteria.ALIAS_TO_ENTITY_MAP);
+
+	    query.setParameter("userName", user.getUserName());
+	    query.setParameter("msisdn", msisdn);
+
+	    List resultList = query.list();
+	    if (resultList.size() > 0) {
+		Object result = resultList.get(0);
+		customerInfoDTO = new CustomerInfoDTO();
+		Map resultMap = (Map) result;
+		customerInfoDTO.setMsisdn((String) resultMap.get("msisdn"));
+		customerInfoDTO.setTitle((String) resultMap.get("title"));
+		customerInfoDTO.setFirstName((String) resultMap.get("firstName"));
+		customerInfoDTO.setLastName((String) resultMap.get("lastName"));
+		String dateOfBirth = (String) resultMap.get("dob");
+		if (CommonUtil.getNullOrTrimmedValue(dateOfBirth) != null) {
+		    Date date;
+		    DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+		    date = dateFormat.parse(dateOfBirth);
+		    customerInfoDTO.setDob(date);
 		}
-		return attributeMaps;
+		customerInfoDTO.setMsisdn((String) resultMap.get("msisdn"));
+		customerInfoDTO.setAddress((String) resultMap.get("address"));
+		customerInfoDTO.setAccountType((String) resultMap.get("accountType"));
+		customerInfoDTO.setOwnderType((String) resultMap.get("ownerType"));
+		customerInfoDTO.setAdditionalInfo((String) resultMap.get("additionalInfo"));
+		customerInfoDTO.setStatus((String) resultMap.get("status"));
+		customerInfoDTO.setIdentificationType((String) resultMap.get("identificationType"));
+		customerInfoDTO.setIdentificationNumber((String) resultMap.get("identificationNumber"));
+	    }
+
+	} catch (Exception ex) {
+	    LOG.error("###CUSTOMERINFO### Error in Get Profile Data", ex);
+	    throw ex;
 	}
 
-	@Override
-	public Attribute getAttribute(String attributeName) throws Exception {
-		
-		Attribute attribute = null;
-		try{
-			Session session = getSession();
-			attribute = (Attribute) session.createQuery("from Attribute where attribute = :attribute").setParameter("attribute", attributeName)
-				    .getSingleResult();
-		}catch(NoResultException e){
-		    return null;	
-		}catch(Exception ex){
-			LOG.error("Error in getAttribute " + ex);
-			throw ex;
-		}
-		return attribute;
-	}
+	return customerInfoDTO;
+    }
 
-
-	
-	
-	
-*/}
+}

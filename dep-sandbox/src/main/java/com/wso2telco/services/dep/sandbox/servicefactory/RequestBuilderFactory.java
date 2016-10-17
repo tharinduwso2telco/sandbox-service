@@ -4,6 +4,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import com.wso2telco.services.dep.sandbox.dao.model.custom.RequestDTO;
+import com.wso2telco.services.dep.sandbox.servicefactory.customerinfo.CustomerInfoServiceFactory;
 import com.wso2telco.services.dep.sandbox.servicefactory.location.LocationRequestFactory;
 import com.wso2telco.services.dep.sandbox.servicefactory.payment.PaymentRequestFactory;
 import com.wso2telco.services.dep.sandbox.servicefactory.provisioning.ProvisioningServiceFactory;
@@ -46,6 +47,10 @@ public class RequestBuilderFactory {
 			LOG.debug("LOADING USER FACTORY");
 			requestHandler = UserServiceFactory.getInstance(requestDTO);
 			break;
+		case CUSTOMERINFO:
+		    	LOG.debug("LOADING CUSTOMERINFO FACTORY");
+		    	requestHandler = CustomerInfoServiceFactory.getInstance(requestDTO);
+		    	break;
 		default:
 			break;
 		}
