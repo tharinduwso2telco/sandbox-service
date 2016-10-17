@@ -30,7 +30,7 @@ public class ProvisioningServiceFactory {
 	final String REMOVE_SERVICE = "remove";
 	final String LIST_SERVICE_BY_CUSTOMER = "list/active";
 	final String SERVICE = "addservice";
-
+	final String NEW_SERVICE = "newservice";
 
 	if (requestDTO.getRequestPath().toLowerCase().contains(QUERY_APPLICABLE_SERVICES) && requestDTO.isGet()) {
 	    LOG.debug("###PROVISION### LOADING QUERY APPLICABLE PROVISIONING SERVICES");
@@ -45,7 +45,10 @@ public class ProvisioningServiceFactory {
 	    }  if (requestDTO.getRequestPath().toLowerCase().contains(SERVICE)) {
 		LOG.debug("###PROVISION### LOADING ADD SERVICE FOR MSISDN");
 		return new AssignServiceForMsisdn();
-	    }else {
+	    }else if (requestDTO.getRequestPath().toLowerCase().contains(NEW_SERVICE)){
+		LOG.debug("LOADING ADD NEW SERVICE");
+		return new NewProvisioningService();
+	}else {
 		LOG.debug("###PROVISION### LOADING PROVISION REQUESTED SERVICE");
 		return new ProvisionRequestedServiceHandler();
 	    }
@@ -54,5 +57,5 @@ public class ProvisioningServiceFactory {
 	return null;
 
     }
-
 }
+

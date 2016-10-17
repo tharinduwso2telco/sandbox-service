@@ -286,10 +286,40 @@ public class HibernateProvisioningDAO extends AbstractDAO implements Provisionin
 			LOG.error(ex);
 			LOG.error("###PROVISION### Error in updateDeleteStatus " + ex);
 		}
+
+	}
+
+	public void saveProvisionService(ProvisionAllService provisionAllService) throws Exception {
+			try {
+				saveOrUpdate(provisionAllService);
+			} catch (Exception ex) {
+				LOG.error("###PROVISION### Error in saveProvisionService " + ex);
+				throw ex;
+			}
 		
 		
 	}
 	
+	public List<ProvisionAllService> getProvisionServices(int userid) throws Exception {
+		Session session = getSession();
+		List<ProvisionAllService> serviceList = new ArrayList<ProvisionAllService>();
+		try {
+			StringBuilder hqlQueryBuilder = new StringBuilder();
+			hqlQueryBuilder
+					.append("from ProvisionAllService pas ");
+			hqlQueryBuilder.append("where pas.user.id = :id");
+			
+			
+			Query query = session.createQuery(hqlQueryBuilder.toString());
+			query.setParameter("id", userid);
+			serviceList = (List<ProvisionAllService>) query.getResultList();
+		} catch (Exception ex) {
+			LOG.error("###PROVISION### Error in getProvisionServices " + ex);
+			throw ex;
+		}
+		return serviceList;
+	}
+		
 	/*
 	 * (non-Javadoc)
 	 * 

@@ -24,8 +24,6 @@ import com.wso2telco.services.dep.sandbox.dao.model.domain.ProvisionMSISDNServic
 import com.wso2telco.services.dep.sandbox.dao.model.domain.ProvisionRequestLog;
 import com.wso2telco.services.dep.sandbox.dao.model.domain.ProvisionResponseMessage;
 import com.wso2telco.services.dep.sandbox.dao.model.domain.ProvisionedServices;
-import com.wso2telco.services.dep.sandbox.util.ProvisioningStatusCodes;
-import com.wso2telco.services.dep.sandbox.dao.model.domain.Status;
 import com.wso2telco.services.dep.sandbox.dao.model.domain.Status;
 import com.wso2telco.services.dep.sandbox.dao.model.domain.User;
 import com.wso2telco.services.dep.sandbox.util.ProvisioningStatusCodes;
@@ -42,7 +40,9 @@ public interface ProvisioningDAO {
 	
 	public ProvisionAllService getProvisionService(String serviceCode, String ServiceName, User user) throws Exception;
 	
-	public ProvisionedServices getAlreadyProvisionedService (User user, List<String> statusCodes, ProvisionAllService provisionService, String phoneNumber) throws Exception;
+	public void saveProvisionService(ProvisionAllService provisionAllService) throws Exception;
+	
+	public List<ProvisionAllService> getProvisionServices(int userid) throws Exception;
 
 	public ProvisionResponseMessage getErrorResponse(String msisdn,String username, String serviceCode) throws Exception;
 
@@ -61,4 +61,6 @@ public interface ProvisioningDAO {
 	public void saveProvisionedService(ProvisionedServices provisionedService) throws Exception;
 
 	public void saveServiceForMsisdn(ProvisionMSISDNServicesMap map)throws Exception;
+	
+	public ProvisionedServices getAlreadyProvisionedService(User user, List<String> statusCodes, ProvisionAllService provisionService, String phoneNumber) throws Exception;
 }
