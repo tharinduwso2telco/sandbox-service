@@ -23,30 +23,37 @@ import com.wso2telco.services.dep.sandbox.servicefactory.RequestHandleable;
 
 public class ProvisioningServiceFactory {
 
-    private static Log LOG = LogFactory.getLog(ProvisioningServiceFactory.class);
 
-    public static RequestHandleable getInstance(final RequestDTO requestDTO) {
-	final String QUERY_APPLICABLE_SERVICES = "list/applicable";
-	final String REMOVE_SERVICE = "remove";
-	final String LIST_SERVICE_BY_CUSTOMER = "list/active";
+	private static Log LOG = LogFactory.getLog(ProvisioningServiceFactory.class);
 
-	if (requestDTO.getRequestPath().toLowerCase().contains(QUERY_APPLICABLE_SERVICES) && requestDTO.isGet()) {
-	    LOG.debug("LOADING QUERY APPLICABLE PROVISIONING SERVICES");
-	    return new QueryApplicableProvisioningService();
-	} else if (requestDTO.getRequestPath().toLowerCase().contains(LIST_SERVICE_BY_CUSTOMER) && requestDTO.isGet()) {
-	    LOG.debug("LOADING LIST OF PROVISIONED SERVICES");
-	    return new ListActiveProvisionedServices();
-	} else if (requestDTO.isPost()) {
-	    if (requestDTO.getRequestPath().toLowerCase().contains(REMOVE_SERVICE)) {
-		LOG.debug("REMOVING GIVEN PROVISIONED SERVICE");
-		return new RemoveProvisionedServices();
-	    } else {
-		LOG.debug("###PROVISION### LOADING PROVISION REQUESTED SERVICE");
-		return new ProvisionRequestedServiceHandler();
-	    }
+	public static RequestHandleable getInstance(final RequestDTO requestDTO) {
+		final String QUERY_APPLICABLE_SERVICES = "list/applicable";
+		final String REMOVE_SERVICE = "remove";
+		final String LIST_SERVICE_BY_CUSTOMER = "list/active";
+		final String NEW_SERVICE = "newservice";
+
+		if (requestDTO.getRequestPath().toLowerCase().contains(QUERY_APPLICABLE_SERVICES) && requestDTO.isGet()) {
+			LOG.debug("LOADING QUERY APPLICABLE PROVISIONING SERVICES");
+			return new QueryApplicableProvisioningService();
+		} else if (requestDTO.getRequestPath().toLowerCase().contains(LIST_SERVICE_BY_CUSTOMER) && requestDTO.isGet()) {
+			LOG.debug("LOADING LIST OF PROVISIONED SERVICES");
+			return new ListActiveProvisionedServices();
+
+		} else if (requestDTO.isPost()) {
+			if (requestDTO.getRequestPath().toLowerCase().contains(REMOVE_SERVICE)) {
+				LOG.debug("REMOVING GIVEN PROVISIONED SERVICE");
+				return new RemoveProvisionedServices();
+			}else if (requestDTO.getRequestPath().toLowerCase().contains(NEW_SERVICE)){
+				LOG.debug("LOADING ADD NEW SERVICE");
+				return new NewProvisioningService();
+			} else {
+				LOG.debug("###PROVISION### LOADING PROVISION REQUESTED SERVICE");
+				return new ProvisionRequestedServiceHandler();
+			}
+		} 
+		return null;
 	}
-	return null;
 
     }
 
-}
+
