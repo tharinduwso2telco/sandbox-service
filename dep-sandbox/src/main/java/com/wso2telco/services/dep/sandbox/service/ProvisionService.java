@@ -37,6 +37,7 @@ import com.wordnik.swagger.annotations.ApiImplicitParam;
 import com.wordnik.swagger.annotations.ApiImplicitParams;
 import com.wordnik.swagger.annotations.ApiOperation;
 import com.wordnik.swagger.annotations.ApiParam;
+import com.wso2telco.services.dep.sandbox.dao.model.custom.AddServicesMsisdnRequestWrapperDTO;
 import com.wso2telco.services.dep.sandbox.dao.model.custom.ListProvisionedRequestWrapperDTO;
 import com.wso2telco.services.dep.sandbox.dao.model.custom.QueryProvisioningServicesRequestWrapper;
 import com.wso2telco.services.dep.sandbox.dao.model.custom.RemoveProvisionRequestBean;
@@ -53,15 +54,16 @@ import com.wso2telco.services.dep.sandbox.servicefactory.Returnable;
 import com.wso2telco.services.dep.sandbox.util.RequestType;
 
 
-@Path("/provision/{v1}")
-@Consumes({ MediaType.APPLICATION_JSON })
+@Path("/provisioning/{v1}")
+@Consumes({ MediaType.APPLICATION_JSON ,MediaType.TEXT_PLAIN})
 @Produces({ MediaType.APPLICATION_JSON })
-@Api(value = "/provision/{v1}", description = "Rest Service for provisionning API")
+@Api(value = "/provisioning/{v1}", description = "Rest Service for Provisionning API")
 public class ProvisionService {
 
 	Log LOG = LogFactory.getLog(ProvisionService.class);
 
 	@GET
+	//@ApiSubResource("/{msisdn}/list/applicable")
 	@Path("/{msisdn}/list/applicable")
 	@ApiOperation(value = "getApplicableServices", notes = "getApplicableServices", response = Response.class)
 	@ApiImplicitParams({
@@ -181,6 +183,38 @@ public class ProvisionService {
 		requestDTO.setHttpRequest(request);
 		requestDTO.setMsisdn(msisdn);
 		requestDTO.setProvisionRequestBean(provisionRequest);
+		requestDTO.setRequestType(RequestType.PROVISIONING);
+		
+		RequestHandleable<RequestDTO> handler = RequestBuilderFactory.getInstance(requestDTO);
+		Returnable returnable = null;
+		
+		try {
+			returnable = handler.execute(requestDTO);
+			Response response = Response.status(returnable.getHttpStatus()).entity(returnable.getResponse()).build();
+			return response;
+		} catch (Exception ex) {
+			LOG.error("###PROVISION### Error in Provision Service", ex);
+			Response response = Response.status(Status.BAD_REQUEST).entity(SandboxErrorType.SERVICE_ERROR.getCode() + " " + SandboxErrorType.SERVICE_ERROR.getMessage()).build();
+			return response;
+		}
+	}
+	
+	@POST
+	@Path("/{msisdn}/{serviceCode}/addservice")
+	@ApiOperation(value = "addServiceMsisdn", notes = "add services for msisdn", response = Response.class)
+	@ApiImplicitParams({
+	    @ApiImplicitParam(name = "sandbox", value = "Authorization token", 
+	                     required = true, dataType = "string", paramType = "header")
+	})
+	public Response addServiceMsisdn(
+			@ApiParam(value = "msisdn", required = true) @PathParam("msisdn") String msisdn,
+			@ApiParam(value = "serviceCode", required = true) @PathParam("serviceCode") String serviceCode,
+			@Context HttpServletRequest request) {
+		
+	    AddServicesMsisdnRequestWrapperDTO requestDTO = new AddServicesMsisdnRequestWrapperDTO();
+		requestDTO.setHttpRequest(request);
+		requestDTO.setMsisdn(msisdn);
+		requestDTO.setServiceCode(serviceCode);
 		requestDTO.setRequestType(RequestType.PROVISIONING);
 		
 		RequestHandleable<RequestDTO> handler = RequestBuilderFactory.getInstance(requestDTO);

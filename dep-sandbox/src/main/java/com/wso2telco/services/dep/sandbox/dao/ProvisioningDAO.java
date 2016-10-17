@@ -59,4 +59,6 @@ public interface ProvisioningDAO {
 	public ProvisionMSISDNServicesMap getProvisionMsisdnService(ManageNumber number, ProvisionAllService service) throws Exception;
 	
 	public void saveProvisionedService(ProvisionedServices provisionedService) throws Exception;
+
+	public void saveServiceForMsisdn(ProvisionMSISDNServicesMap map)throws Exception;
 }

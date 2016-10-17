@@ -42,11 +42,12 @@ public class RequestBuilderFactory {
 			LOG.debug("LOADING PROVISIONING FACTORY");
 			requestHandler = ProvisioningServiceFactory.getInstance(requestDTO);
 			break;
-		case ADMIN:
+		case USER:
 			LOG.debug("LOADING USER FACTORY");
 			requestHandler = UserServiceFactory.getInstance(requestDTO);
 			break;
 		default:
+			LOG.debug("APPROPIATE FACTORY CLASS NOT FOUND");
 			break;
 		}
 

@@ -29,22 +29,28 @@ public class ProvisioningServiceFactory {
 	final String QUERY_APPLICABLE_SERVICES = "list/applicable";
 	final String REMOVE_SERVICE = "remove";
 	final String LIST_SERVICE_BY_CUSTOMER = "list/active";
+	final String SERVICE = "addservice";
+
 
 	if (requestDTO.getRequestPath().toLowerCase().contains(QUERY_APPLICABLE_SERVICES) && requestDTO.isGet()) {
-	    LOG.debug("LOADING QUERY APPLICABLE PROVISIONING SERVICES");
+	    LOG.debug("###PROVISION### LOADING QUERY APPLICABLE PROVISIONING SERVICES");
 	    return new QueryApplicableProvisioningService();
 	} else if (requestDTO.getRequestPath().toLowerCase().contains(LIST_SERVICE_BY_CUSTOMER) && requestDTO.isGet()) {
-	    LOG.debug("LOADING LIST OF PROVISIONED SERVICES");
+	    LOG.debug("###PROVISION### LOADING LIST OF PROVISIONED SERVICES");
 	    return new ListActiveProvisionedServices();
 	} else if (requestDTO.isPost()) {
 	    if (requestDTO.getRequestPath().toLowerCase().contains(REMOVE_SERVICE)) {
-		LOG.debug("REMOVING GIVEN PROVISIONED SERVICE");
+		LOG.debug("###PROVISION### LOADING REMOVE GIVEN PROVISIONED SERVICE");
 		return new RemoveProvisionedServices();
-	    } else {
+	    }  if (requestDTO.getRequestPath().toLowerCase().contains(SERVICE)) {
+		LOG.debug("###PROVISION### LOADING ADD SERVICE FOR MSISDN");
+		return new AssignServiceForMsisdn();
+	    }else {
 		LOG.debug("###PROVISION### LOADING PROVISION REQUESTED SERVICE");
 		return new ProvisionRequestedServiceHandler();
 	    }
 	}
+	LOG.debug("###PROVISION### APPROPIATE SERVICE CLASS NOT FOUND ");
 	return null;
 
     }
