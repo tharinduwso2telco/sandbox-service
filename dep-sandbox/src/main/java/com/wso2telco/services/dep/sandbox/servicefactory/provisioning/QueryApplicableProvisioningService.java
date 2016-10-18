@@ -68,6 +68,7 @@ public class QueryApplicableProvisioningService
 	@Override
 	protected List<String> getAddress() {
 		List<String> address = new ArrayList<String>();
+		address.add(requestWrapperDTO.getMsisdn());
 		return address;
 	}
 

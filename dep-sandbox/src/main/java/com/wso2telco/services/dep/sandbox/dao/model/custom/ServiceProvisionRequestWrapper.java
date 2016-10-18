@@ -58,14 +58,5 @@ public class ServiceProvisionRequestWrapper extends RequestDTO {
 		this.provisionRequestBean = provisionRequestBean;
 	}
 	
-	public String getNumberFromMsisdn() {
-		String trimmedMsisdn = CommonUtil.getNullOrTrimmedValue(getMsisdn());
-
-		if (trimmedMsisdn != null) {
-			return CommonUtil.extractNumberFromMsisdn(getMsisdn());
-		}
-
-		return null;
-	}
 
 }
