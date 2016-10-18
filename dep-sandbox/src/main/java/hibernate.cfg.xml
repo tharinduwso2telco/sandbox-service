@@ -18,9 +18,9 @@
 
 		 <property name="current_session_context_class">thread</property>
    	  <property name="transaction.factory_class">org.hibernate.transaction.JDBCTransactionFactory</property>
-				<!--<property name="hibernate.current_session_context_class">thread</property>
-		Mapping entitiy classes -->
-				
+				<!--<property name="hibernate.current_session_context_class">thread</property>-->
+
+  <!-- Mapping entitiy classes -->
   <mapping class="com.wso2telco.services.dep.sandbox.dao.model.domain.Payment"/>
   <mapping class="com.wso2telco.services.dep.sandbox.dao.model.domain.Sms"/>
   <mapping class="com.wso2telco.services.dep.sandbox.dao.model.domain.ManageNumber"/>
