@@ -23,6 +23,7 @@ import org.apache.commons.logging.LogFactory;
 import com.wso2telco.core.msisdnvalidator.InvalidMSISDNException;
 import com.wso2telco.core.msisdnvalidator.MSISDN;
 import com.wso2telco.core.msisdnvalidator.MSISDNUtil;
+import com.wso2telco.services.dep.sandbox.dao.model.custom.RequestDTO;
 import com.wso2telco.services.dep.sandbox.exception.SandboxException;
 import com.wso2telco.services.dep.sandbox.exception.SandboxException.SandboxErrorType;
 
@@ -31,6 +32,8 @@ public class CommonUtil {
 	static Log LOG = LogFactory.getLog(CommonUtil.class);
 	
 	private static final String MSISDN_SPLITTER = ":|\\+";
+	
+	public static final String QUERY_STRING_SEPARATOR = "?";
 
 	public static void validateMsisdn(String msisdn) throws SandboxException {
 
@@ -72,15 +75,33 @@ public class CommonUtil {
 		return outputValue;
 	}
 	
-	public static String extractNumberFromMsisdn(String msisdn) {
-		String phoneNumber = "";
-		String[] splittedMsisdn = msisdn.trim().split(MSISDN_SPLITTER);
-
-		if (splittedMsisdn != null && splittedMsisdn.length > 0) {
-			phoneNumber = splittedMsisdn[splittedMsisdn.length - 1];
-		}
-
-		return phoneNumber;
+    public static String extractNumberFromMsisdn(String msisdn) throws InvalidMSISDNException {
+	String phoneNumber = "";
+	MSISDNUtil msisdnUtil = new MSISDNUtil();
+	try {
+	    MSISDN parsedMsisdn = msisdnUtil.parse(msisdn);
+	    phoneNumber = Integer.toString(parsedMsisdn.getCountryCode())
+		    + Long.toString(parsedMsisdn.getNationalNumber());
+	} catch (InvalidMSISDNException e) {
+	    LOG.error("Error in Parsing MSISDN", e);
+	    throw e;
 	}
+
+	return phoneNumber;
+    }
+    
+    public static String getResourceUrl(RequestDTO extendedRequestDTO) {
+	StringBuilder resourceUrlBuilder = new StringBuilder();
+	String protocolVersion = extendedRequestDTO.getHttpRequest().getProtocol();
+	String[] protocolDetail = protocolVersion.split("/");
+	resourceUrlBuilder.append(protocolDetail[0].toLowerCase() + "://");
+	resourceUrlBuilder.append(extendedRequestDTO.getHttpRequest().getHeader("Host"));
+	resourceUrlBuilder.append(extendedRequestDTO.getHttpRequest().getPathInfo());
+	if (extendedRequestDTO.getHttpRequest().getQueryString() != null) {
+		resourceUrlBuilder.append(QUERY_STRING_SEPARATOR);
+		resourceUrlBuilder.append(extendedRequestDTO.getHttpRequest().getQueryString());
+	}
+	return resourceUrlBuilder.toString();
+}
 
 }
