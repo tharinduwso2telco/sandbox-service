@@ -18,8 +18,22 @@ package com.wso2telco.services.dep.sandbox.servicefactory.customerinfo;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import com.wso2telco.services.dep.sandbox.dao.model.custom.RequestDTO;
+import com.wso2telco.services.dep.sandbox.service.CustomerInfoService;
+import com.wso2telco.services.dep.sandbox.servicefactory.RequestHandleable;
 
 public class CustomerInfoServiceFactory {
-    
+
     private static Log LOG = LogFactory.getLog(CustomerInfoServiceFactory.class);
+
+    public static RequestHandleable getInstance(final RequestDTO requestDTO) {
+	final String GET_PROFILE = "profile";
+
+	if (requestDTO.getRequestPath().contains(GET_PROFILE)) {
+	    LOG.debug("LOADING GET PROFILE SERVICE");
+	    return new GetProfileRequestHandler();
+	}
+
+	return null;
+    }
 }

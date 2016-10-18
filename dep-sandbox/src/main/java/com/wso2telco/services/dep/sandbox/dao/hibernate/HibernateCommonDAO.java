@@ -7,6 +7,11 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 
 import com.wso2telco.services.dep.sandbox.dao.GenaricDAO;
+import com.wso2telco.services.dep.sandbox.dao.model.domain.APIServiceCalls;
+import com.wso2telco.services.dep.sandbox.dao.model.domain.APITypes;
+import com.wso2telco.services.dep.sandbox.dao.model.domain.AttributeDistribution;
+import com.wso2telco.services.dep.sandbox.dao.model.domain.AttributeValues;
+import com.wso2telco.services.dep.sandbox.dao.model.domain.Attributes;
 import com.wso2telco.services.dep.sandbox.dao.model.domain.ManageNumber;
 import com.wso2telco.services.dep.sandbox.dao.model.domain.SenderAddress;
 import com.wso2telco.services.dep.sandbox.dao.model.domain.User;
@@ -72,4 +77,98 @@ class HibernateCommonDAO extends AbstractDAO implements GenaricDAO {
 			}
 			return whitelisted;
 		}
+
+
+	@Override
+	public APITypes getAPIType(String api) {
+	    Session sess = getSession();
+		APITypes apis = null;
+		try {
+		    apis = (APITypes) sess.createQuery("from APITypes WHERE lower(apiname) = :api").setParameter("api", api).uniqueResult();
+
+		} catch (Exception e) {
+		    LOG.error("getAPITypes", e);
+		} finally {
+		    sess.close();
+		}
+
+		return apis;
+	}
+
+	@Override
+	public APIServiceCalls getServiceCall(int apiId,String service) {
+	    Session sess = getSession();
+	    APIServiceCalls services = null;
+		try {
+		    services = (APIServiceCalls) sess.createQuery("from APIServiceCalls WHERE apiType.id = ? AND lower(serviceName) = ?")
+			    .setParameter(0, apiId).setParameter(1, service).uniqueResult();
+
+		} catch (Exception e) {
+		    LOG.error("getServiceCall", e);
+		} finally {
+		    sess.close();
+		}
+
+		return services;
+	}
+
+	@Override
+	public Attributes getAttribute(String attribute) {
+	    Session sess = getSession();
+	    Attributes attributeObj = null;
+		try {
+		    attributeObj = (Attributes) sess.createQuery("from Attributes WHERE lower(attributeName) = :attribute")
+			    .setParameter("attribute", attribute).uniqueResult();
+
+		} catch (Exception e) {
+		    LOG.error("getAttribute", e);
+		} finally {
+		    sess.close();
+		}
+
+		return attributeObj;
+	}
+
+	@Override
+	public AttributeDistribution getAttributeDistribution(int apiServiceId,
+		int attributeId) {
+	    Session sess = getSession();
+	    AttributeDistribution distributionObj = null;
+		try {
+		    distributionObj = (AttributeDistribution) sess.createQuery("from AttributeDistribution WHERE attribute.attributeId = ? AND serviceCall.apiServiceCallId = ?")
+			    .setParameter(0, attributeId).setParameter(1, apiServiceId).uniqueResult();
+
+		} catch (Exception e) {
+		    LOG.error("getServiceCall", e);
+		} finally {
+		    sess.close();
+		}
+
+		return distributionObj;
+	}
+
+	@Override
+        public void saveAttributeValue(AttributeValues valueObj) {
+    
+    	try {
+    	    saveOrUpdate(valueObj);
+    	} catch (Exception e) {
+    	    LOG.error("saveAttributeValue", e);
+    	}
+        }
+
+	@Override
+	    public AttributeValues getAttributeValue(AttributeDistribution distributionObj){
+	    Session sess = getSession();
+	    AttributeValues value = null;
+	        try {
+	            value = (AttributeValues) sess.createQuery("from AttributeValues where attributeDistributionId = ?").setParameter(0,distributionObj).uniqueResult();
+	         } catch (Exception e) {
+	           LOG.error("getAttributeValue",e);
+	        } finally {
+	           sess.close();
+	        }
+
+	        return value;
+	}
 }

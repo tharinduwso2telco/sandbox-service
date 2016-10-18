@@ -26,6 +26,7 @@ public class ServiceInfo {
 	private String description;
 
 	private BigDecimal serviceCharge;
+	
 
 	/**
 	 * @return the serviceCode
@@ -86,4 +87,6 @@ public class ServiceInfo {
 	public void setServiceCharge(BigDecimal serviceCharge) {
 		this.serviceCharge = serviceCharge;
 	}
+
+	
 }

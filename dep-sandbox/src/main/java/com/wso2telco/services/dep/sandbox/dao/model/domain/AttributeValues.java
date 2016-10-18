@@ -7,6 +7,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 @Entity
@@ -18,7 +19,7 @@ public class AttributeValues {
     @Column(name = "sbxattributevaluedid")
     private int attributevalueId;
 
-    @ManyToOne
+    @OneToOne
     @JoinColumn(name = "attributedistributiondid", referencedColumnName = "sbtattributedistributiondid")
     private AttributeDistribution attributeDistributionId;
 
@@ -26,7 +27,7 @@ public class AttributeValues {
     private String tobject;
 
     @Column(name = "ownerdid")
-    private String ownerdid;
+    private int ownerdid;
 
     @Column(name = "value")
     private String value;
@@ -55,11 +56,11 @@ public class AttributeValues {
 	this.tobject = tobject;
     }
 
-    public String getOwnerdid() {
+    public int getOwnerdid() {
 	return ownerdid;
     }
 
-    public void setOwnerdid(String ownerdid) {
+    public void setOwnerdid(int ownerdid) {
 	this.ownerdid = ownerdid;
     }
 

@@ -1,8 +1,8 @@
 database:
   driverClass: com.mysql.cj.jdbc.Driver
   user: root
-  password: root
-  url: jdbc:mysql://127.0.0.1/mife_sandbox?useSSL=false
+  password: 
+  url: jdbc:mysql://<IP_OF_DB_SERVER>/<DB_NAME_OF_SANDBOX>?useSSL=false
 server:
         applicationConnectors:
           - type: http
@@ -31,9 +31,9 @@ logging:
       target: stdout
 # Enable following for file appender
     - type: file
-      currentLogFilename: log/token_service.log #<path to log file>/<filename.log>
+      currentLogFilename: log/sandbox_service.log #<path to log file>/<filename.log>
       threshold: ALL
       archive: true
-      archivedLogFilenamePattern: log/token_service-%d.log #<path to log file >/< archive filename.log>
+      archivedLogFilenamePattern: log/sandbox_service-%d.log #<path to log file >/< archive filename.log>
       archivedFileCount: 5
       timeZone: UTC

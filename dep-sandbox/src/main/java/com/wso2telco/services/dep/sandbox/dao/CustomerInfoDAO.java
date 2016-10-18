@@ -15,15 +15,13 @@
  ******************************************************************************/
 package com.wso2telco.services.dep.sandbox.dao;
 
-
+import com.wso2telco.services.dep.sandbox.dao.model.custom.CustomerInfoDTO;
+import com.wso2telco.services.dep.sandbox.dao.model.domain.ManageNumber;
+import com.wso2telco.services.dep.sandbox.dao.model.domain.User;
 
 public interface CustomerInfoDAO {
-	
-	/*public void saveAttributeMap(AttributeMap attributeMap) throws Exception;
-	
-	public List<AttributeMap> getAttributeMaps(String tobject, String ownerdid, Attribute attribute) throws Exception;
-	
-	public Attribute getAttribute(String attributeName) throws Exception;*/
-
-
+    
+    public ManageNumber getMSISDN (String msisdn, String imsi, String mcc, String mnc) throws Exception;
+    
+    public CustomerInfoDTO getProfileData(String msisdn, User user) throws Exception;
 }

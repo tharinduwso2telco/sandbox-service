@@ -17,7 +17,6 @@ package com.wso2telco.services.dep.sandbox.service;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -37,15 +36,17 @@ import com.wordnik.swagger.annotations.ApiImplicitParam;
 import com.wordnik.swagger.annotations.ApiImplicitParams;
 import com.wordnik.swagger.annotations.ApiOperation;
 import com.wordnik.swagger.annotations.ApiParam;
+import com.wso2telco.services.dep.sandbox.dao.ProvisioningDAO;
+import com.wso2telco.services.dep.sandbox.dao.model.custom.AddServicesMsisdnRequestWrapperDTO;
 import com.wso2telco.services.dep.sandbox.dao.model.custom.ListProvisionedRequestWrapperDTO;
+import com.wso2telco.services.dep.sandbox.dao.model.custom.ProvisionRequestBean;
+import com.wso2telco.services.dep.sandbox.dao.model.custom.ProvisioningServicesRequestWrapperDTO;
 import com.wso2telco.services.dep.sandbox.dao.model.custom.QueryProvisioningServicesRequestWrapper;
 import com.wso2telco.services.dep.sandbox.dao.model.custom.RemoveProvisionRequestBean;
 import com.wso2telco.services.dep.sandbox.dao.model.custom.RemoveProvisionedRequestWrapperDTO;
-import com.wso2telco.services.dep.sandbox.dao.model.custom.ProvisionRequestBean;
-import com.wso2telco.services.dep.sandbox.dao.model.custom.QueryProvisioningServicesRequestWrapper;
 import com.wso2telco.services.dep.sandbox.dao.model.custom.RequestDTO;
+import com.wso2telco.services.dep.sandbox.dao.model.custom.ServiceDetail;
 import com.wso2telco.services.dep.sandbox.dao.model.custom.ServiceProvisionRequestWrapper;
-import com.wso2telco.services.dep.sandbox.exception.SandboxException;
 import com.wso2telco.services.dep.sandbox.exception.SandboxException.SandboxErrorType;
 import com.wso2telco.services.dep.sandbox.servicefactory.RequestBuilderFactory;
 import com.wso2telco.services.dep.sandbox.servicefactory.RequestHandleable;
@@ -53,10 +54,10 @@ import com.wso2telco.services.dep.sandbox.servicefactory.Returnable;
 import com.wso2telco.services.dep.sandbox.util.RequestType;
 
 
-@Path("/provision/{v1}")
+@Path("/provisioning/{v1}")
 @Consumes({ MediaType.APPLICATION_JSON })
 @Produces({ MediaType.APPLICATION_JSON })
-@Api(value = "/provision/{v1}", description = "Rest Service for provisionning API")
+@Api(value = "/provisioning/{v1}", description = "Rest Service for Provisionning API")
 public class ProvisionService {
 
 	Log LOG = LogFactory.getLog(ProvisionService.class);
@@ -96,6 +97,7 @@ public class ProvisionService {
 
 	}
 	
+
 	@GET
 	@Path("/{msisdn}/list/active")
 	@ApiOperation(value = "getActiveProvisionedServices", notes = "getActiveProvisionedServices", response = Response.class)
@@ -196,5 +198,4 @@ public class ProvisionService {
 			return response;
 		}
 	}
-
 }

@@ -14,7 +14,7 @@ public class UserServiceFactory {
 
     public static RequestHandleable getInstance(RequestDTO requestDTO) {
 	final String ADD_USER_PATH = "register";
-	final String ADD_ATTRIBUTE_PATH = "addattribute";
+	final String ADD_ATTRIBUTE_PATH = "attribute";
 	
 
 	if(requestDTO.getRequestPath().contains(ADD_USER_PATH) && requestDTO.isPost()){
