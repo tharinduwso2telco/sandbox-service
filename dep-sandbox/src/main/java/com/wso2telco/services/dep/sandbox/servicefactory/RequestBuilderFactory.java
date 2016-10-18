@@ -6,6 +6,7 @@ import org.apache.commons.logging.LogFactory;
 import com.wso2telco.services.dep.sandbox.dao.model.custom.RequestDTO;
 import com.wso2telco.services.dep.sandbox.servicefactory.location.LocationRequestFactory;
 import com.wso2telco.services.dep.sandbox.servicefactory.payment.PaymentRequestFactory;
+import com.wso2telco.services.dep.sandbox.servicefactory.provisionConfig.ProvisioningConfigServiceFactory;
 import com.wso2telco.services.dep.sandbox.servicefactory.provisioning.ProvisioningServiceFactory;
 import com.wso2telco.services.dep.sandbox.servicefactory.smsmessaging.SMSRequestFactory;
 import com.wso2telco.services.dep.sandbox.servicefactory.user.UserServiceFactory;
@@ -41,6 +42,10 @@ public class RequestBuilderFactory {
 		case PROVISIONING:
 			LOG.debug("LOADING PROVISIONING FACTORY");
 			requestHandler = ProvisioningServiceFactory.getInstance(requestDTO);
+			break;
+		case PROVISIONINGCONFIG:
+			LOG.debug("LOADING PROVISIONING CONFIGURATION FACTORY");
+			requestHandler = ProvisioningConfigServiceFactory.getInstance(requestDTO);
 			break;
 		case USER:
 			LOG.debug("LOADING USER FACTORY");

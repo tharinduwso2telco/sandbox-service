@@ -55,7 +55,7 @@ import com.wso2telco.services.dep.sandbox.util.RequestType;
 
 
 @Path("/provisioning/{v1}")
-@Consumes({ MediaType.APPLICATION_JSON ,MediaType.TEXT_PLAIN})
+@Consumes({ MediaType.APPLICATION_JSON })
 @Produces({ MediaType.APPLICATION_JSON })
 @Api(value = "/provisioning/{v1}", description = "Rest Service for Provisionning API")
 public class ProvisionService {
@@ -63,7 +63,6 @@ public class ProvisionService {
 	Log LOG = LogFactory.getLog(ProvisionService.class);
 
 	@GET
-	//@ApiSubResource("/{msisdn}/list/applicable")
 	@Path("/{msisdn}/list/applicable")
 	@ApiOperation(value = "getApplicableServices", notes = "getApplicableServices", response = Response.class)
 	@ApiImplicitParams({
@@ -199,69 +198,4 @@ public class ProvisionService {
 			return response;
 		}
 	}
-	
-	@POST
-	@Path("/{msisdn}/{serviceCode}/addservice")
-	@ApiOperation(value = "addServiceMsisdn", notes = "add services for msisdn", response = Response.class)
-	@ApiImplicitParams({
-	    @ApiImplicitParam(name = "sandbox", value = "Authorization token", 
-	                     required = true, dataType = "string", paramType = "header")
-	})
-	public Response addServiceMsisdn(
-			@ApiParam(value = "msisdn", required = true) @PathParam("msisdn") String msisdn,
-			@ApiParam(value = "serviceCode", required = true) @PathParam("serviceCode") String serviceCode,
-			@Context HttpServletRequest request) {
-		
-	    AddServicesMsisdnRequestWrapperDTO requestDTO = new AddServicesMsisdnRequestWrapperDTO();
-		requestDTO.setHttpRequest(request);
-		requestDTO.setMsisdn(msisdn);
-		requestDTO.setServiceCode(serviceCode);
-		requestDTO.setRequestType(RequestType.PROVISIONING);
-		
-		RequestHandleable<RequestDTO> handler = RequestBuilderFactory.getInstance(requestDTO);
-		Returnable returnable = null;
-		
-		try {
-			returnable = handler.execute(requestDTO);
-			Response response = Response.status(returnable.getHttpStatus()).entity(returnable.getResponse()).build();
-			return response;
-		} catch (Exception ex) {
-			LOG.error("###PROVISION### Error in Provision Service", ex);
-			Response response = Response.status(Status.BAD_REQUEST).entity(SandboxErrorType.SERVICE_ERROR.getCode() + " " + SandboxErrorType.SERVICE_ERROR.getMessage()).build();
-			return response;
-		}
-	}
-	
-	@Path("/newservice")
-	@ApiOperation(value = "addService", notes = "addService", response = Response.class)
-	public Response addService( @Context HttpServletRequest httpRequest, ServiceDetail serviceDetail ) {
-		LOG.debug("/newservice invorked :" + serviceDetail.getServiceCode() + serviceDetail.getServiceType() + serviceDetail.getDescription() + serviceDetail.getServiceCharge());
-		
-		ProvisioningServicesRequestWrapperDTO requestDTO = new ProvisioningServicesRequestWrapperDTO();
-		requestDTO.setHttpRequest(httpRequest);
-		requestDTO.setRequestType(RequestType.PROVISIONING);
-		requestDTO.setServiceDetail(serviceDetail);
-
-		
-		RequestHandleable handler = RequestBuilderFactory.getInstance(requestDTO);
-		Returnable returnable = null;
-		
-		ProvisioningDAO provisioningDAO = null;
-
-		try {
-			
-			returnable = handler.execute(requestDTO);
-			
-			Response response = Response.status(returnable.getHttpStatus()).entity(returnable.getResponse()).build();
-			LOG.debug("QUERY NEW SERVICE RESPONSE : " + response);
-			return response;
-		} catch (Exception ex) {
-			LOG.error("QUERY NEW SERVICE ERROR : " , ex);
-			return Response.status(Response.Status.BAD_REQUEST).entity(SandboxErrorType.INVALID_INPUT_VALUE.getCode() + " " + SandboxErrorType.INVALID_INPUT_VALUE.getMessage()).build();
-		}
-
-
-	}
-	
-
 }

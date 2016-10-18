@@ -1,4 +1,4 @@
-package com.wso2telco.services.dep.sandbox.servicefactory.provisioning;
+package com.wso2telco.services.dep.sandbox.servicefactory.provisionConfig;
 
 import java.util.ArrayList;
 import java.util.List;
