@@ -1,8 +1,9 @@
-package com.wso2telco.services.dep.sandbox.servicefactory.provisioning;
+package com.wso2telco.services.dep.sandbox.servicefactory.provisionConfig;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.math.BigDecimal;
+
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 

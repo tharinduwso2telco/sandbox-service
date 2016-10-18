@@ -616,4 +616,17 @@ public class HibernateProvisioningDAO extends AbstractDAO implements Provisionin
 		}
 		return provisionedCheckList;
 	}
+
+	@Override
+    public void saveServiceForMsisdn(ProvisionMSISDNServicesMap map)
+	    throws Exception {
+	try {
+	    saveOrUpdate(map);
+	} catch (Exception ex) {
+	    LOG.error("###PROVISION### Error in saveServiceForMsisdn " + ex);
+	    throw ex;
+	}
+    }
+
+	
 }

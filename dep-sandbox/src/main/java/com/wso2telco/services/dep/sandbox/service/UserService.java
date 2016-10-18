@@ -33,6 +33,7 @@ import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiImplicitParam;
 import com.wordnik.swagger.annotations.ApiImplicitParams;
 import com.wordnik.swagger.annotations.ApiOperation;
+import com.wordnik.swagger.annotations.ApiParam;
 import com.wso2telco.services.dep.sandbox.dao.UserDAO;
 import com.wso2telco.services.dep.sandbox.dao.model.custom.AttributeRequestBean;
 import com.wso2telco.services.dep.sandbox.dao.model.custom.AttributeRequestWrapperDTO;
@@ -63,7 +64,7 @@ public class UserService {
     public Response registerUser(@PathParam("userName") String userName, @Context HttpServletRequest httpRequest) {
 	RegisterUserServiceRequestWrapperDTO requestDTO = new RegisterUserServiceRequestWrapperDTO();
 	requestDTO.setUserName(userName);
-	requestDTO.setRequestType(RequestType.ADMIN);
+	requestDTO.setRequestType(RequestType.USER);
 	requestDTO.setHttpRequest(httpRequest);
 	RequestHandleable handler = RequestBuilderFactory.getInstance(requestDTO);
 	Returnable returnable = null;
@@ -85,17 +86,21 @@ public class UserService {
     }
     
     @POST
-    @Path("/addattribute")
+    @Path("/{apiType}/{serviceType}/attribute")
     @ApiOperation(value = "addAttribute", notes = "add new attributes for user", response = Response.class)
     @ApiImplicitParams({
 	    @ApiImplicitParam(name = "sandbox", value = "Authorization token", 
 	                     required = true, dataType = "string", paramType = "header")
 	})
-    public Response addAttribute(@Context HttpServletRequest httpRequest, AttributeRequestBean request) {
+    public Response addAttribute(@ApiParam(value = "apiType", required = true) @PathParam("apiType") String apiType,
+	    @ApiParam(value = "serviceType", required = true) @PathParam("serviceType") String serviceType,
+	    @Context HttpServletRequest httpRequest, AttributeRequestBean request) {
 	AttributeRequestWrapperDTO requestDTO = new AttributeRequestWrapperDTO();
-	requestDTO.setRequestType(RequestType.ADMIN);
+	requestDTO.setApiType(apiType);
+	requestDTO.setServiceType(serviceType);
+	requestDTO.setRequestType(RequestType.USER);
 	requestDTO.setHttpRequest(httpRequest);
-	requestDTO.setAttribute(request);;
+	requestDTO.setAttributeBean(request);
 	RequestHandleable handler = RequestBuilderFactory.getInstance(requestDTO);
 	Returnable returnable = null;
 
