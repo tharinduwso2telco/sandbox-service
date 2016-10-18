@@ -34,6 +34,8 @@ import org.hibernate.query.Query;
 
 import com.wso2telco.services.dep.sandbox.dao.CustomerInfoDAO;
 import com.wso2telco.services.dep.sandbox.dao.model.custom.CustomerInfoDTO;
+import com.wso2telco.services.dep.sandbox.dao.model.domain.AttributeValues;
+import com.wso2telco.services.dep.sandbox.dao.model.domain.Attributes;
 import com.wso2telco.services.dep.sandbox.dao.model.domain.ManageNumber;
 import com.wso2telco.services.dep.sandbox.dao.model.domain.User;
 import com.wso2telco.services.dep.sandbox.servicefactory.customerinfo.CustomerInfoRequestType;
@@ -56,7 +58,7 @@ public class HibernateCustomerInfoDAO extends AbstractDAO implements CustomerInf
 	    StringBuilder hqlBuilder = new StringBuilder();
 	    hqlBuilder.append("from ManageNumber number where ");
 	    if (msisdn != null && imsi != null) {
-		hqlBuilder.append(" number.Number = : msisdn ");
+		hqlBuilder.append(" number.Number = :msisdn ");
 		hqlBuilder.append(" and ");
 		hqlBuilder.append(" number.imsi = :imsi");
 		parameterMap.put("msisdn", msisdn);
@@ -186,5 +188,82 @@ public class HibernateCustomerInfoDAO extends AbstractDAO implements CustomerInf
 
 	return customerInfoDTO;
     }
+
+	@Override
+	public List<AttributeValues> getAttributeServices(String msisdn,
+			Integer userID, String imsi, String[] schema) throws Exception {
+		Session session = getSession();
+		List<AttributeValues> attributeValues = null;
+
+		StringBuilder hql = new StringBuilder();
+		hql.append("SELECT ");
+		hql.append("val ");
+		hql.append("FROM ");
+		hql.append("AttributeValues AS val, ");
+		hql.append("APIServiceCalls AS calls, ");
+		hql.append("APITypes AS api, ");
+		hql.append("AttributeDistribution AS dist, ");
+		hql.append("Attributes AS att ");
+		hql.append("WHERE ");
+		hql.append("api.id = calls.apiType.id ");
+		hql.append("AND calls.apiServiceCallId = dist.serviceCall.apiServiceCallId ");
+		hql.append("AND dist.distributionId = val.attributeDistributionId.distributionId ");
+		hql.append("AND att.attributeId = dist.attribute.attributeId ");
+		hql.append("AND val.ownerdid = :userId ");
+		hql.append("AND api.apiname = :apiName ");
+		hql.append("AND calls.serviceName = :apiService ");
+		hql.append("AND att.attributeName IN ( :schema)");
+
+		try {
+			Query query = session.createQuery(hql.toString());
+
+			query.setParameter("apiName", RequestType.CUSTOMERINFO.toString());
+			query.setParameter("apiService", CustomerInfoRequestType.GETATTRIBUTE.toString());
+			query.setParameter("userId", userID);
+			query.setParameterList("schema", schema);
+
+			attributeValues = (List<AttributeValues>) query.getResultList();
+
+		} catch (Exception ex) {
+			LOG.error("###Customer rInfo### Error in get customer attributes "
+					+ ex);
+			throw ex;
+		}
+
+		return attributeValues;
+	}
+
+	@Override
+	public boolean checkSchema(String[] schema) throws Exception {
+
+		Session session = getSession();
+		Attributes resultSet = null;
+		List<AttributeValues> attributeValues = null;
+
+		try {
+
+			StringBuilder hql = new StringBuilder();
+			hql.append("SELECT ");
+			hql.append("att.attributeName ");
+			hql.append("FROM ");
+			hql.append("Attributes AS att ");
+			hql.append("WHERE ");
+			hql.append("att.attributeName IN ( :schema)");
+
+			Query query = session.createQuery(hql.toString());
+			query.setParameterList("schema", schema);
+
+			attributeValues = (List<AttributeValues>) query.getResultList();
+
+			if (attributeValues.size() == schema.length) {
+				return true;
+			}
+
+		} catch (Exception ex) {
+			LOG.error("###Customer Info### Error in getErrorResponse " + ex);
+			throw ex;
+		}
+		return false;
+	}
 
 }

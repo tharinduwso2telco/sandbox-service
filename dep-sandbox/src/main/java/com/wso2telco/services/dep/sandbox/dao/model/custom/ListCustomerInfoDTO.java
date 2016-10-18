@@ -13,22 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package com.wso2telco.services.dep.sandbox.dao;
+package com.wso2telco.services.dep.sandbox.dao.model.custom;
 
-import java.util.List;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
-import com.wso2telco.services.dep.sandbox.dao.model.custom.CustomerInfoDTO;
-import com.wso2telco.services.dep.sandbox.dao.model.domain.AttributeValues;
-import com.wso2telco.services.dep.sandbox.dao.model.domain.ManageNumber;
-import com.wso2telco.services.dep.sandbox.dao.model.domain.User;
+public class ListCustomerInfoDTO {
 
-public interface CustomerInfoDAO {
-    
-    public ManageNumber getMSISDN (String msisdn, String imsi, String mcc, String mnc) throws Exception;
-    
-    public CustomerInfoDTO getProfileData(String msisdn, User user) throws Exception;
-    
-	public List<AttributeValues> getAttributeServices (String msisdn,Integer userID, String imsi,String[] schema) throws Exception;
-	
-	public boolean checkSchema (String [] schema) throws Exception;
+	private ListCustomerInfoAttributesDTO customerInfo;
+
+	/**
+	 * @return the customerInfo
+	 */
+	public ListCustomerInfoAttributesDTO getCustomer() {
+		return customerInfo;
+	}
+
+	@JsonProperty("Customer")
+	public void setCustomer(ListCustomerInfoAttributesDTO customerInfo) {
+		this.customerInfo =  customerInfo;
+	}
 }

@@ -28,12 +28,15 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import com.wordnik.swagger.annotations.Api;
+import com.wordnik.swagger.annotations.ApiImplicitParam;
+import com.wordnik.swagger.annotations.ApiImplicitParams;
 import com.wordnik.swagger.annotations.ApiOperation;
 import com.wordnik.swagger.annotations.ApiParam;
 import com.wso2telco.services.dep.sandbox.exception.SandboxException.SandboxErrorType;
 import com.wso2telco.services.dep.sandbox.servicefactory.RequestBuilderFactory;
 import com.wso2telco.services.dep.sandbox.servicefactory.RequestHandleable;
 import com.wso2telco.services.dep.sandbox.servicefactory.Returnable;
+import com.wso2telco.services.dep.sandbox.servicefactory.customerinfo.GetAttributeRequestWrapper;
 import com.wso2telco.services.dep.sandbox.servicefactory.customerinfo.GetProfileRequestWrapper;
 import com.wso2telco.services.dep.sandbox.util.RequestType;
 
@@ -78,5 +81,45 @@ public class CustomerInfoService {
 	}
 
     }
+    
+    
+    @GET
+	@Path("/attribute")
+	@ApiOperation(value = "getAttributeServices", notes = "getAttributeServices", response = Response.class)
+	@ApiImplicitParams({
+	    @ApiImplicitParam(name = "sandbox", value = "Authorization token", 
+	                     required = true, dataType = "string", paramType = "header")
+	})
+	public Response getAttributeServices( @ApiParam(value = "msisdn", required = false) @QueryParam("msisdn") String msisdn,
+			@ApiParam(value = "imsi", required = false) @QueryParam("imsi") String imsi,
+			@ApiParam(value = "schema",  required = true) @QueryParam("schema") String schema,
+			@ApiParam(value = "mcc", required = false) @QueryParam("mcc") String mcc,
+			@ApiParam(value = "mnc", required = false) @QueryParam("mnc") String mnc,@Context HttpServletRequest request) {
+		LOG.debug("/{schema}/{mcc}/{mnc}/attribute invorked :" + msisdn + imsi + schema + mcc + mnc);
+		GetAttributeRequestWrapper requestDTO = new GetAttributeRequestWrapper();
+		requestDTO.setHttpRequest(request);
+		requestDTO.setMsisdn(msisdn);
+		requestDTO.setImsi(imsi);
+		requestDTO.setSchema(schema);
+		requestDTO.setMcc(mcc);
+		requestDTO.setMnc(mnc);
+		requestDTO.setRequestType(RequestType.CUSTOMERINFO);
+
+		RequestHandleable handler = RequestBuilderFactory.getInstance(requestDTO);
+		Returnable returnable = null;
+
+		try {
+			returnable = handler.execute(requestDTO);
+			Response response = Response.status(returnable.getHttpStatus()).entity(returnable.getResponse()).build();
+			LOG.debug("GET ATTRIBUTE SERVICE RESPONSE : " + response);
+			return response;
+		} catch (Exception ex) {
+			LOG.error("GET ATTRIBUTE SERVICE ERROR : ", ex);
+			return Response.status(Response.Status.BAD_REQUEST).entity(
+					SandboxErrorType.SERVICE_ERROR.getCode() + " " + SandboxErrorType.SERVICE_ERROR.getMessage())
+					.build();
+		}
+
+	}
 
 }
