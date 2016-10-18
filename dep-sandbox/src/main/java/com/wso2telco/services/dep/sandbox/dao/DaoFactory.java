@@ -26,6 +26,5 @@ public class DaoFactory {
 	
 	public static CustomerInfoDAO getCustomerInfoDAO(){
 	    	return new HibernateFactory().getHibernateCustomerInfoDAO();
-
 	}
 }

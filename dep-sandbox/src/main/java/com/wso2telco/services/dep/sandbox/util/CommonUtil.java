@@ -15,15 +15,11 @@
  ******************************************************************************/
 package com.wso2telco.services.dep.sandbox.util;
 
-import java.util.Arrays;
-import java.util.List;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import com.mysql.cj.fabric.xmlrpc.base.Array;
 import com.wso2telco.core.msisdnvalidator.InvalidMSISDNException;
 import com.wso2telco.core.msisdnvalidator.MSISDN;
 import com.wso2telco.core.msisdnvalidator.MSISDNUtil;
@@ -75,7 +71,6 @@ public class CommonUtil {
 		return outputValue;
 	}
 	
-	
 	public static String extractNumberFromMsisdn(String msisdn) {
 		String phoneNumber = "";
 		String[] splittedMsisdn = msisdn.trim().split(MSISDN_SPLITTER);
@@ -85,18 +80,6 @@ public class CommonUtil {
 		}
 
 		return phoneNumber;
-	}
-	
-	public static String [] getStringToArray(String schema) {
-		String[] schemaList = schema.split(",",-1);
-		String[] splitSchemaList = null;
-//		for(int i=0; i < schemaList.length; i++ )
-//		{
-//		splitSchemaList[i] =	getNullOrTrimmedValue(schemaList[i]);
-//		}
-//		
-
-		return schemaList;
 	}
 
 }

@@ -15,68 +15,83 @@
  ******************************************************************************/
 package com.wso2telco.services.dep.sandbox.dao.hibernate;
 
-
-import java.util.List;
-
-import javax.persistence.NoResultException;
-
-import org.apache.commons.logging.LogFactory;
-import org.hibernate.Session;
-
 import com.wso2telco.services.dep.sandbox.dao.CustomerInfoDAO;
-import com.wso2telco.services.dep.sandbox.dao.model.custom.ListCustomerInfoDTO;
-import com.wso2telco.services.dep.sandbox.dao.model.domain.AttributeValues;
-import com.wso2telco.services.dep.sandbox.dao.model.domain.Attributes;
 
 
-public class HibernateCustomerInfoDAO extends AbstractDAO implements CustomerInfoDAO {
-	public List<AttributeValues> getAttributeServices(String msisdn, String user,
-			String imsi, String[] schema) throws Exception {
-		// TODO Auto-generated method stub
-		List<AttributeValues> attributeValues = null;
-		try{
-			StringBuilder hql = new StringBuilder();
-			hql.append("SELECT");
-			hql.append(" prservice");
+public class HibernateCustomerInfoDAO extends AbstractDAO implements CustomerInfoDAO {/*
+    {
+	LOG = LogFactory.getLog(HibernateCustomerInfoDAO.class);
+    }
 
-			
-		}catch(NoResultException ex){
-			return null;
-		}catch(Exception e){
-			LOG.error("###CUSTOMER INFO### Error in getAlreadyProvisionedService", e);
-
-			throw e;
+	@Override
+	public void saveAttributeMap(AttributeMap attributeMap) throws Exception {
+		try {
+			saveOrUpdate(attributeMap);
+		} catch (Exception ex) {
+			LOG.error("Error in SaveAttributeMap " + ex);
+			throw ex;
 		}
 		
-		
-		
-		
-
-		
-		return attributeValues;
 	}
 
 	@Override
-	public boolean checkSchema(String schema) throws Exception {
-		// TODO Auto-generated method stub
-
-		Session session = getSession();
-		Attributes resultSet = null;
+	public List<AttributeMap> getAttributeMaps(String tobject, String ownerdid, Attribute attribute) throws Exception {
 		
-		try {
+		Session session = getSession();
+		Map<String, Object> parameterMap = new HashMap<String, Object>();
+		List<AttributeMap> attributeMaps = new ArrayList<AttributeMap>();
+		try{
+			StringBuilder hqlQueryBuilder = new StringBuilder();
+			if(tobject != null && ownerdid != null){
+				hqlQueryBuilder.append("from AttributeMap am ");
+				hqlQueryBuilder.append("where ");
+				hqlQueryBuilder.append("am.tobject = :tobject");
+				hqlQueryBuilder.append(" AND am.ownerdid = :ownerdid");
+				parameterMap.put("tobject", tobject);
+				parameterMap.put("ownerdid", ownerdid);
+				
+				if(attribute != null){
+					hqlQueryBuilder.append(" AND am.attribute = :attribute");
+					parameterMap.put("attribute", attribute);
+				}
+				
+				Query query = session.createQuery(hqlQueryBuilder.toString());
+				
+				Set<Entry<String, Object>> entrySet = parameterMap.entrySet();
+				
+				for (Entry<String, Object> entry : entrySet) {
+					query.setParameter(entry.getKey(), entry.getValue());
+				}
+				
+				attributeMaps = (List<AttributeMap>) query.getResultList();
+			}
 			
-			resultSet = (Attributes)session.createQuery("from Attributes where attributeName = ?").setParameter(0, schema).uniqueResult();
-			
-			if(resultSet!=null ){
-				return true;
-}
-
-		} catch (Exception ex) {
-		LOG.error("###Customer Info### Error in getErrorResponse " + ex);
-		throw ex;
-	}
-	return false;
+		}catch(Exception ex){
+			LOG.error("Error in getAttributeMaps " + ex);
+			throw ex;
+		}
+		return attributeMaps;
 	}
 
-}
+	@Override
+	public Attribute getAttribute(String attributeName) throws Exception {
+		
+		Attribute attribute = null;
+		try{
+			Session session = getSession();
+			attribute = (Attribute) session.createQuery("from Attribute where attribute = :attribute").setParameter("attribute", attributeName)
+				    .getSingleResult();
+		}catch(NoResultException e){
+		    return null;	
+		}catch(Exception ex){
+			LOG.error("Error in getAttribute " + ex);
+			throw ex;
+		}
+		return attribute;
+	}
 
+
+	
+	
+	
+*/}

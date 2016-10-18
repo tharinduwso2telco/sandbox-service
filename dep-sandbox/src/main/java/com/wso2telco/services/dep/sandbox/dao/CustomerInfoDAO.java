@@ -15,15 +15,15 @@
  ******************************************************************************/
 package com.wso2telco.services.dep.sandbox.dao;
 
-import java.util.List;
 
-import com.wso2telco.services.dep.sandbox.dao.model.domain.AttributeValues;
 
-public interface CustomerInfoDAO 
-{
+public interface CustomerInfoDAO {
 	
-	public List<AttributeValues> getAttributeServices (String msisdn,String username, String imsi,String[] schema) throws Exception;
-	public boolean checkSchema (String schema) throws Exception;
+	/*public void saveAttributeMap(AttributeMap attributeMap) throws Exception;
+	
+	public List<AttributeMap> getAttributeMaps(String tobject, String ownerdid, Attribute attribute) throws Exception;
+	
+	public Attribute getAttribute(String attributeName) throws Exception;*/
 
 
 }

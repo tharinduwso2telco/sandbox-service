@@ -21,10 +21,8 @@ public class HibernateFactory {
 	public HibernateUserDAO getHibernateUserDAO() {
 		return new HibernateUserDAO();
 	}
-
-	public HibernateCustomerInfoDAO getHibernateCustomerInfoDAO(){
+	
+	public HibernateCustomerInfoDAO getHibernateCustomerInfoDAO() {
 		return new HibernateCustomerInfoDAO();
 	}
-	
-
 }

@@ -57,7 +57,7 @@ class HibernateCommonDAO extends AbstractDAO implements GenaricDAO {
 
 			List<ManageNumber> whitelisted = null;
 			try {
-				whitelisted =sess.createQuery("from ManageNumber where user.id = :userid and number in(:numbers)").setParameter("userid", Integer.valueOf(userid))
+				whitelisted =sess.createQuery("from ManageNumber where user.id = :userid and number  in(:numbers)").setParameter("userid", Integer.valueOf(userid))
 						.setParameterList("numbers", numbers).list();
 				/*query.setP
 				query.setParameter("userid", userid);

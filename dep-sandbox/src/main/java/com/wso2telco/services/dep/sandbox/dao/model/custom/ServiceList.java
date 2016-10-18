@@ -22,8 +22,6 @@ import java.util.List;
 public class ServiceList {
 
 	private List<ServiceInfo> serviceInfo = new ArrayList<>();
-	
-	private List<CustomerInfo> customerInfo = new ArrayList<>();
 
 	private String currencyCode;
 
@@ -44,21 +42,6 @@ public class ServiceList {
 		this.serviceInfo = serviceInfo;
 	}
 
-	/**
-	 * @return the customerInfo
-	 */
-	public List<CustomerInfo> getCustomerInfo() {
-		return customerInfo;
-	}
-
-	/**
-	 * @param customerInfo
-	 *            the customerInfo to set
-	 */
-	public void setCustomerInfo(List<CustomerInfo> customerInfo) {
-		this.customerInfo = customerInfo;
-	}
-	
 	/**
 	 * @return the currencyCode
 	 */
@@ -94,12 +77,5 @@ public class ServiceList {
 		this.serviceInfo.add(serviceInfo);
 		return serviceInfo;
 	}
-	
-	public CustomerInfo addNewCustomerInfo() {
-		CustomerInfo customerInfo = new CustomerInfo();
-		this.customerInfo.add(customerInfo);
-		return customerInfo;
-	}
-
 
 }
