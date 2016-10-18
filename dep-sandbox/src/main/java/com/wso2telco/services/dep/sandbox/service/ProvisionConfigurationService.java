@@ -93,6 +93,7 @@ public class ProvisionConfigurationService {
     @POST
     @Path("/service")
     @ApiOperation(value = "addServiceForUser", notes = "Define New Services For User", response = Response.class)
+    @ApiImplicitParams({ @ApiImplicitParam(name = "sandbox", value = "user name", required = true, dataType = "string", paramType = "header") })
     public Response addService(@Context HttpServletRequest httpRequest,
 	    ServiceDetail serviceDetail) {
 	LOG.debug("/service invorked :" + serviceDetail.getServiceCode()
