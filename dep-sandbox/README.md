@@ -294,6 +294,7 @@ Type - POST
 Request URI-
 ```
 http://<host>:<port>/provisioning/{v1}/config/service
+```
 
 - Enable user defined services for given MSISDN
 
@@ -304,6 +305,7 @@ Type - POST
 Request URI-
 ```
 http://<host>:<port>/provisioning/{v1}/config/{msisdn}/service/{serviceCode}
+```
 
 - Retrieve user defined services
 
@@ -314,6 +316,7 @@ Type - GET
 Request URI-
 ```
 http://<host>:<port>/provisioning/{v1}/config/service
+```
 
 Response :
 ```
@@ -334,7 +337,7 @@ Response :
     }
   ]
 }
-
+```
 
 ####1.6.2 Swagger Annotations
 
