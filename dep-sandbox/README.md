@@ -13,6 +13,12 @@ four operations.
 - Remove Service - Remove a provisioned service from a MSISDN
 - List service by customer - List the provisioned services for a given MSISDN
 
+Provisioning Related User Configurations can also be done through rest service calls. Configuration for provisioning API has three operations.
+
+- Add new services for user
+- Enable user defined services for given MSISDN
+- Retrieve user defined services
+
 ###1.2 System Requirements
 
 - Java SE Development Kit 1.8 
@@ -29,9 +35,9 @@ No need to install Maven if you install by downloading and extracting the binary
 
 MySQL Server’s time zone setting should be set to UTC time zone as ‘+00:00'.
 
-The database script relevant for this service can be found at /dbscripts folder.
+The database script relevant for this particular service can be found at /dbscripts folder with the name of Provisioning.sql
 
-DB can be created through running the script.
+DB tables can be created through running the script under the selection of particular sandbox Database.
 
 ####1.3.2 Configuration Setup
 
@@ -43,7 +49,7 @@ user: database username
 
 password: database password
 
-url: url for database driver, by default jdbc:mysql://localhost/token_service
+url: url for database driver, for example jdbc:mysql://localhost/sandbox?useSSL=false
 
 #####1.3.2.2 Log Configuration
 
@@ -143,7 +149,7 @@ Response :
       }
     ],
     "currencyCode": currencyCode,
-    "resourceURL": "http://<host>:<port>/provision/v1/{msisdn}/list/applicable"
+    "resourceURL": "http://<host>:<port>/provisioning/v1/{msisdn}/list/applicable"
   }
 }
 ```
@@ -156,7 +162,7 @@ Type - POST
 
 Resource URI :
 ```
-http://<host>:<port>/provision/v1/{msisdn}
+http://<host>:<port>/provisioning/v1/{msisdn}
 ```
 Request Body :
 ```
@@ -185,7 +191,7 @@ Response :
     "callbackReference": {
       "notifyURL": "notifyURL",
       "callbackData": "callbackData",
-      "resourceURL": "http://<host>:<port>/provision/v1/{msisdn}"
+      "resourceURL": "http://<host>:<port>/provisioning/v1/{msisdn}"
     },
     "transactionStatus": "AlreadyActive"
   }
@@ -200,7 +206,7 @@ Type - POST
 
 Request URI:
 ```
-http://<host>:<port>/provision/v1/{msisdn}/remove
+http://<host>:<port>/provisioning/v1/{msisdn}/remove
 ```
 Request Body :
 ```
@@ -229,7 +235,7 @@ Response :
     "callbackReference": {
       "notifyURL": "notifyURL",
       "callbackData": "callbackData",
-      "resourceURL": "http://<host>:<port>/provision/v1/{msisdn}/remove"
+      "resourceURL": "http://<host>:<port>/provisioning/v1/{msisdn}/remove"
     },
     "transactionStatus": "Pending"
   }
@@ -244,7 +250,7 @@ Type - GET
 
 Request URI-
 ```
-http://<host>:<port>/provision/v1/{msisdn}/list/active
+http://<host>:<port>/provisioning/v1/{msisdn}/list/active
 ```
 
 Response :
@@ -275,10 +281,59 @@ Response :
         "timeStamp": "timestamp"
       }
     ],
-    "resourceURL": "http://<host>:<port>/provision/v1/{msisdn}/list/active"
+    "resourceURL": "http://<host>:<port>/provisioning/v1/{msisdn}/list/active"
   }
 }
 ```
+- Add new services for user
+
+Request :
+
+Type - POST
+
+Request URI-
+```
+http://<host>:<port>/provisioning/{v1}/config/service
+
+- Enable user defined services for given MSISDN
+
+Request :
+
+Type - POST
+
+Request URI-
+```
+http://<host>:<port>/provisioning/{v1}/config/{msisdn}/service/{serviceCode}
+
+- Retrieve user defined services
+
+Request :
+
+Type - GET
+
+Request URI-
+```
+http://<host>:<port>/provisioning/{v1}/config/service
+
+Response :
+```
+
+{
+  "serviceInfoList": [
+    {
+      "serviceCode": "SRV0001",
+      "serviceType": "ROAMING",
+      "description": "ServiceDescription",
+      "serviceCharge": 10
+    },
+    {
+      "serviceCode": "SRV0002",
+      "serviceType": "DATA",
+      "description": "ServiceDescription",
+      "serviceCharge": 0
+    }
+  ]
+}
 
 
 ####1.6.2 Swagger Annotations
@@ -286,6 +341,6 @@ Response :
 [Swagger](http://swagger.io/getting-started/) is a standard, language-agnostic interface to REST APIs which allows both humans and computers to discover and understand the capabilities of the service without access to source code, documentation, or through network traffic inspection.
 
 
-In order to retrieve Swagger definitions of this microservice, go to http://&lt;host&gt;:&lt;port&gt;/swagger?path=&lt;service_base_path&gt;.
+In order to retrieve Swagger definitions of this microservice, go to http://&lt;host&gt;:&lt;port&gt;/swagger
 
-For example [http://localhost:8181/swagger?path=tokenservice](http://localhost:8181/swagger?path=tokenservice)  in default configuration.
+For example [http://localhost:8181/swagger](http://localhost:8181/swagger)  in default configuration.
