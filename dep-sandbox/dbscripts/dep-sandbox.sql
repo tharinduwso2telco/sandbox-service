@@ -1,3 +1,4 @@
+CREATE DATABASE IF NOT EXISTS sandbox;
 USE sandbox;
 --
 -- Table structure for table `charge_amount_request`
