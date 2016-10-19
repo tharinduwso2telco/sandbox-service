@@ -135,7 +135,7 @@ public class ProvisionConfigurationService {
     @GET
     @Path("/service")
     @ApiOperation(value = "getUserServices", notes = "Retrieves User defined Services", response = Response.class)
-    @ApiImplicitParams({ @ApiImplicitParam(name = "sandbox", value = "Authorization token", required = true, dataType = "string", paramType = "header") })
+    @ApiImplicitParams({ @ApiImplicitParam(name = "sandbox", value = "user name", required = true, dataType = "string", paramType = "header") })
     public Response getApplicableServices(@Context HttpServletRequest httpRequest) {
 	LOG.debug("/service invoked :" );
 	RetrieveServiceUserRequestDTO requestDTO = new RetrieveServiceUserRequestDTO();

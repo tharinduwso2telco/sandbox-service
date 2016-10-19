@@ -186,7 +186,7 @@ public class GetProfileRequestHandler extends AbstractRequestHandler<GetProfileR
 	customer.setTitle(customerInfoDTO.getTitle());
 	customer.setFirstName(customerInfoDTO.getFirstName());
 	customer.setLastName(customerInfoDTO.getLastName());
-	customer.setImsi(number.getIMSI());
+	//customer.setImsi(number.getIMSI());
 
 	Date dateOfBirth = customerInfoDTO.getDob();
 	if (dateOfBirth != null) {
