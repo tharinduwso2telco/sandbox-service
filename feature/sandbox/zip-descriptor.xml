@@ -21,7 +21,7 @@
                                <include>dbscripts/</include>
                                <include>deploy/</include>
                                <include>LICENSE.txt</include>
-                               <include>README.txt</include>
+                               <include>README.md</include>
 
                         </includes>
                </fileSet>
