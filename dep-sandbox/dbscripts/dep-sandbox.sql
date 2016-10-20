@@ -275,269 +275,6 @@ INSERT INTO `paymentparam` VALUES (1,NULL,NULL,NULL,NULL,100000000.00,1000,'Char
 UNLOCK TABLES;
 
 --
--- Table structure for table `sbtprmsisdnservicessmap`
---
-
-DROP TABLE IF EXISTS `sbtprmsisdnservicessmap`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `sbtprmsisdnservicessmap` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `numbersid` int(11) NOT NULL,
-  `servicesid` int(11) NOT NULL,
-  PRIMARY KEY (`id`),
-  KEY `fk01sbtprmsisdnservicessmap` (`numbersid`),
-  KEY `fk02sbtprmsisdnservicessmap` (`servicesid`),
-  CONSTRAINT `fk01sbtprmsisdnservicessmap` FOREIGN KEY (`numbersid`) REFERENCES `numbers` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT `fk02sbtprmsisdnservicessmap` FOREIGN KEY (`servicesid`) REFERENCES `sbxprservices` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=latin1;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `sbtprmsisdnservicessmap`
---
-
-LOCK TABLES `sbtprmsisdnservicessmap` WRITE;
-/*!40000 ALTER TABLE `sbtprmsisdnservicessmap` DISABLE KEYS */;
-INSERT INTO `sbtprmsisdnservicessmap` VALUES (1,1,1),(2,1,2),(3,2,1),(4,1,3),(5,2,2),(6,2,3);
-/*!40000 ALTER TABLE `sbtprmsisdnservicessmap` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `sbtprprovisionedservices`
---
-
-DROP TABLE IF EXISTS `sbtprprovisionedservices`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `sbtprprovisionedservices` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `msisdnservicesmapid` int(11) DEFAULT NULL,
-  `clientcorrelator` varchar(100) DEFAULT NULL,
-  `clientreferencecode` varchar(45) DEFAULT NULL,
-  `notifyurl` varchar(255) DEFAULT NULL,
-  `callbackdata` varchar(45) DEFAULT NULL,
-  `statusid` int(11) DEFAULT NULL,
-  `createddate` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (`id`),
-  KEY `fk01sbtprsbtprprovisionedservices` (`statusid`),
-  KEY `fk02sbtprsbtprprovisionedservices` (`msisdnservicesmapid`),
-  CONSTRAINT `fk01sbtprsbtprprovisionedservices` FOREIGN KEY (`statusid`) REFERENCES `sbxstatus` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT `fk02sbtprsbtprprovisionedservices` FOREIGN KEY (`msisdnservicesmapid`) REFERENCES `sbtprmsisdnservicessmap` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=latin1;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `sbtprprovisionedservices`
---
-
-LOCK TABLES `sbtprprovisionedservices` WRITE;
-/*!40000 ALTER TABLE `sbtprprovisionedservices` DISABLE KEYS */;
-INSERT INTO `sbtprprovisionedservices` VALUES (1,1,'12345','REF12345','http://application.com/notifyURL','',1,'0000-00-00 00:00:00'),(2,2,'1211','afs','afsfas',NULL,1,'2016-09-13 17:49:12'),(3,3,'',NULL,NULL,NULL,1,'2016-09-13 17:53:07'),(4,4,NULL,NULL,NULL,NULL,1,'2016-09-13 17:53:39'),(5,1,NULL,NULL,NULL,NULL,3,'2016-09-13 17:54:58'),(6,6,NULL,NULL,NULL,NULL,2,'2016-09-13 17:54:58');
-/*!40000 ALTER TABLE `sbtprprovisionedservices` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `sbtprspexpectmessage`
---
-
-DROP TABLE IF EXISTS `sbtprspexpectmessage`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `sbtprspexpectmessage` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `numberid` int(11) NOT NULL,
-  `messageid` int(11) NOT NULL,
-  `requesttype` varchar(50) DEFAULT NULL,
-  `servicesid` int(11) NOT NULL,
-  PRIMARY KEY (`id`),
-  KEY `fk01sbtprspexpectmessage` (`numberid`),
-  KEY `fk02sbtprspexpectmessage` (`messageid`),
-  KEY `fk03sbtprspexpectmessage` (`servicesid`),
-  CONSTRAINT `fk01sbtprspexpectmessage` FOREIGN KEY (`numberid`) REFERENCES `numbers` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT `fk02sbtprspexpectmessage` FOREIGN KEY (`messageid`) REFERENCES `sbxresponsemessage` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT `fk03sbtprspexpectmessage` FOREIGN KEY (`servicesid`) REFERENCES `sbxprservices` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `sbtprspexpectmessage`
---
-
-LOCK TABLES `sbtprspexpectmessage` WRITE;
-/*!40000 ALTER TABLE `sbtprspexpectmessage` DISABLE KEYS */;
-INSERT INTO `sbtprspexpectmessage` VALUES (1,1,1,'PROVISION',1),(2,1,1,'DELETE',1);
-/*!40000 ALTER TABLE `sbtprspexpectmessage` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `sbxapitypes`
---
-
-DROP TABLE IF EXISTS `sbxapitypes`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `sbxapitypes` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `apiname` varchar(50) NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `sbxapitypes`
---
-
-LOCK TABLES `sbxapitypes` WRITE;
-/*!40000 ALTER TABLE `sbxapitypes` DISABLE KEYS */;
-INSERT INTO `sbxapitypes` VALUES (1,'LOCATION'),(2,'SMS'),(3,'USSD'),(4,'PAYMENT'),(5,'CREDIT'),(6,'WALLET'),(7,'PROVISION');
-/*!40000 ALTER TABLE `sbxapitypes` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `sbxprrequesstlog`
---
-
-DROP TABLE IF EXISTS `sbxprrequesstlog`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `sbxprrequesstlog` (
-  `provision_request_log_id` int(11) NOT NULL AUTO_INCREMENT,
-  `requesttype` varchar(50) NOT NULL,
-  `msisdn` varchar(50) NOT NULL,
-  `userid` int(11) NOT NULL,
-  `clientcorrelator` varchar(255) DEFAULT NULL,
-  `clientreferencecode` varchar(255) DEFAULT NULL,
-  `notifyurl` varchar(255) DEFAULT NULL,
-  `callbackdata` varchar(255) DEFAULT NULL,
-  `timestamp` date DEFAULT NULL,
-  PRIMARY KEY (`provision_request_log_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=91 DEFAULT CHARSET=latin1;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `sbxprrequesstlog`
---
-
-LOCK TABLES `sbxprrequesstlog` WRITE;
-/*!40000 ALTER TABLE `sbxprrequesstlog` DISABLE KEYS */;
-INSERT INTO `sbxprrequesstlog` VALUES (1,'QUERY_APPLICABLE','+9471123',1,NULL,NULL,NULL,NULL,'2016-09-07'),(2,'QUERY_APPLICABLE','+94773524308',1,NULL,NULL,NULL,NULL,'2016-09-07'),(3,'QUERY_APPLICABLE','el:+94773524308',1,NULL,NULL,NULL,NULL,'2016-09-07'),(4,'LIST_ACTIVE_PROVISIONED_SERVICES','+94773524308',1,NULL,NULL,NULL,NULL,'2016-09-14'),(7,'LIST_ACTIVE_PROVISIONED_SERVICES','+94773524308',1,NULL,NULL,NULL,NULL,'2016-09-14'),(8,'LIST_ACTIVE_PROVISIONED_SERVICES','+94773524308',1,NULL,NULL,NULL,NULL,'2016-09-14'),(9,'LIST_ACTIVE_PROVISIONED_SERVICES','+94773524308',1,NULL,NULL,NULL,NULL,'2016-09-14'),(10,'LIST_ACTIVE_PROVISIONED_SERVICES','+94773524308',1,NULL,NULL,NULL,NULL,'2016-09-14'),(11,'LIST_ACTIVE_PROVISIONED_SERVICES','+94773524308',1,NULL,NULL,NULL,NULL,'2016-09-14'),(12,'LIST_ACTIVE_PROVISIONED_SERVICES','+94773524308',1,NULL,NULL,NULL,NULL,'2016-09-14'),(16,'LIST_ACTIVE_PROVISIONED_SERVICES','+94773524308',1,NULL,NULL,NULL,NULL,'2016-09-14'),(17,'LIST_ACTIVE_PROVISIONED_SERVICES','+94773524308',1,NULL,NULL,NULL,NULL,'2016-09-14'),(18,'LIST_ACTIVE_PROVISIONED_SERVICES','+94773524308',1,NULL,NULL,NULL,NULL,'2016-09-14'),(19,'LIST_ACTIVE_PROVISIONED_SERVICES','+94773524308',1,NULL,NULL,NULL,NULL,'2016-09-14'),(20,'LIST_ACTIVE_PROVISIONED_SERVICES','+94773524308',1,NULL,NULL,NULL,NULL,'2016-09-14'),(21,'LIST_ACTIVE_PROVISIONED_SERVICES','+94773524308',1,NULL,NULL,NULL,NULL,'2016-09-14'),(32,'LIST_ACTIVE_PROVISIONED_SERVICES','+94773524308',1,NULL,NULL,NULL,NULL,'2016-09-14'),(33,'LIST_ACTIVE_PROVISIONED_SERVICES','+94773524308',1,NULL,NULL,NULL,NULL,'2016-09-14'),(34,'LIST_ACTIVE_PROVISIONED_SERVICES','+94773524308',1,NULL,NULL,NULL,NULL,'2016-09-14'),(35,'LIST_ACTIVE_PROVISIONED_SERVICES','+94773524308',1,NULL,NULL,NULL,NULL,'2016-09-14'),(36,'LIST_ACTIVE_PROVISIONED_SERVICES','+94773524308',1,NULL,NULL,NULL,NULL,'2016-09-14'),(37,'LIST_ACTIVE_PROVISIONED_SERVICES','+94773524308',1,NULL,NULL,NULL,NULL,'2016-09-14'),(38,'LIST_ACTIVE_PROVISIONED_SERVICES','+94773524308',1,NULL,NULL,NULL,NULL,'2016-09-14'),(39,'LIST_ACTIVE_PROVISIONED_SERVICES','+94773524308',1,NULL,NULL,NULL,NULL,'2016-09-14'),(40,'LIST_ACTIVE_PROVISIONED_SERVICES','+94773524308',1,NULL,NULL,NULL,NULL,'2016-09-14'),(41,'LIST_ACTIVE_PROVISIONED_SERVICES','+94773524308',1,NULL,NULL,NULL,NULL,'2016-09-14'),(42,'LIST_ACTIVE_PROVISIONED_SERVICES','+94773524308',1,NULL,NULL,NULL,NULL,'2016-09-14'),(43,'LIST_ACTIVE_PROVISIONED_SERVICES','+94773524308',1,NULL,NULL,NULL,NULL,'2016-09-14'),(44,'LIST_ACTIVE_PROVISIONED_SERVICES','+94773524308',1,NULL,NULL,NULL,NULL,'2016-09-14'),(46,'LIST_ACTIVE_PROVISIONED_SERVICES','+94773524308',1,NULL,NULL,NULL,NULL,'2016-09-14'),(47,'LIST_ACTIVE_PROVISIONED_SERVICES','+94773524308',1,NULL,NULL,NULL,NULL,'2016-09-14'),(49,'LIST_ACTIVE_PROVISIONED_SERVICES','+94773524308',1,NULL,NULL,NULL,NULL,'2016-09-14'),(50,'LIST_ACTIVE_PROVISIONED_SERVICES','+94773524308',1,NULL,NULL,NULL,NULL,'2016-09-14'),(51,'LIST_ACTIVE_PROVISIONED_SERVICES','+94773524308',1,NULL,NULL,NULL,NULL,'2016-09-14'),(53,'LIST_ACTIVE_PROVISIONED_SERVICES','+94773524308',1,NULL,NULL,NULL,NULL,'2016-09-14'),(54,'LIST_ACTIVE_PROVISIONED_SERVICES','+94773524308',1,NULL,NULL,NULL,NULL,'2016-09-14'),(55,'LIST_ACTIVE_PROVISIONED_SERVICES','+94773524308',1,NULL,NULL,NULL,NULL,'2016-09-14'),(56,'LIST_ACTIVE_PROVISIONED_SERVICES','+94773524308',1,NULL,NULL,NULL,NULL,'2016-09-14'),(57,'LIST_ACTIVE_PROVISIONED_SERVICES','+94773524308',1,NULL,NULL,NULL,NULL,'2016-09-14'),(58,'LIST_ACTIVE_PROVISIONED_SERVICES','+94773524308',1,NULL,NULL,NULL,NULL,'2016-09-14'),(59,'LIST_ACTIVE_PROVISIONED_SERVICES','+94773524308',1,NULL,NULL,NULL,NULL,'2016-09-14'),(60,'LIST_ACTIVE_PROVISIONED_SERVICES','+94773524308',1,NULL,NULL,NULL,NULL,'2016-09-14'),(61,'LIST_ACTIVE_PROVISIONED_SERVICES','+94773524308',1,NULL,NULL,NULL,NULL,'2016-09-14'),(62,'LIST_ACTIVE_PROVISIONED_SERVICES','+94773524308',1,NULL,NULL,NULL,NULL,'2016-09-14'),(63,'LIST_ACTIVE_PROVISIONED_SERVICES','+94773524308',1,NULL,NULL,NULL,NULL,'2016-09-14'),(64,'LIST_ACTIVE_PROVISIONED_SERVICES','+94773524308',1,NULL,NULL,NULL,NULL,'2016-09-14'),(65,'LIST_ACTIVE_PROVISIONED_SERVICES','+94773524308',1,NULL,NULL,NULL,NULL,'2016-09-14'),(66,'LIST_ACTIVE_PROVISIONED_SERVICES','+94773524308',1,NULL,NULL,NULL,NULL,'2016-09-14'),(67,'LIST_ACTIVE_PROVISIONED_SERVICES','+94773524308',1,NULL,NULL,NULL,NULL,'2016-09-14'),(68,'LIST_ACTIVE_PROVISIONED_SERVICES','+94773524308',1,NULL,NULL,NULL,NULL,'2016-09-14'),(69,'LIST_ACTIVE_PROVISIONED_SERVICES','+94773524308',1,NULL,NULL,NULL,NULL,'2016-09-14'),(70,'LIST_ACTIVE_PROVISIONED_SERVICES','+94773524308',1,NULL,NULL,NULL,NULL,'2016-09-14'),(71,'LIST_ACTIVE_PROVISIONED_SERVICES','+94773524308',1,NULL,NULL,NULL,NULL,'2016-09-14'),(72,'LIST_ACTIVE_PROVISIONED_SERVICES','+94773524308',1,NULL,NULL,NULL,NULL,'2016-09-14'),(73,'LIST_ACTIVE_PROVISIONED_SERVICES','+94773524308',1,NULL,NULL,NULL,NULL,'2016-09-14'),(74,'LIST_ACTIVE_PROVISIONED_SERVICES','+94773524308',1,NULL,NULL,NULL,NULL,'2016-09-14'),(75,'LIST_ACTIVE_PROVISIONED_SERVICES','+94773524308',1,NULL,NULL,NULL,NULL,'2016-09-14'),(76,'LIST_ACTIVE_PROVISIONED_SERVICES','+94773524308',1,NULL,NULL,NULL,NULL,'2016-09-14'),(77,'LIST_ACTIVE_PROVISIONED_SERVICES','+94773524308',1,NULL,NULL,NULL,NULL,'2016-09-14'),(78,'LIST_ACTIVE_PROVISIONED_SERVICES','+94773524308',1,NULL,NULL,NULL,NULL,'2016-09-14'),(79,'LIST_ACTIVE_PROVISIONED_SERVICES','+94773524308',1,NULL,NULL,NULL,NULL,'2016-09-14'),(80,'LIST_ACTIVE_PROVISIONED_SERVICES','+94773524308',1,NULL,NULL,NULL,NULL,'2016-09-14'),(81,'LIST_ACTIVE_PROVISIONED_SERVICES','+94773524308',1,NULL,NULL,NULL,NULL,'2016-09-14'),(82,'LIST_ACTIVE_PROVISIONED_SERVICES','+94773524308',1,NULL,NULL,NULL,NULL,'2016-09-14'),(83,'LIST_ACTIVE_PROVISIONED_SERVICES','+94773524308',1,NULL,NULL,NULL,NULL,'2016-09-14'),(84,'LIST_ACTIVE_PROVISIONED_SERVICES','+94773524308',1,NULL,NULL,NULL,NULL,'2016-09-14'),(85,'LIST_ACTIVE_PROVISIONED_SERVICES','+94773524308',1,NULL,NULL,NULL,NULL,'2016-09-14'),(86,'LIST_ACTIVE_PROVISIONED_SERVICES','+94773524308',1,NULL,NULL,NULL,NULL,'2016-09-14'),(87,'LIST_ACTIVE_PROVISIONED_SERVICES','+94773524308',1,NULL,NULL,NULL,NULL,'2016-09-14'),(88,'LIST_ACTIVE_PROVISIONED_SERVICES','+94773524308',1,NULL,NULL,NULL,NULL,'2016-09-14'),(89,'LIST_ACTIVE_PROVISIONED_SERVICES','+94773524308',1,NULL,NULL,NULL,NULL,'2016-09-15'),(90,'LIST_ACTIVE_PROVISIONED_SERVICES','+94773524308',1,NULL,NULL,NULL,NULL,'2016-09-15');
-/*!40000 ALTER TABLE `sbxprrequesstlog` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `sbxprservices`
---
-
-DROP TABLE IF EXISTS `sbxprservices`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `sbxprservices` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `code` varchar(45) NOT NULL,
-  `name` varchar(45) NOT NULL,
-  `type` varchar(45) DEFAULT NULL,
-  `description` varchar(150) DEFAULT NULL,
-  `charge` float DEFAULT NULL,
-  `tag` varchar(45) DEFAULT NULL,
-  `value` varchar(45) DEFAULT NULL,
-	`userid` int(11) NOT NULL,
-CONSTRAINT `pksbxprservices` PRIMARY KEY (`id`),
-CONSTRAINT `fk01sbxprservice` FOREIGN KEY (`userid`) REFERENCES `user` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `sbxprservices`
---
-
-LOCK TABLES `sbxprservices` WRITE;
-/*!40000 ALTER TABLE `sbxprservices` DISABLE KEYS */;
-INSERT INTO `sbxprservices` VALUES (1,'SRV0001','ROAM5G','ROAMING','ServiceDescription',10,'count','25',0),(2,'SRV0002','FBDATA','DATA','ServiceDescription',0,'limit','1000',0),(3,'SRV0003','VoIP','VOICE',NULL,NULL,NULL,NULL,0);
-/*!40000 ALTER TABLE `sbxprservices` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `sbxresponsemessage`
---
-
-DROP TABLE IF EXISTS `sbxresponsemessage`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `sbxresponsemessage` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `categoryid` int(11) DEFAULT NULL,
-  `message` text,
-  `apitypeid` int(11) DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  KEY `fk01sbxresponsemessage` (`categoryid`),
-  KEY `fk02sbxresponsemessage` (`apitypeid`),
-  CONSTRAINT `fk01sbxresponsemessage` FOREIGN KEY (`categoryid`) REFERENCES `sbxresponsemessagecategory` (`id`),
-  CONSTRAINT `fk02sbxresponsemessage` FOREIGN KEY (`apitypeid`) REFERENCES `sbxapitypes` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `sbxresponsemessage`
---
-
-LOCK TABLES `sbxresponsemessage` WRITE;
-/*!40000 ALTER TABLE `sbxresponsemessage` DISABLE KEYS */;
-INSERT INTO `sbxresponsemessage` VALUES (1,1,'Service Not Available',7);
-/*!40000 ALTER TABLE `sbxresponsemessage` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `sbxresponsemessagecategory`
---
-
-DROP TABLE IF EXISTS `sbxresponsemessagecategory`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `sbxresponsemessagecategory` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `category` varchar(50) DEFAULT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `sbxresponsemessagecategory`
---
-
-LOCK TABLES `sbxresponsemessagecategory` WRITE;
-/*!40000 ALTER TABLE `sbxresponsemessagecategory` DISABLE KEYS */;
-INSERT INTO `sbxresponsemessagecategory` VALUES (1,'General Error'),(2,'Service Error'),(3,'Policy Error');
-/*!40000 ALTER TABLE `sbxresponsemessagecategory` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `sbxstatus`
---
-
-DROP TABLE IF EXISTS `sbxstatus`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `sbxstatus` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `status` varchar(45) DEFAULT NULL,
-  `code` varchar(40) DEFAULT NULL,
-  `description` varchar(100) DEFAULT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=latin1;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `sbxstatus`
---
-
-LOCK TABLES `sbxstatus` WRITE;
-/*!40000 ALTER TABLE `sbxstatus` DISABLE KEYS */;
-INSERT INTO `sbxstatus` VALUES (1,'Pending','PRV_PROVISION_PENDING','Provision Transaction is pendign with subsystem'),(2,'Failed','PRV_PROVISION_FAILED','Provisioning failed due to subsystem error'),(3,'Success','PRV_PROVISION_SUCCESS','Successfully provisioned'),(4,'NotActive','PRV_DELETE_NOT_ACTIVE','Service not provisioned for user'),(5,'AlreadyActive','PRV_PROVISION_ALREADY_ACTIVE','Service already active'),(6,'Pending','PRV_DELETE_PENDING','Delete Transaction is pending with subsystem'),(7,'Failed','PRV_DELETE_FAILED','Removal failed due to subsystem error'),(8,'Success','PRV_DELETE_SUCCESS','Successfully removed');
-/*!40000 ALTER TABLE `sbxstatus` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
 -- Table structure for table `send_sms_to_application`
 --
 
@@ -901,73 +638,11 @@ CREATE TABLE `ussd_transactions` (
   KEY `FK_f6e3wvsa0gqeft93d6r8uo4qx` (`user_id`),
   CONSTRAINT `FK_f6e3wvsa0gqeft93d6r8uo4qx` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-/*!40101 SET character_set_client = @saved_cs_client */;
+
 
 --
--- Dumping data for table `ussd_transactions`
+-- Table structure for table `sbtprmsisdnservicessmap`
 --
-
-LOCK TABLES `ussd_transactions` WRITE;
-/*!40000 ALTER TABLE `ussd_transactions` DISABLE KEYS */;
-/*!40000 ALTER TABLE `ussd_transactions` ENABLE KEYS */;
-UNLOCK TABLES;
-/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
-
-/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
-/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
-/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
-/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
-
--- Dump completed on 2016-09-15 11:06:21
-
---
--- Table structure for table `sbxservicetype`
---
-
-DROP TABLE IF EXISTS `sbxservicetype`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `sbxservicetype` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `servicename` varchar(100) NOT NULL,
-  `api-id` int(11) NOT NULL,
-CONSTRAINT `pksbxservicetype` PRIMARY KEY (`id`),
-CONSTRAINT `fk01sbxservicetype` FOREIGN KEY (`api-id`) REFERENCES `sbxapitypes` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `sbxservicetype`
---
-
-LOCK TABLES `sbxservicetype` WRITE;
-/*!40000 ALTER TABLE `sbxservicetype` DISABLE KEYS */;
-INSERT INTO `sbxservicetype` VALUES (1,'getApplicableServices',7),(2,'removeProvisionedServices',7),(3,'addService',7);
-/*!40000 ALTER TABLE `sbxservicetype` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `sbtmessagelog`
---
-
-DROP TABLE IF EXISTS `sbtmessagelog`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `sbtmessagelog` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `request` text,
-  `servicenameid` int(11) NOT NULL,
-  `userid` int(11) NOT NULL,
-  `reference` varchar(100),
-  `value` varchar(100),
-  `message-timestamp` timestamp DEFAULT CURRENT_TIMESTAMP,
-CONSTRAINT `pksbtmessagelog` PRIMARY KEY (`id`),
-CONSTRAINT `fk01sbtmessagelog` FOREIGN KEY (`servicenameid`) REFERENCES `sbxservicetype` (`id`),
-CONSTRAINT `fk02sbtmessagelog` FOREIGN KEY (`userid`) REFERENCES `user` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 CREATE TABLE IF NOT EXISTS  `sbtprmsisdnservicessmap` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -975,7 +650,10 @@ CREATE TABLE IF NOT EXISTS  `sbtprmsisdnservicessmap` (
   `servicesid` int(11) NOT NULL,
   PRIMARY KEY (`id`)
 );
-INSERT INTO `sbtprmsisdnservicessmap` VALUES (1,1,1),(2,1,2),(3,2,1),(4,1,3),(5,2,2),(6,2,3);
+
+--
+-- Table structure for table `sbtprprovisionedservices`
+--
 
 CREATE TABLE IF NOT EXISTS `sbtprprovisionedservices` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -988,7 +666,10 @@ CREATE TABLE IF NOT EXISTS `sbtprprovisionedservices` (
   `createddate` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
 );
-INSERT INTO `sbtprprovisionedservices` VALUES (3,3,'',NULL,NULL,NULL,1,'2016-09-13 17:53:07'),(5,5,NULL,NULL,NULL,'',3,'2016-09-13 17:54:58'),(6,6,NULL,NULL,NULL,NULL,2,'2016-09-13 17:54:58'),(7,1,'1345:0001:12','REF12345','https://gateway1a.mife.sla-mobile.com.my:8243/provisioning/v1/ProvisionNotification/69','some-data-useful-to-the-requester',6,'2016-10-10 10:40:11'),(8,2,'1345','REF12345','http://application.example.com/notifications/DeliveryInfoNotification','some-data-useful-to-the-requester',3,'2016-09-30 05:36:21');
+
+--
+-- Table structure for table `sbtprspexpectmessage`
+--
 
 CREATE TABLE IF NOT EXISTS  `sbtprspexpectmessage` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -998,14 +679,26 @@ CREATE TABLE IF NOT EXISTS  `sbtprspexpectmessage` (
   `servicesid` int(11) NOT NULL,
   PRIMARY KEY (`id`)
 );
-INSERT INTO `sbtprspexpectmessage` VALUES (1,1,1,'PROVISION',1);
+
+--
+-- Table structure for table `sbxapitypes`
+--
 
 CREATE TABLE IF NOT EXISTS `sbxapitypes` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `apiname` varchar(50) NOT NULL,
   PRIMARY KEY (`id`)
 );
-INSERT INTO `sbxapitypes` VALUES (1,'LOCATION'),(2,'SMS'),(3,'USSD'),(4,'PAYMENT'),(5,'CREDIT'),(6,'WALLET'),(7,'PROVISION'),(8,'CUSTOMER');
+
+--
+-- Dumping data for table `sbxapitypes`
+--
+
+INSERT INTO `sbxapitypes` VALUES (1,'LOCATION'),(2,'SMS'),(3,'USSD'),(4,'PAYMENT'),(5,'CREDIT'),(6,'WALLET'),(7,'PROVISION');
+
+--
+-- Table structure for table `sbxprrequesstlog`
+--
 
 CREATE TABLE IF NOT EXISTS `sbxprrequesstlog` (
   `provision_request_log_id` int(11) NOT NULL AUTO_INCREMENT,
@@ -1019,7 +712,10 @@ CREATE TABLE IF NOT EXISTS `sbxprrequesstlog` (
   `timestamp` date DEFAULT NULL,
   PRIMARY KEY (`provision_request_log_id`)
 );
-INSERT INTO `sbxprrequesstlog` VALUES (181,'LIST_ACTIVE_PROVISIONED_SERVICES','tel:+94773524308',1,NULL,NULL,NULL,NULL,'2016-09-24'),(182,'DELETE_PROVISION_SERVICE','tel:+94773524308',1,'1345','REF12345','http://application.example.com/notifications/DeliveryInfoNotification','some-data-useful-to-the-requester','2016-09-24'),(183,'DELETE_PROVISION_SERVICE','tel:+94773524308',1,'1345','REF12345','http://application.example.com/notifications/DeliveryInfoNotification','some-data-useful-to-the-requester','2016-09-24');
+
+--
+-- Table structure for table `sbxprservices`
+--
 
 CREATE TABLE IF NOT EXISTS `sbxprservices` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -1033,7 +729,10 @@ CREATE TABLE IF NOT EXISTS `sbxprservices` (
   `userid` int(11) NOT NULL,
   PRIMARY KEY (`id`)
 );
-INSERT INTO `sbxprservices` VALUES (1,'SRV0001','ROAM5G','ROAMING','ServiceDescription',10,'count','25',1),(2,'SRV0002','FBDATA','DATA','ServiceDescription',0,'limit','1000',1),(3,'SRV0003','VoIP','VOICE','Voice',20,NULL,NULL,1);
+
+--
+-- Table structure for table `sbxresponsemessage`
+--
 
 CREATE TABLE IF NOT EXISTS `sbxresponsemessage` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -1043,12 +742,31 @@ CREATE TABLE IF NOT EXISTS `sbxresponsemessage` (
   `apitypeid` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`)
 );
-INSERT INTO `sbxresponsemessage` VALUES (1,1,'SVC0009','Service Related Error',7);
+
+--
+-- Table structure for table `sbxresponsemessagecategory`
+--
 
 CREATE TABLE IF NOT EXISTS `sbxresponsemessagecategory` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `category` varchar(50) DEFAULT NULL,
   PRIMARY KEY (`id`)
 );
-INSERT INTO `sbxresponsemessagecategory` VALUES (1,'SERVICEEXCEPTION'),(2,'POLICYEXCEPTION'),(3,'General Error');
 
+--
+-- Table structure for table `sbxstatus`
+--
+
+CREATE TABLE IF NOT EXISTS `sbxstatus` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `status` varchar(45) DEFAULT NULL,
+  `code` varchar(40) DEFAULT NULL,
+  `description` varchar(100) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+);
+
+--
+-- Dumping data for table `sbxstatus`
+--
+
+INSERT INTO `sbxstatus` VALUES (1,'Pending','PRV_PROVISION_PENDING','Provision Transaction is pendign with subsystem'),(2,'Failed','PRV_PROVISION_FAILED','Provisioning failed due to subsystem error'),(3,'Success','PRV_PROVISION_SUCCESS','Successfully provisioned'),(4,'NotActive','PRV_DELETE_NOT_ACTIVE','Service not provisioned for user'),(5,'AlreadyActive','PRV_PROVISION_ALREADY_ACTIVE','Service already active'),(6,'Pending','PRV_DELETE_PENDING','Delete Transaction is pending with subsystem'),(7,'Failed','PRV_DELETE_FAILED','Removal failed due to subsystem error'),(8,'Success','PRV_DELETE_SUCCESS','Successfully removed');
