@@ -111,7 +111,6 @@ public class CommonUtil {
 
 	public static String[] getStringToArray(String schema) {
 		String[] schemaList = schema.split(",", -1);
-		String[] splitSchemaList = null;
 		
 		return schemaList;
 	}
