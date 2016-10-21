@@ -79,7 +79,7 @@ public class ServiceInfoListProvisionedDTO {
 	 * 
 	 * @return the timestamp
 	 */
-	public String getTimeStamp() {
+	public String getTimestamp() {
 		return timestamp;
 	}
 
@@ -88,7 +88,7 @@ public class ServiceInfoListProvisionedDTO {
 	 * @param timestamp
 	 *            to set
 	 */
-	public void setTimeStamp(Date timestamp) {
+	public void setTimestamp(Date timestamp) {
 		
 		this.timestamp = new SimpleDateFormat(ProvisioningUtil.DEFAULT_DATE_FORMATE).format(timestamp);;
 	}

@@ -127,7 +127,7 @@ public class ListActiveProvisionedServices extends AbstractRequestHandler<ListPr
 						ServiceInfoListProvisionedDTO serviceInfo = serviceList.addNewServiceInfo();
 						serviceInfo.setServiceCode(service.getServiceCode());
 						serviceInfo.setDescription(service.getDescription());
-						serviceInfo.setTimeStamp(service.getCreatedDate());
+						serviceInfo.setTimestamp(service.getCreatedDate());
 						serviceInfo.setServiceInfo(metaServiceInfoList);
 					}
 				} else {
