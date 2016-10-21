@@ -4,15 +4,6 @@ USE sandbox;
 -- Table structure for table `charge_amount_request`
 --
 
-CREATE TABLE IF NOT EXISTS `sbxstatus` (
-  `id` int(11) NOT NULL AUTO_INCREMENT ,
-  `status` varchar(45) DEFAULT NULL,
-  `code` varchar(40) DEFAULT NULL,
-  `description` varchar(100) DEFAULT NULL,
-  PRIMARY KEY (`id`)
-);
-INSERT INTO sbxstatus(status,code,description) VALUES ('Pending','PRV_PROVISION_PENDING','Provision Transaction is pendign with subsystem'),('Failed','PRV_PROVISION_FAILED','Provisioning failed due to subsystem error'),('Success','PRV_PROVISION_SUCCESS','Successfully provisioned'),('NotActive','PRV_DELETE_NOT_ACTIVE','Service not provisioned for user'),('AlreadyActive','PRV_PROVISION_ALREADY_ACTIVE','Service already active'),('Pending','PRV_DELETE_PENDING','Delete Transaction is pending with subsystem'),('Failed','PRV_DELETE_FAILED','Removal failed due to subsystem error'),('Success','PRV_DELETE_SUCCESS','Successfully removed');
-
 
 DROP TABLE IF EXISTS `charge_amount_request`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
