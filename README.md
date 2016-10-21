@@ -372,3 +372,17 @@ Unless 400 Bad Request will be returned
 In order to retrieve Swagger definitions of this microservice, go to http://&lt;host&gt;:&lt;port&gt;/swagger
 
 For example [http://localhost:8181/swagger](http://localhost:8181/swagger)  in default configuration.
+
+
+###1.7 Current Limitations for Service Provider
+
+- Provision adn Un-Provision Service calls are designed to give "Pending" as default Transaction Status. So "Success" status cannot be generated for both Provision and Un-Provision.
+
+- Un-Provision cannot be invoked from SP side due to the above mentioned limitation (In order to invoke Un-Provision, the Database should have successfully provisioned data.)
+
+- Notification Trigger is not implemented so that Service Provider's notify url will not be notified at all for sandbox.
+
+- Provisioning API and it's configurations can only be catered through sandbox microservice (Swagger), other existing non-api specific thing such as Manage Numbers should be done in existing flow from Sandbox UI.
+
+
+
