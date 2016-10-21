@@ -376,7 +376,7 @@ For example [http://localhost:8181/swagger](http://localhost:8181/swagger)  in d
 
 ###1.7 Current Limitations for Service Provider
 
-- Provision adn Un-Provision Service calls are designed to give "Pending" as default Transaction Status. So "Success" status cannot be generated for both Provision and Un-Provision.
+- Provision and Un-Provision Service calls are designed to give "Pending" as default Transaction Status. So "Success" status cannot be generated for both Provision and Un-Provision.
 
 - Un-Provision cannot be invoked from SP side due to the above mentioned limitation (In order to invoke Un-Provision, the Database should have successfully provisioned data.)
 
