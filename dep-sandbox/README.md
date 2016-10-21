@@ -13,7 +13,8 @@ four operations.
 - Remove Service - Remove a provisioned service from a MSISDN
 - List service by customer - List the provisioned services for a given MSISDN
 
-Provisioning Related User Configurations can also be done through rest service calls. Configuration for provisioning API has three operations.
+In order to get expected responses for the above listed Provisioning API, user need to got through some pre-configurations.
+Provisioning Related User Configurations can be done through Swagger UI with rest service calls. Configuration for provisioning API supports three operations.
 
 - Add new services for user
 - Enable user defined services for given MSISDN
@@ -35,7 +36,10 @@ No need to install Maven if you install by downloading and extracting the binary
 
 MySQL Server’s time zone setting should be set to UTC time zone as ‘+00:00'.
 
-The database script relevant for this particular service can be found at /dbscripts folder with the name of Provisioning.sql
+The database script relevant for this particular service can be found at /dbscripts folder 
+
+- If the sandbox DataBase is going to be set-up for the first time then refer the sql script with the name of dep-sandbox.sql
+- If the existing sandbox Database is going to be used then refer Provisioning.sql
 
 DB tables can be created through running the script under the selection of particular sandbox Database.
 
@@ -81,7 +85,8 @@ The name of the standard stream to which events will be written.
 Can be stdout or stderr. 
 
 -- currentLogFilename: 
-The filename where current events are logged.
+The folder location where current events are logged can be mentioned under this tag
+for eg :- log/sandbox_service.log 
 
 -- archive: 
 Whether or not to archive old events in separate files.
@@ -285,7 +290,13 @@ Response :
   }
 }
 ```
+
+####1.6.2 API features with postman testing
+
 - Add new services for user
+
+This service gives the flexibity for the user to define whatever the service that should be added in order to get use of it.
+The defined services through this will be used as Provisioning API service call data. 
 
 Request :
 
@@ -295,19 +306,15 @@ Request URI-
 ```
 http://<host>:<port>/provisioning/{v1}/config/service
 ```
+Response :
+200 OK will be returned if the service is successfully added for the user.
+Unless 400 Bad Request will be returned
 
-- Enable user defined services for given MSISDN
 
-Request :
-
-Type - POST
-
-Request URI-
-```
-http://<host>:<port>/provisioning/{v1}/config/{msisdn}/service/{serviceCode}
-```
 
 - Retrieve user defined services
+
+This service is used to list out all the user defined services used for the provisioning api.
 
 Request :
 
@@ -339,7 +346,25 @@ Response :
 }
 ```
 
-####1.6.2 Swagger Annotations
+- Enable user defined services for given MSISDN
+
+This service is used to make the user defined services to be enabled for the MSISDN. So the list applicable service call will use the data inserted through this config call while retriving.
+User can get user defined services from above mentioned get call and use this service to add the retrieved service to enable it for given MSISDN
+
+Request :
+
+Type - POST
+
+Request URI-
+```
+http://<host>:<port>/provisioning/{v1}/config/{msisdn}/service/{serviceCode}
+```
+Response :
+200 OK will be returned if the service is successfully added for the user.
+Unless 400 Bad Request will be returned
+
+
+####1.6.3 Swagger Annotations
 
 [Swagger](http://swagger.io/getting-started/) is a standard, language-agnostic interface to REST APIs which allows both humans and computers to discover and understand the capabilities of the service without access to source code, documentation, or through network traffic inspection.
 
