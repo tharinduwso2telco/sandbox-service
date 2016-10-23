@@ -19,8 +19,12 @@ public interface GenaricDAO {
     public boolean isWhiteListedSenderAddress(int userId, String shortCode);
 
     public APITypes getAPIType(String api);
+    
+    public List<APITypes> getAllAPIType();
 
     public APIServiceCalls getServiceCall(int apiId, String service);
+    
+    public List<APIServiceCalls> getAllServiceCall(int apiId);
     
     public Attributes getAttribute(String attribute);
     
@@ -29,6 +33,8 @@ public interface GenaricDAO {
     public void saveAttributeValue(AttributeValues valueObj);
 
     public AttributeValues getAttributeValue(AttributeDistribution distributionObj);
+
+    public List<AttributeDistribution> getAttributeDistributionByServiceCall(int apiId, int serviceId);
 
 
 }
