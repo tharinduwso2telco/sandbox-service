@@ -15,37 +15,20 @@
  ******************************************************************************/
 package com.wso2telco.services.dep.sandbox.dao.model.custom;
 
-import java.util.ArrayList;
-import java.util.List;
+public class APITypeRequestWrapperDTO extends RequestDTO {
 
-public class UserServiceList {
-    
-    private List<ServiceInfo> serviceInfo = new ArrayList<>();
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 7571746738963604311L;
+    private String apiType;
 
+    public String getApiType() {
+	return apiType;
+    }
 
-	/**
-	 * @return the serviceInfo
-	 */
-	public List<ServiceInfo> getServiceInfoList() {
-		return serviceInfo;
-	}
-
-	/**
-	 * @param serviceInfo
-	 *            to set
-	 */
-	public void setServiceInfoList(List<ServiceInfo> serviceInfo) {
-		this.serviceInfo = serviceInfo;
-		
-	}
-	/**
-	 * 
-	 * @return the newly added serviceInfo
-	 */
-	public ServiceInfo addNewServiceInfo() {
-	    ServiceInfo serviceInfo = new ServiceInfo();
-		this.serviceInfo.add(serviceInfo);
-		return serviceInfo;
-	}
+    public void setApiType(String apiType) {
+	this.apiType = apiType;
+    }
 }
 

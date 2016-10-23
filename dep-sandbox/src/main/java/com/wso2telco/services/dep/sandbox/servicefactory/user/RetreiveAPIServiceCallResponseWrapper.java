@@ -15,21 +15,42 @@
  ******************************************************************************/
 package com.wso2telco.services.dep.sandbox.servicefactory.user;
 
+import java.util.List;
+
 import com.wso2telco.services.dep.sandbox.servicefactory.AbstractReturnWrapperDTO;
 
-public class AttributeInsertionResponseWrapper extends AbstractReturnWrapperDTO {
+public class RetreiveAPIServiceCallResponseWrapper extends
+	AbstractReturnWrapperDTO {
 
-    public String responseMessage;
+    private APIServices APIServicesList;
 
     @Override
     public Object getResponse() {
 	if (getRequestError() != null) {
 	    return getRequestError();
 	}
-	return responseMessage;
+	return getAPIServicesList();
     }
 
-    public void setResponseMessage(String message) {
-	this.responseMessage = message;
+    public void setAPIServicesList(APIServices APIServicesList) {
+	this.APIServicesList = APIServicesList;
+    }
+
+    public APIServices getAPIServicesList() {
+	return APIServicesList;
+    }
+
+    public static class APIServices {
+	
+	private List<String> APIServiceCallList;
+
+	public void setApiServiceCallTypes(List<String> APIServiceCallList) {
+	    this.APIServiceCallList = APIServiceCallList;
+	}
+
+	public List<String> getApiServiceCallTypes() {
+	    return APIServiceCallList;
+	}
+
     }
 }
