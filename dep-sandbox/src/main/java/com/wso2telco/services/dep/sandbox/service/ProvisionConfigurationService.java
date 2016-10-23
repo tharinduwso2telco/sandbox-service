@@ -58,7 +58,7 @@ public class ProvisionConfigurationService {
     @POST
     @Path("/{msisdn}/service/{serviceCode}")
     @ApiOperation(value = "addServiceForMsisdn", notes = "add user defined services for msisdn", response = Response.class)
-    @ApiImplicitParams({ @ApiImplicitParam(name = "sandbox", value = "user name", required = true, dataType = "string", paramType = "header") })
+    @ApiImplicitParams({ @ApiImplicitParam(name = "sandbox", value = "username", required = true, dataType = "string", paramType = "header") })
     public Response addServiceMsisdn(
 	    @ApiParam(value = "msisdn", required = true) @PathParam("msisdn") String msisdn,
 	    @ApiParam(value = "serviceCode", required = true) @PathParam("serviceCode") String serviceCode,
@@ -93,7 +93,7 @@ public class ProvisionConfigurationService {
     @POST
     @Path("/service")
     @ApiOperation(value = "addServiceForUser", notes = "Define New Services For User", response = Response.class)
-    @ApiImplicitParams({ @ApiImplicitParam(name = "sandbox", value = "user name", required = true, dataType = "string", paramType = "header") })
+    @ApiImplicitParams({ @ApiImplicitParam(name = "sandbox", value = "username", required = true, dataType = "string", paramType = "header") })
     public Response addService(@Context HttpServletRequest httpRequest,
 	    ServiceDetail serviceDetail) {
 	LOG.debug("/service invorked :" + serviceDetail.getServiceCode()
@@ -135,7 +135,7 @@ public class ProvisionConfigurationService {
     @GET
     @Path("/service")
     @ApiOperation(value = "getUserServices", notes = "Retrieves User defined Services", response = Response.class)
-    @ApiImplicitParams({ @ApiImplicitParam(name = "sandbox", value = "Authorization token", required = true, dataType = "string", paramType = "header") })
+    @ApiImplicitParams({ @ApiImplicitParam(name = "sandbox", value = "username", required = true, dataType = "string", paramType = "header") })
     public Response getApplicableServices(@Context HttpServletRequest httpRequest) {
 	LOG.debug("/service invoked :" );
 	RetrieveServiceUserRequestDTO requestDTO = new RetrieveServiceUserRequestDTO();
