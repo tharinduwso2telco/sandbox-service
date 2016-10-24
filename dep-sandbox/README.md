@@ -1,19 +1,6 @@
 #Sandbox Services
 
-##1. Provision Service
-
-###1.1 Introduction
-
-Provision service will provide the Service providers a list of provision services available for the given MSISDN and 
-based on the services available service providers can provision and unprovision the services. Basically provision API supports
-four operations.
-
-- Query Applicable - List the applicable services for a given MSISDN
-- Provision Service - Provision a service on to the specified MSISDN
-- Remove Service - Remove a provisioned service from a MSISDN
-- List service by customer - List the provisioned services for a given MSISDN
-
-###1.2 System Requirements
+##1 System Requirements
 
 - Java SE Development Kit 1.8 
 - Apache Maven 3.0.x 
@@ -23,29 +10,33 @@ To build the product from the source distribution both JDK and Apache Maven are 
 
 No need to install Maven if you install by downloading and extracting the binary distribution (as recommended for most users) instead of building from the source code.
 
-###1.3 Install
+##2 Install
 
-####1.3.1 Database Setup
+###2.1 Database Setup
 
 MySQL Server’s time zone setting should be set to UTC time zone as ‘+00:00'.
 
-The database script relevant for this service can be found at /dbscripts folder.
+The database script relevant for this particular service can be found at /dbscripts folder 
 
-DB can be created through running the script.
+- If the sandbox DataBase is going to be set-up for the first time then refer the sql script with the name of dep-sandbox.sql
+- If the existing sandbox Database is going to be used then refer the sql script with the name of service
 
-####1.3.2 Configuration Setup
+
+DB tables can be created through running the script under the selection of particular sandbox Database.
+
+###2.2 Configuration Setup
 
 Folder path:	/deploy/config.yml
 
-#####1.3.2.1 Database Configuration
+####2.2.1 Database Configuration
 
 user: database username
 
 password: database password
 
-url: url for database driver, by default jdbc:mysql://localhost/token_service
+url: url for database driver, for example jdbc:mysql://localhost/sandbox?useSSL=false
 
-#####1.3.2.2 Log Configuration
+####2.2.2 Log Configuration
 
 - Level:
 
@@ -75,7 +66,8 @@ The name of the standard stream to which events will be written.
 Can be stdout or stderr. 
 
 -- currentLogFilename: 
-The filename where current events are logged.
+The folder location where current events are logged can be mentioned under this tag
+for eg :- log/sandbox_service.log 
 
 -- archive: 
 Whether or not to archive old events in separate files.
@@ -91,7 +83,7 @@ Must be between 1 and 50.
 Logback pattern with which events will be formatted.
 
 
-###1.4 Build the Service
+##3 Build the Service
 
 Run the following Maven command. This will create the fat jar dep-sanbox-1.0.2-SNAPSHOT.jar in the target directory.
 
@@ -100,7 +92,7 @@ mvn clean install
 ```
 This fat jar is a jar file that contains sanbox microservice as well as all its dependencies.
 
-###1.5 Run the Service
+##4 Run the Service
 
 In order to get the service up and running, execute the following command.
 
@@ -108,9 +100,38 @@ In order to get the service up and running, execute the following command.
 java -jar target/dep-sanbox-1.0.2-SNAPSHOT.jar server deploy/config.yml
 ```
 
-###1.6 API Features
+##5 Swagger Annotations
 
-####1.6.1 API features with postman testing
+[Swagger](http://swagger.io/getting-started/) is a standard, language-agnostic interface to REST APIs which allows both humans and computers to discover and understand the capabilities of the service without access to source code, documentation, or through network traffic inspection.
+
+
+In order to retrieve Swagger definitions of this microservice, go to http://&lt;host&gt;:&lt;port&gt;/swagger
+
+For example [http://localhost:8181/swagger](http://localhost:8181/swagger)  in default configuration.
+
+
+##6 API Features
+
+###6.1. Provision Service
+
+####6.1.1 Introduction
+
+Provision service will provide the Service providers a list of provision services available for the given MSISDN and 
+based on the services available service providers can provision and unprovision the services. Basically provision API supports
+four operations.
+
+- Query Applicable - List the applicable services for a given MSISDN
+- Provision Service - Provision a service on to the specified MSISDN
+- Remove Service - Remove a provisioned service from a MSISDN
+- List service by customer - List the provisioned services for a given MSISDN
+
+Provisioning Related User Configurations can also be done through rest service calls. Configuration for provisioning API has three operations.
+
+- Add new services for user
+- Enable user defined services for given MSISDN
+- Retrieve user defined services
+
+####6.1.2 API features with postman testing
 
 - Query Applicable- List the applicable services for a given MSISDN
 
@@ -143,7 +164,7 @@ Response :
       }
     ],
     "currencyCode": currencyCode,
-    "resourceURL": "http://<host>:<port>/provision/v1/{msisdn}/list/applicable"
+    "resourceURL": "http://<host>:<port>/provisioning/v1/{msisdn}/list/applicable"
   }
 }
 ```
@@ -156,7 +177,7 @@ Type - POST
 
 Resource URI :
 ```
-http://<host>:<port>/provision/v1/{msisdn}
+http://<host>:<port>/provisioning/v1/{msisdn}
 ```
 Request Body :
 ```
@@ -185,7 +206,7 @@ Response :
     "callbackReference": {
       "notifyURL": "notifyURL",
       "callbackData": "callbackData",
-      "resourceURL": "http://<host>:<port>/provision/v1/{msisdn}"
+      "resourceURL": "http://<host>:<port>/provisioning/v1/{msisdn}"
     },
     "transactionStatus": "AlreadyActive"
   }
@@ -200,7 +221,7 @@ Type - POST
 
 Request URI:
 ```
-http://<host>:<port>/provision/v1/{msisdn}/remove
+http://<host>:<port>/provisioning/v1/{msisdn}/remove
 ```
 Request Body :
 ```
@@ -229,7 +250,7 @@ Response :
     "callbackReference": {
       "notifyURL": "notifyURL",
       "callbackData": "callbackData",
-      "resourceURL": "http://<host>:<port>/provision/v1/{msisdn}/remove"
+      "resourceURL": "http://<host>:<port>/provisioning/v1/{msisdn}/remove"
     },
     "transactionStatus": "Pending"
   }
@@ -244,7 +265,7 @@ Type - GET
 
 Request URI-
 ```
-http://<host>:<port>/provision/v1/{msisdn}/list/active
+http://<host>:<port>/provisioning/v1/{msisdn}/list/active
 ```
 
 Response :
@@ -275,17 +296,200 @@ Response :
         "timeStamp": "timestamp"
       }
     ],
-    "resourceURL": "http://<host>:<port>/provision/v1/{msisdn}/list/active"
+    "resourceURL": "http://<host>:<port>/provisioning/v1/{msisdn}/list/active"
+  }
+}
+```
+####6.1.3 API features with postman testing
+
+- Add new services for user
+
+This service gives the flexibity for the user to define whatever the service that should be added in order to get use of it.
+The defined services through this will be used as Provisioning API service call data. 
+
+Request :
+
+Type - POST
+
+Request URI-
+```
+http://<host>:<port>/provisioning/{v1}/config/service
+```
+Response :
+200 OK will be returned if the service is successfully added for the user.
+Unless 400 Bad Request will be returned
+
+
+
+- Retrieve user defined services
+
+This service is used to list out all the user defined services used for the provisioning api.
+
+Request :
+
+Type - GET
+
+Request URI-
+```
+http://<host>:<port>/provisioning/{v1}/config/service
+```
+
+Response :
+```
+
+{
+  "serviceInfoList": [
+    {
+      "serviceCode": "SRV0001",
+      "serviceType": "ROAMING",
+      "description": "ServiceDescription",
+      "serviceCharge": 10
+    },
+    {
+      "serviceCode": "SRV0002",
+      "serviceType": "DATA",
+      "description": "ServiceDescription",
+      "serviceCharge": 0
+    }
+  ]
+}
+```
+
+- Enable user defined services for given MSISDN
+
+This service is used to make the user defined services to be enabled for the MSISDN. So the list applicable service call will use the data inserted through this config call while retriving.
+User can get user defined services from above mentioned get call and use this service to add the retrieved service to enable it for given MSISDN
+
+Request :
+
+Type - POST
+
+Request URI-
+```
+http://<host>:<port>/provisioning/{v1}/config/{msisdn}/service/{serviceCode}
+```
+Response :
+200 OK will be returned if the service is successfully added for the user.
+Unless 400 Bad Request will be returned
+
+###6.1.4 Current Limitations for Service Provider
+
+- Provision and Un-Provision Service calls are designed to give "Pending" as default Transaction Status. So "Success" status cannot be generated for both Provision and Un-Provision.
+
+- Un-Provision cannot be invoked from SP side due to the above mentioned limitation (In order to invoke Un-Provision, the Database should have successfully provisioned data.)
+
+- Notification Trigger is not implemented so that Service Provider's notify url will not be notified at all for sandbox.
+
+- Provisioning API and it's configurations can only be catered through sandbox microservice (Swagger), other existing non-api specific thing such as Manage Numbers should be done in existing flow from Sandbox UI.
+
+###6.2 Customer Info Service
+
+####6.2.1 Introduction
+
+Customer Info service will provide the Service providers a list of customer info services available for the given MSISDN/IMSI. Basically Customer Info API supports
+2 operations.
+
+- Get Profile - Get a customer’s basic profile information 
+- Get Attributes- Get a customer’s basic profile information and registered schema
+
+####6.2.2 API features with postman testing
+
+- Get Profile- Get a customer’s basic profile information
+
+Request :
+
+Type - GET
+
+Request URI:
+```
+http://<host>:<port>/customer/v1/profile?msisdn={msisdn}&imsi={imsi}&mnc={mnc}&mcc={mcc}
+```
+
+Response :
+```
+{
+  "Customer": {
+        "msisdn": "123456789",
+        "imsi": "0987654321", 
+        "title": "Mr",
+        "firstName": "Bilbo",
+        "lastName": "Baggins"
+        "dob": "21/10/2006"
+        "identificationType": "PP"
+        "identificationNumber": "PP12345DC"
+        "accountType": "Postpaid"
+        "ownerType": "Paymaster"
+        "status": "Confirmed"
+        "address":{
+			"line1": "Bag End",
+			"line2": "",
+			"line3": "",
+			"city": "The Shire",
+			"country": "Middle Earth"
+		}
+        "additionalInfo	":[{
+			"tag": "creditLimit",
+			"value": "2500"
+	},{
+			"tag": "creditLimit",
+			"value": "2500"
+	}],
+
+       "resourceURL": "http://<host>:<port>/customer/v1/profile?msisdn={msisdn}&imsi={imsi}&mnc={mnc}&mcc={mcc}"
+  }
+}
+```
+
+- Get Attributes- Get a customer’s basic profile information and registered schema
+
+Request :
+
+Type - GET
+
+Request URI:
+```
+http://<host>:<port>/customer/v1/attribute?msisdn={msisdn}&imsi={imsi}&schema={schema1,schema2,schema3,schema4}&mnc={mnc}&mcc={mcc}
+```
+
+Response :
+```
+{
+  "Customer": {
+        "msisdn": "123456789",
+        "imsi": "0987654321",
+        "basic":{ 
+        	"title": "Mr",
+        	"firstName": "Bilbo",
+        	"lastName": "Baggins"
+        	"dob": "21/10/2006"
+        	"address":{
+			"line1": "Bag End",
+			"line2": "",
+			"line3": "",
+			"city": "The Shire",
+			"country": "Middle Earth"
+		}
+ 	}, 
+        "billing": {
+        	"creditLimit": 2500,
+        	"balance": 1000,
+        	"outStanding": 0,
+        	"currency": "LKR"
+ 	},
+        "identification": {
+        	"type": "Passport",
+        	"number": "N123456",
+        	"expiry": "2026/01/01"
+ 	},
+        "account": {
+        	"type": "Postpaid",
+        	"status": "Active"
+ 	},
+       "resourceURL": "http://<host>:<port>/customer/v1/attribute?msisdn={msisdn}&imsi={imsi}&schema={schema1,schema2,schema3,schema4}&mnc={mnc}&mcc={mcc}"
   }
 }
 ```
 
 
-####1.6.2 Swagger Annotations
-
-[Swagger](http://swagger.io/getting-started/) is a standard, language-agnostic interface to REST APIs which allows both humans and computers to discover and understand the capabilities of the service without access to source code, documentation, or through network traffic inspection.
 
 
-In order to retrieve Swagger definitions of this microservice, go to http://&lt;host&gt;:&lt;port&gt;/swagger?path=&lt;service_base_path&gt;.
-
-For example [http://localhost:8181/swagger?path=tokenservice](http://localhost:8181/swagger?path=tokenservice)  in default configuration.
