@@ -262,11 +262,7 @@ public class AttributeInsertionServiceHandler extends
 		    new JSONObject(value);
 		    return true;
 		} catch (JSONException ex) {
-		    responseWrapper.setRequestError(constructRequestError(
-			    SERVICEEXCEPTION, ServiceError.INVALID_INPUT_VALUE,
-			    "Attribute value for " + name
-				    + " should be a JSON Object"));
-		    if (AttributeValueJsonObject.ADDITIONALINFO.toString()
+		    if (AttributeValueJsonObject.ADDITIONAL_INFO.toString()
 			    .equals(name)) {
 			try {
 			    new JSONArray(value);
@@ -278,9 +274,15 @@ public class AttributeInsertionServiceHandler extends
 					    ServiceError.INVALID_INPUT_VALUE,
 					    "Attribute value for "
 						    + name
-						    + " should be a JSON Object/Array"));
+						    + " should be a JSON Array"));
 			}
+		    }else{
+			responseWrapper.setRequestError(constructRequestError(
+				    SERVICEEXCEPTION, ServiceError.INVALID_INPUT_VALUE,
+				    "Attribute value for " + name
+					    + " should be a JSON Object"));
 		    }
+		    
 		    throw new Exception();
 		}
 	    }
