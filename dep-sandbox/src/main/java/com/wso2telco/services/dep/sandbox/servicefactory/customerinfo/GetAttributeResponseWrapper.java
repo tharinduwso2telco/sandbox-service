@@ -15,32 +15,31 @@
  ******************************************************************************/
 package com.wso2telco.services.dep.sandbox.servicefactory.customerinfo;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import com.wso2telco.services.dep.sandbox.dao.model.custom.ListCustomerInfoAttributesDTO;
+import com.wso2telco.services.dep.sandbox.dao.model.custom.ListCustomerInfoDTO;
+import com.wso2telco.services.dep.sandbox.servicefactory.AbstractReturnWrapperDTO;
 
-import com.wso2telco.services.dep.sandbox.dao.model.custom.RequestDTO;
-import com.wso2telco.services.dep.sandbox.service.CustomerInfoService;
-import com.wso2telco.services.dep.sandbox.servicefactory.RequestHandleable;
+public class GetAttributeResponseWrapper extends AbstractReturnWrapperDTO {
 
-public class CustomerInfoServiceFactory {
+	private ListCustomerInfoAttributesDTO customerInfo;
 
-    private static Log LOG = LogFactory.getLog(CustomerInfoServiceFactory.class);
+	private ListCustomerInfoDTO Customer;
 
-    public static RequestHandleable getInstance(final RequestDTO requestDTO) {
-	final String GET_PROFILE = "profile";
-    final String GET_ATTRIBUTE = "attribute";
-
-
-	if (requestDTO.getRequestPath().contains(GET_PROFILE)) {
-	    LOG.debug("LOADING GET PROFILE SERVICE");
-	    return new GetProfileRequestHandler();
+	@Override
+	public Object getResponse() {
+		if (getRequestError() != null) {
+			return getRequestError();
+		}
+		return Customer;
 	}
 
-	if (requestDTO.getRequestPath().contains(GET_ATTRIBUTE)) {
-	    LOG.debug("LOADING GET ATTIRIBUTE SERVICE");
-	    return new GetAttributeRequestHandler();
+	public ListCustomerInfoDTO getCustomer() {
+		return Customer;
 	}
-	
-	return null;
-    }
+
+	public void setCustomer(ListCustomerInfoDTO Customer) {
+		this.Customer = Customer;
+	}
+
+
 }
