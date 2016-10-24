@@ -89,7 +89,7 @@ class HibernateCommonDAO extends AbstractDAO implements GenaricDAO {
     }
 
     @Override
-    public APITypes getAPIType(String api) {
+    public APITypes getAPIType(String api) throws Exception {
 	Session sess = getSession();
 	APITypes apis = null;
 	try {
@@ -99,15 +99,15 @@ class HibernateCommonDAO extends AbstractDAO implements GenaricDAO {
 
 	} catch (Exception e) {
 	    LOG.error("getAPITypes", e);
-	} finally {
-	    sess.close();
+	    throw e;
 	}
 
 	return apis;
     }
 
     @Override
-    public APIServiceCalls getServiceCall(int apiId, String service) {
+    public APIServiceCalls getServiceCall(int apiId, String service)
+	    throws Exception {
 	Session sess = getSession();
 	APIServiceCalls services = null;
 	try {
@@ -119,15 +119,14 @@ class HibernateCommonDAO extends AbstractDAO implements GenaricDAO {
 
 	} catch (Exception e) {
 	    LOG.error("getServiceCall", e);
-	} finally {
-	    sess.close();
+	    throw e;
 	}
 
 	return services;
     }
 
     @Override
-    public Attributes getAttribute(String attribute) {
+    public Attributes getAttribute(String attribute) throws Exception {
 	Session sess = getSession();
 	Attributes attributeObj = null;
 	try {
@@ -138,8 +137,7 @@ class HibernateCommonDAO extends AbstractDAO implements GenaricDAO {
 
 	} catch (Exception e) {
 	    LOG.error("getAttribute", e);
-	} finally {
-	    sess.close();
+	    throw e;
 	}
 
 	return attributeObj;
@@ -147,7 +145,7 @@ class HibernateCommonDAO extends AbstractDAO implements GenaricDAO {
 
     @Override
     public AttributeDistribution getAttributeDistribution(int apiServiceId,
-	    int attributeId) {
+	    int attributeId) throws Exception {
 	Session sess = getSession();
 	AttributeDistribution distributionObj = null;
 	try {
@@ -159,26 +157,26 @@ class HibernateCommonDAO extends AbstractDAO implements GenaricDAO {
 
 	} catch (Exception e) {
 	    LOG.error("getServiceCall", e);
-	} finally {
-	    sess.close();
+	    throw e;
 	}
 
 	return distributionObj;
     }
 
     @Override
-    public void saveAttributeValue(AttributeValues valueObj) {
+    public void saveAttributeValue(AttributeValues valueObj) throws Exception {
 
 	try {
 	    saveOrUpdate(valueObj);
 	} catch (Exception e) {
 	    LOG.error("saveAttributeValue", e);
+	    throw e;
 	}
     }
 
     @Override
     public AttributeValues getAttributeValue(
-	    AttributeDistribution distributionObj) {
+	    AttributeDistribution distributionObj) throws Exception {
 	Session sess = getSession();
 	AttributeValues value = null;
 	try {
@@ -188,16 +186,14 @@ class HibernateCommonDAO extends AbstractDAO implements GenaricDAO {
 		    .setParameter(0, distributionObj).uniqueResult();
 	} catch (Exception e) {
 	    LOG.error("getAttributeValue", e);
-	} finally {
-	    sess.close();
+	    throw e;
 	}
-
 	return value;
     }
 
     @Override
     public List<AttributeDistribution> getAttributeDistributionByServiceCall(
-	    int api, int serviceName) {
+	    int api, int serviceName) throws Exception {
 	Session sess = getSession();
 	List<AttributeDistribution> distributionList = new ArrayList<AttributeDistribution>();
 
@@ -219,12 +215,13 @@ class HibernateCommonDAO extends AbstractDAO implements GenaricDAO {
 		    .setParameter("serviceName", serviceName).getResultList();
 	} catch (Exception e) {
 	    LOG.error("getAttributeDistributionByServiceCall", e);
+	    throw e;
 	}
 	return distributionList;
     }
 
     @Override
-    public List<APITypes> getAllAPIType() {
+    public List<APITypes> getAllAPIType() throws Exception {
 	Session sess = getSession();
 	List<APITypes> apiList = new ArrayList<APITypes>();
 
@@ -233,20 +230,24 @@ class HibernateCommonDAO extends AbstractDAO implements GenaricDAO {
 		    .getResultList();
 	} catch (Exception e) {
 	    LOG.error("getAllAPIType", e);
+	    throw e;
 	}
 	return apiList;
     }
 
     @Override
-    public List<APIServiceCalls> getAllServiceCall(int apiId) {
+    public List<APIServiceCalls> getAllServiceCall(int apiId) throws Exception {
 	Session sess = getSession();
 	List<APIServiceCalls> apiServiceList = new ArrayList<APIServiceCalls>();
 
 	try {
-	    apiServiceList = (List<APIServiceCalls>) sess.createQuery("from APIServiceCalls where apiType.id = :apiId").setParameter("apiId", apiId)
-		    .getResultList();
+	    apiServiceList = (List<APIServiceCalls>) sess
+		    .createQuery(
+			    "from APIServiceCalls where apiType.id = :apiId")
+		    .setParameter("apiId", apiId).getResultList();
 	} catch (Exception e) {
 	    LOG.error("getAllServiceCall", e);
+	    throw e;
 	}
 	return apiServiceList;
     }

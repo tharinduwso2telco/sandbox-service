@@ -18,23 +18,23 @@ public interface GenaricDAO {
 
     public boolean isWhiteListedSenderAddress(int userId, String shortCode);
 
-    public APITypes getAPIType(String api);
+    public APITypes getAPIType(String api)throws Exception;
     
-    public List<APITypes> getAllAPIType();
+    public List<APITypes> getAllAPIType()throws Exception;
 
-    public APIServiceCalls getServiceCall(int apiId, String service);
+    public APIServiceCalls getServiceCall(int apiId, String service)throws Exception;
     
-    public List<APIServiceCalls> getAllServiceCall(int apiId);
+    public List<APIServiceCalls> getAllServiceCall(int apiId)throws Exception;
     
-    public Attributes getAttribute(String attribute);
+    public Attributes getAttribute(String attribute)throws Exception;
     
-    public AttributeDistribution getAttributeDistribution(int apiServiceId, int attributeId);
+    public AttributeDistribution getAttributeDistribution(int apiServiceId, int attributeId)throws Exception;
     
-    public void saveAttributeValue(AttributeValues valueObj);
+    public void saveAttributeValue(AttributeValues valueObj)throws Exception;
 
-    public AttributeValues getAttributeValue(AttributeDistribution distributionObj);
+    public AttributeValues getAttributeValue(AttributeDistribution distributionObj)throws Exception;
 
-    public List<AttributeDistribution> getAttributeDistributionByServiceCall(int apiId, int serviceId);
+    public List<AttributeDistribution> getAttributeDistributionByServiceCall(int apiId, int serviceId) throws Exception;
 
 
 }
