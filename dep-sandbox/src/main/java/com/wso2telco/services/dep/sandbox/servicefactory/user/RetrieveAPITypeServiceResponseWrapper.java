@@ -13,39 +13,44 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package com.wso2telco.services.dep.sandbox.dao.model.custom;
+package com.wso2telco.services.dep.sandbox.servicefactory.user;
 
-import java.util.ArrayList;
 import java.util.List;
 
-public class UserServiceList {
-    
-    private List<ServiceInfo> serviceInfo = new ArrayList<>();
+import com.wso2telco.services.dep.sandbox.servicefactory.AbstractReturnWrapperDTO;
 
+public class RetrieveAPITypeServiceResponseWrapper extends
+	AbstractReturnWrapperDTO {
 
-	/**
-	 * @return the serviceInfo
-	 */
-	public List<ServiceInfo> getServiceInfoList() {
-		return serviceInfo;
+    private APIType APIList;
+
+    @Override
+    public Object getResponse() {
+	if (getRequestError() != null) {
+	    return getRequestError();
+	}
+	return getAPIList();
+    }
+
+    public void setAPIList(APIType APIList) {
+	this.APIList = APIList;
+    }
+
+    public APIType getAPIList() {
+	return APIList;
+    }
+
+    public static class APIType {
+
+	private List<String> APITypesList;
+
+	public void setApiTypes(List<String> APITypesList) {
+	    this.APITypesList = APITypesList;
 	}
 
-	/**
-	 * @param serviceInfo
-	 *            to set
-	 */
-	public void setServiceInfoList(List<ServiceInfo> serviceInfo) {
-		this.serviceInfo = serviceInfo;
-		
+	public List<String> getApiTypes() {
+	    return APITypesList;
 	}
-	/**
-	 * 
-	 * @return the newly added serviceInfo
-	 */
-	public ServiceInfo addNewServiceInfo() {
-	    ServiceInfo serviceInfo = new ServiceInfo();
-		this.serviceInfo.add(serviceInfo);
-		return serviceInfo;
-	}
+
+    }
 }
-

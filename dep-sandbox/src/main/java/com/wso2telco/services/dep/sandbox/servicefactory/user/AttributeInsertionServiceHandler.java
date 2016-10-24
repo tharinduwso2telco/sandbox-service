@@ -1,5 +1,22 @@
+/*******************************************************************************
+ * Copyright  (c) 2015-2016, WSO2.Telco Inc. (http://www.wso2telco.com) All Rights Reserved.
+ * 
+ * WSO2.Telco Inc. licenses this file to you under  the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ ******************************************************************************/
 package com.wso2telco.services.dep.sandbox.servicefactory.user;
 
+import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.ws.rs.core.Response;
@@ -9,12 +26,10 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.google.common.base.Objects;
 import com.wso2telco.core.dbutils.exception.ServiceError;
 import com.wso2telco.dep.oneapivalidation.exceptions.CustomException;
 import com.wso2telco.dep.oneapivalidation.util.Validation;
 import com.wso2telco.dep.oneapivalidation.util.ValidationRule;
-import com.wso2telco.services.dep.sandbox.dao.CustomerInfoDAO;
 import com.wso2telco.services.dep.sandbox.dao.DaoFactory;
 import com.wso2telco.services.dep.sandbox.dao.model.custom.AttributeRequestBean;
 import com.wso2telco.services.dep.sandbox.dao.model.custom.AttributeRequestBean.AttributeProperties;
@@ -27,26 +42,37 @@ import com.wso2telco.services.dep.sandbox.dao.model.domain.Attributes;
 import com.wso2telco.services.dep.sandbox.servicefactory.AbstractRequestHandler;
 import com.wso2telco.services.dep.sandbox.servicefactory.AddressIgnorerable;
 import com.wso2telco.services.dep.sandbox.servicefactory.Returnable;
-import com.wso2telco.services.dep.sandbox.servicefactory.provisioning.ProvisionRequestedServiceHandler;
 import com.wso2telco.services.dep.sandbox.util.APIAttributeToObjectMaps;
+import com.wso2telco.services.dep.sandbox.util.AttributeEnum;
+import com.wso2telco.services.dep.sandbox.util.AttributeMetaInfo.AccountField;
+import com.wso2telco.services.dep.sandbox.util.AttributeMetaInfo.AdditionalInfoField;
+import com.wso2telco.services.dep.sandbox.util.AttributeMetaInfo.AddressField;
+import com.wso2telco.services.dep.sandbox.util.AttributeMetaInfo.BasicField;
+import com.wso2telco.services.dep.sandbox.util.AttributeMetaInfo.BillingField;
+import com.wso2telco.services.dep.sandbox.util.AttributeMetaInfo.IdentificationField;
 import com.wso2telco.services.dep.sandbox.util.AttributeValueJsonObject;
 import com.wso2telco.services.dep.sandbox.util.CommonUtil;
 
-public class AttributeServiceHandler extends
+;
+
+public class AttributeInsertionServiceHandler extends
 	AbstractRequestHandler<AttributeRequestWrapperDTO> implements
 	AddressIgnorerable {
 
     private AttributeRequestWrapperDTO requestWrapperDTO;
-    private AttributeResponseWrapper responseWrapper;
+    private static AttributeInsertionResponseWrapper responseWrapper;
     private APITypes apiObj;
     private APIServiceCalls serviceObj;
     private Attributes attributeObj;
     private AttributeDistribution distributionObj;
     private AttributeRequestBean attributeBean;
     private AttributeProperties attributeProperty;
+    private final String MANDATORY = "Mandatory";
+    private final String OPTIONAL = "Optional";
+    List<ValidationRule> validationRule = new ArrayList<ValidationRule>();
 
     {
-	LOG = LogFactory.getLog(ProvisionRequestedServiceHandler.class);
+	LOG = LogFactory.getLog(AttributeInsertionServiceHandler.class);
 	dao = DaoFactory.getGenaricDAO();
     }
 
@@ -67,25 +93,28 @@ public class AttributeServiceHandler extends
 	String service = CommonUtil.getNullOrTrimmedValue(wrapperDTO
 		.getServiceType());
 	try {
+
 	    checkIfBeanExists(wrapperDTO);
 	    checkIfAttributePropertyExists();
+
 	    String name = CommonUtil.getNullOrTrimmedValue(attributeProperty
 		    .getName());
 	    String value = CommonUtil.getNullOrTrimmedValue(attributeProperty
-		    .getValue());
-	    ValidationRule[] validationRules = defineValidationRules(api,
+		    .getValue().toString());
+
+	    ValidationRule[] validationRules = defineCommonValidationRules(api,
 		    service, name, value);
 	    Validation.checkRequestParams(validationRules);
-	    
-	    checkAttributeValueObjectMapsName(name.toLowerCase(),value);
-	    
+
 	    checkApiExist(api);
 	    checkApiServiceExist(service);
 	    checkAttributeExist(name);
 	    checkAttributeDistributionExist();
+	    checkAttributeValueObjectMapsName(name.toLowerCase(), value);
+	    checkFieldsForJsonAttribute(name.toUpperCase(), value);
 
 	} catch (CustomException ex) {
-	    LOG.error("###USER### Error in Validation of Mandotary/Optional params : "
+	    LOG.error("###USER### Error in Validation of Mandotary/Optional values : "
 		    + ex);
 
 	    responseWrapper.setRequestError(constructRequestError(
@@ -101,42 +130,169 @@ public class AttributeServiceHandler extends
 	return true;
     }
 
-    private void checkAttributeValueObjectMapsName(String name, String value)
+    private void checkFieldsForJsonAttribute(String lowerCase, String value)
+	    throws Exception {
+
+	if (AttributeValueJsonObject.valueOf(lowerCase) != null) {
+	    String methodName = lowerCase.substring(0, 1)
+		    + lowerCase.substring(1).toLowerCase();
+	    Method method = AttributeInsertionServiceHandler.class
+		    .getDeclaredMethod("validate" + methodName, String.class);
+	    method.invoke(this, value);
+	    checkValidationForParams();
+	}
+
+    }
+
+    private void validateAdditionalInfo(String attributeValue) throws Exception {
+
+	try {
+
+	    JSONObject valueObj = new JSONObject(attributeValue);
+	    checkMandatoryfields(AdditionalInfoField.values(),
+		    attributeValue.toString());
+
+	} catch (JSONException ex) {
+	    LOG.error("###USER### Provided Additional Info Attribute Value is not a json object");
+	    JSONArray jsonValueArray = new JSONArray(attributeValue);
+
+	    for (int jsonObjectIndex = 0; jsonObjectIndex < jsonValueArray
+		    .length(); jsonObjectIndex++) {
+		JSONObject jsonValueObject = jsonValueArray
+			.getJSONObject(jsonObjectIndex);
+		checkMandatoryfields(AdditionalInfoField.values(),
+			jsonValueObject.toString());
+	    }
+	}
+    }
+
+    private void validateAccount(String value) throws Exception {
+
+	checkMandatoryfields(AccountField.values(), value);
+
+    }
+
+    private void validateBasic(String value) throws Exception {
+
+	checkMandatoryfields(BasicField.values(), value);
+
+    }
+
+    private void validateBilling(String value) throws Exception {
+
+	checkMandatoryfields(BillingField.values(), value);
+
+    }
+
+    private void validateIdentification(String value) throws Exception {
+
+	checkMandatoryfields(IdentificationField.values(), value);
+
+    }
+
+    private void validateAddress(String value) throws Exception {
+
+	checkMandatoryfields(AddressField.values(), value);
+
+    }
+
+    private void checkFieldNameExist(JSONObject valueObj, String field)
+	    throws Exception {
+	if (!valueObj.has(field)) {
+	    responseWrapper.setRequestError(constructRequestError(
+		    SERVICEEXCEPTION, ServiceError.INVALID_INPUT_VALUE,
+		    "Attribute value should have mandatory field " + field));
+	    LOG.error("###USER### Attribute value should have mandatory field "
+		    + field);
+
+	    throw new Exception();
+	}
+
+    }
+
+    private List<ValidationRule> checkMandatoryfields(AttributeEnum[] class1,
+	    String value) throws Exception {
+
+	JSONObject valueObj = new JSONObject(value);
+
+	for (AttributeEnum attribute : class1) {
+	    if (attribute.getFieldType().equals(MANDATORY)) {
+		checkFieldNameExist(valueObj, attribute.toString());
+		String fieldValue = CommonUtil.getNullOrTrimmedValue(valueObj
+			.getString(attribute.toString()));
+		validationRule.add(new ValidationRule(
+			ValidationRule.VALIDATION_TYPE_MANDATORY, attribute
+				.toString(), fieldValue));
+
+	    } else if (attribute.getFieldType().equals(OPTIONAL)) {
+		if (valueObj.has(BasicField.address.toString()) && attribute.toString().equals(BasicField.address.toString())) {
+		    validateAddress(valueObj.getJSONObject(attribute.toString()).toString());
+		} else {
+		    String fieldValue = CommonUtil
+			    .getNullOrTrimmedValue(valueObj.optString(attribute
+				    .toString()));
+		    validationRule.add(new ValidationRule(
+			    ValidationRule.VALIDATION_TYPE_OPTIONAL, attribute
+				    .toString(), fieldValue));
+		}
+
+	    }
+
+	}
+	return validationRule;
+    }
+
+    private void checkValidationForParams() throws Exception {
+
+	ValidationRule[] validationRules = new ValidationRule[validationRule
+		.size()];
+	validationRules = validationRule.toArray(validationRules);
+
+	Validation.checkRequestParams(validationRules);
+
+    }
+
+    private boolean checkAttributeValueObjectMapsName(String name, String value)
 	    throws Exception {
 
 	for (AttributeValueJsonObject attribute : AttributeValueJsonObject
 		.values()) {
-	    if (attribute.name().equals(name)) {
+	    if (attribute.toString().equals(name)) {
 		try {
 		    new JSONObject(value);
+		    return true;
 		} catch (JSONException ex) {
-		    responseWrapper.setRequestError(constructRequestError(
-			    SERVICEEXCEPTION, ServiceError.INVALID_INPUT_VALUE,
-			    "Attribute value for" + name
-				    + "should be a JSON Object"));
-		    if (name.toLowerCase() == AttributeValueJsonObject.ADDITIONALINFO
-			    .toString()) {
+		    if (AttributeValueJsonObject.ADDITIONAL_INFO.toString()
+			    .equals(name)) {
 			try {
 			    new JSONArray(value);
+			    return true;
 			} catch (JSONException exc) {
 			    responseWrapper
 				    .setRequestError(constructRequestError(
 					    SERVICEEXCEPTION,
 					    ServiceError.INVALID_INPUT_VALUE,
-					    "Attribute value for"
+					    "Attribute value for "
 						    + name
-						    + "should be a JSON Object/Array"));
+						    + " should be a JSON Array"));
 			}
+		    }else{
+			responseWrapper.setRequestError(constructRequestError(
+				    SERVICEEXCEPTION, ServiceError.INVALID_INPUT_VALUE,
+				    "Attribute value for " + name
+					    + " should be a JSON Object"));
 		    }
+		    
 		    throw new Exception();
 		}
 	    }
 	}
+	return true;
 
     }
 
-    private ValidationRule[] defineValidationRules(String api, String service,
-	    String name, String value) {
+    private ValidationRule[] defineCommonValidationRules(String api,
+	    String service, String name, String value) {
 
 	ValidationRule[] validationRules = {
 		new ValidationRule(ValidationRule.VALIDATION_TYPE_MANDATORY,
@@ -178,9 +334,9 @@ public class AttributeServiceHandler extends
 	    responseWrapper.setHttpStatus(Response.Status.BAD_REQUEST);
 	    return responseWrapper;
 	}
-	
+
 	try {
-	    
+
 	    AttributeValues valueObj = new AttributeValues();
 	    valueObj = dao.getAttributeValue(distributionObj);
 	    if (valueObj != null) {
@@ -193,6 +349,7 @@ public class AttributeServiceHandler extends
 		valueObj.setValue(attributeProperty.getValue());
 	    }
 	    dao.saveAttributeValue(valueObj);
+	    responseWrapper.setResponseMessage("Success");
 	    responseWrapper.setHttpStatus(Response.Status.CREATED);
 
 	} catch (Exception ex) {
@@ -210,7 +367,8 @@ public class AttributeServiceHandler extends
 	try {
 	    toObj = APIAttributeToObjectMaps.valueOf(apiEnum).getTableName();
 	} catch (Exception ex) {
-	    LOG.error("###USER### Error in finding  which Table the attribute should go for this API ");
+	    LOG.error("###USER### Error in finding  which Table (ToObject) the attribute should go for this API "
+		    + api.getAPIName());
 	    throw new Exception();
 	}
 	return toObj;
@@ -223,8 +381,12 @@ public class AttributeServiceHandler extends
 	if (distributionObj == null) {
 	    responseWrapper.setRequestError(constructRequestError(
 		    SERVICEEXCEPTION, ServiceError.INVALID_INPUT_VALUE,
-		    "Given Attribute name is invalid for Service Call"));
-	    LOG.error("###USER### Error in Validation of Given Attribute name Service Call");
+		    "Given Attribute name " + attributeObj.getAttributeName()
+			    + " is invalid for " + serviceObj.getServiceName()
+			    + " Service Call"));
+	    LOG.error("###USER### Given Attribute name "
+		    + attributeObj.getAttributeName() + " is invalid for "
+		    + serviceObj.getServiceName() + " Service Call");
 	    throw new Exception();
 	}
     }
@@ -234,8 +396,9 @@ public class AttributeServiceHandler extends
 	if (attributeObj == null) {
 	    responseWrapper.setRequestError(constructRequestError(
 		    SERVICEEXCEPTION, ServiceError.INVALID_INPUT_VALUE,
-		    "Given Attribute is invalid" + attribute));
-	    LOG.error("###USER### Error in Validation of Given Attribute is invalid");
+		    "Given Attribute " + attribute + " is invalid"));
+	    LOG.error("###USER### Error in Validation of Given Attribute "
+		    + attribute + " is invalid");
 	    throw new Exception();
 	}
     }
@@ -245,9 +408,11 @@ public class AttributeServiceHandler extends
 	if (serviceObj == null) {
 	    responseWrapper.setRequestError(constructRequestError(
 		    SERVICEEXCEPTION, ServiceError.INVALID_INPUT_VALUE,
-		    "Service " + service + " is Invalid for given API"));
+		    "Service " + service + " is Invalid for given API "
+			    + apiObj.getAPIName()));
 	    LOG.error("###USER### Error in Validation due to Service "
-		    + service + " is Invalid for given API");
+		    + service + " is Invalid for given API "
+		    + apiObj.getAPIName());
 
 	    throw new Exception();
 	}
@@ -258,8 +423,9 @@ public class AttributeServiceHandler extends
 	if (apiObj == null) {
 	    responseWrapper.setRequestError(constructRequestError(
 		    SERVICEEXCEPTION, ServiceError.INVALID_INPUT_VALUE,
-		    "Given API is invalid" + api));
-	    LOG.error("###USER### Error in Validation of Given API is invalid");
+		    "Given API " + api + " is invalid"));
+	    LOG.error("###USER### Error in Validation of Given API " + api
+		    + " is invalid");
 	    throw new Exception();
 	}
     }
@@ -268,6 +434,7 @@ public class AttributeServiceHandler extends
     protected void init(AttributeRequestWrapperDTO extendedRequestDTO)
 	    throws Exception {
 	requestWrapperDTO = extendedRequestDTO;
-	responseWrapper = new AttributeResponseWrapper();
+	responseWrapper = new AttributeInsertionResponseWrapper();
     }
+
 }

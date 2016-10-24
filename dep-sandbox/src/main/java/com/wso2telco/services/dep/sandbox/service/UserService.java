@@ -18,6 +18,7 @@ package com.wso2telco.services.dep.sandbox.service;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -34,12 +35,11 @@ import com.wordnik.swagger.annotations.ApiImplicitParam;
 import com.wordnik.swagger.annotations.ApiImplicitParams;
 import com.wordnik.swagger.annotations.ApiOperation;
 import com.wordnik.swagger.annotations.ApiParam;
-import com.wso2telco.services.dep.sandbox.dao.UserDAO;
+import com.wso2telco.services.dep.sandbox.dao.model.custom.APIServiceCallRequestWrapperDTO;
+import com.wso2telco.services.dep.sandbox.dao.model.custom.APITypeRequestWrapperDTO;
 import com.wso2telco.services.dep.sandbox.dao.model.custom.AttributeRequestBean;
 import com.wso2telco.services.dep.sandbox.dao.model.custom.AttributeRequestWrapperDTO;
-import com.wso2telco.services.dep.sandbox.dao.model.custom.QueryProvisioningServicesRequestWrapper;
 import com.wso2telco.services.dep.sandbox.dao.model.custom.RegisterUserServiceRequestWrapperDTO;
-import com.wso2telco.services.dep.sandbox.dao.model.domain.User;
 import com.wso2telco.services.dep.sandbox.exception.SandboxException;
 import com.wso2telco.services.dep.sandbox.servicefactory.RequestBuilderFactory;
 import com.wso2telco.services.dep.sandbox.servicefactory.RequestHandleable;
@@ -49,73 +49,201 @@ import com.wso2telco.services.dep.sandbox.util.RequestType;
 @Path("/user")
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
-@Api(value = "/user", description = "Rest Service for user Configurations in sandbox")
+@Api(value = "/user", description = "Rest Service for User Configurations in sandbox")
 public class UserService {
 
     Log LOG = LogFactory.getLog(UserService.class);
 
     @POST
     @Path("/{userName}/register")
-    @ApiOperation(value = "registerUser", notes = "register New User", response = Response.class)
-    @ApiImplicitParams({
-	    @ApiImplicitParam(name = "sandbox", value = "Authorization token", 
-	                     required = true, dataType = "string", paramType = "header")
-	})
-    public Response registerUser(@PathParam("userName") String userName, @Context HttpServletRequest httpRequest) {
+    @ApiOperation(value = "registerUser", notes = "Register New User", response = Response.class)
+    public Response registerUser(@PathParam("userName") String userName,
+	    @Context HttpServletRequest httpRequest) {
 	RegisterUserServiceRequestWrapperDTO requestDTO = new RegisterUserServiceRequestWrapperDTO();
 	requestDTO.setUserName(userName);
 	requestDTO.setRequestType(RequestType.USER);
 	requestDTO.setHttpRequest(httpRequest);
-	RequestHandleable handler = RequestBuilderFactory.getInstance(requestDTO);
+	RequestHandleable handler = RequestBuilderFactory
+		.getInstance(requestDTO);
 	Returnable returnable = null;
 
 	try {
 	    returnable = handler.execute(requestDTO);
-	    Response response = Response.status(returnable.getHttpStatus()).entity(returnable.getResponse()).build();
+	    Response response = Response.status(returnable.getHttpStatus())
+		    .entity(returnable.getResponse()).build();
 	    LOG.debug("REGISTER USER SERVICE RESPONSE : " + response);
 	    return response;
 	} catch (SandboxException ex) {
-	    LOG.error("###REGISTER_USER### Error encountered in UserService : ", ex);
-	    return Response.status(Response.Status.BAD_REQUEST)
-		    .entity(ex.getErrorType().getCode() + " " + ex.getErrorType().getMessage()).build();
+	    LOG.error(
+		    "###USER### Error encountered in registerUser Service : ",
+		    ex);
+	    return Response
+		    .status(Response.Status.BAD_REQUEST)
+		    .entity(ex.getErrorType().getCode() + " "
+			    + ex.getErrorType().getMessage()).build();
 	} catch (Exception ex) {
-	    LOG.error("###REGISTER_USER### Error encountered in UserService : ", ex);
-	    return Response.status(Response.Status.BAD_REQUEST).entity(ex.getMessage()).build();
+	    LOG.error(
+		    "###USER### Error encountered in registerUser Service : ",
+		    ex);
+	    return Response.status(Response.Status.BAD_REQUEST)
+		    .entity(ex.getMessage()).build();
 	}
 
     }
-    
+
     @POST
     @Path("/{apiType}/{serviceType}/attribute")
-    @ApiOperation(value = "addAttribute", notes = "add new attributes for user", response = Response.class)
-    @ApiImplicitParams({
-	    @ApiImplicitParam(name = "sandbox", value = "Authorization token", 
-	                     required = true, dataType = "string", paramType = "header")
-	})
-    public Response addAttribute(@ApiParam(value = "apiType", required = true) @PathParam("apiType") String apiType,
+    @ApiOperation(value = "addAttribute", notes = "Add new Attributes for user", response = Response.class)
+    @ApiImplicitParams({ @ApiImplicitParam(name = "sandbox", value = "user name", required = true, dataType = "string", paramType = "header") })
+    public Response addAttribute(
+	    @ApiParam(value = "apiType", required = true) @PathParam("apiType") String apiType,
 	    @ApiParam(value = "serviceType", required = true) @PathParam("serviceType") String serviceType,
-	    @Context HttpServletRequest httpRequest, AttributeRequestBean request) {
+	    @Context HttpServletRequest httpRequest,
+	    @ApiParam(value = "Values: eg 'Saman' for firstname {\\\"line1\\\": \\\"14\\\",\\\"country\\\": \\\"SL\\\"} for address", required = true)  AttributeRequestBean request) {
 	AttributeRequestWrapperDTO requestDTO = new AttributeRequestWrapperDTO();
 	requestDTO.setApiType(apiType);
 	requestDTO.setServiceType(serviceType);
 	requestDTO.setRequestType(RequestType.USER);
 	requestDTO.setHttpRequest(httpRequest);
 	requestDTO.setAttributeBean(request);
-	RequestHandleable handler = RequestBuilderFactory.getInstance(requestDTO);
+	RequestHandleable handler = RequestBuilderFactory
+		.getInstance(requestDTO);
 	Returnable returnable = null;
 
 	try {
 	    returnable = handler.execute(requestDTO);
-	    Response response = Response.status(returnable.getHttpStatus()).entity(returnable.getResponse()).build();
+	    Response response = Response.status(returnable.getHttpStatus())
+		    .entity(returnable.getResponse()).build();
 	    LOG.debug("ADD ATTRIBUTE USER SERVICE RESPONSE : " + response);
 	    return response;
 	} catch (SandboxException ex) {
-	    LOG.error("###ADD_ATTRIBUTE### Error encountered in UserService : ", ex);
-	    return Response.status(Response.Status.BAD_REQUEST)
-		    .entity(ex.getErrorType().getCode() + " " + ex.getErrorType().getMessage()).build();
+	    LOG.error(
+		    "###USER### Error encountered in addAttribute Service : ",
+		    ex);
+	    return Response
+		    .status(Response.Status.BAD_REQUEST)
+		    .entity(ex.getErrorType().getCode() + " "
+			    + ex.getErrorType().getMessage()).build();
 	} catch (Exception ex) {
-	    LOG.error("###ADD_ATTRIBUTE### Error encountered in UserService : ", ex);
-	    return Response.status(Response.Status.BAD_REQUEST).entity(ex.getMessage()).build();
+	    LOG.error(
+		    "###USER### Error encountered in addAttribute Service : ",
+		    ex);
+	    return Response.status(Response.Status.BAD_REQUEST)
+		    .entity(ex.getMessage()).build();
+	}
+
+    }
+
+    @GET
+    @Path("/{apiType}/{serviceType}/attribute")
+    @ApiOperation(value = "getAttribute", notes = " Get User Defined Attributes ", response = Response.class)
+    @ApiImplicitParams({ @ApiImplicitParam(name = "sandbox", value = "user name", required = true, dataType = "string", paramType = "header") })
+    public Response getAttribute(
+	    @ApiParam(value = "apiType", required = true) @PathParam("apiType") String apiType,
+	    @ApiParam(value = "serviceType", required = true) @PathParam("serviceType") String serviceType,
+	    @Context HttpServletRequest httpRequest) {
+	AttributeRequestWrapperDTO requestDTO = new AttributeRequestWrapperDTO();
+	requestDTO.setApiType(apiType);
+	requestDTO.setServiceType(serviceType);
+	requestDTO.setRequestType(RequestType.USER);
+	requestDTO.setHttpRequest(httpRequest);
+	RequestHandleable handler = RequestBuilderFactory
+		.getInstance(requestDTO);
+	Returnable returnable = null;
+
+	try {
+	    returnable = handler.execute(requestDTO);
+	    Response response = Response.status(returnable.getHttpStatus())
+		    .entity(returnable.getResponse()).build();
+	    LOG.debug("GET ATTRIBUTE USER SERVICE RESPONSE : " + response);
+	    return response;
+	} catch (SandboxException ex) {
+	    LOG.error(
+		    "###USER### Error encountered in getAttribute Service : ",
+		    ex);
+	    return Response
+		    .status(Response.Status.BAD_REQUEST)
+		    .entity(ex.getErrorType().getCode() + " "
+			    + ex.getErrorType().getMessage()).build();
+	} catch (Exception ex) {
+	    LOG.error(
+		    "###USER### Error encountered in getAttribute Service : ",
+		    ex);
+	    return Response.status(Response.Status.BAD_REQUEST)
+		    .entity(ex.getMessage()).build();
+	}
+
+    }
+
+    @GET
+    @Path("/apiType")
+    @ApiOperation(value = "listApiTypes", notes = "List of Available API Types", response = Response.class)
+    @ApiImplicitParams({ @ApiImplicitParam(name = "sandbox", value = "username", required = true, dataType = "string", paramType = "header") })
+    public Response getApiTypes(@Context HttpServletRequest httpRequest) {
+	APITypeRequestWrapperDTO requestDTO = new APITypeRequestWrapperDTO();
+	requestDTO.setRequestType(RequestType.USER);
+	requestDTO.setHttpRequest(httpRequest);
+	RequestHandleable handler = RequestBuilderFactory
+		.getInstance(requestDTO);
+	Returnable returnable = null;
+
+	try {
+	    returnable = handler.execute(requestDTO);
+	    Response response = Response.status(returnable.getHttpStatus())
+		    .entity(returnable.getResponse()).build();
+	    LOG.debug("GET API TYPES SERVICE RESPONSE : " + response);
+	    return response;
+	} catch (SandboxException ex) {
+	    LOG.error("###USER### Error encountered in getApiTypes Service : ",
+		    ex);
+	    return Response
+		    .status(Response.Status.BAD_REQUEST)
+		    .entity(ex.getErrorType().getCode() + " "
+			    + ex.getErrorType().getMessage()).build();
+	} catch (Exception ex) {
+	    LOG.error("###USER### Error encountered in getApiTypes Service : ",
+		    ex);
+	    return Response.status(Response.Status.BAD_REQUEST)
+		    .entity(ex.getMessage()).build();
+	}
+
+    }
+
+    @GET
+    @Path("/{apiType}/serviceType")
+    @ApiOperation(value = "listApiServiceCallTypes", notes = "List of available API Service Call Types", response = Response.class)
+    @ApiImplicitParams({ @ApiImplicitParam(name = "sandbox", value = "username", required = true, dataType = "string", paramType = "header") })
+    public Response getApiServices(
+	    @ApiParam(value = "apiType", required = true) @PathParam("apiType") String apiType,
+	    @Context HttpServletRequest httpRequest) {
+	APIServiceCallRequestWrapperDTO requestDTO = new APIServiceCallRequestWrapperDTO();
+	requestDTO.setApiType(apiType);
+	requestDTO.setRequestType(RequestType.USER);
+	requestDTO.setHttpRequest(httpRequest);
+	RequestHandleable handler = RequestBuilderFactory
+		.getInstance(requestDTO);
+	Returnable returnable = null;
+
+	try {
+	    returnable = handler.execute(requestDTO);
+	    Response response = Response.status(returnable.getHttpStatus())
+		    .entity(returnable.getResponse()).build();
+	    LOG.debug("GET API SERVICE CALLS RESPONSE : " + response);
+	    return response;
+	} catch (SandboxException ex) {
+	    LOG.error(
+		    "###USER### Error encountered in getApiServiceCallTypes Service : ",
+		    ex);
+	    return Response
+		    .status(Response.Status.BAD_REQUEST)
+		    .entity(ex.getErrorType().getCode() + " "
+			    + ex.getErrorType().getMessage()).build();
+	} catch (Exception ex) {
+	    LOG.error(
+		    "###USER### Error encountered in getApiServiceCallTypes Service : ",
+		    ex);
+	    return Response.status(Response.Status.BAD_REQUEST)
+		    .entity(ex.getMessage()).build();
 	}
 
     }

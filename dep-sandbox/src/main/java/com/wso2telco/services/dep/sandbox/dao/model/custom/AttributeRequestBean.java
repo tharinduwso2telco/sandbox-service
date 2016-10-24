@@ -1,5 +1,7 @@
 package com.wso2telco.services.dep.sandbox.dao.model.custom;
 
+import org.json.JSONArray;
+
 public class AttributeRequestBean {
 
     private AttributeProperties requestObject;
