@@ -22,157 +22,164 @@ import javax.persistence.Table;
 @Table(name = "numbers")
 public class ManageNumber implements Serializable {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
-    
-    @Column(name="number")
-    private String Number;
-    
-    @Column(name="imsi")
-    private String imsi;
-    
-    @Column(name="mcc")
-    private int mcc;
-    
-    @Column(name="mnc")
-    private int mnc;
-    
-    @Column(name="num_description")
-    private String description;
-    
-    @Column(name="num_balance")
-    private double balance;
-    
-    @Column(name="reserved_amount", columnDefinition = "double default true")
-    private double reserved_amount;
-    
-    @Column(name="num_status")
-    private int status;
-    
-    @ManyToOne
-    @JoinColumn(name="user_id", referencedColumnName="id")
-    private User user;
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private int id;
 
-    /**
-     * @return the id
-     */
-    public int getId() {
-        return id;
-    }
+	@Column(name = "number")
+	private String Number;
 
-    /**
-     * @param id the id to set
-     */
-    public void setId(int id) {
-        this.id = id;
-    }
+	@Column(name = "imsi")
+	private String imsi;
 
-    /**
-     * @return the user
-     */
-    public User getUser() {
-        return user;
-    }
+	@Column(name = "mcc")
+	private int mcc;
 
-    /**
-     * @param user the user to set
-     */
-    public void setUser(User user) {
-        this.user = user;
-    }
+	@Column(name = "mnc")
+	private int mnc;
 
-    /**
-     * @return the ManageNumber
-     */
-    public String getNumber() {
-        return Number;
-    }
+	@Column(name = "num_description")
+	private String description;
 
-    /**
-     * @param Number the Number to set
-     */
-    public void setNumber(String Number) {
-        this.Number = Number;
-    }
-    
-    public String getIMSI() {
-        return imsi;
-    }
+	@Column(name = "num_balance")
+	private double balance;
 
-    public void setIMSI(String imsi) {
-        this.imsi = imsi;
-    }
-    
-    public int getMNC() {
-        return mnc;
-    }
-   
-    public void setMNC(int mnc) {
-        this.mnc = mnc;
-    }
-    
-    public int getMCC() {
-        return mcc;
-    }
+	@Column(name = "reserved_amount", columnDefinition = "double default true")
+	private double reserved_amount;
 
-    public void setMCC(int mcc) {
-        this.mcc = mcc;
-    }
+	@Column(name = "num_status")
+	private int status;
 
-    /**
-     * @return the description
-     */
-    public String getDescription() {
-        return description;
-    }
+	@ManyToOne
+	@JoinColumn(name = "user_id", referencedColumnName = "id")
+	private User user;
 
-    /**
-     * @param description the description to set
-     */
-    public void setDescription(String description) {
-        this.description = description;
-    }
+	/**
+	 * @return the id
+	 */
+	public int getId() {
+		return id;
+	}
 
-    /**
-     * @return the balance
-     */
-    public double getBalance() {
-        return balance;
-    }
+	/**
+	 * @param id
+	 *            the id to set
+	 */
+	public void setId(int id) {
+		this.id = id;
+	}
 
-    /**
-     * @param balance the balance to set
-     */
-    public void setBalance(double balance) {
-        this.balance = balance;
-    }
+	/**
+	 * @return the user
+	 */
+	public User getUser() {
+		return user;
+	}
 
-    /**
-     * @return the status
-     */
-    public int getStatus() {
-        return status;
-    }
+	/**
+	 * @param user
+	 *            the user to set
+	 */
+	public void setUser(User user) {
+		this.user = user;
+	}
 
-    /**
-     * @param status the status to set
-     */
-    public void setStatus(int status) {
-        this.status = status;
-    }
+	/**
+	 * @return the ManageNumber
+	 */
+	public String getNumber() {
+		return Number;
+	}
 
-    /**
-     * @return the reserved_amount
-     */
-    public double getReserved_amount() {
-        return reserved_amount;
-    }
+	/**
+	 * @param Number
+	 *            the Number to set
+	 */
+	public void setNumber(String Number) {
+		this.Number = Number;
+	}
 
-    /**
-     * @param reserved_amount the reserved_amount to set
-     */
-    public void setReserved_amount(double reserved_amount) {
-        this.reserved_amount = reserved_amount;
-    }
+	public String getIMSI() {
+		return imsi;
+	}
+
+	public void setIMSI(String imsi) {
+		this.imsi = imsi;
+	}
+
+	public int getMNC() {
+		return mnc;
+	}
+
+	public void setMNC(int mnc) {
+		this.mnc = mnc;
+	}
+
+	public int getMCC() {
+		return mcc;
+	}
+
+	public void setMCC(int mcc) {
+		this.mcc = mcc;
+	}
+
+	/**
+	 * @return the description
+	 */
+	public String getDescription() {
+		return description;
+	}
+
+	/**
+	 * @param description
+	 *            the description to set
+	 */
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	/**
+	 * @return the balance
+	 */
+	public double getBalance() {
+		return balance;
+	}
+
+	/**
+	 * @param balance
+	 *            the balance to set
+	 */
+	public void setBalance(double balance) {
+		this.balance = balance;
+	}
+
+	/**
+	 * @return the status
+	 */
+	public int getStatus() {
+		return status;
+	}
+
+	/**
+	 * @param status
+	 *            the status to set
+	 */
+	public void setStatus(int status) {
+		this.status = status;
+	}
+
+	/**
+	 * @return the reserved_amount
+	 */
+	public double getReserved_amount() {
+		return reserved_amount;
+	}
+
+	/**
+	 * @param reserved_amount
+	 *            the reserved_amount to set
+	 */
+	public void setReserved_amount(double reserved_amount) {
+		this.reserved_amount = reserved_amount;
+	}
 }

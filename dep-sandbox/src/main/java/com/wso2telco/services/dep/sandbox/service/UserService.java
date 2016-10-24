@@ -35,10 +35,15 @@ import com.wordnik.swagger.annotations.ApiImplicitParam;
 import com.wordnik.swagger.annotations.ApiImplicitParams;
 import com.wordnik.swagger.annotations.ApiOperation;
 import com.wordnik.swagger.annotations.ApiParam;
+
 import com.wso2telco.services.dep.sandbox.dao.model.custom.APIServiceCallRequestWrapperDTO;
 import com.wso2telco.services.dep.sandbox.dao.model.custom.APITypeRequestWrapperDTO;
 import com.wso2telco.services.dep.sandbox.dao.model.custom.AttributeRequestBean;
 import com.wso2telco.services.dep.sandbox.dao.model.custom.AttributeRequestWrapperDTO;
+
+import com.wso2telco.services.dep.sandbox.dao.model.custom.ManageNumberRequest;
+import com.wso2telco.services.dep.sandbox.dao.model.custom.ManageNumberRequestWrapperDTO;
+
 import com.wso2telco.services.dep.sandbox.dao.model.custom.RegisterUserServiceRequestWrapperDTO;
 import com.wso2telco.services.dep.sandbox.exception.SandboxException;
 import com.wso2telco.services.dep.sandbox.servicefactory.RequestBuilderFactory;
@@ -51,6 +56,7 @@ import com.wso2telco.services.dep.sandbox.util.RequestType;
 @Produces(MediaType.APPLICATION_JSON)
 @Api(value = "/user", description = "Rest Service for User Configurations in sandbox")
 public class UserService {
+
 
     Log LOG = LogFactory.getLog(UserService.class);
 
@@ -244,7 +250,39 @@ public class UserService {
 		    ex);
 	    return Response.status(Response.Status.BAD_REQUEST)
 		    .entity(ex.getMessage()).build();
+	}}
+
+
+	@POST
+	@Path("/managenumber")
+	@ApiOperation(value = "addManageNumber", notes = "add numbers for user", response = Response.class)
+	@ApiImplicitParams({
+			@ApiImplicitParam(name = "sandbox", value = "Authorization token", required = true, dataType = "string", paramType = "header")})
+	public Response addManageNumber(@Context HttpServletRequest httpRequest, ManageNumberRequest request) {
+		LOG.debug(request.getNumber() + " " + request.getNumberBalance() + " " + request.getReservedAmount() + " "
+				+ request.getDescription() + " " + request.getStatus() + " " + request.getImsi() + " "
+				+ request.getMnc() + " " + request.getMcc());
+		ManageNumberRequestWrapperDTO requestDTO = new ManageNumberRequestWrapperDTO();
+		requestDTO.setRequestType(RequestType.USER);
+		requestDTO.setHttpRequest(httpRequest);
+		requestDTO.setManageNumberRequest(request);
+		RequestHandleable handler = RequestBuilderFactory.getInstance(requestDTO);
+		Returnable returnable = null;
+
+		try {
+			returnable = handler.execute(requestDTO);
+			Response response = Response.status(returnable.getHttpStatus()).entity(returnable.getResponse()).build();
+			LOG.debug("ADD MANAGE NUMBER SERVICE RESPONSE : " + response);
+			return response;
+		} catch (SandboxException ex) {
+			LOG.error("###ADD MANAGE NUMBER### Error encountered in UserService : ", ex);
+			return Response.status(Response.Status.BAD_REQUEST)
+					.entity(ex.getErrorType().getCode() + " " + ex.getErrorType().getMessage()).build();
+		} catch (Exception ex) {
+			LOG.error("###ADD MANAGE NUMBER### Error encountered in UserService : ", ex);
+			return Response.status(Response.Status.BAD_REQUEST).entity(ex.getMessage()).build();
+		}
+
 	}
 
-    }
 }
