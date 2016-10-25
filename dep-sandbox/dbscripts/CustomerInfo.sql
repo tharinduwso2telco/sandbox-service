@@ -1,7 +1,7 @@
 USE `<EXISTING_SANDBOX_DATABASE>`;
 
 ALTER TABLE `numbers` 
-ADD COLUMN `imsi` varchar(255) DEFAULT '0' AFTER `number`,
+ADD COLUMN `imsi` varchar(255) DEFAULT NULL AFTER `number`,
 ADD COLUMN `mnc` int(5) DEFAULT '0' AFTER `imsi`,
 ADD COLUMN `mcc` int(5) DEFAULT '0' AFTER `mnc` ;
 
