@@ -13,6 +13,8 @@ import com.wso2telco.dep.oneapivalidation.exceptions.CustomException;
 import com.wso2telco.dep.oneapivalidation.util.Validation;
 import com.wso2telco.dep.oneapivalidation.util.ValidationRule;
 import com.wso2telco.services.dep.sandbox.dao.DaoFactory;
+import com.wso2telco.services.dep.sandbox.dao.NumberDAO;
+import com.wso2telco.services.dep.sandbox.dao.ProvisioningDAO;
 import com.wso2telco.services.dep.sandbox.dao.model.custom.ManageNumberRequest;
 import com.wso2telco.services.dep.sandbox.dao.model.custom.ManageNumberRequestWrapperDTO;
 import com.wso2telco.services.dep.sandbox.dao.model.domain.ManageNumber;
@@ -21,12 +23,14 @@ import com.wso2telco.services.dep.sandbox.servicefactory.Returnable;
 import com.wso2telco.services.dep.sandbox.util.CommonUtil;
 
 public class ManageNumberServiceHandler extends AbstractRequestHandler<ManageNumberRequestWrapperDTO> {
-
+	
+	private NumberDAO numberDAO;
 	private ManageNumberRequestWrapperDTO requestWrapper;
 	private ManageNumberResponseWrapper responseWrapper;
 
 	{
 		LOG = LogFactory.getLog(ManageNumberServiceHandler.class);
+		numberDAO = DaoFactory.getNumberDAO();
 		dao = DaoFactory.getGenaricDAO();
 	}
 
@@ -89,7 +93,7 @@ public class ManageNumberServiceHandler extends AbstractRequestHandler<ManageNum
 		try {
 			int userId = extendedRequestDTO.getUser().getId();
 			List<String> numbers = new ArrayList<>();
-			for (ManageNumber manageNumber : dao.getManageNumbers(userId)) {
+			for (ManageNumber manageNumber : numberDAO.getManageNumbers(userId)) {
 				numbers.add(manageNumber.getNumber());
 			}
 			if (!numbers.contains(extendedRequestDTO.getManageNumberRequest().getNumber())) {
@@ -103,7 +107,7 @@ public class ManageNumberServiceHandler extends AbstractRequestHandler<ManageNum
 				manageNumber.setIMSI(extendedRequestDTO.getManageNumberRequest().getImsi());
 				manageNumber.setMCC(extendedRequestDTO.getManageNumberRequest().getMcc());
 				manageNumber.setMNC(extendedRequestDTO.getManageNumberRequest().getMnc());
-				dao.saveManageNumbers(manageNumber);
+				numberDAO.saveManageNumbers(manageNumber);
 				responseWrapper.setHttpStatus(Response.Status.OK);
 				responseWrapper.setStatus("Successful");
 			} else {

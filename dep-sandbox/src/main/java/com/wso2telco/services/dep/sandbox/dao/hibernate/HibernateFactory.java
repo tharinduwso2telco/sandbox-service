@@ -25,4 +25,8 @@ public class HibernateFactory {
 	public HibernateCustomerInfoDAO getHibernateCustomerInfoDAO() {
 		return new HibernateCustomerInfoDAO();
 	}
+	
+	public HibernateNumberDAO getHibernateNumberDAO() {
+		return new HibernateNumberDAO();
+	}
 }

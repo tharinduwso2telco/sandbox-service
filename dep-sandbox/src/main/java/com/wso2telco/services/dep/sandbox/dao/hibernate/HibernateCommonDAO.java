@@ -254,31 +254,4 @@ class HibernateCommonDAO extends AbstractDAO implements GenaricDAO {
     }
 
 
-
-	@Override
-	public void saveManageNumbers(ManageNumber manageNumber) throws Exception {
-		
-		try {
-    	    saveOrUpdate(manageNumber);
-    	} catch (Exception e) {
-    	    LOG.error("saveManageNumbers", e);
-    	}
-		
-	}
-
-	@Override
-	public List<ManageNumber> getManageNumbers(int userId) throws Exception {
-		Session sess = getSession();
-
-		List<ManageNumber> manageNumbers = null;
-		try {
-			manageNumbers =sess.createQuery("from ManageNumber where user.id = :userid").setParameter("userid", userId).list();
-		} catch (Exception e) {
-			LOG.error("getManageNumbers",e);
-		} finally {
-			sess.close();
-		}
-		return manageNumbers;
-	}
-
 }
