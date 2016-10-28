@@ -23,6 +23,7 @@ import java.util.List;
 import javax.ws.rs.core.Response.Status;
 
 import org.apache.commons.logging.LogFactory;
+import org.json.simple.JSONObject;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -34,17 +35,22 @@ import com.wso2telco.services.dep.sandbox.dao.CustomerInfoDAO;
 import com.wso2telco.services.dep.sandbox.dao.DaoFactory;
 import com.wso2telco.services.dep.sandbox.dao.model.custom.Customer;
 import com.wso2telco.services.dep.sandbox.dao.model.custom.CustomerInfoDTO;
+import com.wso2telco.services.dep.sandbox.dao.model.domain.APIServiceCalls;
+import com.wso2telco.services.dep.sandbox.dao.model.domain.APITypes;
 import com.wso2telco.services.dep.sandbox.dao.model.domain.ManageNumber;
 import com.wso2telco.services.dep.sandbox.servicefactory.AbstractRequestHandler;
 import com.wso2telco.services.dep.sandbox.servicefactory.Returnable;
 import com.wso2telco.services.dep.sandbox.servicefactory.customerinfo.GetProfileResponseWrapper.CustomerDTOWrapper;
 import com.wso2telco.services.dep.sandbox.util.CommonUtil;
+import com.wso2telco.services.dep.sandbox.util.MessageLogHandler;
+import com.wso2telco.services.dep.sandbox.util.ServiceName;
 
 public class GetProfileRequestHandler extends AbstractRequestHandler<GetProfileRequestWrapper> {
 
     private CustomerInfoDAO customerInfoDAO;
     private GetProfileRequestWrapper requestWrapperDTO;
     private GetProfileResponseWrapper responseWrapperDTO;
+    private MessageLogHandler logHandler;
 
     public static final String DOB_DATE_FORMAT = "dd/MM/yyyy";
 
@@ -52,6 +58,7 @@ public class GetProfileRequestHandler extends AbstractRequestHandler<GetProfileR
 	LOG = LogFactory.getLog(GetProfileRequestHandler.class);
 	customerInfoDAO = DaoFactory.getCustomerInfoDAO();
 	dao = DaoFactory.getGenaricDAO();
+	logHandler = MessageLogHandler.getInstance();
 
     }
 
@@ -129,6 +136,17 @@ public class GetProfileRequestHandler extends AbstractRequestHandler<GetProfileR
 
     @Override
     protected Returnable process(GetProfileRequestWrapper extendedRequestDTO) throws Exception {
+    	
+    	APITypes apiTypes = dao.getAPIType(extendedRequestDTO.getRequestType().toString().toLowerCase());
+    	APIServiceCalls apiServiceCalls = dao.getServiceCall(apiTypes.getId(), ServiceName.GetProfile.toString().toLowerCase());
+    	JSONObject obj = new JSONObject();
+    	obj.put("msisdn",extendedRequestDTO.getMsisdn());
+    	obj.put("imsi",extendedRequestDTO.getImsi());
+    	obj.put("mcc",extendedRequestDTO.getMcc());
+    	obj.put("mnc",extendedRequestDTO.getMnc());
+    	obj.put("userName",extendedRequestDTO.getUser().getUserName());
+    	logHandler.saveMessageLog(apiServiceCalls.getApiServiceCallId(), extendedRequestDTO.getUser().getId(), "msisdn", extendedRequestDTO.getMsisdn(), obj);
+    	
 	if (responseWrapperDTO.getRequestError() != null) {
 	    responseWrapperDTO.setHttpStatus(Status.BAD_REQUEST);
 	    return responseWrapperDTO;
@@ -165,7 +183,6 @@ public class GetProfileRequestHandler extends AbstractRequestHandler<GetProfileR
 	    responseWrapperDTO.setHttpStatus(Status.BAD_REQUEST);
 	    return responseWrapperDTO;
 	}
-
 	populateResponse(number, customerInfoDTO);
 	responseWrapperDTO.setHttpStatus(Status.OK);
 

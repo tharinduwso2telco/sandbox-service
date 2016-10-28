@@ -7,13 +7,10 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
 import org.apache.commons.logging.LogFactory;
+import org.json.simple.JSONObject;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import com.wso2telco.core.dbutils.exception.ServiceError;
 import com.wso2telco.dep.oneapivalidation.exceptions.CustomException;
 import com.wso2telco.dep.oneapivalidation.util.Validation;
@@ -22,11 +19,15 @@ import com.wso2telco.services.dep.sandbox.dao.CustomerInfoDAO;
 import com.wso2telco.services.dep.sandbox.dao.DaoFactory;
 import com.wso2telco.services.dep.sandbox.dao.model.custom.ListCustomerInfoAttributesDTO;
 import com.wso2telco.services.dep.sandbox.dao.model.custom.ListCustomerInfoDTO;
+import com.wso2telco.services.dep.sandbox.dao.model.domain.APIServiceCalls;
+import com.wso2telco.services.dep.sandbox.dao.model.domain.APITypes;
 import com.wso2telco.services.dep.sandbox.dao.model.domain.AttributeValues;
 import com.wso2telco.services.dep.sandbox.servicefactory.AbstractRequestHandler;
 import com.wso2telco.services.dep.sandbox.servicefactory.Returnable;
 import com.wso2telco.services.dep.sandbox.util.AttributeMetaInfo.Attribute;
 import com.wso2telco.services.dep.sandbox.util.CommonUtil;
+import com.wso2telco.services.dep.sandbox.util.MessageLogHandler;
+import com.wso2telco.services.dep.sandbox.util.ServiceName;
 
 public class GetAttributeRequestHandler extends
 	AbstractRequestHandler<GetAttributeRequestWrapper> {
@@ -35,11 +36,13 @@ public class GetAttributeRequestHandler extends
     private GetAttributeRequestWrapper requestWrapperDTO;
     private GetAttributeResponseWrapper responseWrapperDTO;
     private static String schemaValues = null;
+    private MessageLogHandler logHandler;
 
     {
 	LOG = LogFactory.getLog(GetAttributeRequestHandler.class);
 	customerInfoDao = DaoFactory.getCustomerInfoDAO();
 	dao = DaoFactory.getGenaricDAO();
+	logHandler = MessageLogHandler.getInstance();
     }
 
     @Override
@@ -148,7 +151,18 @@ public class GetAttributeRequestHandler extends
 	    responseWrapperDTO.setHttpStatus(Response.Status.BAD_REQUEST);
 	    return responseWrapperDTO;
 	}
-
+	
+	APITypes apiTypes = dao.getAPIType(extendedRequestDTO.getRequestType().toString().toLowerCase());
+	APIServiceCalls apiServiceCalls = dao.getServiceCall(apiTypes.getId(), ServiceName.GetAttribute.toString().toLowerCase());
+	JSONObject obj = new JSONObject();
+	obj.put("msisdn",extendedRequestDTO.getMsisdn());
+	obj.put("imsi",extendedRequestDTO.getImsi());
+	obj.put("schema",extendedRequestDTO.getSchema());
+	obj.put("mcc",extendedRequestDTO.getMcc());
+	obj.put("mnc",extendedRequestDTO.getMnc());
+	obj.put("userName",extendedRequestDTO.getUser().getUserName());
+	logHandler.saveMessageLog(apiServiceCalls.getApiServiceCallId(), extendedRequestDTO.getUser().getId(), "msisdn", extendedRequestDTO.getMsisdn(), obj);
+	
 	String msisdn = null;
 	ObjectMapper mapper = new ObjectMapper();
 	JsonNode node = null;

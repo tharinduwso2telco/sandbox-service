@@ -1,12 +1,14 @@
 package com.wso2telco.services.dep.sandbox.util;
 
 
+import java.io.StringWriter;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.json.simple.JSONObject;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.wso2telco.services.dep.sandbox.dao.LoggingDAO;
@@ -34,13 +36,14 @@ public class MessageLogHandler {
         return instance;
     }
     
-    public void saveMessageLog(final int servicenameid, final int userid, final String reference, final String value, Object obj) throws Exception {
+    public void saveMessageLog(final int servicenameid, final int userid, final String reference, final String value, JSONObject obj) throws Exception {
         executorService.execute(new Runnable() {
             public void run() {
-            	ObjectMapper mapper = new ObjectMapper();
+            	StringWriter out = new StringWriter();
                 try {
-                	String jsonString = mapper.writeValueAsString(obj);
-                	log.debug(jsonString);
+                	obj.writeJSONString(out);
+                	String jsonString = out.toString();
+                	log.debug("JSON Sting" + jsonString);
                 	MessageLog messageLog = new MessageLog();
                 	messageLog.setServicenameid(servicenameid);
                 	messageLog.setUserid(userid);
