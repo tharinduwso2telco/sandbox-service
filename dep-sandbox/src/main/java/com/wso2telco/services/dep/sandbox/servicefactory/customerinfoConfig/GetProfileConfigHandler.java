@@ -235,6 +235,7 @@ public class GetProfileConfigHandler extends
 	}
 
 	AttributeValues valueObj = new AttributeValues();
+	List<AttributeValues> attributeValues = new ArrayList<AttributeValues>();
 
 	for (Map.Entry<AttributeDistribution, String> eachValuedDistribution : attributeValueDistribution
 		.entrySet()) {
@@ -243,6 +244,7 @@ public class GetProfileConfigHandler extends
 	    if (valueObj != null) {
 
 		valueObj.setValue(eachValuedDistribution.getValue());
+		attributeValues.add(valueObj);
 
 	    } else {
 
@@ -252,10 +254,11 @@ public class GetProfileConfigHandler extends
 		valueObj.setTobject(getToObject(eachValuedDistribution.getKey()
 			.getAPIServiceCall().getAPIType()));
 		valueObj.setValue(eachValuedDistribution.getValue());
+		attributeValues.add(valueObj);
 
 	    }
 
-	    dao.saveAttributeValue(valueObj);
+	    dao.saveAttributeValue(attributeValues);
 
 	}
 
