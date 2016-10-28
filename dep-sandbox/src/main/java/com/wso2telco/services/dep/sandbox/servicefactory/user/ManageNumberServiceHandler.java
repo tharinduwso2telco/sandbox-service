@@ -108,7 +108,7 @@ public class ManageNumberServiceHandler extends AbstractRequestHandler<ManageNum
 				manageNumber.setMCC(extendedRequestDTO.getManageNumberRequest().getMcc());
 				manageNumber.setMNC(extendedRequestDTO.getManageNumberRequest().getMnc());
 				numberDAO.saveManageNumbers(manageNumber);
-				responseWrapper.setHttpStatus(Response.Status.OK);
+				responseWrapper.setHttpStatus(Response.Status.CREATED);
 				responseWrapper.setStatus("Successful");
 			} else {
 				LOG.info("Already exist number");

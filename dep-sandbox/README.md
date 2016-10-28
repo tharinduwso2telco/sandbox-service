@@ -112,9 +112,130 @@ For example [http://localhost:8181/swagger](http://localhost:8181/swagger)  in d
 
 ##6 API Features
 
-###6.1. Provision Service
+###6.1. User Service
 
-####6.1.1 Introduction
+- Manage Numbers
+
+This servivce is used to define user specific number for sandbox usage.
+
+Request :
+
+Type - POST
+
+Request URI:
+```
+http://<host>:<port>/user/managenumber
+
+Request Body :
+```
+{
+  "number": "",
+  "numberBalance": 0,
+  "reservedAmount": 0,
+  "description": "",
+  "status": 0,
+  "imsi": "",
+  "mcc": 0,
+  "mnc": 0
+}
+```
+
+Response :
+
+200 OK will be returned if the service is successfully added for the user.
+Unless 400 Bad Request will be returned
+
+- Get available APITypes
+
+This service can be used to list out all the apis that are currently available.
+
+Request :
+
+Type - GET
+
+Request URI:
+```
+http://<host>:<port>/user/apiType
+```
+
+Response :
+```
+{
+  "apiTypes": [
+    "LOCATION",
+    "SMS",
+    "USSD",
+    "PAYMENT",
+    "CREDIT",
+    "WALLET",
+    "PROVISIONING",
+    "CUSTOMERINFO"
+  ]
+}
+```
+
+- Get available API specific ServiceTypes
+
+This service can be used to list out all the rest service calls under specific api that are currently available. 
+So that the apis that are listed through above service can be used here as parameter to retrieve associated serviceTypes
+
+Request :
+
+Type - GET
+
+Request URI:
+```
+http://<host>:<port>/user/{apiType}/serviceType
+```
+
+Response :
+```
+{
+  "apiServiceCallTypes": [
+    "GetAttribute",
+    "GetProfile"
+  ]
+}
+```
+
+- Get available APIServiceType specific Attributes
+
+This service can be used to list out all the attributes that are defined under each service call of specific api.
+So that, above mentioned two services can be used to set the parameters of this particular service.
+
+Request :
+
+Type - GET
+
+Request URI:
+```
+http://<host>:<port>/user/{apiType}/{serviceType}/attribute
+```
+
+Response :
+```
+
+{
+  "attributes": [
+    "title",
+    "firstname",
+    "lastname",
+    "dob",
+    "address",
+    "id_type",
+    "id_status",
+    "owner_type",
+    "account_type",
+    "additional_info",
+    "id_number"
+  ]
+}
+```
+
+
+###6.2. Provision Service
+
+####6.2.1 Introduction
 
 Provision service will provide the Service providers a list of provision services available for the given MSISDN and 
 based on the services available service providers can provision and unprovision the services. Basically provision API supports
@@ -131,7 +252,7 @@ Provisioning Related User Configurations can also be done through rest service c
 - Enable user defined services for given MSISDN
 - Retrieve user defined services
 
-####6.1.2 API features with postman testing
+####6.2.2 API features with postman testing
 
 - Query Applicable- List the applicable services for a given MSISDN
 
@@ -302,7 +423,7 @@ Response :
 ```
 
 
-####6.1.3 Provisioning API Related User Configurations postman testing
+####6.2.3 Provisioning API Related User Configurations postman testing
 
 
 - Add new services for user
@@ -321,7 +442,6 @@ http://<host>:<port>/provisioning/{v1}/config/service
 Response :
 200 OK will be returned if the service is successfully added for the user.
 Unless 400 Bad Request will be returned
-
 
 
 - Retrieve user defined services
@@ -375,7 +495,7 @@ Response :
 200 OK will be returned if the service is successfully added for the user.
 Unless 400 Bad Request will be returned
 
-###6.1.4 Current Limitations for Service Provider
+###6.2.4 Current Limitations for Service Provider
 
 - Provision and Un-Provision Service calls are designed to give "Pending" as default Transaction Status. So "Success" status cannot be generated for both Provision and Un-Provision.
 
@@ -385,9 +505,14 @@ Unless 400 Bad Request will be returned
 
 - Provisioning API and it's configurations can only be catered through sandbox microservice (Swagger), other existing non-api specific thing such as Manage Numbers should be done in existing flow from Sandbox UI.
 
-###6.2 Customer Info Service
 
-####6.2.1 Introduction
+
+
+
+###6.3 Customer Info Service
+
+
+####6.3.1 Introduction
 
 Customer Info service will provide the Service providers a list of customer info services available for the given MSISDN/IMSI. Basically Customer Info API supports
 2 operations.
@@ -402,7 +527,8 @@ CustomerInfo Related User Configurations can also be done through rest service c
 - Get available APIServiceType specific Attributes
 - Post values for APIServiceType specific Attributes
 
-####6.2.2 API features with postman testing
+
+####6.3.2 API features with postman testing
 
 - Get Profile- Get a customer’s basic profile information
 
@@ -412,7 +538,7 @@ Type - GET
 
 Request URI:
 ```
-http://<host>:<port>/customer/v1/profile?msisdn={msisdn}&imsi={imsi}&mnc={mnc}&mcc={mcc}
+http://<host>:<port>/customerinfo/v1/customer/profile?msisdn={msisdn}&imsi={imsi}&mnc={mnc}&mcc={mcc}
 ```
 
 Response :
@@ -445,7 +571,7 @@ Response :
 			"value": "2500"
 	}],
 
-       "resourceURL": "http://<host>:<port>/customer/v1/profile?msisdn={msisdn}&imsi={imsi}&mnc={mnc}&mcc={mcc}"
+       "resourceURL": "http://<host>:<port>/customerinfo/v1/customer/profile?msisdn={msisdn}&imsi={imsi}&mnc={mnc}&mcc={mcc}"
   }
 }
 ```
@@ -458,7 +584,7 @@ Type - GET
 
 Request URI:
 ```
-http://<host>:<port>/customer/v1/attribute?msisdn={msisdn}&imsi={imsi}&schema={schema1,schema2,schema3,schema4}&mnc={mnc}&mcc={mcc}
+http://<host>:<port>/customerinfo/v1/customer/attribute?msisdn={msisdn}&imsi={imsi}&schema={schema1,schema2,schema3,schema4}&mnc={mnc}&mcc={mcc}
 ```
 
 Response :
@@ -495,187 +621,103 @@ Response :
         	"type": "Postpaid",
         	"status": "Active"
  	},
-       "resourceURL": "http://<host>:<port>/customer/v1/attribute?msisdn={msisdn}&imsi={imsi}&schema={schema1,schema2,schema3,schema4}&mnc={mnc}&mcc={mcc}"
+       "resourceURL": "http://<host>:<port>/customerinfo/v1/customer/attribute?msisdn={msisdn}&imsi={imsi}&schema={schema1,schema2,schema3,schema4}&mnc={mnc}&mcc={mcc}"
   }
 }
 ```
 
+####6.3.3 CustomerInfo API Related User Configurations postman testing
 
-- Get available APITypes
-
-This service can be used to list out all the apis that are currently available.
-
-Request :
-
-Type - GET
-
-Request URI:
-```
-http://<host>:<port>/user/apiType
-```
-
-Response :
-```
-{
-  "apiTypes": [
-    "LOCATION",
-    "SMS",
-    "USSD",
-    "PAYMENT",
-    "CREDIT",
-    "WALLET",
-    "PROVISIONING",
-    "CUSTOMERINFO"
-  ]
-}
-```
-
-- Get available API specific ServiceTypes
-
-This service can be used to list out all the rest service calls under specific api that are currently available. 
-So that the apis that are listed through above service can be used here as parameter to retrieve associated serviceTypes
-
-Request :
-
-Type - GET
-
-Request URI:
-```
-http://<host>:<port>/user/{apiType}/serviceType
-```
-
-Response :
-```
-{
-  "apiServiceCallTypes": [
-    "GetAttribute",
-    "GetProfile"
-  ]
-}
-```
-
-- Get available APIServiceType specific Attributes
-
-This service can be used to list out all the attributes that are defined under each service call of specific api.
-So that, above mentioned two services can be used to set the parameters of this particular service.
-
-Request :
-
-Type - GET
-
-Request URI:
-```
-http://<host>:<port>/user/{apiType}/{serviceType}/attribute
-```
-
-Response :
-```
-
-{
-  "attributes": [
-    "title",
-    "firstname",
-    "lastname",
-    "dob",
-    "address",
-    "id_type",
-    "id_status",
-    "owner_type",
-    "account_type",
-    "additional_info",
-    "id_number"
-  ]
-}
-```
 
 - Post values for APIServiceType specific Attributes
 
-This service can be used to insert values for the attributes that are listed using above rest service.
-Since this service is used to save values sometimes straightly as JSON object, there are some limitations in setting the Body values 
-Some of the inputs such as basic,billing,account,identification,address,additional_info should be passed as valid Strings to be converted as JSON Objects/Array.
-The hint for the input string format is givven in description column of swagger UI.
+This service can be used to insert values for the attributes that are using for customerinto rest service.
 The values that are inserted using this service will be retrieved when actual CutomerInfo API GET service calls are invoked.
+
+- Add new Profiles for user
 
 Request :
 
-Type - POST
+Type - GET
 
 Request URI:
 ```
-http://<host>:<port>/user/{apiType}/{serviceType}/attribute
+http://<host>:<port>/customerinfo/{v1}/config/customer/getProfile
 ```
-Body:
-
-For eg:
-
+Request Body :
 ```
-
 {
-  "attribute": {
-    "name": "basic",
-    "value": "{\"title\":\"Mr\",\"firstName\":\"adfas\",\"lastName\":\"dfs\",\"dob\":\"sfas\",
-	\"address\":{\"line1\":\"13\",\"line2\":\"mike\",\"city\":\"battic\",\"country\":\"SL\"}}"
-  }
-}
-
-{
-  "attribute": {
-    "name": "additional_info",
-    "value": "[{\"tag\":\"creditLimit\",\"value\":\"2500\"},{\"tag\":\"currency\",\"value\":\"LKR\"}]"
-  }
+  "title": "",
+  "firstName": "",
+  "lastName": "",
+  "dob": "",
+  "identificationType": "",
+  "identificationNumber": "",
+  "accountType": "",
+  "ownerType": "",
+  "status": "",
+  "address": {
+    "line1": "",
+    "line2": "",
+    "line3": "",
+    "city": "",
+    "country": ""
+  },
+  "additionalInfo": "List[AdditionalInfo]"
 }
 ```
-Response : 
-200 OK will be returned if the service is successfully inserted the value for particular attribute.
-Unless 400 Bad Request will be returned with the relevant missing/failed criteria for processing.
-
-Some of the possible scenarios for Bad request would be:-
-
-Request :
-
-http://<host>:<port>/user/Customerinfo/Getprofile/attribute
-
-Body:
-{
-  "attribute": {
-    "name": "basic",
-    "value": "{\"title\":\"Mr\",\"firstName\":\"adfas\",\"lastName\":\"dfs\",\"dob\":\"sfas\"}"
-  }
-}
-
 Response :
+200 OK will be returned if the service is successfully added for the user.
+Unless 400 Bad Request will be returned
 
-{
-  "serviceException": {
-    "messageId": "SVC0002",
-    "text": "Invalid input value for message part %1",
-    "variables": "Given Attribute name basic is invalid for GetProfile Service Call"
-  }
-}
 
-Reason : The above response is due to the fact that the attribute "basic" is enabled only for the "getAttribute" service call of "CustomerInfo" API.
+- Add new Attributes for user
 
 Request :
 
-http://<host>:<port>/user/Customerinfo/Getprofile/attribute
+Type - GET
 
-Body:
+Request URI:
+```
+http://<host>:<port>/customerinfo/{v1}/config/customer/getAttribute
+```
+Request Body :
+```
 {
-  "attribute": {
-    "name": "address",
-    "value": " {\"line2\":\"mike\",\"city\":\"battic\",\"country\":\"SL\"} "
+  "basic": {
+    "title": "",
+    "firstName": "",
+    "lastName": "",
+    "dob": "",
+    "address": {
+      "line1": "",
+      "line2": "",
+      "line3": "",
+      "city": "",
+      "country": ""
+    }
+  },
+  "billing": {
+    "outstanding": "",
+    "currency": "",
+    "balance": "",
+    "creditLimit": ""
+  },
+  "account": {
+    "type": "",
+    "status": ""
+  },
+  "identification": {
+    "type": "",
+    "number": "",
+    "expiry": ""
   }
 }
+```
+Response :
+200 OK will be returned if the service is successfully added for the user.
+Unless 400 Bad Request will be returned
 
-Response:
 
-{
-  "serviceException": {
-    "messageId": "SVC0002",
-    "text": "Invalid input value for message part %1",
-    "variables": "Attribute value should have mandatory field line1"
-  }
-}
-
-Reason : The above response is due to the fact that the attribute "address" has mandatory field named "line1"
+Note : Service Provider should be aware of the mandatory/optional parameters according to specification so that they will be validated while data insertion in configuration service.
 

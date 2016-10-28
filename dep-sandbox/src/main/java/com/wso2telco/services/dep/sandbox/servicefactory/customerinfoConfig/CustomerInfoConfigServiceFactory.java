@@ -20,13 +20,10 @@ import org.apache.commons.logging.LogFactory;
 
 import com.wso2telco.services.dep.sandbox.dao.model.custom.RequestDTO;
 import com.wso2telco.services.dep.sandbox.servicefactory.RequestHandleable;
-import com.wso2telco.services.dep.sandbox.servicefactory.customerinfo.GetProfileRequestHandler;
 import com.wso2telco.services.dep.sandbox.servicefactory.provisionConfig.ProvisioningConfigServiceFactory;
-import com.wso2telco.services.dep.sandbox.servicefactory.provisionConfig.RetieveServicesUser;
+import com.wso2telco.services.dep.sandbox.util.ServiceName;
 
 public class CustomerInfoConfigServiceFactory {
-    final static String getProfile = "getProfile";
-    final static String getAttribute = "getAttribute";
 
     private static Log LOG = LogFactory
 	    .getLog(ProvisioningConfigServiceFactory.class);
@@ -34,11 +31,11 @@ public class CustomerInfoConfigServiceFactory {
     public static RequestHandleable getInstance(final RequestDTO requestDTO) {
 	if (requestDTO.isPost()) {
 	    if (requestDTO.getRequestPath().toLowerCase()
-		    .contains(getProfile.toLowerCase())) {
+		    .contains(ServiceName.GetProfile.toString().toLowerCase())) {
 		LOG.debug("###CUSTOMERINFOCONFIG### LOADING GET PROFILE CONFIG SERVICES FOR USER");
 		return new GetProfileConfigHandler();
 	    } else if (requestDTO.getRequestPath().toLowerCase()
-		    .contains(getAttribute.toLowerCase())) {
+		    .contains(ServiceName.GetAttribute.toString().toLowerCase())) {
 		LOG.debug("###CUSTOMERINFOCONFIG### LOADING GET ATTRIBUTE CONFIG SERVICES FOR USER");
 		return new GetAttributeConfigHandler();
 	    }

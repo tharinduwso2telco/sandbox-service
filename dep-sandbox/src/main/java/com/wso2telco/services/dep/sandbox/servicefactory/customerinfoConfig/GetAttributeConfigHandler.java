@@ -52,6 +52,7 @@ import com.wso2telco.services.dep.sandbox.util.AttributeMetaInfo.BillingField;
 import com.wso2telco.services.dep.sandbox.util.AttributeMetaInfo.IdentificationField;
 import com.wso2telco.services.dep.sandbox.util.CommonUtil;
 import com.wso2telco.services.dep.sandbox.util.RequestType;
+import com.wso2telco.services.dep.sandbox.util.ServiceName;
 
 public class GetAttributeConfigHandler extends
 	AbstractRequestHandler<GetAttributeConfigRequestWrapperDTO> implements
@@ -61,7 +62,6 @@ public class GetAttributeConfigHandler extends
     private GetAttributeConfigResponseWrapper responseWrapperDTO;
 
     private final String MANDATORY = "Mandatory";
-    private final String service = "GetAttribute";
 
     List<ValidationRule> validationRule = new ArrayList<ValidationRule>();
     Map<String, String> valuesInRequset = new HashMap<String, String>();
@@ -226,7 +226,7 @@ public class GetAttributeConfigHandler extends
 		.toLowerCase());
 
 	APIServiceCalls serviceType = dao.getServiceCall(apiType.getId(),
-		service);
+		ServiceName.GetAttribute.toString());
 
 	List<AttributeDistribution> availableDistribution = dao
 		.getAttributeDistributionByServiceCall(apiType.getId(),
@@ -265,7 +265,7 @@ public class GetAttributeConfigHandler extends
 		valueObj.setTobject(getToObject(eachValuedDistribution.getKey()
 			.getAPIServiceCall().getAPIType()));
 		valueObj.setValue(eachValuedDistribution.getValue());
-		
+
 		attributeValues.add(valueObj);
 	    }
 

@@ -51,6 +51,7 @@ import com.wso2telco.services.dep.sandbox.util.AttributeMetaInfo.AddressField;
 import com.wso2telco.services.dep.sandbox.util.AttributeMetaInfo.Profile;
 import com.wso2telco.services.dep.sandbox.util.CommonUtil;
 import com.wso2telco.services.dep.sandbox.util.RequestType;
+import com.wso2telco.services.dep.sandbox.util.ServiceName;
 
 public class GetProfileConfigHandler extends
 	AbstractRequestHandler<GetProfileConfigRequestWrapperDTO> implements
@@ -60,7 +61,6 @@ public class GetProfileConfigHandler extends
     private GetProfileConfigResponseWrapper responseWrapperDTO;
 
     private final String MANDATORY = "Mandatory";
-    private final String service = "GetProfile";
 
     private List<ValidationRule> validationRule = new ArrayList<ValidationRule>();
     private Map<String, String> valuesInRequset = new HashMap<String, String>();
@@ -215,7 +215,7 @@ public class GetProfileConfigHandler extends
 		.toLowerCase());
 
 	APIServiceCalls serviceType = dao.getServiceCall(apiType.getId(),
-		service);
+		ServiceName.GetProfile.toString());
 
 	List<AttributeDistribution> availableDistribution = dao
 		.getAttributeDistributionByServiceCall(apiType.getId(),
