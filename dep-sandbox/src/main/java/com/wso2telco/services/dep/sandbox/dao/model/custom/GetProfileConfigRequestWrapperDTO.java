@@ -13,23 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package com.wso2telco.services.dep.sandbox.servicefactory.user;
+package com.wso2telco.services.dep.sandbox.dao.model.custom;
 
-import com.wso2telco.services.dep.sandbox.servicefactory.AbstractReturnWrapperDTO;
+public class GetProfileConfigRequestWrapperDTO extends RequestDTO {
 
-public class AttributeInsertionResponseWrapper extends AbstractReturnWrapperDTO {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -4159346835394387787L;
 
-    public String responseMessage;
+    private GetProfileConfigRequestBean requestObject;
 
-    @Override
-    public Object getResponse() {
-	if (getRequestError() != null) {
-	    return getRequestError();
-	}
-	return responseMessage;
+    public GetProfileConfigRequestBean getRequestObject() {
+	return requestObject;
     }
 
-    public void setResponseMessage(String message) {
-	this.responseMessage = message;
+    public void setRequestObject(GetProfileConfigRequestBean requestObject) {
+	this.requestObject = requestObject;
     }
 }

@@ -174,6 +174,18 @@ class HibernateCommonDAO extends AbstractDAO implements GenaricDAO {
 	}
 
     }
+    
+    public void saveAttributeValue(List<AttributeValues> valueObj) throws Exception {
+	
+	List<Object> objectList = new ArrayList<Object>(valueObj);
+	try {
+	    saveOrUpdateList(objectList);
+	} catch (Exception e) {
+	    LOG.error("saveAttributeValue", e);
+	    throw e;
+	}
+
+    }
 
     @Override
     public AttributeValues getAttributeValue(
@@ -251,6 +263,23 @@ class HibernateCommonDAO extends AbstractDAO implements GenaricDAO {
 	    throw e;
 	}
 	return apiServiceList;
+    }
+
+    @Override
+    public List<AttributeValues> getAttributeListValue(
+	    List<AttributeDistribution> distributionObj) throws Exception {
+	Session sess = getSession();
+	List<AttributeValues> value = null;
+	try {
+	    value = (List<AttributeValues>) sess
+		    .createQuery(
+			    "from AttributeValues where attributeDistributionId IN ( :distributionObj)")
+		    			.setParameterList("distributionObj", distributionObj).list();
+	} catch (Exception e) {
+	    LOG.error("getAttributeValue", e);
+	    throw e;
+	}
+	return value;
     }
 
 

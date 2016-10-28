@@ -24,6 +24,8 @@ import javax.ws.rs.core.Response.Status;
 
 import org.apache.commons.logging.LogFactory;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.wso2telco.core.dbutils.exception.ServiceError;
 import com.wso2telco.dep.oneapivalidation.exceptions.CustomException;
 import com.wso2telco.dep.oneapivalidation.util.Validation;
@@ -82,7 +84,6 @@ public class GetProfileRequestHandler extends AbstractRequestHandler<GetProfileR
 	    if (msisdn == null && imsi == null) {
 		responseWrapperDTO.setRequestError(constructRequestError(SERVICEEXCEPTION,
 			ServiceError.INVALID_INPUT_VALUE, "MSISDN and IMSI are missing"));
-		responseWrapperDTO.setHttpStatus(Status.BAD_REQUEST);
 	    }
 
 	    if (msisdn != null) {
@@ -117,12 +118,10 @@ public class GetProfileRequestHandler extends AbstractRequestHandler<GetProfileR
 	    }
 	    responseWrapperDTO.setRequestError(
 		    constructRequestError(SERVICEEXCEPTION, ex.getErrcode(), ex.getErrmsg(), errorMessage));
-	    responseWrapperDTO.setHttpStatus(Status.BAD_REQUEST);
 	} catch (Exception ex) {
 	    LOG.error("###CUSTOMERINFO### Error in validations", ex);
 	    responseWrapperDTO
 		    .setRequestError(constructRequestError(SERVICEEXCEPTION, ServiceError.SERVICE_ERROR_OCCURED, null));
-	    responseWrapperDTO.setHttpStatus(Status.BAD_REQUEST);
 	}
 
 	return true;
@@ -131,6 +130,7 @@ public class GetProfileRequestHandler extends AbstractRequestHandler<GetProfileR
     @Override
     protected Returnable process(GetProfileRequestWrapper extendedRequestDTO) throws Exception {
 	if (responseWrapperDTO.getRequestError() != null) {
+	    responseWrapperDTO.setHttpStatus(Status.BAD_REQUEST);
 	    return responseWrapperDTO;
 	}
 
@@ -178,9 +178,10 @@ public class GetProfileRequestHandler extends AbstractRequestHandler<GetProfileR
 	requestWrapperDTO = extendedRequestDTO;
     }
 
-    private void populateResponse(ManageNumber number, CustomerInfoDTO customerInfoDTO) {
+    private void populateResponse(ManageNumber number, CustomerInfoDTO customerInfoDTO) throws Exception{
 	Customer customer = new Customer();
 	CustomerDTOWrapper customerDTOWrapper = new CustomerDTOWrapper();
+	ObjectMapper mapper = new ObjectMapper();
 
 	customer.setMsisdn(number.getNumber());
 	customer.setTitle(customerInfoDTO.getTitle());
@@ -199,8 +200,8 @@ public class GetProfileRequestHandler extends AbstractRequestHandler<GetProfileR
 	customer.setAccountType(customerInfoDTO.getAccountType());
 	customer.setOwnderType(customerInfoDTO.getOwnderType());
 	customer.setStatus(customerInfoDTO.getOwnderType());
-	customer.setAddress(customerInfoDTO.getAddress());
-	customer.setAdditionalInfo(customerInfoDTO.getAdditionalInfo());
+	customer.setAddress(mapper.readValue(customerInfoDTO.getAddress(), JsonNode.class));
+	customer.setAdditionalInfo(mapper.readValue(customerInfoDTO.getAdditionalInfo(), JsonNode.class));
 	customer.setResourceURL(CommonUtil.getResourceUrl(requestWrapperDTO));
 
 	customerDTOWrapper.setCustomer(customer);

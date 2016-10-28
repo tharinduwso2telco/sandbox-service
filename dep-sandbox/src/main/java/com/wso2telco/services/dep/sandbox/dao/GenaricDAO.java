@@ -33,8 +33,12 @@ public interface GenaricDAO {
     public void saveAttributeValue(AttributeValues valueObj)throws Exception;
 
     public AttributeValues getAttributeValue(AttributeDistribution distributionObj)throws Exception;
+    
+    public List<AttributeValues> getAttributeListValue(List<AttributeDistribution> distributionObj)throws Exception;
 
     public List<AttributeDistribution> getAttributeDistributionByServiceCall(int apiId, int serviceId) throws Exception;
+
+    public void saveAttributeValue(List<AttributeValues> attributeValues)throws Exception;
 
 
 

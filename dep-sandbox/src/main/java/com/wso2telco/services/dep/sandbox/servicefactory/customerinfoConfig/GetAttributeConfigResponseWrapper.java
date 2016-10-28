@@ -13,10 +13,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package com.wso2telco.services.dep.sandbox.util;
+package com.wso2telco.services.dep.sandbox.servicefactory.customerinfoConfig;
 
-public interface AttributeEnum {
+import com.wso2telco.services.dep.sandbox.servicefactory.AbstractReturnWrapperDTO;
 
-    String getFieldType();
+public class GetAttributeConfigResponseWrapper extends
+	AbstractReturnWrapperDTO {
+    private String status;
 
+    public String getStatus() {
+	return status;
+    }
+
+    public void setStatus(String status) {
+	this.status = status;
+    }
+
+    @Override
+    public Object getResponse() {
+
+	if (getRequestError() != null) {
+	    return getRequestError();
+	}
+	return getStatus();
+    }
 }

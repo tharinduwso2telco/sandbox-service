@@ -21,6 +21,7 @@ public class HibernateNumberDAO extends AbstractDAO implements NumberDAO {
 			saveOrUpdate(manageNumber);
 		} catch (Exception e) {
 			LOG.error("saveManageNumbers", e);
+			throw e;
 		}
 
 	}
@@ -35,6 +36,7 @@ public class HibernateNumberDAO extends AbstractDAO implements NumberDAO {
 					.list();
 		} catch (Exception e) {
 			LOG.error("getManageNumbers", e);
+			throw e;
 		} finally {
 			sess.close();
 		}

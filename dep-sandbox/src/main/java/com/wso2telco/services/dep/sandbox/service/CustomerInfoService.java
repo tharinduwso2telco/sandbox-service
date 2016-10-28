@@ -40,7 +40,7 @@ import com.wso2telco.services.dep.sandbox.servicefactory.customerinfo.GetAttribu
 import com.wso2telco.services.dep.sandbox.servicefactory.customerinfo.GetProfileRequestWrapper;
 import com.wso2telco.services.dep.sandbox.util.RequestType;
 
-@Path("customer/{v1}")
+@Path("customerinfo/{v1}")
 @Produces({ MediaType.APPLICATION_JSON })
 @Api(value = "customer/{v1}", description = "Rest Service for Customer info API")
 public class CustomerInfoService {
@@ -48,8 +48,12 @@ public class CustomerInfoService {
     Log LOG = LogFactory.getLog(CustomerInfoService.class);
 
     @GET
-    @Path("/profile")
+    @Path("/customer/profile")
     @ApiOperation(value = "getProfile", notes = "getProfile", response = Response.class)
+    @ApiImplicitParams({
+	    @ApiImplicitParam(name = "sandbox", value = "username", 
+	                     required = true, dataType = "string", paramType = "header")
+	})
     public Response getProfile(@ApiParam(value = "msisdn", required = false) @QueryParam("msisdn") String msisdn,
 	    @ApiParam(value = "imsi", required = false) @QueryParam("imsi") String imsi,
 	    @ApiParam(value = "mcc", required = false) @QueryParam("mcc") String mcc,
@@ -84,10 +88,10 @@ public class CustomerInfoService {
     
     
     @GET
-	@Path("/attribute")
+	@Path("/customer/attribute")
 	@ApiOperation(value = "getAttributeServices", notes = "getAttributeServices", response = Response.class)
 	@ApiImplicitParams({
-	    @ApiImplicitParam(name = "sandbox", value = "Authorization token", 
+	    @ApiImplicitParam(name = "sandbox", value = "username", 
 	                     required = true, dataType = "string", paramType = "header")
 	})
 	public Response getAttributeServices( @ApiParam(value = "msisdn", required = false) @QueryParam("msisdn") String msisdn,

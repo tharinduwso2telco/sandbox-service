@@ -1,7 +1,7 @@
 /*******************************************************************************
  * Copyright  (c) 2015-2016, WSO2.Telco Inc. (http://www.wso2telco.com) All Rights Reserved.
  * 
- * WSO2.Telco Inc. licences this file to you under  the Apache License, Version 2.0 (the "License");
+ * WSO2.Telco Inc. licenses this file to you under  the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  * 
@@ -15,15 +15,10 @@
  ******************************************************************************/
 package com.wso2telco.services.dep.sandbox.dao.model.custom;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonInclude.Include;
-import com.fasterxml.jackson.databind.JsonNode;
+import java.util.ArrayList;
+import java.util.List;
 
-@JsonInclude(value=Include.NON_NULL)
-public class Customer {
-    private String msisdn;
-
-    private String imsi;
+public class GetProfileConfigRequestBean {
 
     private String title;
 
@@ -39,45 +34,13 @@ public class Customer {
 
     private String accountType;
 
-    private String ownderType;
+    private String ownerType;
 
     private String status;
 
-    private JsonNode address;
+    private Address address;
 
-    private JsonNode additionalInfo;
-    
-    private String resourceURL;
-
-    /**
-     * @return the msisdn
-     */
-    public String getMsisdn() {
-	return msisdn;
-    }
-
-    /**
-     * @param msisdn
-     *            the msisdn to set
-     */
-    public void setMsisdn(String msisdn) {
-	this.msisdn = msisdn;
-    }
-
-    /**
-     * @return the imsi
-     */
-    public String getImsi() {
-	return imsi;
-    }
-
-    /**
-     * @param imsi
-     *            the imsi to set
-     */
-    public void setImsi(String imsi) {
-	this.imsi = imsi;
-    }
+    private List<AdditionalInfo> additionalInfo;
 
     /**
      * @return the title
@@ -185,18 +148,18 @@ public class Customer {
     }
 
     /**
-     * @return the ownderType
+     * @return the ownerType
      */
-    public String getOwnderType() {
-	return ownderType;
+    public String getOwnerType() {
+	return ownerType;
     }
 
     /**
-     * @param ownderType
-     *            the ownderType to set
+     * @param ownerType
+     *            the ownerType to set
      */
-    public void setOwnderType(String ownderType) {
-	this.ownderType = ownderType;
+    public void setOwnerType(String ownerType) {
+	this.ownerType = ownerType;
     }
 
     /**
@@ -217,7 +180,7 @@ public class Customer {
     /**
      * @return the address
      */
-    public JsonNode getAddress() {
+    public Address getAddress() {
 	return address;
     }
 
@@ -225,37 +188,94 @@ public class Customer {
      * @param address
      *            the address to set
      */
-    public void setAddress(JsonNode address) {
+    public void setAddress(Address address) {
 	this.address = address;
     }
 
     /**
      * @return the additionalInfo
      */
-    public JsonNode getAdditionalInfo() {
+    public List<AdditionalInfo> getAdditionalInfo() {
 	return additionalInfo;
     }
 
-    /**
-     * @param additionalInfo
-     *            the additionalInfo to set
-     */
-    public void setAdditionalInfo(JsonNode additionalInfo) {
+    public void setAdditionalInfo(List<AdditionalInfo> additionalInfo) {
 	this.additionalInfo = additionalInfo;
     }
 
-    /**
-     * @return the resourceURL
-     */
-    public String getResourceURL() {
-	return resourceURL;
+    public static class AdditionalInfo {
+
+	private String tag;
+
+	private String value;
+
+	public String getTag() {
+	    return tag;
+	}
+
+	public void setTag(String tag) {
+	    this.tag = tag;
+	}
+
+	public String getValue() {
+	    return value;
+	}
+
+	public void setValue(String value) {
+	    this.value = value;
+	}
     }
 
-    /**
-     * @param resourceURL the resourceURL to set
-     */
-    public void setResourceURL(String resourceURL) {
-	this.resourceURL = resourceURL;
-    }
+    public static class Address {
 
+	private String line1;
+
+	private String line2;
+
+	private String line3;
+
+	private String city;
+
+	public String getCity() {
+	    return city;
+	}
+
+	public void setCity(String city) {
+	    this.city = city;
+	}
+
+	public String getCountry() {
+	    return country;
+	}
+
+	public void setCountry(String country) {
+	    this.country = country;
+	}
+
+	private String country;
+
+	public String getLine1() {
+	    return line1;
+	}
+
+	public void setLine1(String line1) {
+	    this.line1 = line1;
+	}
+
+	public String getLine2() {
+	    return line2;
+	}
+
+	public void setLine2(String line2) {
+	    this.line2 = line2;
+	}
+
+	public String getLine3() {
+	    return line3;
+	}
+
+	public void setLine3(String line3) {
+	    this.line3 = line3;
+	}
+    }
 }

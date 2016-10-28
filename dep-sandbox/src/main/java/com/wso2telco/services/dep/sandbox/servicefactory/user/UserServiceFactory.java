@@ -26,26 +26,23 @@ public class UserServiceFactory {
     private static Log LOG = LogFactory.getLog(UserServiceFactory.class);
 
     public static RequestHandleable getInstance(RequestDTO requestDTO) {
+	
 	final String ADD_USER_PATH = "register";
 	final String ATTRIBUTE_PATH = "attribute";
 	final String API_TYPE_PATH = "apiType";
 	final String API_SERVICE_TYPE_PATH = "serviceType";
 	final String ADD_NUMBER_PATH = "managenumber";
-	
-
 
 	if (requestDTO.getRequestPath().contains(ADD_USER_PATH)
 		&& requestDTO.isPost()) {
 	    LOG.debug("LOADING REGISTER NEW USER");
 	    return new RegisterServiceHandler();
-	} else if (requestDTO.getRequestPath().contains(ATTRIBUTE_PATH)) {
-	    if (requestDTO.isPost()) {
-		LOG.debug("LOADING ATTRIBUTE VALUE INSERTION SERVICE ");
-		return new AttributeInsertionServiceHandler();
-	    } else if (requestDTO.isGet()) {
-		LOG.debug("LOADING AVAILABLE SERVICE CALL SPECIFIC ATTRIBUTES");
-		return new RetrieveAttributesServiceHandler();
-	    }
+	} else if (requestDTO.getRequestPath().contains(ATTRIBUTE_PATH)
+		&& requestDTO.isGet()) {
+
+	    LOG.debug("LOADING AVAILABLE SERVICE CALL SPECIFIC ATTRIBUTES");
+	    return new RetrieveAttributesServiceHandler();
+
 	} else if (requestDTO.getRequestPath().contains(API_TYPE_PATH)
 		&& requestDTO.isGet()) {
 	    LOG.debug("LOADING API TYPES");
@@ -54,9 +51,10 @@ public class UserServiceFactory {
 		&& requestDTO.isGet()) {
 	    LOG.debug("LOADING API SERVICE CALL TYPES");
 	    return new RetrieveAPIServicecallHandler();
-	} else if(requestDTO.getRequestPath().contains(ADD_NUMBER_PATH) && requestDTO.isPost()){
-		LOG.debug("LOADING NUMBER SERVICE CALL");
-		return new ManageNumberServiceHandler();
+	} else if (requestDTO.getRequestPath().contains(ADD_NUMBER_PATH)
+		&& requestDTO.isPost()) {
+	    LOG.debug("LOADING NUMBER SERVICE CALL");
+	    return new ManageNumberServiceHandler();
 	}
 
 	LOG.debug("NO ANY SERVICE FOUND FOR REQUESTED PATH");

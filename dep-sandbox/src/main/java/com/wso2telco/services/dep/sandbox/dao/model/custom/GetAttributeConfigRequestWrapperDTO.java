@@ -1,7 +1,7 @@
 /*******************************************************************************
  * Copyright  (c) 2015-2016, WSO2.Telco Inc. (http://www.wso2telco.com) All Rights Reserved.
  * 
- * WSO2.Telco Inc. licences this file to you under  the Apache License, Version 2.0 (the "License");
+ * WSO2.Telco Inc. licenses this file to you under  the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  * 
@@ -13,10 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package com.wso2telco.services.dep.sandbox.util;
+package com.wso2telco.services.dep.sandbox.dao.model.custom;
 
-public interface AttributeEnum {
+public class GetAttributeConfigRequestWrapperDTO extends RequestDTO {
 
-    String getFieldType();
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -5410465778059246538L;
+
+    private GetAttributeConfigRequestBean requestObject;
+
+    public GetAttributeConfigRequestBean getRequestObject() {
+	return requestObject;
+    }
+
+    public void setRequestObject(GetAttributeConfigRequestBean requestObject) {
+	this.requestObject = requestObject;
+    }
 
 }

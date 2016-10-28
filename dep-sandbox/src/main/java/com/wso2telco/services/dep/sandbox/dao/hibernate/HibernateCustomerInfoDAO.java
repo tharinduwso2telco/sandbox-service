@@ -117,15 +117,15 @@ public class HibernateCustomerInfoDAO extends AbstractDAO implements CustomerInf
 
 	    hqlBuilder.append("SELECT msisdn,");
 	    hqlBuilder.append(" MAX(IF(column_name = 'title', value, NULL)) title, ");
-	    hqlBuilder.append(" MAX(IF(column_name = 'firstname',value,NULL)) firstName, ");
-	    hqlBuilder.append(" MAX(IF(column_name = 'lastname',value,NULL)) lastName,");
+	    hqlBuilder.append(" MAX(IF(column_name = 'firstName',value,NULL)) firstName, ");
+	    hqlBuilder.append(" MAX(IF(column_name = 'lastName',value,NULL)) lastName,");
 	    hqlBuilder.append(" MAX(IF(column_name = 'dob', value, NULL)) dob, ");
-	    hqlBuilder.append(" MAX(IF(column_name = 'id_type', value, NULL)) identificationType, ");
-	    hqlBuilder.append(" MAX(IF(column_name = 'id_number',value,NULL)) identificationNumber, ");
+	    hqlBuilder.append(" MAX(IF(column_name = 'identificationType', value, NULL)) identificationType, ");
+	    hqlBuilder.append(" MAX(IF(column_name = 'identificationNumber',value,NULL)) identificationNumber, ");
 	    hqlBuilder.append(" MAX(IF(column_name = 'address', value, NULL)) address, ");
-	    hqlBuilder.append(" MAX(IF(column_name = 'additional_info',value,NULL)) additionalInfo, ");
-	    hqlBuilder.append(" MAX(IF(column_name = 'owner_type',value,NULL)) ownerType, ");
-	    hqlBuilder.append(" MAX(IF(column_name = 'account_type',value,NULL)) accountType, ");
+	    hqlBuilder.append(" MAX(IF(column_name = 'additionalInfo',value,NULL)) additionalInfo, ");
+	    hqlBuilder.append(" MAX(IF(column_name = 'ownerType',value,NULL)) ownerType, ");
+	    hqlBuilder.append(" MAX(IF(column_name = 'accountType',value,NULL)) accountType, ");
 	    hqlBuilder.append(" MAX(IF(column_name = 'status', value, NULL)) status ");
 	    hqlBuilder.append(" FROM ");
 	    hqlBuilder.append(" (SELECT numbers.number AS msisdn, ");

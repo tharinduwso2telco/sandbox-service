@@ -37,7 +37,7 @@ CREATE TABLE IF NOT EXISTS `sbtmessagelog` (
   `userid` int(11) NOT NULL,
   `reference` varchar(100) DEFAULT NULL,
   `value` varchar(100) DEFAULT NULL,
-  `message-timestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `messagetimestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   CONSTRAINT `fk01sbtmessagelog` FOREIGN KEY (`servicenameid`) REFERENCES `sbxapiservicecalls` (`sbxapiservicecallsdid`),
   CONSTRAINT `fk02sbtmessagelog` FOREIGN KEY (`userid`) REFERENCES `user` (`id`)
@@ -58,7 +58,7 @@ CREATE TABLE IF NOT EXISTS `sbxattribute` (
 -- Dumping data for table `sbxattribute`
 --
 
-INSERT INTO `sbxattribute` VALUES (1,'title'),(2,'firstname'),(3,'lastname'),(4,'dob'),(5,'address'),(10,'id_type'),(11,'status'),(12,'owner_type'),(13,'account_type'),(14,'basic'),(15,'billing'),(16,'identification'),(17,'account'),(18,'additional_info'),(19,'id_number');
+INSERT INTO `sbxattribute` VALUES (1,'title'),(2,'firstName'),(3,'lastName'),(4,'dob'),(5,'address'),(10,'identificationType'),(11,'status'),(12,'ownerType'),(13,'accountType'),(14,'basic'),(15,'billing'),(16,'identification'),(17,'account'),(18,'additionalInfo'),(19,'identificationNumber');
 
 --
 -- Table structure for table `sbtattributedistribution`

@@ -97,49 +97,6 @@ public class UserService {
 
     }
 
-    @POST
-    @Path("/{apiType}/{serviceType}/attribute")
-    @ApiOperation(value = "addAttribute", notes = "Add new Attributes for user", response = Response.class)
-    @ApiImplicitParams({ @ApiImplicitParam(name = "sandbox", value = "user name", required = true, dataType = "string", paramType = "header") })
-    public Response addAttribute(
-	    @ApiParam(value = "apiType", required = true) @PathParam("apiType") String apiType,
-	    @ApiParam(value = "serviceType", required = true) @PathParam("serviceType") String serviceType,
-	    @Context HttpServletRequest httpRequest,
-	    @ApiParam(value = "Values: eg 'Saman' for firstname {\\\"line1\\\": \\\"14\\\",\\\"country\\\": \\\"SL\\\"} for address", required = true)  AttributeRequestBean request) {
-	AttributeRequestWrapperDTO requestDTO = new AttributeRequestWrapperDTO();
-	requestDTO.setApiType(apiType);
-	requestDTO.setServiceType(serviceType);
-	requestDTO.setRequestType(RequestType.USER);
-	requestDTO.setHttpRequest(httpRequest);
-	requestDTO.setAttributeBean(request);
-	RequestHandleable handler = RequestBuilderFactory
-		.getInstance(requestDTO);
-	Returnable returnable = null;
-
-	try {
-	    returnable = handler.execute(requestDTO);
-	    Response response = Response.status(returnable.getHttpStatus())
-		    .entity(returnable.getResponse()).build();
-	    LOG.debug("ADD ATTRIBUTE USER SERVICE RESPONSE : " + response);
-	    return response;
-	} catch (SandboxException ex) {
-	    LOG.error(
-		    "###USER### Error encountered in addAttribute Service : ",
-		    ex);
-	    return Response
-		    .status(Response.Status.BAD_REQUEST)
-		    .entity(ex.getErrorType().getCode() + " "
-			    + ex.getErrorType().getMessage()).build();
-	} catch (Exception ex) {
-	    LOG.error(
-		    "###USER### Error encountered in addAttribute Service : ",
-		    ex);
-	    return Response.status(Response.Status.BAD_REQUEST)
-		    .entity(ex.getMessage()).build();
-	}
-
-    }
-
     @GET
     @Path("/{apiType}/{serviceType}/attribute")
     @ApiOperation(value = "getAttribute", notes = " Get User Defined Attributes ", response = Response.class)

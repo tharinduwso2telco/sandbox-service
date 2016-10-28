@@ -2,6 +2,7 @@ package com.wso2telco.services.dep.sandbox.dao.model.custom;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.databind.JsonNode;
 
 @JsonInclude(value=Include.NON_NULL)
 public class ListCustomerInfoAttributesDTO 
@@ -13,10 +14,10 @@ public class ListCustomerInfoAttributesDTO
 	private String imsi;
 	
 	/** The Schema **/
-	private String basic;
-	private String billing;
-	private String account;
-	private String identification;
+	private JsonNode basic;
+	private JsonNode billing;
+	private JsonNode account;
+	private JsonNode identification;
 	
 	/** The resource url **/
 	private String resourceURL;
@@ -39,40 +40,40 @@ public class ListCustomerInfoAttributesDTO
 	}
 
 	
-	public String getBasic() {
+	public JsonNode getBasic() {
 		return basic;
 	}
 		
 
-	public void setBasic(String string) {
+	public void setBasic(JsonNode string) {
 		this.basic = string;
 	}
 
 	
-	public String getBilling() {
+	public JsonNode getBilling() {
 		return billing;
 	}
 	
 
-	public void setBilling(String billing) {
+	public void setBilling(JsonNode billing) {
 		this.billing = billing;
 	}
 
-	public String getAccount() {
+	public JsonNode getAccount() {
 		return account;
 	}
 
-	public void setAccount(String account) {
+	public void setAccount(JsonNode account) {
 		this.account = account;
 	}
 	
 	
-	public String getIdentification() {
+	public JsonNode getIdentification() {
 		return identification;
 	}
 
 
-	public void setIdentification(String identification) {
+	public void setIdentification(JsonNode identification) {
 		this.identification = identification;
 	}
 
