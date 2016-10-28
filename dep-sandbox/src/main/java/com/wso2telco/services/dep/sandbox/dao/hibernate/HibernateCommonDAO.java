@@ -281,6 +281,23 @@ class HibernateCommonDAO extends AbstractDAO implements GenaricDAO {
 	}
 	return value;
     }
+    
+    @Override
+    public AttributeValues getAttributeValue(
+	    AttributeDistribution distributionObj, int ownerdid) throws Exception {
+	Session sess = getSession();
+	AttributeValues value = null;
+	try {
+	    value = (AttributeValues) sess
+		    .createQuery(
+			    "from AttributeValues where attributeDistributionId = ? and ownerdid = ?")
+		    .setParameter(0, distributionObj).setParameter(1, ownerdid).uniqueResult();
+	} catch (Exception e) {
+	    LOG.error("getAttributeValue", e);
+	    throw e;
+	}
+	return value;
+    }
 
 
 }

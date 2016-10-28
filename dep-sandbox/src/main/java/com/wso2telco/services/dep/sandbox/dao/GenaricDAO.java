@@ -39,6 +39,8 @@ public interface GenaricDAO {
     public List<AttributeDistribution> getAttributeDistributionByServiceCall(int apiId, int serviceId) throws Exception;
 
     public void saveAttributeValue(List<AttributeValues> attributeValues)throws Exception;
+    
+    public AttributeValues getAttributeValue(AttributeDistribution distributionObj, int ownerdid) throws Exception ;
 
 
 

@@ -4,6 +4,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import com.wso2telco.services.dep.sandbox.dao.model.custom.RequestDTO;
+import com.wso2telco.services.dep.sandbox.servicefactory.credit.CreditServiceFactory;
 import com.wso2telco.services.dep.sandbox.servicefactory.customerinfo.CustomerInfoServiceFactory;
 import com.wso2telco.services.dep.sandbox.servicefactory.customerinfoConfig.CustomerInfoConfigServiceFactory;
 import com.wso2telco.services.dep.sandbox.servicefactory.location.LocationRequestFactory;
@@ -61,6 +62,10 @@ public class RequestBuilderFactory {
 		    	LOG.debug("LOADING CUSTOMERINFO CONFIGURATION FACTORY");
 		    	requestHandler = CustomerInfoConfigServiceFactory.getInstance(requestDTO);
 		    	break;
+		case CREDIT:
+	    	LOG.debug("LOADING CREDIT CONFIGURATION FACTORY");
+	    	requestHandler = CreditServiceFactory.getInstance(requestDTO);
+	    	break;
 		default:
 			LOG.debug("APPROPIATE FACTORY CLASS NOT FOUND");
 			break;
