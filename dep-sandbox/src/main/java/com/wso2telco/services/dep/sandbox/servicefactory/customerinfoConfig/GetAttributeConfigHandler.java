@@ -268,10 +268,8 @@ public class GetAttributeConfigHandler extends
 
 		attributeValues.add(valueObj);
 	    }
-
-	    dao.saveAttributeValue(attributeValues);
-
 	}
+	dao.saveAttributeValue(attributeValues);
 
 	responseWrapperDTO
 		.setStatus("Successfully Updated attribute for getAttribute!!");

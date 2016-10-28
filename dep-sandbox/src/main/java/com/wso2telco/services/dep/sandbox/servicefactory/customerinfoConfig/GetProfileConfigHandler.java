@@ -257,11 +257,9 @@ public class GetProfileConfigHandler extends
 		attributeValues.add(valueObj);
 
 	    }
-
-	    dao.saveAttributeValue(attributeValues);
-
 	}
 
+	dao.saveAttributeValue(attributeValues);
 	responseWrapperDTO
 		.setStatus("Successfully Updated attribute for getProfile!!");
 	responseWrapperDTO.setHttpStatus(Response.Status.CREATED);
