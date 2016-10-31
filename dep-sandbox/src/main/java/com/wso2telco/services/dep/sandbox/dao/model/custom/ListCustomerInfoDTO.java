@@ -24,6 +24,7 @@ public class ListCustomerInfoDTO {
 	/**
 	 * @return the customerInfo
 	 */
+	@JsonProperty ("Customer")
 	public ListCustomerInfoAttributesDTO getCustomer() {
 		return customerInfo;
 	}

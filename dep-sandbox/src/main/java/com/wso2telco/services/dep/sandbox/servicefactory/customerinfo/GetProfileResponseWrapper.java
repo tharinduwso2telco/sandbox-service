@@ -15,6 +15,7 @@
  ******************************************************************************/
 package com.wso2telco.services.dep.sandbox.servicefactory.customerinfo;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.wso2telco.services.dep.sandbox.dao.model.custom.Customer;
 import com.wso2telco.services.dep.sandbox.dao.model.custom.CustomerInfoDTO;
 import com.wso2telco.services.dep.sandbox.servicefactory.AbstractReturnWrapperDTO;
@@ -52,6 +53,8 @@ public class GetProfileResponseWrapper extends AbstractReturnWrapperDTO {
 	/**
 	 * @return the customer
 	 */
+	
+	@JsonProperty ("Customer")
 	public Customer getCustomer() {
 	    return customer;
 	}

@@ -23,6 +23,7 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriInfo;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -64,10 +65,12 @@ public class CustomerInfoService {
 	GetProfileRequestWrapper requestDTO = new GetProfileRequestWrapper();
 	requestDTO.setRequestType(RequestType.CUSTOMERINFO);
 	requestDTO.setHttpRequest(request);
-	requestDTO.setMsisdn(msisdn);
 	requestDTO.setImsi(imsi);
 	requestDTO.setMcc(mcc);
 	requestDTO.setMnc(mnc);
+	String [] queryParams = request.getQueryString().split("\\=");
+	requestDTO.setMsisdn(queryParams[1]);
+
 
 	RequestHandleable handler = RequestBuilderFactory.getInstance(requestDTO);
 	Returnable returnable = null;
@@ -108,6 +111,11 @@ public class CustomerInfoService {
 		requestDTO.setMcc(mcc);
 		requestDTO.setMnc(mnc);
 		requestDTO.setRequestType(RequestType.CUSTOMERINFO);
+		String [] queryParams = request.getQueryString().split("\\&");
+		for (String eachParam : queryParams){
+		    if (eachParam.contains("msisdn"))
+			requestDTO.setMsisdn(eachParam.split("\\=")[1]);
+		}
 
 		RequestHandleable handler = RequestBuilderFactory.getInstance(requestDTO);
 		Returnable returnable = null;
