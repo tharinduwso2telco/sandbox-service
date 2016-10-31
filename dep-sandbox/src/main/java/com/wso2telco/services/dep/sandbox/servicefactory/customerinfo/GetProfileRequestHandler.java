@@ -215,8 +215,8 @@ public class GetProfileRequestHandler extends AbstractRequestHandler<GetProfileR
 	customer.setIdentificationType(customerInfoDTO.getIdentificationType());
 	customer.setIdentificationNumber(customerInfoDTO.getIdentificationNumber());
 	customer.setAccountType(customerInfoDTO.getAccountType());
-	customer.setOwnderType(customerInfoDTO.getOwnderType());
-	customer.setStatus(customerInfoDTO.getOwnderType());
+	customer.setOwnerType(customerInfoDTO.getOwnerType());
+	customer.setStatus(customerInfoDTO.getStatus());
 	customer.setAddress(mapper.readValue(customerInfoDTO.getAddress(), JsonNode.class));
 	customer.setAdditionalInfo(mapper.readValue(customerInfoDTO.getAdditionalInfo(), JsonNode.class));
 	customer.setResourceURL(CommonUtil.getResourceUrl(requestWrapperDTO));

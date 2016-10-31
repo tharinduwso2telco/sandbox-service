@@ -39,7 +39,7 @@ public class Customer {
 
     private String accountType;
 
-    private String ownderType;
+    private String ownerType;
 
     private String status;
 
@@ -187,16 +187,16 @@ public class Customer {
     /**
      * @return the ownderType
      */
-    public String getOwnderType() {
-	return ownderType;
+    public String getOwnerType() {
+	return ownerType;
     }
 
     /**
      * @param ownderType
      *            the ownderType to set
      */
-    public void setOwnderType(String ownderType) {
-	this.ownderType = ownderType;
+    public void setOwnerType(String ownerType) {
+	this.ownerType = ownerType;
     }
 
     /**

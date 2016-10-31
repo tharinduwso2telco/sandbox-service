@@ -174,7 +174,7 @@ public class HibernateCustomerInfoDAO extends AbstractDAO implements CustomerInf
 		customerInfoDTO.setMsisdn((String) resultMap.get("msisdn"));
 		customerInfoDTO.setAddress((String) resultMap.get("address"));
 		customerInfoDTO.setAccountType((String) resultMap.get("accountType"));
-		customerInfoDTO.setOwnderType((String) resultMap.get("ownerType"));
+		customerInfoDTO.setOwnerType((String) resultMap.get("ownerType"));
 		customerInfoDTO.setAdditionalInfo((String) resultMap.get("additionalInfo"));
 		customerInfoDTO.setStatus((String) resultMap.get("status"));
 		customerInfoDTO.setIdentificationType((String) resultMap.get("identificationType"));
