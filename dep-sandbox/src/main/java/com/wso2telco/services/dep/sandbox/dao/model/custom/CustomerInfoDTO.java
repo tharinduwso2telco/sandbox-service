@@ -151,14 +151,14 @@ public class CustomerInfoDTO {
     }
 
     /**
-     * @return the ownderType
+     * @return the ownerType
      */
     public String getOwnerType() {
 	return ownerType;
     }
 
     /**
-     * @param ownderType
+     * @param ownerType
      *            the ownderType to set
      */
     public void setOwnerType(String ownerType) {
