@@ -68,8 +68,11 @@ public class CustomerInfoService {
 	requestDTO.setImsi(imsi);
 	requestDTO.setMcc(mcc);
 	requestDTO.setMnc(mnc);
-	String [] queryParams = request.getQueryString().split("\\=");
-	requestDTO.setMsisdn(queryParams[1]);
+	String [] queryParams = request.getQueryString().split("\\&");
+	for (String eachParam : queryParams){
+	    if (eachParam.contains("msisdn"))
+		requestDTO.setMsisdn(eachParam.split("\\=")[1]);
+	}
 
 
 	RequestHandleable handler = RequestBuilderFactory.getInstance(requestDTO);
