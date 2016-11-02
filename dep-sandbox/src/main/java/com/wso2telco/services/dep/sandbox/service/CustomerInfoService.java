@@ -68,11 +68,11 @@ public class CustomerInfoService {
 	requestDTO.setImsi(imsi);
 	requestDTO.setMcc(mcc);
 	requestDTO.setMnc(mnc);
-	String [] queryParams = request.getQueryString().split("\\&");
+	/*String [] queryParams = request.getQueryString().split("\\&");
 	for (String eachParam : queryParams){
-	    if (eachParam.contains("msisdn"))
-		requestDTO.setMsisdn(eachParam.split("\\=")[1]);
-	}
+	    if (eachParam.contains("msisdn"))*/
+		requestDTO.setMsisdn(/*eachParam.split("\\=")[1]*/msisdn);
+	/*}*/
 
 
 	RequestHandleable handler = RequestBuilderFactory.getInstance(requestDTO);
@@ -114,11 +114,11 @@ public class CustomerInfoService {
 		requestDTO.setMcc(mcc);
 		requestDTO.setMnc(mnc);
 		requestDTO.setRequestType(RequestType.CUSTOMERINFO);
-		String [] queryParams = request.getQueryString().split("\\&");
+		/*String [] queryParams = request.getQueryString().split("\\&");
 		for (String eachParam : queryParams){
 		    if (eachParam.contains("msisdn"))
 			requestDTO.setMsisdn(eachParam.split("\\=")[1]);
-		}
+		}*/
 
 		RequestHandleable handler = RequestBuilderFactory.getInstance(requestDTO);
 		Returnable returnable = null;
