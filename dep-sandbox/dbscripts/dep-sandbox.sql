@@ -376,7 +376,7 @@ CREATE TABLE IF NOT EXISTS  `sbxattribute` (
 -- Dumping data for table `sbxattribute`
 --
 
-INSERT INTO `sbxattribute` VALUES (1,'title'),(2,'firstName'),(3,'lastName'),(4,'dob'),(5,'address'),(10,'identificationType'),(11,'status'),(12,'ownerType'),(13,'accountType'),(14,'basic'),(15,'billing'),(16,'identification'),(17,'account'),(18,'additionalInfo'),(19,'identificationNumber');
+INSERT INTO `sbxattribute` VALUES (1,'title'),(2,'firstName'),(3,'lastName'),(4,'dob'),(5,'address'),(6,'identificationType'),(7,'status'),(8,'ownerType'),(9,'accountType'),(10,'basic'),(11,'billing'),(12,'identification'),(13,'account'),(14,'additionalInfo'),(15,'identificationNumber');
 --
 -- Table structure for table `sbtattributedistribution`
 --
@@ -394,7 +394,7 @@ CREATE TABLE IF NOT EXISTS `sbtattributedistribution` (
 -- Dumping data for table `sbtattributedistribution`
 --
 
-INSERT INTO `sbtattributedistribution` VALUES (1,1,2),(2,2,2),(3,3,2),(4,4,2),(5,5,2),(6,10,2),(7,11,2),(8,12,2),(9,13,2),(10,14,1),(11,15,1),(12,16,1),(13,17,1),(14,18,2),(15,19,2);
+INSERT INTO `sbtattributedistribution` VALUES (1,1,2),(2,2,2),(3,3,2),(4,4,2),(5,5,2),(6,6,2),(7,7,2),(8,8,2),(9,9,2),(10,10,1),(11,11,1),(12,12,1),(13,13,1),(14,14,2),(15,15,2);
 
 
 --
