@@ -60,7 +60,7 @@ public class CustomerInfoService {
 	    @ApiParam(value = "mcc", required = false) @QueryParam("mcc") String mcc,
 	    @ApiParam(value = "mnc", required = false) @QueryParam("mnc") String mnc,
 	    @Context HttpServletRequest request) {
-	LOG.debug("/profile invoked");
+	LOG.debug("/profile invoked" + msisdn + imsi + mcc + mnc);
 
 	GetProfileRequestWrapper requestDTO = new GetProfileRequestWrapper();
 	requestDTO.setRequestType(RequestType.CUSTOMERINFO);
@@ -68,13 +68,8 @@ public class CustomerInfoService {
 	requestDTO.setImsi(imsi);
 	requestDTO.setMcc(mcc);
 	requestDTO.setMnc(mnc);
-	/*String [] queryParams = request.getQueryString().split("\\&");
-	for (String eachParam : queryParams){
-	    if (eachParam.contains("msisdn"))*/
-		requestDTO.setMsisdn(/*eachParam.split("\\=")[1]*/msisdn);
-	/*}*/
-
-
+	requestDTO.setMsisdn(msisdn);
+	
 	RequestHandleable handler = RequestBuilderFactory.getInstance(requestDTO);
 	Returnable returnable = null;
 
@@ -106,6 +101,7 @@ public class CustomerInfoService {
 			@ApiParam(value = "mcc", required = false) @QueryParam("mcc") String mcc,
 			@ApiParam(value = "mnc", required = false) @QueryParam("mnc") String mnc,@Context HttpServletRequest request) {
 		LOG.debug("/{schema}/{mcc}/{mnc}/attribute invorked :" + msisdn + imsi + schema + mcc + mnc);
+		
 		GetAttributeRequestWrapper requestDTO = new GetAttributeRequestWrapper();
 		requestDTO.setHttpRequest(request);
 		requestDTO.setMsisdn(msisdn);
@@ -114,11 +110,6 @@ public class CustomerInfoService {
 		requestDTO.setMcc(mcc);
 		requestDTO.setMnc(mnc);
 		requestDTO.setRequestType(RequestType.CUSTOMERINFO);
-		/*String [] queryParams = request.getQueryString().split("\\&");
-		for (String eachParam : queryParams){
-		    if (eachParam.contains("msisdn"))
-			requestDTO.setMsisdn(eachParam.split("\\=")[1]);
-		}*/
 
 		RequestHandleable handler = RequestBuilderFactory.getInstance(requestDTO);
 		Returnable returnable = null;
