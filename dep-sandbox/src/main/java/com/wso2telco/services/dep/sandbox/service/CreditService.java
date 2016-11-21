@@ -33,7 +33,7 @@ import com.wso2telco.services.dep.sandbox.util.RequestType;
 @Path("/{v1}/credit")
 @Consumes({ MediaType.APPLICATION_JSON })
 @Produces({ MediaType.APPLICATION_JSON })
-@Api(value = "/credit/{v1}", description = "Rest Service for Credit API")
+@Api(value = "/{v1}/credit", description = "Rest Service for Credit API")
 public class CreditService {
 	
 	Log LOG = LogFactory.getLog(CreditService.class);

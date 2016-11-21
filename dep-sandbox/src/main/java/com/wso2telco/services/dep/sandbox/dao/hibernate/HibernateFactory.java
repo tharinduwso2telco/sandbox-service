@@ -30,7 +30,4 @@ public class HibernateFactory {
 		return new HibernateNumberDAO();
 	}
 	
-	public HibernateCreditDAO getHibernateCreditDAO() {
-		return new HibernateCreditDAO();
-	}
 }

@@ -13,7 +13,6 @@ import com.wso2telco.core.dbutils.exception.ServiceError;
 import com.wso2telco.dep.oneapivalidation.exceptions.CustomException;
 import com.wso2telco.dep.oneapivalidation.util.Validation;
 import com.wso2telco.dep.oneapivalidation.util.ValidationRule;
-import com.wso2telco.services.dep.sandbox.dao.CreditDAO;
 import com.wso2telco.services.dep.sandbox.dao.DaoFactory;
 import com.wso2telco.services.dep.sandbox.dao.NumberDAO;
 import com.wso2telco.services.dep.sandbox.dao.model.custom.CallbackReference;
@@ -34,7 +33,6 @@ import com.wso2telco.services.dep.sandbox.util.ServiceName;
 
 public class PatialRefundRequestHandler extends AbstractRequestHandler<PatialRefundRequestWrapper> {
 
-	private CreditDAO creditDao;
 	private NumberDAO numberDao;
 	private MessageLogHandler logHandler;
 	private PatialRefundRequestWrapper requestWrapperDTO;
@@ -53,7 +51,6 @@ public class PatialRefundRequestHandler extends AbstractRequestHandler<PatialRef
 
 	{
 		LOG = LogFactory.getLog(PatialRefundRequestHandler.class);
-		creditDao = DaoFactory.getCreditDAO();
 		numberDao = DaoFactory.getNumberDAO();
 		dao = DaoFactory.getGenaricDAO();
 		logHandler = MessageLogHandler.getInstance();
@@ -183,7 +180,7 @@ public class PatialRefundRequestHandler extends AbstractRequestHandler<PatialRef
 
 		double newBalance = manageNumber.getBalance() + amount;
 		manageNumber.setBalance(newBalance);
-		creditDao.updateNumberBalance(manageNumber);
+		numberDao.saveManageNumbers(manageNumber);
 	}
 
 	private void buildJsonResponseBody(double amount, String clientCorrelator, String merchantIdentification,

@@ -13,7 +13,6 @@ import com.wso2telco.core.dbutils.exception.ServiceError;
 import com.wso2telco.dep.oneapivalidation.exceptions.CustomException;
 import com.wso2telco.dep.oneapivalidation.util.Validation;
 import com.wso2telco.dep.oneapivalidation.util.ValidationRule;
-import com.wso2telco.services.dep.sandbox.dao.CreditDAO;
 import com.wso2telco.services.dep.sandbox.dao.DaoFactory;
 import com.wso2telco.services.dep.sandbox.dao.NumberDAO;
 import com.wso2telco.services.dep.sandbox.dao.model.custom.CallbackReference;
@@ -38,7 +37,6 @@ import com.wso2telco.services.dep.sandbox.util.ServiceName;
 
 public class CreditApplyRequestHandler extends AbstractRequestHandler<CreditApplyRequestWrapper> {
 
-	private CreditDAO creditDao;
 	private NumberDAO numberDao;
 	private MessageLogHandler logHandler;
 	private CreditApplyRequestWrapper requestWrapperDTO;
@@ -59,7 +57,6 @@ public class CreditApplyRequestHandler extends AbstractRequestHandler<CreditAppl
 
 	{
 		LOG = LogFactory.getLog(CreditApplyRequestHandler.class);
-		creditDao = DaoFactory.getCreditDAO();
 		numberDao = DaoFactory.getNumberDAO();
 		dao = DaoFactory.getGenaricDAO();
 		logHandler = MessageLogHandler.getInstance();
@@ -221,7 +218,7 @@ public class CreditApplyRequestHandler extends AbstractRequestHandler<CreditAppl
 
 		double newBalance = manageNumber.getBalance() + amount;
 		manageNumber.setBalance(newBalance);
-		creditDao.updateNumberBalance(manageNumber);
+		numberDao.saveManageNumbers(manageNumber);
 	}
 
 	private void updateValue(AttributeValues attributeValues, double amount) throws Exception {
