@@ -13,8 +13,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package com.wso2telco.services.dep.sandbox.util;
+package com.wso2telco.services.dep.sandbox.dao.model.custom;
 
-public enum TableName {
-    USER, NUMBERS, SBXAPISERVICECALLS
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+
+@JsonInclude(value=Include.NON_NULL)
+public class PaymentAmountResponse {
+	
+	private ChargingInformation chargingInformation;
+
+	private ChargingMetaData chargingMetaData;
+
+	public ChargingInformation getChargingInformation() {
+		return chargingInformation;
+	}
+
+	public void setChargingInformation(ChargingInformation chargingInformation) {
+		this.chargingInformation = chargingInformation;
+	}
+
+	public ChargingMetaData getChargingMetaData() {
+		return chargingMetaData;
+	}
+
+	public void setChargingMetaData(ChargingMetaData chargingMetaData) {
+		this.chargingMetaData = chargingMetaData;
+	}
 }

@@ -13,8 +13,33 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package com.wso2telco.services.dep.sandbox.util;
 
-public enum TableName {
-    USER, NUMBERS, SBXAPISERVICECALLS
+package com.wso2telco.services.dep.sandbox.dao.model.custom;
+
+public class RefundRequestWrapperDTO extends RequestDTO {
+
+	/** The endUserId param **/
+	private String endUserId;
+
+	/** The request bean **/
+	private RefundTransactionRequestBean refundRequestBean;
+
+	public String getEndUserId() {
+		return endUserId;
+	}
+
+	public void setEndUserId(String endUserId) {
+		this.endUserId = endUserId;
+	}
+
+	public RefundTransactionRequestBean getRefundRequestBean() {
+		return refundRequestBean;
+	}
+
+	public void setRefundRequestBean(
+			RefundTransactionRequestBean refundRequestBean) {
+		this.refundRequestBean = refundRequestBean;
+	}
+	
+	
 }

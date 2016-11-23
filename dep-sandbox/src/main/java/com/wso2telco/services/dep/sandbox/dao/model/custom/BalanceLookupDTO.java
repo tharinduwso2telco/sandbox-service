@@ -13,8 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package com.wso2telco.services.dep.sandbox.util;
+package com.wso2telco.services.dep.sandbox.dao.model.custom;
 
-public enum TableName {
-    USER, NUMBERS, SBXAPISERVICECALLS
+public class BalanceLookupDTO {
+
+	private BalanceLookupResponseBean balanceLookup;
+
+	public BalanceLookupResponseBean getaccountBalance() {
+		return balanceLookup;
+	}
+
+	public void setaccountBalance(BalanceLookupResponseBean balanceLookup) {
+		this.balanceLookup = balanceLookup;
+	}
 }

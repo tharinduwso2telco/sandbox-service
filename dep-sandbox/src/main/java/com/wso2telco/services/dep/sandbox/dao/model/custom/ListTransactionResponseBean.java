@@ -13,8 +13,34 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package com.wso2telco.services.dep.sandbox.util;
+package com.wso2telco.services.dep.sandbox.dao.model.custom;
 
-public enum TableName {
-    USER, NUMBERS, SBXAPISERVICECALLS
+import java.util.ArrayList;
+import java.util.List;
+
+import com.fasterxml.jackson.databind.JsonNode;
+
+public class ListTransactionResponseBean {
+		
+	private List<JsonNode> amountTransaction = new ArrayList<JsonNode>();
+	
+	private String resourceURL;
+	
+
+	public String getResourceURL() {
+		return resourceURL;
+	}
+
+	public List<JsonNode> getAmountTransaction() {
+		return amountTransaction;
+	}
+
+	public void setAmountTransaction(List<JsonNode> amountTransaction) {
+		this.amountTransaction = amountTransaction;
+	}
+
+	public void setResourceURL(String resourceURL) {
+		this.resourceURL = resourceURL;
+	}
+	
 }

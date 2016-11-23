@@ -13,8 +13,41 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package com.wso2telco.services.dep.sandbox.util;
+package com.wso2telco.services.dep.sandbox.dao.model.custom;
 
-public enum TableName {
-    USER, NUMBERS, SBXAPISERVICECALLS
+import java.util.ArrayList;
+import java.util.List;
+
+public class RetrieveAccountStatusConfigDTO {
+
+/*	private StatusValueConfigResponseBean requestBean;
+
+	public StatusValueConfigResponseBean getStatus() {
+		return requestBean;
+	}
+
+	public void setStatus(StatusValueConfigResponseBean requestBean) {
+		this.requestBean = requestBean;
+	}*/
+	
+/*	private String status;
+
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
+	}*/
+
+	private List<String>accountStatus = new ArrayList<String>();
+
+	public List<String> getAccountStatus() {
+		return accountStatus;
+	}
+
+	public void setAccountStatus(List<String> accountStatus) {
+		this.accountStatus = accountStatus;
+	}
+	
 }

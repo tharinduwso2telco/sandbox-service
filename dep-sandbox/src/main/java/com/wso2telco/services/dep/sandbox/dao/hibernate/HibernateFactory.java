@@ -29,4 +29,8 @@ public class HibernateFactory {
 	public HibernateNumberDAO getHibernateNumberDAO() {
 		return new HibernateNumberDAO();
 	}
+	
+	public HibernateWalletDAO getHibernateWalletDAO() {
+		return new HibernateWalletDAO();
+	}
 }
