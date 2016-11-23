@@ -18,7 +18,7 @@ import com.wso2telco.services.dep.sandbox.dao.NumberDAO;
 import com.wso2telco.services.dep.sandbox.dao.model.custom.CallbackReference;
 import com.wso2telco.services.dep.sandbox.dao.model.custom.CreditApplyRequestWrapper;
 import com.wso2telco.services.dep.sandbox.dao.model.custom.CreditApplyResponseBean;
-import com.wso2telco.services.dep.sandbox.dao.model.custom.CreditApplyResponseBean.ServiceCreditResponse;
+import com.wso2telco.services.dep.sandbox.dao.model.custom.CreditApplyResponseBean.CreditApplyResponse;
 import com.wso2telco.services.dep.sandbox.dao.model.custom.CreditRequestBean;
 import com.wso2telco.services.dep.sandbox.dao.model.custom.CreditRequestBean.CreditApplyRequest;
 import com.wso2telco.services.dep.sandbox.dao.model.domain.APIServiceCalls;
@@ -235,16 +235,16 @@ public class CreditApplyRequestHandler extends AbstractRequestHandler<CreditAppl
 		receiptResponse.setCallbackData(callbackData);
 		receiptResponse.setNotifyURL(notifyURL);
 		receiptResponse.setResourceURL(CommonUtil.getResourceUrl(requestWrapperDTO));
-		ServiceCreditResponse serviceCreditResponse = new ServiceCreditResponse();
-		serviceCreditResponse.setAmount(amount);
-		serviceCreditResponse.setType(type);
-		serviceCreditResponse.setClientCorrelator(clientCorrelator);
-		serviceCreditResponse.setMerchantIdentification(merchantIdentification);
-		serviceCreditResponse.setReasonForCredit(reason);
-		serviceCreditResponse.setStatus(status);
-		serviceCreditResponse.setReceiptResponse(receiptResponse);
+		CreditApplyResponse creditApplyResponse = new CreditApplyResponse();
+		creditApplyResponse.setAmount(amount);
+		creditApplyResponse.setType(type);
+		creditApplyResponse.setClientCorrelator(clientCorrelator);
+		creditApplyResponse.setMerchantIdentification(merchantIdentification);
+		creditApplyResponse.setReasonForCredit(reason);
+		creditApplyResponse.setStatus(status);
+		creditApplyResponse.setReceiptResponse(receiptResponse);
 		CreditApplyResponseBean creditApplyResponseBean = new CreditApplyResponseBean();
-		creditApplyResponseBean.setServiceCreditResponse(serviceCreditResponse);
+		creditApplyResponseBean.setCreditApplyResponse(creditApplyResponse);
 		responseWrapperDTO.setCreditApplyResponseBean(creditApplyResponseBean);
 
 	}

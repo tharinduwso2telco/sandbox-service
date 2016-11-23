@@ -20,7 +20,7 @@ import com.wso2telco.services.dep.sandbox.dao.model.custom.PatialRefundRequestWr
 import com.wso2telco.services.dep.sandbox.dao.model.custom.RefundRequestBean;
 import com.wso2telco.services.dep.sandbox.dao.model.custom.RefundRequestBean.RefundRequest;
 import com.wso2telco.services.dep.sandbox.dao.model.custom.RefundResponseBean;
-import com.wso2telco.services.dep.sandbox.dao.model.custom.RefundResponseBean.ServiceRefundResponse;
+import com.wso2telco.services.dep.sandbox.dao.model.custom.RefundResponseBean.RefundResponse;
 import com.wso2telco.services.dep.sandbox.dao.model.domain.APIServiceCalls;
 import com.wso2telco.services.dep.sandbox.dao.model.domain.APITypes;
 import com.wso2telco.services.dep.sandbox.dao.model.domain.ManageNumber;
@@ -190,15 +190,15 @@ public class PatialRefundRequestHandler extends AbstractRequestHandler<PatialRef
 		receiptResponse.setCallbackData(callbackData);
 		receiptResponse.setNotifyURL(notifyURL);
 		receiptResponse.setResourceURL(CommonUtil.getResourceUrl(requestWrapperDTO));
-		ServiceRefundResponse serviceRefundResponse = new ServiceRefundResponse();
-		serviceRefundResponse.setAmount(amount);
-		serviceRefundResponse.setServerTransactionReference(serverTransactionReference);
-		serviceRefundResponse.setClientCorrelator(clientCorrelator);
-		serviceRefundResponse.setMerchantIdentification(merchantIdentification);
-		serviceRefundResponse.setReasonForRefund(reason);
-		serviceRefundResponse.setReceiptResponse(receiptResponse);
+		RefundResponse refundResponse = new RefundResponse();
+		refundResponse.setAmount(amount);
+		refundResponse.setServerTransactionReference(serverTransactionReference);
+		refundResponse.setClientCorrelator(clientCorrelator);
+		refundResponse.setMerchantIdentification(merchantIdentification);
+		refundResponse.setReasonForRefund(reason);
+		refundResponse.setReceiptResponse(receiptResponse);
 		RefundResponseBean refundResponseBean = new RefundResponseBean();
-		refundResponseBean.setServiceRefundResponse(serviceRefundResponse);
+		refundResponseBean.setRefundResponse(refundResponse);
 		responseWrapperDTO.setRefundResponseBean(refundResponseBean);
 
 	}

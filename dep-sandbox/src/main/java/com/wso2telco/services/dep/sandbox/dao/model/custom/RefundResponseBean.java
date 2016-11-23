@@ -2,20 +2,20 @@ package com.wso2telco.services.dep.sandbox.dao.model.custom;
 
 public class RefundResponseBean {
 	
-	private ServiceRefundResponse serviceRefundResponse;
+	private RefundResponse refundResponse;
 	
 	
-	public ServiceRefundResponse getServiceRefundResponse() {
-		return serviceRefundResponse;
+	public RefundResponse getRefundResponse() {
+		return refundResponse;
 	}
 
 
-	public void setServiceRefundResponse(ServiceRefundResponse serviceRefundResponse) {
-		this.serviceRefundResponse = serviceRefundResponse;
+	public void setRefundResponse(RefundResponse refundResponse) {
+		this.refundResponse = refundResponse;
 	}
 
 
-	public static class ServiceRefundResponse {
+	public static class RefundResponse {
 		
 		private double amount;
 		

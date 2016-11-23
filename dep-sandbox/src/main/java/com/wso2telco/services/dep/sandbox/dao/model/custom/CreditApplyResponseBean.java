@@ -2,24 +2,24 @@ package com.wso2telco.services.dep.sandbox.dao.model.custom;
 
 public class CreditApplyResponseBean {
 	
-	private ServiceCreditResponse serviceCreditResponse;
+	private CreditApplyResponse creditApplyResponse;
 	
 	
-	public ServiceCreditResponse getServiceCreditResponse() {
-		return serviceCreditResponse;
+	public CreditApplyResponse getCreditApplyResponse() {
+		return creditApplyResponse;
 	}
 
 
-	public void setServiceCreditResponse(ServiceCreditResponse serviceCreditResponse) {
-		this.serviceCreditResponse = serviceCreditResponse;
+	public void setCreditApplyResponse(CreditApplyResponse creditApplyResponse) {
+		this.creditApplyResponse = creditApplyResponse;
 	}
 
 
-	public static class ServiceCreditResponse {
-		
-		private String type;
+	public static class CreditApplyResponse {
 		
 		private double amount;
+		
+		private String type;
 		
 		private String clientCorrelator;
 		
@@ -31,20 +31,20 @@ public class CreditApplyResponseBean {
 		
 		private CallbackReference receiptResponse;
 
-		public String getType() {
-			return type;
-		}
-
-		public void setType(String type) {
-			this.type = type;
-		}
-
 		public double getAmount() {
 			return amount;
 		}
 
 		public void setAmount(double amount) {
 			this.amount = amount;
+		}
+		
+		public String getType() {
+			return type;
+		}
+
+		public void setType(String type) {
+			this.type = type;
 		}
 
 		public String getClientCorrelator() {

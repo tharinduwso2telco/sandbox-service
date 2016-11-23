@@ -719,5 +719,115 @@ Response :
 Unless 400 Bad Request will be returned
 
 
+
+
+
+###6.4 Credit Service
+
+
+####6.4.1 Introduction
+
+Credit service will provide the Service providers a list of credit services available for the given MSISDN. Basically Credit API supports 2 operations.
+
+- Apply a Credit - Apply a credit
+- Partial Refund - Perform a partial refund
+
+
+####6.3.2 API features with postman testing
+
+- Apply a Credit - Apply a credit
+
+Request :
+
+Type - POST
+
+Request URI:
+```
+http://<host>:<port>/{v1}/credit/{msisdn}/apply 
+```
+
+Request Body :
+```
+{
+	"creditApplyRequest":{
+		"type":"type",
+		"amount":0,
+		"clientCorrelator":"clientCorrelator",
+		"reasonForCredit":"reasonForCredit",
+		"merchantIdentification":"merchantIdentification",
+		"receiptRequest":{
+			"notifyURL":"notifyURL",
+			"callbackData":"callbackData"
+		}
+	}
+}
+```
+
+Response :
+```
+{
+  "creditApplyResponse": {
+    "type": "type",
+    "amount": 0,
+    "clientCorrelator": "clientCorrelator",
+    "reasonForCredit": "reasonForCredit",
+    "merchantIdentification": "merchantIdentification",
+    "status": "status",
+    "receiptResponse": {
+      "notifyURL": "notifyURL",
+      "callbackData": "callbackData",
+      "resourceURL": "http://<host>:<port>/{v1}/credit/{msisdn}/apply"
+    }
+  }
+}
+```
+
+- Partial Refund - Perform a partial refund
+
+Request :
+
+Type - POST
+
+Request URI:
+```
+http://<host>:<port>/{v1}/credit/{msisdn}/refund 
+```
+
+Request Body :
+```
+{
+	"refundRequest":{
+		"amount":0,
+		"clientCorrelator":"clientCorrelator",
+		"reasonForRefund":"reasonForRefund",
+		"merchantIdentification":"merchantIdentification",
+		"serverTransactionReference":"serverTransactionReference",
+		"receiptRequest":{
+			"notifyURL":"notifyURL",
+			"callbackData":"callbackData"
+		}
+	}
+}
+```
+
+Response :
+```
+{
+  "refundResponse": {
+    "amount": 0,
+    "serverTransactionReference": "serverTransactionReference",
+    "clientCorrelator": "clientCorrelator",
+    "reasonForRefund": "reasonForRefund",
+    "merchantIdentification": "merchantIdentification",
+    "receiptResponse": {
+      "notifyURL": "notifyURL",
+      "callbackData": "callbackData",
+      "resourceURL": "http://<host>:<port>/{v1}/credit/{msisdn}/refund"
+    }
+  }
+}
+```
+
+
 Note : Service Provider should be aware of the mandatory/optional parameters according to specification so that they will be validated while data insertion in configuration service.
 
