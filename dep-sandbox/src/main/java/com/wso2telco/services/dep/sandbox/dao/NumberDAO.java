@@ -10,5 +10,7 @@ public interface NumberDAO {
     public void saveManageNumbers(ManageNumber manageNumber) throws Exception;
     
     public List<ManageNumber> getManageNumbers(int userId) throws Exception;
+    
+    public ManageNumber getNumber(String number, String username) throws Exception;
 
 }

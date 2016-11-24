@@ -4,6 +4,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import com.wso2telco.services.dep.sandbox.dao.model.custom.RequestDTO;
+import com.wso2telco.services.dep.sandbox.servicefactory.credit.CreditServiceFactory;
 import com.wso2telco.services.dep.sandbox.servicefactory.customerinfo.CustomerInfoServiceFactory;
 import com.wso2telco.services.dep.sandbox.servicefactory.customerinfoConfig.CustomerInfoConfigServiceFactory;
 import com.wso2telco.services.dep.sandbox.servicefactory.location.LocationRequestFactory;
@@ -12,8 +13,8 @@ import com.wso2telco.services.dep.sandbox.servicefactory.provisionConfig.Provisi
 import com.wso2telco.services.dep.sandbox.servicefactory.provisioning.ProvisioningServiceFactory;
 import com.wso2telco.services.dep.sandbox.servicefactory.smsmessaging.SMSRequestFactory;
 import com.wso2telco.services.dep.sandbox.servicefactory.user.UserServiceFactory;
-import com.wso2telco.services.dep.sandbox.servicefactory.wallet.WalletConfigServiceFactory;
 import com.wso2telco.services.dep.sandbox.servicefactory.wallet.WalletServiceFactory;
+import com.wso2telco.services.dep.sandbox.servicefactory.walletConfig.WalletConfigServiceFactory;
 
 public class RequestBuilderFactory {
 
@@ -63,19 +64,22 @@ public class RequestBuilderFactory {
 		    LOG.debug("LOADING CUSTOMERINFO CONFIGURATION FACTORY");
 		    requestHandler = CustomerInfoConfigServiceFactory.getInstance(requestDTO);
 		    break;
+		case CREDIT:
+	    	LOG.debug("LOADING CREDIT CONFIGURATION FACTORY");
+	    	requestHandler = CreditServiceFactory.getInstance(requestDTO);
+	    	break;
 		case WALLET:
 	    	LOG.debug("LOADING WALLET FACTORY");
 	    	requestHandler = WalletServiceFactory.getInstance(requestDTO);
 	    	break;
 		case WALLETCONFIG:
-	    	LOG.debug("LOADING WALLET CONFIGURATION FACTORY");
-	    	requestHandler = WalletConfigServiceFactory.getInstance(requestDTO);
-	    	break;
+		    LOG.debug("LOADING WALLET CONFIGURATION FACTORY");
+		    requestHandler = WalletConfigServiceFactory.getInstance(requestDTO);
+		    break;
 		default:
 			LOG.debug("APPROPIATE FACTORY CLASS NOT FOUND");
 			break;
 		}
-
 		return requestHandler;
 	}
 }

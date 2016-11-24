@@ -1,14 +1,11 @@
-package com.wso2telco.services.dep.sandbox.servicefactory.wallet;
+package com.wso2telco.services.dep.sandbox.servicefactory.walletConfig;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import com.wso2telco.services.dep.sandbox.dao.model.custom.RequestDTO;
 import com.wso2telco.services.dep.sandbox.servicefactory.RequestHandleable;
-import com.wso2telco.services.dep.sandbox.servicefactory.walletConfig.AssignAccountInfoConfigRequestHandler;
-import com.wso2telco.services.dep.sandbox.servicefactory.walletConfig.RetrieveAccountStatusConfigRequestHandler;
-import com.wso2telco.services.dep.sandbox.servicefactory.walletConfig.RetrieveTransactionStatusConfigRequestHandler;
-import com.wso2telco.services.dep.sandbox.servicefactory.walletConfig.AssignTransactionStatusConfigRequestHandler;
+import com.wso2telco.services.dep.sandbox.servicefactory.wallet.WalletServiceFactory;
 
 public class WalletConfigServiceFactory {
 	
@@ -21,17 +18,17 @@ public class WalletConfigServiceFactory {
     final String GET_ACCOUNT_STATUS = "getAccountStatus";
     
 	if (requestDTO.getRequestPath().contains(ADD_ACCOUNT_INFO)) {
-	    LOG.debug("LOADING ACCOUNT INFO SERVICE");
+	    LOG.debug("LOADING  ASSIGN ACCOUNT INFO SERVICE");
 	    return new AssignAccountInfoConfigRequestHandler();
 	}
 	else if(requestDTO.getRequestPath().contains(ADD_TRANSACTION_STATUS)){
-	    LOG.debug("LOADING TRANSACTION STATUS SERVICE");
+	    LOG.debug("LOADING ASSIGN TRANSACTION STATUS SERVICE");
 	    return new AssignTransactionStatusConfigRequestHandler();
 	}else if(requestDTO.getRequestPath().contains(GET_TRANSACTION_STATUS)){
-	    LOG.debug("LOADING TRANSACTION STATUS SERVICE");
+	    LOG.debug("LOADING RETRIEVE TRANSACTION STATUS SERVICE");
 	    return new RetrieveTransactionStatusConfigRequestHandler();
 	}else if(requestDTO.getRequestPath().contains(GET_ACCOUNT_STATUS)){
-	    LOG.debug("LOADING TRANSACTION STATUS SERVICE");
+	    LOG.debug("LOADING RETRIEVE TRANSACTION STATUS SERVICE");
 	    return new RetrieveAccountStatusConfigRequestHandler();
 	}
 	else

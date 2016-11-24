@@ -35,6 +35,7 @@ public class Application extends AbstractApplication<ConfigDTO> {
 		listOfObject.add(new ProvisionConfigurationService());
 		listOfObject.add(new CustomerInfoService());
 		listOfObject.add(new CustomerInfoConfigurationService());
+		listOfObject.add(new CreditService());
 		listOfObject.add(new WalletService());
 		listOfObject.add(new WalletConfigurationService());
 		return listOfObject;

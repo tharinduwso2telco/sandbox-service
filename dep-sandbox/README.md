@@ -719,11 +719,121 @@ Response :
 Unless 400 Bad Request will be returned
 
 
-Note : Service Provider should be aware of the mandatory/optional parameters according to specification so that they will be validated while data insertion in configuration service.
 
-###6.4 Wallet Service
+
+
+###6.4 Credit Service
+
 
 ####6.4.1 Introduction
+
+Credit service will provide the Service providers a list of credit services available for the given MSISDN. Basically Credit API supports 2 operations.
+
+- Apply a Credit - Apply a credit
+- Partial Refund - Perform a partial refund
+
+
+####6.3.2 API features with postman testing
+
+- Apply a Credit - Apply a credit
+
+Request :
+
+Type - POST
+
+Request URI:
+```
+http://<host>:<port>/{v1}/credit/{msisdn}/apply 
+```
+
+Request Body :
+```
+{
+	"creditApplyRequest":{
+		"type":"type",
+		"amount":0,
+		"clientCorrelator":"clientCorrelator",
+		"reasonForCredit":"reasonForCredit",
+		"merchantIdentification":"merchantIdentification",
+		"receiptRequest":{
+			"notifyURL":"notifyURL",
+			"callbackData":"callbackData"
+		}
+	}
+}
+```
+
+Response :
+```
+{
+  "creditApplyResponse": {
+    "type": "type",
+    "amount": 0,
+    "clientCorrelator": "clientCorrelator",
+    "reasonForCredit": "reasonForCredit",
+    "merchantIdentification": "merchantIdentification",
+    "status": "status",
+    "receiptResponse": {
+      "notifyURL": "notifyURL",
+      "callbackData": "callbackData",
+      "resourceURL": "http://<host>:<port>/{v1}/credit/{msisdn}/apply"
+    }
+  }
+}
+```
+
+- Partial Refund - Perform a partial refund
+
+Request :
+
+Type - POST
+
+Request URI:
+```
+http://<host>:<port>/{v1}/credit/{msisdn}/refund 
+```
+
+Request Body :
+```
+{
+	"refundRequest":{
+		"amount":0,
+		"clientCorrelator":"clientCorrelator",
+		"reasonForRefund":"reasonForRefund",
+		"merchantIdentification":"merchantIdentification",
+		"serverTransactionReference":"serverTransactionReference",
+		"receiptRequest":{
+			"notifyURL":"notifyURL",
+			"callbackData":"callbackData"
+		}
+	}
+}
+```
+
+Response :
+```
+{
+  "refundResponse": {
+    "amount": 0,
+    "serverTransactionReference": "serverTransactionReference",
+    "clientCorrelator": "clientCorrelator",
+    "reasonForRefund": "reasonForRefund",
+    "merchantIdentification": "merchantIdentification",
+    "receiptResponse": {
+      "notifyURL": "notifyURL",
+      "callbackData": "callbackData",
+      "resourceURL": "http://<host>:<port>/{v1}/credit/{msisdn}/refund"
+    }
+  }
+}
+```
+
+
+Note : Service Provider should be aware of the mandatory/optional parameters according to specification so that they will be validated while data insertion in configuration service.
+
+###6.5 Wallet Service
+
+####6.5.1 Introduction
 Wallet service will provide the Service providers a list of wallet services available for the given MSISDN and based on the services available service provider can make/refund payment. Basically Wallet API supports 4 operations.
 
 - Make Payment - Charge a subscriber for a service provided by a the Service Provider
@@ -731,7 +841,7 @@ Wallet service will provide the Service providers a list of wallet services avai
 - Refund - Refund an end user
 - Balance lookup - Check the account balance of an end user
 
-####6.4.2 API features with postman testing
+####6.5.2 API features with postman testing
 
 - Make Payment - Charge a subscriber for a service provided by a the Service Provider
 
@@ -928,7 +1038,7 @@ Response :
 
 ```
 
-####6.4.3 Wallet API Related User Configurations postman testing
+####6.5.3 Wallet API Related User Configurations postman testing
 
 - Retrieve and Post values for Transaction
 
