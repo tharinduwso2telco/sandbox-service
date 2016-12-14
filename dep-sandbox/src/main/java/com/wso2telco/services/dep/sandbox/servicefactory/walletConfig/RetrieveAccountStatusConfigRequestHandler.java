@@ -39,9 +39,10 @@ public class RetrieveAccountStatusConfigRequestHandler extends AbstractRequestHa
 		}
 
 	@Override
-	protected List<String> getAddress() {;
-		return null;
-	}
+	protected List<String> getAddress() {
+		List<String> address = new ArrayList<String>();
+		return address;
+	    }
 	
 	@Override
 	protected boolean validate(RetrieveAccountStatusConfigRequestWrapper wrapperDTO)
@@ -61,11 +62,7 @@ public class RetrieveAccountStatusConfigRequestHandler extends AbstractRequestHa
 			responseWrapper.setRequestError(constructRequestError(
 					SERVICEEXCEPTION, ex.getErrcode(), ex.getErrmsg(),null));
 			responseWrapper.setHttpStatus(Response.Status.BAD_REQUEST);
-		}catch (Exception e) {
-		    LOG.error("###WALLETCONFIG### Error in validations", e);
-		    responseWrapper
-			    .setRequestError(constructRequestError(SERVICEEXCEPTION, ServiceError.SERVICE_ERROR_OCCURED, null));
-		}	
+		}
 		return true;
 	}
 

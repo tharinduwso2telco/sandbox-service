@@ -28,19 +28,18 @@ import com.wso2telco.services.dep.sandbox.util.CommonUtil;
 import com.wso2telco.services.dep.sandbox.util.MessageLogHandler;
 import com.wso2telco.services.dep.sandbox.util.ServiceName;
 
-public class ListTransactionRequestHandler extends
-		AbstractRequestHandler<ListTransactionRequestWrapper> {
+public class ListTransactionRequestHandler extends AbstractRequestHandler<ListTransactionRequestWrapper> {
 
 	private WalletDAO walletDAO;
 	private ListTransactionResponseWrapper responseWrapper;
 	private ListTransactionRequestWrapper requestWrapper;
-    private MessageLogHandler logHandler;
-	
+	private MessageLogHandler logHandler;
+
 	{
 		LOG = LogFactory.getLog(ListTransactionRequestHandler.class);
 		walletDAO = DaoFactory.getWalletDAO();
 		dao = DaoFactory.getGenaricDAO();
-        logHandler = MessageLogHandler.getInstance();
+		logHandler = MessageLogHandler.getInstance();
 
 	}
 
@@ -57,23 +56,19 @@ public class ListTransactionRequestHandler extends
 	}
 
 	@Override
-	protected boolean validate(ListTransactionRequestWrapper wrapperDTO)
-			throws Exception {
+	protected boolean validate(ListTransactionRequestWrapper wrapperDTO) throws Exception {
 
-		String endUserId = CommonUtil.getNullOrTrimmedValue(wrapperDTO
-				.getEndUserId());
+		String endUserId = CommonUtil.getNullOrTrimmedValue(wrapperDTO.getEndUserId());
 
 		try {
 			ValidationRule[] validationRules = { new ValidationRule(
-					ValidationRule.VALIDATION_TYPE_MANDATORY_TEL_END_USER_ID,
-					"endUserId", endUserId) };
+					ValidationRule.VALIDATION_TYPE_MANDATORY_TEL_END_USER_ID, "endUserId", endUserId) };
 
 			Validation.checkRequestParams(validationRules);
 
 		} catch (CustomException ex) {
 			LOG.error("###WALLET### Error in Validation : " + ex);
-			responseWrapper.setRequestError(constructRequestError(
-					SERVICEEXCEPTION, ex.getErrcode(), ex.getErrmsg(),
+			responseWrapper.setRequestError(constructRequestError(SERVICEEXCEPTION, ex.getErrcode(), ex.getErrmsg(),
 					wrapperDTO.getEndUserId()));
 			responseWrapper.setHttpStatus(Response.Status.BAD_REQUEST);
 		}
@@ -81,37 +76,34 @@ public class ListTransactionRequestHandler extends
 	}
 
 	@Override
-	protected Returnable process(
-			ListTransactionRequestWrapper extendedRequestDTO) throws Exception {
-		
+	protected Returnable process(ListTransactionRequestWrapper extendedRequestDTO) throws Exception {
+
 		if (responseWrapper.getRequestError() != null) {
 			return responseWrapper;
 		}
 		try {
-			
-			String msisdn = extendedRequestDTO
-					.getEndUserId();
+
+			String msisdn = extendedRequestDTO.getEndUserId();
 			String endUserId = getLastMobileNumber(msisdn);
 			List<AttributeValues> amounTransaction = null;
 			List<String> attributeName = new ArrayList<String>();
 			attributeName.add(AttributeName.Payment.toString().toLowerCase());
 			attributeName.add(AttributeName.Refund.toString().toLowerCase());
-			
-			//Save Request Log
-			APITypes apiTypes = dao.getAPIType(extendedRequestDTO.getRequestType().toString().toLowerCase());
-	        APIServiceCalls apiServiceCalls = dao.getServiceCall(apiTypes.getId(), ServiceName.ListPayment.toString());
-	        JSONObject object = new JSONObject();
-	        object.put("endUserId", msisdn);
-	        logHandler.saveMessageLog(apiServiceCalls.getApiServiceCallId(), extendedRequestDTO.getUser().getId(), "msisdn", msisdn, object);
 
-			
+			// Save Request Log
+			APITypes apiTypes = dao.getAPIType(extendedRequestDTO.getRequestType().toString().toLowerCase());
+			APIServiceCalls apiServiceCalls = dao.getServiceCall(apiTypes.getId(), ServiceName.ListPayment.toString());
+			JSONObject object = new JSONObject();
+			object.put("endUserId", msisdn);
+			logHandler.saveMessageLog(apiServiceCalls.getApiServiceCallId(), extendedRequestDTO.getUser().getId(),
+					"msisdn", msisdn, object);
+
 			ListTransactionResponseBean paymentTransaction = new ListTransactionResponseBean();
-			amounTransaction = walletDAO.getTransactionValue(endUserId, attributeName,null);
-			
-						
+			amounTransaction = walletDAO.getTransactionValue(endUserId, attributeName, null);
+
 			List<JsonNode> listNodes = new ArrayList<JsonNode>();
-			
-			if (amounTransaction != null && !amounTransaction.isEmpty()) { 
+
+			if (amounTransaction != null && !amounTransaction.isEmpty()) {
 				for (AttributeValues values : amounTransaction) {
 
 					JsonNode node = null;
@@ -121,15 +113,13 @@ public class ListTransactionRequestHandler extends
 				}
 				paymentTransaction.setAmountTransaction(listNodes);
 			} else {
-				LOG.error("###WALLET### Valid Transaction List Not Available for msisdn: "
-						+ endUserId);
+				LOG.error("###WALLET### Valid Transaction List Not Available for msisdn: " + endUserId);
 				responseWrapper.setHttpStatus(Status.NO_CONTENT);
 				responseWrapper.setHttpStatus(Response.Status.OK);
 				return responseWrapper;
 
 			}
-			paymentTransaction.setResourceURL(CommonUtil
-					.getResourceUrl(extendedRequestDTO));
+			paymentTransaction.setResourceURL(CommonUtil.getResourceUrl(extendedRequestDTO));
 
 			ListTransactionDTO listTransactionDTO = new ListTransactionDTO();
 
@@ -137,20 +127,17 @@ public class ListTransactionRequestHandler extends
 			responseWrapper.setListPaymentDTO(listTransactionDTO);
 			responseWrapper.setHttpStatus(Response.Status.OK);
 
-			
 		} catch (Exception ex) {
 			LOG.error("###WALLET### Error Occured in Wallet Service. " + ex);
 			responseWrapper.setHttpStatus(Status.BAD_REQUEST);
 			responseWrapper
-					.setRequestError(constructRequestError(SERVICEEXCEPTION,
-							ServiceError.SERVICE_ERROR_OCCURED, null));
+					.setRequestError(constructRequestError(SERVICEEXCEPTION, ServiceError.SERVICE_ERROR_OCCURED, null));
 		}
 		return responseWrapper;
 	}
 
 	@Override
-	protected void init(ListTransactionRequestWrapper extendedRequestDTO)
-			throws Exception {
+	protected void init(ListTransactionRequestWrapper extendedRequestDTO) throws Exception {
 
 		requestWrapper = extendedRequestDTO;
 		responseWrapper = new ListTransactionResponseWrapper();

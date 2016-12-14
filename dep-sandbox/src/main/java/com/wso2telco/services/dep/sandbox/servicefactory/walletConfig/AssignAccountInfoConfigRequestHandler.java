@@ -62,8 +62,6 @@ public class AssignAccountInfoConfigRequestHandler extends AbstractRequestHandle
 			throws Exception {
 		
 		AssignAccountInfoConfigRequestBean requestBean = wrapperDTO.getRequestBean();
-
-		if(requestBean != null){
 			
 			String endUserId = CommonUtil.getNullOrTrimmedValue(wrapperDTO.getEndUserId());
 			String accountCurrency = CommonUtil.getNullOrTrimmedValue(requestBean.getCurrency());
@@ -82,22 +80,12 @@ public class AssignAccountInfoConfigRequestHandler extends AbstractRequestHandle
 				Validation.checkRequestParams(validationRules);
 
 			} catch (CustomException ex) {
-				LOG.error("###WALLETCONFIG### Error in Validation : " + ex);
+				LOG.error("###WALLET### Error in Validation : " + ex);
 				responseWrapper.setRequestError(constructRequestError(
 						SERVICEEXCEPTION, ex.getErrcode(), ex.getErrmsg(),
 						wrapperDTO.getEndUserId()));
 				responseWrapper.setHttpStatus(Response.Status.BAD_REQUEST);
-			}catch (Exception e) {
-			    LOG.error("###WALLETCONFIG### Error in validations", e);
-			    responseWrapper
-				    .setRequestError(constructRequestError(SERVICEEXCEPTION, ServiceError.SERVICE_ERROR_OCCURED, null));
-			}	
-				
-		}else{
-			responseWrapper.setRequestError(constructRequestError(SERVICEEXCEPTION,ServiceError.INVALID_INPUT_VALUE.getCode(),ServiceError.INVALID_INPUT_VALUE.getMessage(),wrapperDTO.getEndUserId()));
-			responseWrapper.setHttpStatus(Status.BAD_REQUEST);
-			return false;
-		}
+			}
 		
 		return true;
 	}

@@ -57,7 +57,8 @@ public class WalletService {
 	@POST
 	@Path("/transaction/{endUserId}/payment")
 	@ApiOperation(value = "makePaymentService", notes = "make payment service", response = Response.class)
-	@ApiImplicitParams({ @ApiImplicitParam(name = "sandbox", value = "Authorization token", required = true, dataType = "string", paramType = "header")})
+	@ApiImplicitParams({
+			@ApiImplicitParam(name = "sandbox", value = "Authorization token", required = true, dataType = "string", paramType = "header") })
 	public Response makePayment(
 			@ApiParam(value = "endUserId", required = true) @PathParam("endUserId") String endUserId,
 			MakePaymentRequestBean makePaymentRequestBean, @Context HttpServletRequest request) {
@@ -70,25 +71,28 @@ public class WalletService {
 		requestDTO.setEndUserId(endUserId);
 		requestDTO.setMakePaymentRequestBean(makePaymentRequestBean);
 		requestDTO.setRequestType(RequestType.WALLET);
-		
+
 		RequestHandleable<RequestDTO> handler = RequestBuilderFactory.getInstance(requestDTO);
 		Returnable returnable = null;
-		
+
 		try {
 			returnable = handler.execute(requestDTO);
 			Response response = Response.status(returnable.getHttpStatus()).entity(returnable.getResponse()).build();
 			return response;
 		} catch (Exception ex) {
 			LOG.error("Make Payment SERVICE ERROR", ex);
-			Response response = Response.status(Status.BAD_REQUEST).entity(SandboxErrorType.SERVICE_ERROR.getCode() + " " + SandboxErrorType.SERVICE_ERROR.getMessage()).build();
+			Response response = Response.status(Status.BAD_REQUEST).entity(
+					SandboxErrorType.SERVICE_ERROR.getCode() + " " + SandboxErrorType.SERVICE_ERROR.getMessage())
+					.build();
 			return response;
 		}
 	}
-		
+
 	@GET
 	@Path("/transaction/{endUserId}/list")
 	@ApiOperation(value = "listTransactionService", notes = "listTransactionService", response = Response.class)
-	@ApiImplicitParams({ @ApiImplicitParam(name = "sandbox", value = "Authorization token", required = true, dataType = "string", paramType = "header") })
+	@ApiImplicitParams({
+			@ApiImplicitParam(name = "sandbox", value = "Authorization token", required = true, dataType = "string", paramType = "header") })
 	public Response getAttributeServices(
 			@ApiParam(value = "endUserId", required = false) @PathParam("endUserId") String endUserId,
 			@Context HttpServletRequest request) {
@@ -98,33 +102,29 @@ public class WalletService {
 		requestDTO.setEndUserId(endUserId);
 		requestDTO.setRequestType(RequestType.WALLET);
 
-		RequestHandleable handler = RequestBuilderFactory
-				.getInstance(requestDTO);
+		RequestHandleable handler = RequestBuilderFactory.getInstance(requestDTO);
 		Returnable returnable = null;
 
 		try {
 			returnable = handler.execute(requestDTO);
-			Response response = Response.status(returnable.getHttpStatus())
-					.entity(returnable.getResponse()).build();
+			Response response = Response.status(returnable.getHttpStatus()).entity(returnable.getResponse()).build();
 			LOG.debug("List Transaction SERVICE RESPONSE : " + response);
 			return response;
 		} catch (Exception ex) {
 			LOG.error("List Transaction SERVICE ERROR : ", ex);
-			return Response
-					.status(Response.Status.BAD_REQUEST)
-					.entity(SandboxErrorType.SERVICE_ERROR.getCode() + " "
-							+ SandboxErrorType.SERVICE_ERROR.getMessage())
+			return Response.status(Response.Status.BAD_REQUEST).entity(
+					SandboxErrorType.SERVICE_ERROR.getCode() + " " + SandboxErrorType.SERVICE_ERROR.getMessage())
 					.build();
 		}
 
 	}
-	
+
 	@POST
 	@Path("/transaction/{endUserId}/refund")
 	@ApiOperation(value = "refundService", notes = "refundService service", response = Response.class)
-	@ApiImplicitParams({ @ApiImplicitParam(name = "sandbox", value = "Authorization token", required = true, dataType = "string", paramType = "header")})
-	public Response refundUser(
-			@ApiParam(value = "endUserId", required = true) @PathParam("endUserId") String endUserId,
+	@ApiImplicitParams({
+			@ApiImplicitParam(name = "sandbox", value = "Authorization token", required = true, dataType = "string", paramType = "header") })
+	public Response refundUser(@ApiParam(value = "endUserId", required = true) @PathParam("endUserId") String endUserId,
 			RefundTransactionRequestBean refundRequestBean, @Context HttpServletRequest request) {
 		LOG.debug("###WALLET### /{endUserId}/refund invoked : endUserId - " + endUserId);
 		if (refundRequestBean != null) {
@@ -135,25 +135,28 @@ public class WalletService {
 		requestDTO.setEndUserId(endUserId);
 		requestDTO.setRefundRequestBean(refundRequestBean);
 		requestDTO.setRequestType(RequestType.WALLET);
-		
+
 		RequestHandleable<RequestDTO> handler = RequestBuilderFactory.getInstance(requestDTO);
 		Returnable returnable = null;
-		
+
 		try {
 			returnable = handler.execute(requestDTO);
 			Response response = Response.status(returnable.getHttpStatus()).entity(returnable.getResponse()).build();
 			return response;
 		} catch (Exception ex) {
 			LOG.error("Refund User SERVICE ERROR", ex);
-			Response response = Response.status(Status.BAD_REQUEST).entity(SandboxErrorType.SERVICE_ERROR.getCode() + " " + SandboxErrorType.SERVICE_ERROR.getMessage()).build();
+			Response response = Response.status(Status.BAD_REQUEST).entity(
+					SandboxErrorType.SERVICE_ERROR.getCode() + " " + SandboxErrorType.SERVICE_ERROR.getMessage())
+					.build();
 			return response;
 		}
 	}
-	
+
 	@GET
 	@Path("/transaction/{endUserId}/balance")
 	@ApiOperation(value = "balanceLookupService", notes = "balanceLookupService", response = Response.class)
-	@ApiImplicitParams({ @ApiImplicitParam(name = "sandbox", value = "Authorization token", required = true, dataType = "string", paramType = "header") })
+	@ApiImplicitParams({
+			@ApiImplicitParam(name = "sandbox", value = "Authorization token", required = true, dataType = "string", paramType = "header") })
 	public Response balanceLookup(
 			@ApiParam(value = "endUserId", required = false) @PathParam("endUserId") String endUserId,
 			@Context HttpServletRequest request) {
@@ -163,22 +166,18 @@ public class WalletService {
 		requestDTO.setEndUserId(endUserId);
 		requestDTO.setRequestType(RequestType.WALLET);
 
-		RequestHandleable handler = RequestBuilderFactory
-				.getInstance(requestDTO);
+		RequestHandleable handler = RequestBuilderFactory.getInstance(requestDTO);
 		Returnable returnable = null;
 
 		try {
 			returnable = handler.execute(requestDTO);
-			Response response = Response.status(returnable.getHttpStatus())
-					.entity(returnable.getResponse()).build();
+			Response response = Response.status(returnable.getHttpStatus()).entity(returnable.getResponse()).build();
 			LOG.debug("Balance Lookup SERVICE RESPONSE : " + response);
 			return response;
 		} catch (Exception ex) {
 			LOG.error("Balance Lookup SERVICE ERROR : ", ex);
-			return Response
-					.status(Response.Status.BAD_REQUEST)
-					.entity(SandboxErrorType.SERVICE_ERROR.getCode() + " "
-							+ SandboxErrorType.SERVICE_ERROR.getMessage())
+			return Response.status(Response.Status.BAD_REQUEST).entity(
+					SandboxErrorType.SERVICE_ERROR.getCode() + " " + SandboxErrorType.SERVICE_ERROR.getMessage())
 					.build();
 		}
 

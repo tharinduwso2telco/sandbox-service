@@ -1,7 +1,5 @@
 USE `<EXISTING_SANDBOX_DATABASE>`;
 
-INSERT INTO sbxapitypes (id, apiname) VALUES (9, "WALLET");
-
 --
 -- Table structure for table `sbxapiservicecalls`
 --
@@ -18,7 +16,7 @@ CREATE TABLE IF NOT EXISTS `sbxapiservicecalls` (
 -- Dumping data for table `sbxapiservicecalls`
 --
 
-INSERT INTO `sbxapiservicecalls` VALUES (1,9,'MakePayment'),(2,9,'ListPayment'),(3,9,'RefundPayment'),(4,9,'BalanceLookup');
+INSERT INTO `sbxapiservicecalls` VALUES (1,6,'MakePayment'),(2,6,'ListPayment'),(3,6,'RefundPayment'),(4,6,'BalanceLookup');
 
 --
 -- Table structure for table `sbtmessagelog`

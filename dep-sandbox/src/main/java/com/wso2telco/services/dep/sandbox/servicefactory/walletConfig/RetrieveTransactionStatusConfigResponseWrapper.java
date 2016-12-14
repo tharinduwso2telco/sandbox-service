@@ -7,7 +7,6 @@ public class RetrieveTransactionStatusConfigResponseWrapper extends AbstractRetu
 	
 	private RetrieveTransactionStatusDTO statusValueDTO;
 	
-	//private String status;
 	
 	@Override
 	public Object getResponse() {
@@ -16,14 +15,6 @@ public class RetrieveTransactionStatusConfigResponseWrapper extends AbstractRetu
 		}
 		return geStatusValueDTO();
 	    }
-
-//	public String getStatus() {
-//		return status;
-//	}
-//
-//	public void setStatus(String status) {
-//		this.status = status;
-//	}
 
 	public RetrieveTransactionStatusDTO geStatusValueDTO() {
 		return statusValueDTO;

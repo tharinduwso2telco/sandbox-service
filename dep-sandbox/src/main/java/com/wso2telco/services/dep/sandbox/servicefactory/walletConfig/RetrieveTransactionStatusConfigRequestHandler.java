@@ -1,5 +1,6 @@
 package com.wso2telco.services.dep.sandbox.servicefactory.walletConfig;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.ws.rs.core.Response;
@@ -40,8 +41,9 @@ public class RetrieveTransactionStatusConfigRequestHandler extends AbstractReque
 
 	@Override
 	protected List<String> getAddress() {
-		return null;
-	}
+		List<String> address = new ArrayList<String>();
+		return address;
+	    }
 
 	@Override
 	protected boolean validate(RetrieveTransactionStatusConfigRequestWrapper wrapperDTO)
@@ -67,10 +69,6 @@ public class RetrieveTransactionStatusConfigRequestHandler extends AbstractReque
 					SERVICEEXCEPTION, ex.getErrcode(), ex.getErrmsg(),
 					wrapperDTO.getServiceCall()));
 			responseWrapper.setHttpStatus(Response.Status.BAD_REQUEST);
-		}catch (Exception e) {
-		    LOG.error("###WALLETCONFIG### Error in validations", e);
-		    responseWrapper
-			    .setRequestError(constructRequestError(SERVICEEXCEPTION, ServiceError.SERVICE_ERROR_OCCURED, null));
 		}
 		return true;
 	}

@@ -75,7 +75,7 @@ public class AssignTransactionStatusConfigRequestHandler extends AbstractRequest
 				Validation.checkRequestParams(validationRules);
 
 			} catch (CustomException ex) {
-				LOG.error("###WALLET### Error in Validation : " + ex);
+				LOG.error("###WALLETCONFIG### Error in Validation : " + ex);
 				responseWrapper.setRequestError(constructRequestError(
 						SERVICEEXCEPTION, ex.getErrcode(), ex.getErrmsg(),
 						wrapperDTO.getEndUserId()));
@@ -106,7 +106,7 @@ public class AssignTransactionStatusConfigRequestHandler extends AbstractRequest
 			
 			//Check valid service call		
 			if(!(serviceCall.equals(serviceCallPayment) || serviceCall.equals(serviceCallRefund))){
-				LOG.error("###WALLET### Provide Valid Service Call ");
+				LOG.error("###WALLETCONFIG### Provide Valid Service Call ");
 			responseWrapper.setHttpStatus(Status.BAD_REQUEST);
 			responseWrapper
 					.setRequestError(constructRequestError(SERVICEEXCEPTION, ServiceError.SERVICE_ERROR_OCCURED, "Provide Valid Service Call"));
@@ -115,7 +115,7 @@ public class AssignTransactionStatusConfigRequestHandler extends AbstractRequest
 			
 			//check valid account status
 			if(!(accountStatus.equals(statusRefused))){
-				LOG.error("###WALLET### Invalid status ");
+				LOG.error("###WALLETCONFIG### Invalid status ");
 			responseWrapper.setHttpStatus(Status.BAD_REQUEST);
 			responseWrapper
 					.setRequestError(constructRequestError(SERVICEEXCEPTION, ServiceError.SERVICE_ERROR_OCCURED, "Provide Valid status"));
@@ -164,7 +164,7 @@ public class AssignTransactionStatusConfigRequestHandler extends AbstractRequest
 					errorMessage));
 			responseWrapper.setHttpStatus(Status.BAD_REQUEST);
 		}catch(Exception ex){
-			LOG.error("###WALLET### Error Occured in WALLET Service. " + ex);
+			LOG.error("###WALLETCONFIG### Error Occured in WALLET Service. " + ex);
 			responseWrapper.setHttpStatus(Status.BAD_REQUEST);
 			responseWrapper
 					.setRequestError(constructRequestError(SERVICEEXCEPTION, ServiceError.SERVICE_ERROR_OCCURED, null));

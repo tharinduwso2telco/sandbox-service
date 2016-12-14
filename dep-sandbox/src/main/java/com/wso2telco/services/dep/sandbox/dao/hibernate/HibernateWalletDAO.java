@@ -163,8 +163,9 @@ public class HibernateWalletDAO extends AbstractDAO implements WalletDAO {
 			distributionId = (AttributeDistribution) query.uniqueResult();
 
 		} catch (NoResultException e) {
-			throw e;
-		} catch (Exception ex) {
+			return null;
+			
+	} catch (Exception ex) {
 			LOG.error("###WALLET### Errorr in WALLET Service " + ex);
 			throw ex;
 		}
@@ -190,8 +191,8 @@ public class HibernateWalletDAO extends AbstractDAO implements WalletDAO {
 			number = (Integer) query.uniqueResult();
 
 		} catch (NoResultException e) {
-			throw e;
-		} catch (Exception ex) {
+return null;
+} catch (Exception ex) {
 			LOG.error("###WALLET### Errorr in WALLET Service " + ex);
 			throw ex;
 		}
@@ -219,7 +220,7 @@ public class HibernateWalletDAO extends AbstractDAO implements WalletDAO {
 			balance = (Double) query.uniqueResult();
 
 		} catch (NoResultException e) {
-			return (Double) null;
+return null;
 		} catch (Exception ex) {
 			LOG.error("###WALLET### Error in Make Payment Service " + ex);
 			throw ex;
@@ -252,7 +253,8 @@ public class HibernateWalletDAO extends AbstractDAO implements WalletDAO {
 			tx.commit();
 
 		} catch (NoResultException e) {
-			throw e;
+			
+			return false;
 		} catch (Exception ex) {
 			LOG.error("###WALLET### Error in Make Payment Service " + ex);
 			throw ex;
@@ -277,8 +279,6 @@ public class HibernateWalletDAO extends AbstractDAO implements WalletDAO {
 		hql.append("val.attributeDistributionId =:attributeDistributionId ");
 		hql.append("AND ");
 		hql.append("val.ownerdid =:endUserId ");
-		
-		
 		try {
 			Query query = session.createQuery(hql.toString());
 			query.setParameter("attributeDistributionId", distributionObj);
@@ -337,8 +337,7 @@ public class HibernateWalletDAO extends AbstractDAO implements WalletDAO {
 			}
 
 		} catch (NoResultException e) {
-			throw e;
-		} catch (Exception ex) {
+return false;		} catch (Exception ex) {
 			LOG.error("###WALLET### Error in Make Payment Service " + ex);
 			throw ex;
 		}
