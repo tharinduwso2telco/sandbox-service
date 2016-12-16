@@ -13,8 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package com.wso2telco.services.dep.sandbox.util;
+package com.wso2telco.services.dep.sandbox.dao.model.custom;
 
-public enum TableName {
-    USER, NUMBERS, SBXAPISERVICECALLS
+public class MakePaymentDTO {
+
+	private MakePaymentResponseBean makePayment;
+
+	public MakePaymentResponseBean getmakePayment() {
+		return makePayment;
+	}
+
+	public void setmakePayment(MakePaymentResponseBean makePayment) {
+		this.makePayment = makePayment;
+	}
+	
+	
+
 }

@@ -125,7 +125,7 @@ Type - POST
 Request URI:
 ```
 http://<host>:<port>/user/managenumber
-
+```
 Request Body :
 ```
 {
@@ -590,39 +590,39 @@ http://<host>:<port>/customerinfo/v1/customer/attribute?msisdn={msisdn}&imsi={im
 Response :
 ```
 {
-  "Customer": {
-        "msisdn": "123456789",
-        "imsi": "0987654321",
-        "basic":{ 
-        	"title": "Mr",
-        	"firstName": "Bilbo",
-        	"lastName": "Baggins"
-        	"dob": "21/10/2006"
-        	"address":{
-			"line1": "Bag End",
-			"line2": "",
-			"line3": "",
-			"city": "The Shire",
-			"country": "Middle Earth"
-		}
- 	}, 
-        "billing": {
-        	"creditLimit": 2500,
-        	"balance": 1000,
-        	"outStanding": 0,
-        	"currency": "LKR"
- 	},
-        "identification": {
-        	"type": "Passport",
-        	"number": "N123456",
-        	"expiry": "2026/01/01"
- 	},
-        "account": {
-        	"type": "Postpaid",
-        	"status": "Active"
- 	},
-       "resourceURL": "http://<host>:<port>/customerinfo/v1/customer/attribute?msisdn={msisdn}&imsi={imsi}&schema={schema1,schema2,schema3,schema4}&mnc={mnc}&mcc={mcc}"
-  }
+	"Customer": {
+		"msisdn": "123456789",
+		"imsi": "0987654321",
+		"basic": {
+			"title": "Mr",
+			"firstName": "Bilbo",
+			"lastName": "Baggins",
+			"dob": "21/10/2006",
+			"address": {
+				"line1": "Bag End",
+				"line2": "",
+				"line3": "",
+				"city": "The Shire",
+				"country": "Middle Earth"
+			}
+		},
+		"billing": {
+			"creditLimit": 2500,
+			"balance": 1000,
+			"outStanding": 0,
+			"currency": "LKR"
+		},
+		"identification": {
+			"type": "Passport",
+			"number": "N123456",
+			"expiry": "2026/01/01"
+		},
+		"account": {
+			"type": "Postpaid",
+			"status": "Active"
+		},
+		"resourceURL": "http://<host>:<port>/customerinfo/v1/customer/attribute?msisdn={msisdn}&imsi={imsi}&schema={schema1,schema2,schema3,schema4}&mnc={mnc}&mcc={mcc}"
+	}
 }
 ```
 
@@ -647,23 +647,23 @@ http://<host>:<port>/customerinfo/{v1}/config/customer/getProfile
 Request Body :
 ```
 {
-  "title": "",
-  "firstName": "",
-  "lastName": "",
-  "dob": "",
-  "identificationType": "",
-  "identificationNumber": "",
-  "accountType": "",
-  "ownerType": "",
-  "status": "",
-  "address": {
-    "line1": "",
-    "line2": "",
-    "line3": "",
-    "city": "",
-    "country": ""
-  },
-  "additionalInfo": "List[AdditionalInfo]"
+	"title": "",
+	"firstName": "",
+	"lastName": "",
+	"dob": "",
+	"identificationType": "",
+	"identificationNumber": "",
+	"accountType": "",
+	"ownerType": "",
+	"status": "",
+	"address": {
+		"line1": "",
+		"line2": "",
+		"line3": "",
+		"city": "",
+		"country": ""
+	},
+	"additionalInfo": "List[AdditionalInfo]"
 }
 ```
 Response :
@@ -684,34 +684,34 @@ http://<host>:<port>/customerinfo/{v1}/config/customer/getAttribute
 Request Body :
 ```
 {
-  "basic": {
-    "title": "",
-    "firstName": "",
-    "lastName": "",
-    "dob": "",
-    "address": {
-      "line1": "",
-      "line2": "",
-      "line3": "",
-      "city": "",
-      "country": ""
-    }
-  },
-  "billing": {
-    "outstanding": "",
-    "currency": "",
-    "balance": "",
-    "creditLimit": ""
-  },
-  "account": {
-    "type": "",
-    "status": ""
-  },
-  "identification": {
-    "type": "",
-    "number": "",
-    "expiry": ""
-  }
+	"basic": {
+		"title": "",
+		"firstName": "",
+		"lastName": "",
+		"dob": "",
+		"address": {
+			"line1": "",
+			"line2": "",
+			"line3": "",
+			"city": "",
+			"country": ""
+		}
+	},
+	"billing": {
+		"outstanding": "",
+		"currency": "",
+		"balance": "",
+		"creditLimit": ""
+	},
+	"account": {
+		"type": "",
+		"status": ""
+	},
+	"identification": {
+		"type": "",
+		"number": "",
+		"expiry": ""
+	}
 }
 ```
 Response :
@@ -830,4 +830,319 @@ Response :
 
 
 Note : Service Provider should be aware of the mandatory/optional parameters according to specification so that they will be validated while data insertion in configuration service.
+
+###6.5 Wallet Service
+
+####6.5.1 Introduction
+Wallet service will provide the Service providers a list of wallet services available for the given MSISDN and based on the services available service provider can make/refund payment. Basically Wallet API supports 4 operations.
+
+- Make Payment - Charge a subscriber for a service provided by a the Service Provider
+- List Transactions - Return all the transactions of the end user for the calling application
+- Refund - Refund an end user
+- Balance lookup - Check the account balance of an end user
+
+####6.5.2 API features with postman testing
+
+- Make Payment - Charge a subscriber for a service provided by a the Service Provider
+
+Request : 
+
+Type - POST
+
+Request URI:
+```
+http://<host>:<port>/wallet/{v1}/transaction/{endUserId}/payment
+```
+Request Body :
+```
+{
+	"makePayment": {
+		"clientCorrelator": "54321",
+		"endUserId": "tel:+00123456789",
+		"paymentAmount": {
+			"chargingInformation": {
+				"amount": "2",
+				"currency": "LKR",
+				"description": "Alien Invaders Game"
+			},
+			"chargingMetaData": {
+				"onBehalfOf": "Example Games Inc",
+				"purchaseCategoryCode": "Game",
+				"channel": "Mobile"
+			}
+		},
+		"referenceCode": "REF-12345",
+		“notifyURL”: “http: //myapplication/mynotifyurl”
+	}
+}
+```
+
+Response :
+```
+{
+	"makePayment": {
+		"clientCorrelator": "54321",
+		"endUserId": "tel:+00123456789",
+		"paymentAmount": {
+			"chargingInformation": {
+				"amount": "2",
+				"currency": "LKR",
+				"description": "Alien Invaders Game"
+			},
+			"chargingMetaData": {
+				"onBehalfOf": "Example Games Inc",
+				"purchaseCategoryCode": "Game",
+				"channel": "Mobile"
+			}
+		},
+		"referenceCode": "REF-12345",
+		“serverReferenceCode”: “WALLET_REF_XX67675XX”,
+		“notifyURL”: “http: //myapplication/mynotifyurl”,
+		“transactionOperationStatus”: “Charged”
+	}
+}
+```
+
+- List Transactions - Return all the transactions of the end user for the calling application
+
+Request :
+
+Type - GET
+
+Request URI-
+```
+http://<host>:<port>/wallet/{v1}/transaction/{endUserId}/list
+```
+
+Response :
+```
+{
+	"paymentTransactionList": {
+		"amountTransaction": [{
+			"endUserId": " tel:+00123456789",
+			"paymentAmount": {
+				"chargingInformation": {
+					"amount": "9",
+					"currency": "USD",
+					"description": "Alien Invaders"
+				}
+			},
+			"referenceCode": "REF-ASM600-239238",
+			"serverReferenceCode": "tx-a3c0e4e006da40a8a5b5-045972478cc3",
+			"transactionOperationStatus": "Charged"
+		}, {
+			"endUserId": " tel:+00123456789",
+			"paymentAmount": {
+				"chargingInformation": {
+					"amount": "6",
+					"currency": "USD",
+					"description": " Snakes Alive "
+				}
+			},
+			"referenceCode": "REF-ASM600-2392344",
+			"serverReferenceCode": "tx-a3c0e4e006da60a8a5b5-044972478cc3",
+			"transactionOperationStatus": "Charged"
+		}],
+		"resourceURL": ” < Resource URL > ”
+	}
+}
+
+```
+
+- Refund - Refund an end user
+
+Request : 
+
+Type - POST
+
+Request URI:
+```
+http://<host>:<port>/wallet/{v1}/transaction/{endUserId}/refund
+```
+Request Body :
+```
+{
+	"refundTransaction": {
+		"clientCorrelator": "54321",
+		"endUserId": "tel:+00123456789",
+		“originalReferenceCode”: ”ABC - 12345” "originalServerReferenceCode": " WALLET_REF_XX67675XX",
+		"paymentAmount": {
+			"chargingInformation": {
+				"amount": "10",
+				"currency": "USD",
+				"description": "Alien Invaders Game"
+			},
+			"chargingMetaData": {
+				"onBehalfOf": "Example Games Inc",
+				"purchaseCategoryCode": "Game",
+				"channel": "WAP"
+			}
+		},
+		"referenceCode": "REF-12345"
+	}
+}
+```
+
+Response :
+```
+{
+	"refundTransaction": {
+		"clientCorrelator": "54321",
+		"endUserId": "tel:+00123456789",
+		“originalReferenceCode”: ”ABC - 12345” "originalServerReferenceCode": " WALLET_REF_XX67675XX",
+		"paymentAmount": {
+			"chargingInformation": {
+				"amount": "10",
+				"currency": "USD",
+				"description": "Alien Invaders Game"
+			},
+			"chargingMetaData": {
+				"onBehalfOf": "Example Games Inc",
+				"purchaseCategoryCode": "Game",
+				"channel": "WAP"
+			}
+		},
+		"referenceCode": "REF-12345",
+		"serverReferenceCode": "ABC-123",
+		"resourceURL": "<Resource URL>",
+		"transactionOperationStatus": "Refunded"
+	}
+}
+```
+
+- Balance lookup - Check the account balance of an end user
+
+Request :
+
+Type - GET
+
+Request URI-
+```
+http://<host>:<port>/wallet/{v1}/transaction/{endUserId}/balance
+```
+
+Response :
+```
+{
+	"accountBalance": {
+		"endUserId": "tel:+00123456789",
+		"serverReferenceCode": " WALLET_REF_XX67675XX",
+		"accountInfo": {
+			"accountStatus": "Active",
+			"accountCurrency": "LKR",
+			"accountBalance": “500.45”
+		}
+		"resourceURL": "<Resource URL>"
+	}
+}
+
+```
+
+####6.5.3 Wallet API Related User Configurations postman testing
+
+- Retrieve and Post values for Transaction
+
+This service can be used to get and insert values for the attributes that are using for wallet rest service.
+The values that are inserted using this service will be retrieved when actual Wallet API GET service call is invoked.
+
+- Get transaction status for msisdn
+
+Request :
+
+Type - GET
+
+Request URI:
+```
+http://<host>:<port>/wallet/{v1}/config/{apiType}/{serviceType}/getTransactionStatus
+```
+Response :
+```
+{
+  "status": "Refused"
+}
+```
+- Get account status for msisdn
+
+Type - GET
+
+Request URI:
+```
+http://<host>:<port>/wallet/{v1}/config{apiType}/{serviceType}/getAccountStatus
+```
+Response :
+```
+{
+	"accountStatus": [
+		"ACTIVE",
+		"SUSPENDED",
+		"TERMINATED"
+	]
+}
+```
+
+- Add transaction status for msisdn
+
+Request :
+
+Type - POST
+
+Request URI:
+```
+http://<host>:<port>/wallet/{v1}/config/{endUserId}/addTransactionStatus
+```
+Request Body :
+```
+{
+	"serviceCall": "MakePayment",
+	"status": "Refused"
+}
+```
+Response :
+200 OK will be returned if the service is successfully added for the msisdn.
+Unless 400 Bad Request will be returned
+
+- Add account information for msisdn
+
+Request :
+
+Type - POST
+
+Request URI:
+```
+http://<host>:<port>/wallet/{v1}/config/{endUserId}/addAccountInfo
+```
+Request Body :
+```
+{
+	"currency": "LKR",
+	"status": "ACTIVE"
+}
+```
+Response :
+200 OK will be returned if the service is successfully added for the msisdn.
+Unless 400 Bad Request will be returned
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 

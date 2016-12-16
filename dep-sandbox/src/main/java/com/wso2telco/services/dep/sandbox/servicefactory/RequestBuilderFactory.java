@@ -13,6 +13,8 @@ import com.wso2telco.services.dep.sandbox.servicefactory.provisionConfig.Provisi
 import com.wso2telco.services.dep.sandbox.servicefactory.provisioning.ProvisioningServiceFactory;
 import com.wso2telco.services.dep.sandbox.servicefactory.smsmessaging.SMSRequestFactory;
 import com.wso2telco.services.dep.sandbox.servicefactory.user.UserServiceFactory;
+import com.wso2telco.services.dep.sandbox.servicefactory.wallet.WalletServiceFactory;
+import com.wso2telco.services.dep.sandbox.servicefactory.walletConfig.WalletConfigServiceFactory;
 
 public class RequestBuilderFactory {
 
@@ -55,22 +57,29 @@ public class RequestBuilderFactory {
 			requestHandler = UserServiceFactory.getInstance(requestDTO);
 			break;
 		case CUSTOMERINFO:
-		    	LOG.debug("LOADING CUSTOMERINFO FACTORY");
-		    	requestHandler = CustomerInfoServiceFactory.getInstance(requestDTO);
-		    	break;
+		    LOG.debug("LOADING CUSTOMERINFO FACTORY");
+		    requestHandler = CustomerInfoServiceFactory.getInstance(requestDTO);
+		    break;
 		case CUSTOMERINFOCONFIG:
-		    	LOG.debug("LOADING CUSTOMERINFO CONFIGURATION FACTORY");
-		    	requestHandler = CustomerInfoConfigServiceFactory.getInstance(requestDTO);
-		    	break;
+		    LOG.debug("LOADING CUSTOMERINFO CONFIGURATION FACTORY");
+		    requestHandler = CustomerInfoConfigServiceFactory.getInstance(requestDTO);
+		    break;
 		case CREDIT:
 	    	LOG.debug("LOADING CREDIT CONFIGURATION FACTORY");
 	    	requestHandler = CreditServiceFactory.getInstance(requestDTO);
 	    	break;
+		case WALLET:
+	    	LOG.debug("LOADING WALLET FACTORY");
+	    	requestHandler = WalletServiceFactory.getInstance(requestDTO);
+	    	break;
+		case WALLETCONFIG:
+		    LOG.debug("LOADING WALLET CONFIGURATION FACTORY");
+		    requestHandler = WalletConfigServiceFactory.getInstance(requestDTO);
+		    break;
 		default:
 			LOG.debug("APPROPIATE FACTORY CLASS NOT FOUND");
 			break;
 		}
-
 		return requestHandler;
 	}
 }

@@ -30,4 +30,7 @@ public class HibernateFactory {
 		return new HibernateNumberDAO();
 	}
 	
+	public HibernateWalletDAO getHibernateWalletDAO() {
+		return new HibernateWalletDAO();
+	}
 }

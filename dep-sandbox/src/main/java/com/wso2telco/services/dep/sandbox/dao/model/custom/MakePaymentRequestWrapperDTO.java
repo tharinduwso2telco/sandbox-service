@@ -13,8 +13,38 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package com.wso2telco.services.dep.sandbox.util;
 
-public enum TableName {
-    USER, NUMBERS, SBXAPISERVICECALLS
+package com.wso2telco.services.dep.sandbox.dao.model.custom;
+
+import com.fasterxml.jackson.annotation.JsonInclude;
+
+public class MakePaymentRequestWrapperDTO extends RequestDTO {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -6173594710611363567L;
+
+	/** The endUserId param **/
+	private String endUserId;
+
+	/** The request bean **/
+	private MakePaymentRequestBean makePaymentRequestBean;
+
+	public String getEndUserId() {
+		return endUserId;
+	}
+
+	public void setEndUserId(String endUserId) {
+		this.endUserId = endUserId;
+	}
+
+	public MakePaymentRequestBean getMakePaymentRequestBean() {
+		return makePaymentRequestBean;
+	}
+
+	public void setMakePaymentRequestBean(
+			MakePaymentRequestBean makePaymentRequestBean) {
+		this.makePaymentRequestBean = makePaymentRequestBean;
+	}
 }

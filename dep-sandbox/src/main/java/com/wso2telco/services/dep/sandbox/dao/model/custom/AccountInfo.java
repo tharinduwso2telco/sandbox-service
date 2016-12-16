@@ -13,8 +13,33 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package com.wso2telco.services.dep.sandbox.util;
+package com.wso2telco.services.dep.sandbox.dao.model.custom;
 
-public enum TableName {
-    USER, NUMBERS, SBXAPISERVICECALLS
+public class AccountInfo {
+
+	private String accountStatus;
+	private String accountCurrency;
+	private String accountBalance;
+	
+	public String getAccountStatus() {
+		return accountStatus;
+	}
+	public void setAccountStatus(String accountStatus) {
+		this.accountStatus = accountStatus;
+	}
+	public String getAccountCurrency() {
+		return accountCurrency;
+	}
+	public void setAccountCurrency(String accountCurrency) {
+		this.accountCurrency = accountCurrency;
+	}
+	public String getAccountBalance() {
+		return accountBalance;
+	}
+	public void setAccountBalance(String accountBalance) {
+		this.accountBalance = accountBalance;
+	}
+	
+	
+		
 }

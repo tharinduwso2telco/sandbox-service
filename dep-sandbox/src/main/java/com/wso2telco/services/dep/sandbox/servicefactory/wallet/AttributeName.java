@@ -13,8 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package com.wso2telco.services.dep.sandbox.util;
+package com.wso2telco.services.dep.sandbox.servicefactory.wallet;
 
-public enum TableName {
-    USER, NUMBERS, SBXAPISERVICECALLS
+public enum AttributeName {
+	 Payment, Refund, Status, Currency, clientCorrelator, transactionStatus
 }
