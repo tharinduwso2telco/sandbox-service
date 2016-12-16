@@ -16,7 +16,7 @@ CREATE TABLE IF NOT EXISTS `sbxapiservicecalls` (
 -- Dumping data for table `sbxapiservicecalls`
 --
 
-INSERT INTO `sbxapiservicecalls` VALUES (1,6,'MakePayment'),(2,6,'ListPayment'),(3,6,'RefundPayment'),(4,6,'BalanceLookup');
+INSERT INTO `sbxapiservicecalls` VALUES (4,6,'MakePayment'),(5,6,'ListPayment'),(6,6,'RefundPayment'),(7,6,'BalanceLookup');
 
 --
 -- Table structure for table `sbtmessagelog`
@@ -50,11 +50,10 @@ CREATE TABLE IF NOT EXISTS `sbxattribute` (
 -- Dumping data for table `sbxattribute`
 --
 
-INSERT INTO `sbxattribute` VALUES (1,'clientCorrelator'),(2,'transactionStatus'),(3,'status'),(4,'currency'),(5,'payment'),(6,'refund');
+INSERT INTO `sbxattribute` VALUES (16,'clientCorrelator'),(17,'transactionStatus'),(18,'status'),(19,'currency'),(20,'payment'),(21,'refund');
 
 --
 -- Table structure for table `sbtattributedistribution`
--
 
 CREATE TABLE IF NOT EXISTS `sbtattributedistribution` (
   `sbtattributedistributiondid` int(11) NOT NULL AUTO_INCREMENT,
@@ -69,7 +68,7 @@ CREATE TABLE IF NOT EXISTS `sbtattributedistribution` (
 -- Dumping data for table `sbtattributedistribution`
 --
 
-INSERT INTO `sbtattributedistribution` VALUES (1,1,1),(2,1,3),(3,2,1),(4,2,3),(5,3,4),(6,4,4),(7,5,1),(8,6,3);	
+INSERT INTO `sbtattributedistribution` VALUES (16,16,1),(17,16,3),(18,17,1),(19,17,3),(20,18,4),(21,19,4),(22,20,1),(23,21,3);	
 
 --
 -- Table structure for table `sbxattributevalue`
@@ -84,5 +83,6 @@ CREATE TABLE IF NOT EXISTS `sbxattributevalue` (
   PRIMARY KEY (`sbxattributevaluedid`),
   CONSTRAINT `fk01sbxattributevalue` FOREIGN KEY (`attributedistributiondid`) REFERENCES `sbtattributedistribution` (`sbtattributedistributiondid`) ON DELETE NO ACTION ON UPDATE NO ACTION
 );
+
 
 
