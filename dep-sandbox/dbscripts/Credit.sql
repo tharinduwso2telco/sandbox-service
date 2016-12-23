@@ -16,7 +16,7 @@ CREATE TABLE IF NOT EXISTS `sbxapiservicecalls` (
 -- Dumping data for table `sbxapiservicecalls`
 --
 
-INSERT INTO `sbxapiservicecalls` VALUES (4,6,'MakePayment'),(5,6,'ListPayment'),(6,6,'RefundPayment'),(7,6,'BalanceLookup');
+INSERT INTO `sbxapiservicecalls` VALUES (8,5,'ApplyCredit'),(9,5,'PartialRefund');
 
 --
 -- Table structure for table `sbtmessagelog`
@@ -50,7 +50,7 @@ CREATE TABLE IF NOT EXISTS `sbxattribute` (
 -- Dumping data for table `sbxattribute`
 --
 
-INSERT INTO `sbxattribute` VALUES (16,'clientCorrelator'),(17,'transactionStatus'),(18,'status'),(19,'currency'),(20,'payment'),(21,'refund');
+INSERT INTO `sbxattribute` VALUES (22,'sms'),(23,'data'),(24,'minutes');
 
 --
 -- Table structure for table `sbtattributedistribution`
@@ -68,7 +68,7 @@ CREATE TABLE IF NOT EXISTS `sbtattributedistribution` (
 -- Dumping data for table `sbtattributedistribution`
 --
 
-INSERT INTO `sbtattributedistribution` VALUES (16,16,4),(17,16,6),(18,17,4),(19,17,6),(20,18,7),(21,19,7),(22,20,4),(23,21,6);	
+INSERT INTO `sbtattributedistribution` VALUES (24,22,8),(25,23,8),(26,24,8);	
 
 --
 -- Table structure for table `sbxattributevalue`
