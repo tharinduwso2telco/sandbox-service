@@ -439,6 +439,17 @@ Request URI-
 ```
 http://<host>:<port>/provisioning/{v1}/config/service
 ```
+Request Body :
+```
+{
+    "serviceCode": "sample1",
+    "serviceName": "sample2",
+    "serviceType": "sample3",
+     "description": "sample4",
+    "serviceCharge": 100
+}
+```
+
 Response :
 200 OK will be returned if the service is successfully added for the user.
 Unless 400 Bad Request will be returned
@@ -519,13 +530,6 @@ Customer Info service will provide the Service providers a list of customer info
 
 - Get Profile - Get a customer’s basic profile information 
 - Get Attributes- Get a customer’s basic profile information and registered schema
-
-CustomerInfo Related User Configurations can also be done through rest service calls. Configuration for provisioning API has four operations under user service.
-
-- Get available APITypes
-- Get available API specific ServiceTypes
-- Get available APIServiceType specific Attributes
-- Post values for APIServiceType specific Attributes
 
 
 ####6.3.2 API features with postman testing
@@ -628,6 +632,10 @@ Response :
 
 ####6.3.3 CustomerInfo API Related User Configurations postman testing
 
+
+The customerinfo configurations are made to respond irrespective of different msisdn added by a specific user. So the configured details will be stored against user, not the msisdn. Trying with different msisdn to set details will overwrite the existing records of specific user. 
+
+Use the below provided seperate rest calls to insert records seperately for get profile & get attribute call. So it will be stored per service call configuration per user.
 
 - Post values for APIServiceType specific Attributes
 
