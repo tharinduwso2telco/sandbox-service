@@ -1,4 +1,4 @@
-USE `<EXISTING_SANDBOX_DATABASE>`;
+USE `sandbox`;
 
 --
 -- Table structure for table `sbxapiservicecalls`
