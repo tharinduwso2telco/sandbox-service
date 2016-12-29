@@ -30,7 +30,7 @@ import com.wso2telco.services.dep.sandbox.servicefactory.RequestHandleable;
 import com.wso2telco.services.dep.sandbox.servicefactory.Returnable;
 import com.wso2telco.services.dep.sandbox.util.RequestType;
 
-@Path("/{v1}/credit")
+@Path("/credit/{v1}")
 @Consumes({ MediaType.APPLICATION_JSON })
 @Produces({ MediaType.APPLICATION_JSON })
 @Api(value = "/{v1}/credit", description = "Rest Service for Credit API")
@@ -72,7 +72,7 @@ public class CreditService {
 		}
 	}
 	
-	@POST
+	/*@POST
 	@Path("/{msisdn}/refund")
 	@ApiOperation(value = "patialRefundForRequestedService", notes = "patial refund requested service", response = Response.class)
 	@ApiImplicitParams({
@@ -104,6 +104,6 @@ public class CreditService {
 			Response response = Response.status(Status.BAD_REQUEST).entity(SandboxErrorType.SERVICE_ERROR.getCode() + " " + SandboxErrorType.SERVICE_ERROR.getMessage()).build();
 			return response;
 		}
-	}
+	}*/
 
 }

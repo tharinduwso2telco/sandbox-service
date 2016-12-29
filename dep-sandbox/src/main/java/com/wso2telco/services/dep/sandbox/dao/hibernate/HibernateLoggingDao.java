@@ -10,6 +10,7 @@ import java.util.Map.Entry;
 
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.Session;
+import org.hibernate.Transaction;
 import org.hibernate.query.Query;
 
 
@@ -25,14 +26,20 @@ public class HibernateLoggingDao extends HibernateAbstractDAO implements Logging
 		LOG = LogFactory.getLog(HibernateProvisioningDAO.class);
 	}
 
-	public void saveMessageLog(MessageLog messageLog) throws Exception {
+	public int saveMessageLog(MessageLog messageLog) throws Exception {
+		Session session = getSession();
+		Transaction transaction = session.beginTransaction();
+		int txnReference = 0;
 		try {
-			saveOrUpdate(messageLog);
+			session.save(messageLog);
+			txnReference = messageLog.getId();
+			transaction.commit();
 		} catch (Exception ex) {
-			LOG.error("Error in SaveMessageLog " + ex);
+			transaction.rollback();
+			LOG.debug("Error Occured While Saving Object. ", ex);
 			throw ex;
 		}
-		
+		return txnReference;
 	}
 
 	public List<MessageLog> getMessageLogs(int userid, List<Integer> serviceNameIds, String ref, String val, Date startTimeStamp,

@@ -139,8 +139,9 @@ public class CreditApplyRequestHandler extends AbstractRequestHandler<CreditAppl
 		APITypes apiType = dao.getAPIType(RequestType.CREDIT.toString().toLowerCase());
 		APIServiceCalls serviceType = dao.getServiceCall(apiType.getId(), ServiceName.ApplyCredit.toString());
 		JSONObject obj = buildJSONObject(request);
-		logHandler.saveMessageLog(serviceType.getApiServiceCallId(), extendedRequestDTO.getUser().getId(), MSISDN, extendedRequestDTO.getMsisdn(), obj);
-
+		int txnReference = logHandler.saveMessageLog(serviceType.getApiServiceCallId(), extendedRequestDTO.getUser().getId(), MSISDN, extendedRequestDTO.getMsisdn(), obj);
+		String ref_number = String.format("%06d", txnReference);
+		
 		double amount = request.getAmount();
 		String type = CommonUtil.getNullOrTrimmedValue(request.getType());
 		String msisdn = CommonUtil.getNullOrTrimmedValue(extendedRequestDTO.getMsisdn());
@@ -158,12 +159,12 @@ public class CreditApplyRequestHandler extends AbstractRequestHandler<CreditAppl
 				if (manageNumber != null) {
 					updateBalance(manageNumber, amount);
 					buildJsonResponseBody(amount, type, clientCorrelator, merchantIdentification, reasonForCredit,
-							CreditStatusCodes.SUCCESS.toString(), callbackData, notifyURL);
+							CreditStatusCodes.SUCCESS.toString(), ref_number,  callbackData, notifyURL);
 					responseWrapperDTO.setHttpStatus(Response.Status.OK);
 					return responseWrapperDTO;
 				} else {
 					buildJsonResponseBody(amount, type, clientCorrelator, merchantIdentification, reasonForCredit,
-							CreditStatusCodes.FAILED.toString(), callbackData, notifyURL);
+							CreditStatusCodes.FAILED.toString(), ref_number, callbackData, notifyURL);
 					responseWrapperDTO.setRequestError(constructRequestError(SERVICEEXCEPTION,
 							ServiceError.INVALID_INPUT_VALUE, "Number is not Registered for the Service"));
 					responseWrapperDTO.setHttpStatus(Status.BAD_REQUEST);
@@ -178,7 +179,7 @@ public class CreditApplyRequestHandler extends AbstractRequestHandler<CreditAppl
 				if (attributeValues != null) {
 					updateValue(attributeValues, amount);
 					buildJsonResponseBody(amount, type, clientCorrelator, merchantIdentification, reasonForCredit,
-							CreditStatusCodes.SUCCESS.toString(), callbackData, notifyURL);
+							CreditStatusCodes.SUCCESS.toString(), ref_number, callbackData, notifyURL);
 					responseWrapperDTO.setHttpStatus(Response.Status.OK);
 					return responseWrapperDTO;
 				} else {
@@ -189,7 +190,7 @@ public class CreditApplyRequestHandler extends AbstractRequestHandler<CreditAppl
 					attributeValues.setValue(Double.toString(amount));
 					dao.saveAttributeValue(attributeValues);
 					buildJsonResponseBody(amount, type, clientCorrelator, merchantIdentification, reasonForCredit,
-							CreditStatusCodes.SUCCESS.toString(), callbackData, notifyURL);
+							CreditStatusCodes.SUCCESS.toString(), ref_number, callbackData, notifyURL);
 					responseWrapperDTO.setHttpStatus(Response.Status.OK);
 					return responseWrapperDTO;
 				}
@@ -198,7 +199,7 @@ public class CreditApplyRequestHandler extends AbstractRequestHandler<CreditAppl
 		} catch (Exception ex) {
 			LOG.error("###CREDIT### Error in processing credit service request. ", ex);
 			buildJsonResponseBody(amount, type, clientCorrelator, merchantIdentification, reasonForCredit,
-					CreditStatusCodes.ERROR.toString(), callbackData, notifyURL);
+					CreditStatusCodes.ERROR.toString(),ref_number , callbackData, notifyURL);
 			responseWrapperDTO
 					.setRequestError(constructRequestError(SERVICEEXCEPTION, ServiceError.SERVICE_ERROR_OCCURED, null));
 			responseWrapperDTO.setHttpStatus(Status.BAD_REQUEST);
@@ -229,7 +230,7 @@ public class CreditApplyRequestHandler extends AbstractRequestHandler<CreditAppl
 	}
 
 	private void buildJsonResponseBody(double amount, String type, String clientCorrelator,
-			String merchantIdentification, String reason, String status, String callbackData, String notifyURL) {
+			String merchantIdentification, String reason, String status, String txnReference,  String callbackData, String notifyURL) {
 
 		CallbackReference receiptResponse = new CallbackReference();
 		receiptResponse.setCallbackData(callbackData);
@@ -242,6 +243,7 @@ public class CreditApplyRequestHandler extends AbstractRequestHandler<CreditAppl
 		creditApplyResponse.setMerchantIdentification(merchantIdentification);
 		creditApplyResponse.setReasonForCredit(reason);
 		creditApplyResponse.setStatus(status);
+		creditApplyResponse.setTxnReference(txnReference);
 		creditApplyResponse.setReceiptResponse(receiptResponse);
 		CreditApplyResponseBean creditApplyResponseBean = new CreditApplyResponseBean();
 		creditApplyResponseBean.setCreditApplyResponse(creditApplyResponse);

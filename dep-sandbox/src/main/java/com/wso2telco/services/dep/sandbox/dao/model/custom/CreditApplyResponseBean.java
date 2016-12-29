@@ -29,6 +29,8 @@ public class CreditApplyResponseBean {
 		
 		private String status;
 		
+		private String txnReference;
+
 		private CallbackReference receiptResponse;
 
 		public double getAmount() {
@@ -77,6 +79,14 @@ public class CreditApplyResponseBean {
 
 		public void setStatus(String status) {
 			this.status = status;
+		}
+		
+		public String getTxnReference() {
+			return txnReference;
+		}
+
+		public void setTxnReference(String txnReference) {
+			this.txnReference = txnReference;
 		}
 
 		public CallbackReference getReceiptResponse() {
