@@ -121,6 +121,7 @@ public class GetProfileConfigHandler extends
 		break;
 
 	    default:
+	    isJsonObject = false;
 		checkEachJsonParametersValue(eachProfile, requestBean);
 
 	    }
