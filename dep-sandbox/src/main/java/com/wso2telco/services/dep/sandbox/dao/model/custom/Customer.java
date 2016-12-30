@@ -36,12 +36,20 @@ public class Customer {
     private String identificationType;
 
     private String identificationNumber;
+    
+    private String onBehalfOf;
+
+	private String purchaseCatergoryCode;
 
     private String accountType;
 
     private String ownerType;
 
     private String status;
+    
+	private String requestIdentifier;
+
+	private String responseIdentifier;
 
     private JsonNode address;
 
@@ -257,5 +265,39 @@ public class Customer {
     public void setResourceURL(String resourceURL) {
 	this.resourceURL = resourceURL;
     }
+
+	public String getOnBehalfOf() {
+		return onBehalfOf;
+	}
+
+	public void setOnBehalfOf(String onBehalfOf) {
+		this.onBehalfOf = onBehalfOf;
+	}
+
+	public String getPurchaseCatergoryCode() {
+		return purchaseCatergoryCode;
+	}
+
+	public void setPurchaseCatergoryCode(String purchaseCatergoryCode) {
+		this.purchaseCatergoryCode = purchaseCatergoryCode;
+	}
+
+	public String getRequestIdentifier() {
+		return requestIdentifier;
+	}
+
+	public void setRequestIdentifier(String requestIdentifier) {
+		this.requestIdentifier = requestIdentifier;
+	}
+
+	public String getResponseIdentifier() {
+		return responseIdentifier;
+	}
+
+	public void setResponseIdentifier(String responseIdentifier) {
+		this.responseIdentifier = responseIdentifier;
+	}
+    
+    
 
 }

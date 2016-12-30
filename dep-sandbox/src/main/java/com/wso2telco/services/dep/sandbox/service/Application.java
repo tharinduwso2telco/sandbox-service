@@ -24,7 +24,7 @@ import com.wso2telco.core.mi.ConfigDTO;
 
 import io.dropwizard.setup.Environment;
 
-public class Application extends AbstractApplication<ConfigDTO> {
+public class Application extends AbstractApplication<SandboxDTO> {
 
 	@Override
 	protected List<Object> getRestFulComponents() {
@@ -41,12 +41,6 @@ public class Application extends AbstractApplication<ConfigDTO> {
 		return listOfObject;
 	}
 
-	@Override
-	protected void runInit(ConfigDTO e, Environment env) {
-		// TODO Auto-generated method stub
-		
-	}
-
 
 	public static void main(String[] args) {
 		try {
@@ -54,6 +48,12 @@ public class Application extends AbstractApplication<ConfigDTO> {
 		}   catch (Exception e) {
 			System.out.println("Unable to start the server " + e.getMessage());
 		}
+	}
+
+	@Override
+	protected void runInit(SandboxDTO e, Environment env) {
+		// TODO Auto-generated method stub
+		
 	}
 	 
 }

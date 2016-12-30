@@ -15,6 +15,9 @@
  ******************************************************************************/
 package com.wso2telco.services.dep.sandbox.util;
 
+import java.util.UUID;
+
+import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
 import org.apache.commons.logging.Log;
@@ -32,7 +35,7 @@ public class CommonUtil {
 	static Log LOG = LogFactory.getLog(CommonUtil.class);
 	
 	public static final String QUERY_STRING_SEPARATOR = "?";
-
+	
 	public static void validateMsisdn(String msisdn) throws SandboxException {
 
 		MSISDNUtil msisdnUtil = new MSISDNUtil();
@@ -99,12 +102,13 @@ public class CommonUtil {
 		resourceUrlBuilder.append(extendedRequestDTO.getHttpRequest()
 				.getHeader("Host"));
 		resourceUrlBuilder.append(extendedRequestDTO.getHttpRequest()
-				.getPathInfo());
-		if (extendedRequestDTO.getHttpRequest().getQueryString() != null) {
+				.getPathInfo() + "/" + RandomStringUtils.randomNumeric(5));
+		
+		/*if (extendedRequestDTO.getHttpRequest().getQueryString() != null) {
 			resourceUrlBuilder.append(QUERY_STRING_SEPARATOR);
 			resourceUrlBuilder.append(extendedRequestDTO.getHttpRequest()
 					.getQueryString());
-		}
+		}*/
 
 		return resourceUrlBuilder.toString();
 	}

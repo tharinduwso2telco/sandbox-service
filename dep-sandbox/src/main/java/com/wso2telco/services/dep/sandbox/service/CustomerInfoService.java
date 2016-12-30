@@ -59,6 +59,9 @@ public class CustomerInfoService {
 	    @ApiParam(value = "imsi", required = false) @QueryParam("imsi") String imsi,
 	    @ApiParam(value = "mcc", required = false) @QueryParam("mcc") String mcc,
 	    @ApiParam(value = "mnc", required = false) @QueryParam("mnc") String mnc,
+	    @ApiParam(value = "onBehalfOf", required = false) @QueryParam("onBehalfOf") String onBehalfOf,
+	    @ApiParam(value = "purchaseCatergoryCode", required = false) @QueryParam("purchaseCatergoryCode") String purchaseCatergoryCode,
+	    @ApiParam(value = "requestIdentifier", required = true) @QueryParam("requestIdentifier") String requestIdentifier,
 	    @Context HttpServletRequest request) {
 	LOG.debug("/profile invoked" + msisdn + imsi + mcc + mnc);
 
@@ -69,6 +72,9 @@ public class CustomerInfoService {
 	requestDTO.setMcc(mcc);
 	requestDTO.setMnc(mnc);
 	requestDTO.setMsisdn(msisdn);
+	requestDTO.setOnBehalfOf(onBehalfOf);
+	requestDTO.setPurchaseCatergoryCode(purchaseCatergoryCode);
+	requestDTO.setRequestIdentifier(requestIdentifier);
 	
 	RequestHandleable handler = RequestBuilderFactory.getInstance(requestDTO);
 	Returnable returnable = null;
@@ -95,11 +101,16 @@ public class CustomerInfoService {
 	    @ApiImplicitParam(name = "sandbox", value = "username", 
 	                     required = true, dataType = "string", paramType = "header")
 	})
-	public Response getAttributeServices( @ApiParam(value = "msisdn", required = false) @QueryParam("msisdn") String msisdn,
+	public Response getAttributeServices(
+			@ApiParam(value = "msisdn", required = false) @QueryParam("msisdn") String msisdn,
 			@ApiParam(value = "imsi", required = false) @QueryParam("imsi") String imsi,
-			@ApiParam(value = "schema",  required = true) @QueryParam("schema") String schema,
+			@ApiParam(value = "schema", required = true) @QueryParam("schema") String schema,
 			@ApiParam(value = "mcc", required = false) @QueryParam("mcc") String mcc,
-			@ApiParam(value = "mnc", required = false) @QueryParam("mnc") String mnc,@Context HttpServletRequest request) {
+			@ApiParam(value = "mnc", required = false) @QueryParam("mnc") String mnc,
+			@ApiParam(value = "onBehalfOf", required = false) @QueryParam("onBehalfOf") String onBehalfOf,
+			@ApiParam(value = "purchaseCatergoryCode", required = false) @QueryParam("purchaseCatergoryCode") String purchaseCatergoryCode,
+			@ApiParam(value = "requestIdentifier", required = true) @QueryParam("requestIdentifier") String requestIdentifier,
+			@Context HttpServletRequest request) {
 		LOG.debug("/{schema}/{mcc}/{mnc}/attribute invorked :" + msisdn + imsi + schema + mcc + mnc);
 		
 		GetAttributeRequestWrapper requestDTO = new GetAttributeRequestWrapper();
@@ -110,6 +121,9 @@ public class CustomerInfoService {
 		requestDTO.setMcc(mcc);
 		requestDTO.setMnc(mnc);
 		requestDTO.setRequestType(RequestType.CUSTOMERINFO);
+		requestDTO.setOnBehalfOf(onBehalfOf);
+		requestDTO.setPurchaseCatergoryCode(purchaseCatergoryCode);
+		requestDTO.setRequestIdentifier(requestIdentifier);
 
 		RequestHandleable handler = RequestBuilderFactory.getInstance(requestDTO);
 		Returnable returnable = null;

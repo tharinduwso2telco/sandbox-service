@@ -30,6 +30,12 @@ public class GetAttributeRequestWrapper extends RequestDTO {
 	private String mcc;
 	
 	private String mnc;
+
+	private String onBehalfOf;
+
+	private String purchaseCatergoryCode;
+
+	private String requestIdentifier;
 	
 	/**
 	 * @return the msisdn
@@ -100,6 +106,29 @@ public class GetAttributeRequestWrapper extends RequestDTO {
 	public void setMnc(String mnc) {
 		this.mnc = mnc;
 	}
-	
+
+	public String getOnBehalfOf() {
+		return onBehalfOf;
+	}
+
+	public void setOnBehalfOf(String onBehalfOf) {
+		this.onBehalfOf = onBehalfOf;
+	}
+
+	public String getPurchaseCatergoryCode() {
+		return purchaseCatergoryCode;
+	}
+
+	public void setPurchaseCatergoryCode(String purchaseCatergoryCode) {
+		this.purchaseCatergoryCode = purchaseCatergoryCode;
+	}
+
+	public String getRequestIdentifier() {
+		return requestIdentifier;
+	}
+
+	public void setRequestIdentifier(String requestIdentifier) {
+		this.requestIdentifier = requestIdentifier;
+	}	
 
 }

@@ -37,3 +37,5 @@ logging:
       archivedLogFilenamePattern: log/sandbox_service-%d.log #<path to log file >/< archive filename.log>
       archivedFileCount: 5
       timeZone: UTC
+      
+requestIdentifierSize: 6

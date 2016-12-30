@@ -23,7 +23,7 @@ import com.wso2telco.services.dep.sandbox.util.CommonUtil;
 public class HibernateLoggingDao extends HibernateAbstractDAO implements LoggingDAO {
 	
 	{
-		LOG = LogFactory.getLog(HibernateProvisioningDAO.class);
+		LOG = LogFactory.getLog(HibernateLoggingDao.class);
 	}
 
 	public int saveMessageLog(MessageLog messageLog) throws Exception {

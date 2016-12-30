@@ -22,6 +22,7 @@ import java.util.List;
 
 import javax.ws.rs.core.Response.Status;
 
+import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.logging.LogFactory;
 import org.json.simple.JSONObject;
 
@@ -38,6 +39,7 @@ import com.wso2telco.services.dep.sandbox.dao.model.custom.CustomerInfoDTO;
 import com.wso2telco.services.dep.sandbox.dao.model.domain.APIServiceCalls;
 import com.wso2telco.services.dep.sandbox.dao.model.domain.APITypes;
 import com.wso2telco.services.dep.sandbox.dao.model.domain.ManageNumber;
+import com.wso2telco.services.dep.sandbox.service.SandboxDTO;
 import com.wso2telco.services.dep.sandbox.servicefactory.AbstractRequestHandler;
 import com.wso2telco.services.dep.sandbox.servicefactory.Returnable;
 import com.wso2telco.services.dep.sandbox.servicefactory.customerinfo.GetProfileResponseWrapper.CustomerDTOWrapper;
@@ -84,7 +86,10 @@ public class GetProfileRequestHandler extends AbstractRequestHandler<GetProfileR
 	String imsi = CommonUtil.getNullOrTrimmedValue(wrapperDTO.getImsi());
 	String mcc = CommonUtil.getNullOrTrimmedValue(wrapperDTO.getMcc());
 	String mnc = CommonUtil.getNullOrTrimmedValue(wrapperDTO.getMnc());
-
+	String onBehalfOf = CommonUtil.getNullOrTrimmedValue(wrapperDTO.getOnBehalfOf());
+	String purchaseCategoryCode = CommonUtil.getNullOrTrimmedValue(wrapperDTO.getPurchaseCatergoryCode());
+	String requestIdentifier = CommonUtil.getNullOrTrimmedValue(wrapperDTO.getRequestIdentifier());
+	
 	List<ValidationRule> validationRulesList = new ArrayList<>();
 
 	try {
@@ -112,6 +117,24 @@ public class GetProfileRequestHandler extends AbstractRequestHandler<GetProfileR
 		validationRulesList
 			.add(new ValidationRule(ValidationRule.VALIDATION_TYPE_OPTIONAL_INT_GE_ZERO, "mnc", mnc));
 	    }
+	    
+	    
+	    
+	    validationRulesList.add(new ValidationRule(ValidationRule.VALIDATION_TYPE_OPTIONAL, "onBehalfOf", onBehalfOf));
+	    validationRulesList.add(new ValidationRule(ValidationRule.VALIDATION_TYPE_OPTIONAL, "purchaseCategoryCode",
+				purchaseCategoryCode));
+
+		if (requestIdentifier != null && checkRequestIdentifierSize(requestIdentifier)) {
+
+			validationRulesList.add(new ValidationRule(ValidationRule.VALIDATION_TYPE_MANDATORY, "requestIdentifier",
+					requestIdentifier));
+		} else {
+			responseWrapperDTO.setRequestError(constructRequestError(
+				    SERVICEEXCEPTION, "SVC0002", "Invalid input value for message part %1",
+				    "requestIdentifier"));
+			    responseWrapperDTO.setHttpStatus(Status.BAD_REQUEST);
+			
+		} 
 
 	    ValidationRule[] validationRules = new ValidationRule[validationRulesList.size()];
 	    validationRules = validationRulesList.toArray(validationRules);
@@ -183,7 +206,7 @@ public class GetProfileRequestHandler extends AbstractRequestHandler<GetProfileR
 	    responseWrapperDTO.setHttpStatus(Status.BAD_REQUEST);
 	    return responseWrapperDTO;
 	}
-	populateResponse(number, customerInfoDTO);
+	populateResponse(number, customerInfoDTO, extendedRequestDTO);
 	responseWrapperDTO.setHttpStatus(Status.OK);
 
 	return responseWrapperDTO;
@@ -195,7 +218,7 @@ public class GetProfileRequestHandler extends AbstractRequestHandler<GetProfileR
 	requestWrapperDTO = extendedRequestDTO;
     }
 
-    private void populateResponse(ManageNumber number, CustomerInfoDTO customerInfoDTO) throws Exception{
+    private void populateResponse(ManageNumber number, CustomerInfoDTO customerInfoDTO, GetProfileRequestWrapper extendedRequestDTO) throws Exception{
 	Customer customer = new Customer();
 	CustomerDTOWrapper customerDTOWrapper = new CustomerDTOWrapper();
 	ObjectMapper mapper = new ObjectMapper();
@@ -205,7 +228,12 @@ public class GetProfileRequestHandler extends AbstractRequestHandler<GetProfileR
 	customer.setFirstName(customerInfoDTO.getFirstName());
 	customer.setLastName(customerInfoDTO.getLastName());
 	customer.setImsi(number.getIMSI());
-
+	customer.setOnBehalfOf(CommonUtil.getNullOrTrimmedValue(extendedRequestDTO.getOnBehalfOf()));
+	customer.setPurchaseCatergoryCode(CommonUtil.getNullOrTrimmedValue(extendedRequestDTO.getPurchaseCatergoryCode()));
+	customer.setRequestIdentifier( CommonUtil.getNullOrTrimmedValue(extendedRequestDTO.getRequestIdentifier()));
+	customer.setResponseIdentifier("RES" + RandomStringUtils.randomAlphabetic(8));
+	
+	
 	Date dateOfBirth = customerInfoDTO.getDob();
 	if (dateOfBirth != null) {
 	    String dob = new SimpleDateFormat(DOB_DATE_FORMAT).format(dateOfBirth);
@@ -226,5 +254,18 @@ public class GetProfileRequestHandler extends AbstractRequestHandler<GetProfileR
 	responseWrapperDTO.setCustomerDTOWrapper(customerDTOWrapper);
 
     }
+    
+    private boolean checkRequestIdentifierSize(String requestIdentifier) {
+
+		int size = SandboxDTO.getRequestIdentifierSize();
+
+		if (requestIdentifier.length() >= size) {
+
+			return true;
+		} else {
+
+			return false;
+		}
+	}
 
 }

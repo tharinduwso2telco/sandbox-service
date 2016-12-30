@@ -120,8 +120,9 @@ public class GetProfileConfigHandler extends
 		}
 		break;
 
-	    default:
-		checkEachJsonParametersValue(eachProfile, requestBean);
+			default:
+				isJsonObject = false;
+				checkEachJsonParametersValue(eachProfile, requestBean);
 
 	    }
 	}

@@ -347,8 +347,7 @@ http://<host>:<port>/provisioning/v1/{msisdn}/remove
 Request Body :
 ```
 {
-	"serviceRemoveRequest":{
-				
+	"serviceRemoveRequest":{		
 				"serviceCode": "SRV0001",
 				"clientCorrelator": "clientCorrelator",
 				"clientReferenceCode" : "clientReferenceCode",
@@ -439,6 +438,16 @@ Request URI-
 ```
 http://<host>:<port>/provisioning/{v1}/config/service
 ```
+Request Body :
+```
+{
+    "serviceCode": "sample1",
+    "serviceName": "sample2",
+    "serviceType": "sample3",
+     "description": "sample4",
+    "serviceCharge": 100
+}
+```
 Response :
 200 OK will be returned if the service is successfully added for the user.
 Unless 400 Bad Request will be returned
@@ -520,13 +529,6 @@ Customer Info service will provide the Service providers a list of customer info
 - Get Profile - Get a customer’s basic profile information 
 - Get Attributes- Get a customer’s basic profile information and registered schema
 
-CustomerInfo Related User Configurations can also be done through rest service calls. Configuration for provisioning API has four operations under user service.
-
-- Get available APITypes
-- Get available API specific ServiceTypes
-- Get available APIServiceType specific Attributes
-- Post values for APIServiceType specific Attributes
-
 
 ####6.3.2 API features with postman testing
 
@@ -538,7 +540,7 @@ Type - GET
 
 Request URI:
 ```
-http://<host>:<port>/customerinfo/v1/customer/profile?msisdn={msisdn}&imsi={imsi}&mnc={mnc}&mcc={mcc}
+http://<host>:<port>/customerinfo/v1/customer/profile?msisdn={msisdn}&imsi={imsi}&mnc={mnc}&mcc={mcc}&onBehalfOf={onBehalfOf}&purchaseCategoryCode={PurchaseCategoryCode}&requestIdentifier={Unique Request ID}
 ```
 
 Response :
@@ -549,20 +551,24 @@ Response :
         "imsi": "0987654321", 
         "title": "Mr",
         "firstName": "Bilbo",
-        "lastName": "Baggins"
-        "dob": "21/10/2006"
-        "identificationType": "PP"
-        "identificationNumber": "PP12345DC"
-        "accountType": "Postpaid"
-        "ownerType": "Paymaster"
-        "status": "Confirmed"
+        "lastName": "Baggins",
+        "dob": "21/10/2006",
+        "identificationType": "PP",
+        "identificationNumber": "PP12345DC",
+        “onBehalfOf”:”my_Merchant”,
+		“purchaseCategoryCode”:”Game”,
+        "accountType": "Postpaid",
+        "ownerType": "Paymaster",
+        "status": "Confirmed",
+        “requestIdentifier”:”REQ12345678”,
+		“responseIdentifier”:”RES12345678”,
         "address":{
 			"line1": "Bag End",
 			"line2": "",
 			"line3": "",
 			"city": "The Shire",
 			"country": "Middle Earth"
-		}
+		},
         "additionalInfo	":[{
 			"tag": "creditLimit",
 			"value": "2500"
@@ -570,8 +576,7 @@ Response :
 			"tag": "creditLimit",
 			"value": "2500"
 	}],
-
-       "resourceURL": "http://<host>:<port>/customerinfo/v1/customer/profile?msisdn={msisdn}&imsi={imsi}&mnc={mnc}&mcc={mcc}"
+       "resourceURL": "http://<host>:<port>/customerinfo/v1/customer/profile/{UniqueID}"
   }
 }
 ```
@@ -584,7 +589,7 @@ Type - GET
 
 Request URI:
 ```
-http://<host>:<port>/customerinfo/v1/customer/attribute?msisdn={msisdn}&imsi={imsi}&schema={schema1,schema2,schema3,schema4}&mnc={mnc}&mcc={mcc}
+http://<host>:<port>/customerinfo/v1/customer/attribute?msisdn={msisdn}&imsi={imsi}&schema={schema1,schema2,schema3,schema4}&mnc={mnc}&mcc={mcc}&onBehalfOf={OnBehalfOf}&purchaseCategoryCode={purchaseCategoryCode}&requestIdentifier={Unique Request ID}
 ```
 
 Response :
@@ -593,6 +598,10 @@ Response :
 	"Customer": {
 		"msisdn": "123456789",
 		"imsi": "0987654321",
+		“onBehalfOf”:”my_Merchant”,
+		“purchaseCategoryCode”:”Game”,
+		“requestIdentifier”:”REQ12345678”,
+		“responseIdentifier”:”RES12345678”,
 		"basic": {
 			"title": "Mr",
 			"firstName": "Bilbo",
@@ -621,13 +630,16 @@ Response :
 			"type": "Postpaid",
 			"status": "Active"
 		},
-		"resourceURL": "http://<host>:<port>/customerinfo/v1/customer/attribute?msisdn={msisdn}&imsi={imsi}&schema={schema1,schema2,schema3,schema4}&mnc={mnc}&mcc={mcc}"
+		"resourceURL": "http://<host>:<port>/customerinfo/v1/customer/attribute/{UniqueID}"
 	}
 }
 ```
 
 ####6.3.3 CustomerInfo API Related User Configurations postman testing
 
+The customerinfo configurations are made to respond irrespective of different msisdn added by a specific user. So the configured details will be stored against user, not the msisdn. Trying with different msisdn to set details will overwrite the existing records of specific user. 
+
+Use the below provided seperate rest calls to insert records seperately for get profile & get attribute call. So it will be stored per service call configuration per user.
 
 - Post values for APIServiceType specific Attributes
 
