@@ -86,7 +86,7 @@ Logback pattern with which events will be formatted.
 
 ##3 Build the Service
 
-Run the following Maven command. This will create the fat jar dep-sanbox-1.0.2-SNAPSHOT.jar in the target directory.
+Run the following Maven command. This will create the fat jar dep-sanbox-<VERSION>.jar in the target directory.
 
 ```
 mvn clean install
@@ -98,7 +98,7 @@ This fat jar is a jar file that contains sanbox microservice as well as all its 
 In order to get the service up and running, execute the following command.
 
 ```
-java -jar target/dep-sanbox-1.0.2-SNAPSHOT.jar server deploy/config.yml
+java -jar target/dep-sanbox-<VERSION>.jar server deploy/config.yml
 ```
 
 ##5 Swagger Annotations
