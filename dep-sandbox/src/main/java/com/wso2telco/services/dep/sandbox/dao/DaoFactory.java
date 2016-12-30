@@ -35,4 +35,8 @@ public class DaoFactory {
     public static WalletDAO getWalletDAO(){
     	return new HibernateFactory().getHibernateWalletDAO();
     }
+    
+    public static LoggingDAO getLoggingDAO(){
+    	return new HibernateFactory().getHibernateLoggingDao();
+    }
 }

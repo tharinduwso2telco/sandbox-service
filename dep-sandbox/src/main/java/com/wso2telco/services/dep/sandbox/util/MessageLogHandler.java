@@ -36,7 +36,7 @@ public class MessageLogHandler {
         return instance;
     }
     
-    public int saveMessageLog(final int servicenameid, final int userid, final String reference, final String value, JSONObject obj) throws Exception {
+    public void saveMessageLog(final int servicenameid, final int userid, final String reference, final String value, JSONObject obj) throws Exception {
     	MessageLog messageLog = new MessageLog();
         executorService.execute(new Runnable() {
             public void run() {
@@ -53,13 +53,13 @@ public class MessageLogHandler {
                 	messageLog.setRequest(jsonString);
                 	messageLog.setMessageTimestamp(new Date());
                 	log.debug("messagelog object has been created");
+                	dbservice.saveMessageLog(messageLog);
                 	
                 } catch (Exception e) {
                     log.debug("error while inserting data into database", e);
                 }
             }
         });
-        return dbservice.saveMessageLog(messageLog);
     }
     
     public List<MessageLog> getMessageLogs(final int userid, final List<Integer> serviceNameIds, final String reference, final String value, final Date startTimeStamp,

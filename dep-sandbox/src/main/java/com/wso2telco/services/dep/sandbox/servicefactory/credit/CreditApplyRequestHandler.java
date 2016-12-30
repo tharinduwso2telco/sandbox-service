@@ -1,6 +1,8 @@
 package com.wso2telco.services.dep.sandbox.servicefactory.credit;
 
+import java.io.StringWriter;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.ws.rs.core.Response;
@@ -14,6 +16,7 @@ import com.wso2telco.dep.oneapivalidation.exceptions.CustomException;
 import com.wso2telco.dep.oneapivalidation.util.Validation;
 import com.wso2telco.dep.oneapivalidation.util.ValidationRule;
 import com.wso2telco.services.dep.sandbox.dao.DaoFactory;
+import com.wso2telco.services.dep.sandbox.dao.LoggingDAO;
 import com.wso2telco.services.dep.sandbox.dao.NumberDAO;
 import com.wso2telco.services.dep.sandbox.dao.model.custom.CallbackReference;
 import com.wso2telco.services.dep.sandbox.dao.model.custom.CreditApplyRequestWrapper;
@@ -27,6 +30,7 @@ import com.wso2telco.services.dep.sandbox.dao.model.domain.AttributeDistribution
 import com.wso2telco.services.dep.sandbox.dao.model.domain.AttributeValues;
 import com.wso2telco.services.dep.sandbox.dao.model.domain.Attributes;
 import com.wso2telco.services.dep.sandbox.dao.model.domain.ManageNumber;
+import com.wso2telco.services.dep.sandbox.dao.model.domain.MessageLog;
 import com.wso2telco.services.dep.sandbox.servicefactory.AbstractRequestHandler;
 import com.wso2telco.services.dep.sandbox.servicefactory.Returnable;
 import com.wso2telco.services.dep.sandbox.util.CommonUtil;
@@ -38,6 +42,7 @@ import com.wso2telco.services.dep.sandbox.util.ServiceName;
 public class CreditApplyRequestHandler extends AbstractRequestHandler<CreditApplyRequestWrapper> {
 
 	private NumberDAO numberDao;
+	private LoggingDAO loggingDao;
 	private MessageLogHandler logHandler;
 	private CreditApplyRequestWrapper requestWrapperDTO;
 	private CreditApplyResponseWrapper responseWrapperDTO;
@@ -59,6 +64,7 @@ public class CreditApplyRequestHandler extends AbstractRequestHandler<CreditAppl
 		LOG = LogFactory.getLog(CreditApplyRequestHandler.class);
 		numberDao = DaoFactory.getNumberDAO();
 		dao = DaoFactory.getGenaricDAO();
+		loggingDao = DaoFactory.getLoggingDAO();
 		logHandler = MessageLogHandler.getInstance();
 	}
 
@@ -139,7 +145,19 @@ public class CreditApplyRequestHandler extends AbstractRequestHandler<CreditAppl
 		APITypes apiType = dao.getAPIType(RequestType.CREDIT.toString().toLowerCase());
 		APIServiceCalls serviceType = dao.getServiceCall(apiType.getId(), ServiceName.ApplyCredit.toString());
 		JSONObject obj = buildJSONObject(request);
-		int txnReference = logHandler.saveMessageLog(serviceType.getApiServiceCallId(), extendedRequestDTO.getUser().getId(), MSISDN, extendedRequestDTO.getMsisdn(), obj);
+		StringWriter out = new StringWriter();
+		obj.writeJSONString(out);
+    	String jsonString = out.toString();
+    	
+		MessageLog messageLog = new MessageLog();
+		messageLog.setServicenameid(serviceType.getApiServiceCallId());
+    	messageLog.setUserid(extendedRequestDTO.getUser().getId());
+    	messageLog.setReference(MSISDN);
+    	messageLog.setValue(extendedRequestDTO.getMsisdn());
+    	messageLog.setRequest(jsonString);
+    	messageLog.setMessageTimestamp(new Date());
+		
+		int txnReference = loggingDao.saveMessageLog(messageLog);
 		String ref_number = String.format("%06d", txnReference);
 		
 		double amount = request.getAmount();
