@@ -650,7 +650,7 @@ The values that are inserted using this service will be retrieved when actual Cu
 
 Request :
 
-Type - GET
+Type - POST
 
 Request URI:
 ```
@@ -687,7 +687,7 @@ Unless 400 Bad Request will be returned
 
 Request :
 
-Type - GET
+Type - POST
 
 Request URI:
 ```
