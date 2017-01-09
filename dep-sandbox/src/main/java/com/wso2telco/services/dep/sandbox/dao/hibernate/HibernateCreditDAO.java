@@ -235,20 +235,20 @@ return null;		} catch (Exception ex) {
 		hql.append("AND calls.apiServiceCallId = dist.serviceCall.apiServiceCallId ");
 		hql.append("AND dist.distributionId = val.attributeDistributionId.distributionId ");
 		hql.append("AND att.attributeId = dist.attribute.attributeId ");
-		//hql.append("AND number.id = val.ownerdid ");
 		hql.append("AND api.apiname =:apiName ");
 		hql.append("AND calls.serviceName =:serviceName ");
 		hql.append("AND val.tobject =:tableName ");
-		//hql.append("AND number.Number =:number ");
-		hql.append("AND val.value =:clientCorrelator");
+		hql.append("AND val.value =:clientCorrelator ");
+		hql.append("AND att.attributeName =:attributeName");
 
 		try {
 			Query query = session.createQuery(hql.toString());
 			query.setParameter("apiName", RequestType.CREDIT.toString());
 			query.setParameter("serviceName", serviceCall);
-			//query.setParameter("number", endUserId);
 			query.setParameter("tableName", TableName.NUMBERS.toString().toLowerCase());
 			query.setParameter("clientCorrelator", referenceCode);
+			query.setParameter("attributeName", AttributeName.referenceCodeCredit.toString());
+
 			resultSet = (AttributeValues) query.uniqueResult();
 			
 			if(resultSet != null){
@@ -256,7 +256,8 @@ return null;		} catch (Exception ex) {
 			}
 
 		} catch (NoResultException e) {
-return false;		} catch (Exception ex) {
+			return false;		
+			} catch (Exception ex) {
 			LOG.error("###CREDIT### Error in Make Refund Payment Service " + ex);
 			throw ex;
 		}
