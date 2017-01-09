@@ -29,6 +29,6 @@ public interface WalletDAO {
 	public AttributeDistribution getDistributionValue(String serviceCall, String attributeName, String apiType) throws Exception; 
 	public Integer getNumber(String endUserId) throws Exception;
 	public AttributeValues getAttributeValue(AttributeDistribution distributionObj, Integer endUserId) throws Exception;
-	public boolean checkDuplicateValue(String endUserId, String serviceCall, String clientCorrelator) throws Exception;
+	public boolean checkDuplicateValue(String endUserId, String serviceCall, String value, String attributeName) throws Exception;
 	public AttributeValues checkClientCorrelator(String endUserId, String serviceCall, String clientCorrelator) throws Exception;
 }
