@@ -1,7 +1,5 @@
 package com.wso2telco.services.dep.sandbox.dao.hibernate;
 
-import java.util.List;
-
 import javax.persistence.NoResultException;
 
 import org.hibernate.Session;
@@ -10,59 +8,12 @@ import org.hibernate.query.Query;
 import com.wso2telco.services.dep.sandbox.dao.CreditDAO;
 import com.wso2telco.services.dep.sandbox.dao.model.domain.AttributeDistribution;
 import com.wso2telco.services.dep.sandbox.dao.model.domain.AttributeValues;
-import com.wso2telco.services.dep.sandbox.servicefactory.credit.AttributeName;
 import com.wso2telco.services.dep.sandbox.util.RequestType;
 import com.wso2telco.services.dep.sandbox.util.ServiceName;
 import com.wso2telco.services.dep.sandbox.util.TableName;
 
 public class HibernateCreditDAO  extends AbstractDAO implements CreditDAO{
-	@Override
-	public String getAttributeValue(String endUserId, String serviceCall, String attribute)
-			throws Exception {
 
-		Session session = getSession();
-		String resultSet = null;
-
-		StringBuilder hql = new StringBuilder();
-
-		hql.append("SELECT ");
-		hql.append("val.value ");
-		hql.append("FROM ");
-		hql.append("AttributeValues as val, ");
-		hql.append("APIServiceCalls AS calls, ");
-		hql.append("APITypes AS api, ");
-		hql.append("AttributeDistribution AS dist, ");
-		hql.append("Attributes AS att, ");
-		hql.append("ManageNumber AS number ");
-		hql.append("WHERE ");
-		hql.append("api.id = calls.apiType.id ");
-		hql.append("AND calls.apiServiceCallId = dist.serviceCall.apiServiceCallId ");
-		hql.append("AND dist.distributionId = val.attributeDistributionId.distributionId ");
-		hql.append("AND att.attributeId = dist.attribute.attributeId ");
-		hql.append("AND number.id = val.ownerdid ");
-		hql.append("AND api.apiname =:apiName ");
-		hql.append("AND calls.serviceName =:serviceName ");
-		hql.append("AND val.tobject =:tableName ");
-		hql.append("AND number.Number =:number ");
-		hql.append("AND att.attributeName =:attName");
-
-		try {
-			Query query = session.createQuery(hql.toString());
-			query.setParameter("apiName", RequestType.CREDIT.toString());
-			query.setParameter("serviceName", serviceCall);
-			query.setParameter("number", endUserId);
-			query.setParameter("tableName", TableName.NUMBERS.toString().toLowerCase());
-			query.setParameter("attName", attribute);
-			resultSet = (String) query.uniqueResult();
-
-		} catch (NoResultException e) {
-			return null;
-		} catch (Exception ex) {
-			LOG.error("###CREDIT### Error in Credit Apply Service " + ex);
-			throw ex;
-		}
-		return resultSet;
-	}
 	@Override
 	public AttributeDistribution getDistributionValue(
 			String serviceCall, String attributeName, String apiType) throws Exception {
@@ -161,7 +112,7 @@ return null;
 	}
 
 	@Override
-	public AttributeValues checkClientCorrelator(String endUserId, String serviceCall, String clientCorrelator)
+	public AttributeValues checkDuplication(String endUserId, String serviceCall, String clientCorrelator, String attributeName)
 			throws Exception {
 
 
@@ -189,7 +140,8 @@ return null;
 		hql.append("AND calls.serviceName =:serviceName ");
 		hql.append("AND val.tobject =:tableName ");
 		hql.append("AND number.Number =:number ");
-		hql.append("AND val.value =:clientCorrelator");
+		hql.append("AND val.value =:clientCorrelator ");
+		hql.append("AND att.attributeName =:attributeName");
 
 		try {
 			Query query = session.createQuery(hql.toString());
@@ -198,11 +150,9 @@ return null;
 			query.setParameter("number", endUserId);
 			query.setParameter("tableName", TableName.NUMBERS.toString().toLowerCase());
 			query.setParameter("clientCorrelator", clientCorrelator);
+			query.setParameter("attributeName", attributeName);
+
 			resultSet = (AttributeValues) query.uniqueResult();
-/*			
-			if(resultSet != null){
-				return resultSet;
-			}*/
 
 		} catch (NoResultException e) {
 return null;		} catch (Exception ex) {
@@ -212,57 +162,6 @@ return null;		} catch (Exception ex) {
 		return resultSet;	
 	}
 
-	@Override
-	public boolean checkDupplicateValue(String endUserId, String serviceCall, String referenceCode) throws Exception {
-
-
-		Session session = getSession();
-		AttributeValues resultSet = null;
-
-		StringBuilder hql = new StringBuilder();
-
-		hql.append("SELECT ");
-		hql.append("val ");
-		hql.append("FROM ");
-		hql.append("AttributeValues as val, ");
-		hql.append("APIServiceCalls AS calls, ");
-		hql.append("APITypes AS api, ");
-		hql.append("AttributeDistribution AS dist, ");
-		hql.append("Attributes AS att, ");
-		hql.append("ManageNumber AS number ");
-		hql.append("WHERE ");
-		hql.append("api.id = calls.apiType.id ");
-		hql.append("AND calls.apiServiceCallId = dist.serviceCall.apiServiceCallId ");
-		hql.append("AND dist.distributionId = val.attributeDistributionId.distributionId ");
-		hql.append("AND att.attributeId = dist.attribute.attributeId ");
-		hql.append("AND api.apiname =:apiName ");
-		hql.append("AND calls.serviceName =:serviceName ");
-		hql.append("AND val.tobject =:tableName ");
-		hql.append("AND val.value =:referenceCode ");
-		hql.append("AND att.attributeName =:attributeName");
-
-		try {
-			Query query = session.createQuery(hql.toString());
-			query.setParameter("apiName", RequestType.CREDIT.toString());
-			query.setParameter("serviceName", serviceCall);
-			query.setParameter("tableName", TableName.NUMBERS.toString().toLowerCase());
-			query.setParameter("referenceCode", referenceCode);
-			query.setParameter("attributeName", AttributeName.referenceCodeCredit.toString());
-
-			resultSet = (AttributeValues) query.uniqueResult();
-			
-			if(resultSet != null){
-				return true;
-			}
-
-		} catch (NoResultException e) {
-			return false;		
-			} catch (Exception ex) {
-			LOG.error("###CREDIT### Error in Credit Apply Service " + ex);
-			throw ex;
-		}
-		return false;	
-	}
 	@Override
 	public AttributeValues getTransactionValue(String endUserId, Integer attributeValue, String serviceCall) throws Exception {
 
