@@ -190,10 +190,9 @@ public class CreditApplyRequestHandler extends AbstractRequestHandler<CreditAppl
 		String referenceCode = CommonUtil.getNullOrTrimmedValue(request.getReferenceCode());
 
 		try {	
-			Boolean isDupplicate = creditDAO.checkDupplicateValue(msisdn, serviceCreditApply, referenceCode);
-			
+			String clientCorrelatorAttribute = AttributeName.clientCorrelator.toString();
 			if(clientCorrelator != null){
-				 AttributeValues values	= creditDAO.checkClientCorrelator(msisdn, serviceCreditApply, clientCorrelator);
+				 AttributeValues values	= creditDAO.checkDuplication(msisdn, serviceCreditApply, clientCorrelator, clientCorrelatorAttribute);
 				if(values != null){
 					//send the already sent response
 					AttributeValues applyCreditResponse = creditDAO.getTransactionValue(msisdn,values.getAttributeValueId() ,AttributeName.applyCredit.toString());
@@ -210,7 +209,10 @@ public class CreditApplyRequestHandler extends AbstractRequestHandler<CreditAppl
 				}
 			}		
 			//check reference code duplication
-			if(isDupplicate != false){
+			String referenceCodeAttribute =  AttributeName.referenceCodeCredit.toString();
+			AttributeValues value =	creditDAO.checkDuplication(msisdn, serviceCreditApply, referenceCode, referenceCodeAttribute);
+			//Boolean isDupplicate = creditDAO.checkDupplicateValue(msisdn, serviceCreditApply, referenceCode);
+			if(value != null){
 				buildJsonResponseBody(amount, type, clientCorrelator, merchantIdentification, reasonForCredit,
 						CreditStatusCodes.FAILED.toString(), callbackData, notifyURL, referenceCode, serverReferenceCode);
 				responseWrapperDTO.setRequestError(constructRequestError(SERVICEEXCEPTION,
