@@ -37,4 +37,8 @@ public class HibernateFactory {
 	public HibernateLoggingDao getHibernateLoggingDao() {
 		return new HibernateLoggingDao();
 	}
+	
+	public HibernateCreditDAO getHibernateCreditDAO() {
+		return new HibernateCreditDAO();
+	}
 }

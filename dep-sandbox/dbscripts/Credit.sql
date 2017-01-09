@@ -50,7 +50,7 @@ CREATE TABLE IF NOT EXISTS `sbxattribute` (
 -- Dumping data for table `sbxattribute`
 --
 
-INSERT INTO `sbxattribute` VALUES (22,'sms'),(23,'data'),(24,'minutes');
+INSERT INTO `sbxattribute` VALUES (22,'sms'),(23,'data'),(24,'minutes'),(25,'referenceCodeCredit'),(26,'clientCorrelator'),(27,'applyCredit');
 
 --
 -- Table structure for table `sbtattributedistribution`
@@ -68,7 +68,7 @@ CREATE TABLE IF NOT EXISTS `sbtattributedistribution` (
 -- Dumping data for table `sbtattributedistribution`
 --
 
-INSERT INTO `sbtattributedistribution` VALUES (24,22,8),(25,23,8),(26,24,8);	
+INSERT INTO `sbtattributedistribution` VALUES (24,22,8),(25,23,8),(26,24,8),(27,25,8),(28,26,8),(29,27,8);	
 
 --
 -- Table structure for table `sbxattributevalue`

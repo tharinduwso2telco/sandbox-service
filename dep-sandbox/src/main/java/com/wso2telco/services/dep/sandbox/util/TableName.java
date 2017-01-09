@@ -16,5 +16,5 @@
 package com.wso2telco.services.dep.sandbox.util;
 
 public enum TableName {
-    USER, NUMBERS, SBXAPISERVICECALLS
+    USER, NUMBERS, SBXAPISERVICECALLS, SBXATTRIBUTEVALUE
 }

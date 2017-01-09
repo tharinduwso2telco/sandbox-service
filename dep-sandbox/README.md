@@ -770,7 +770,8 @@ Request Body :
 		"receiptRequest":{
 			"notifyURL":"notifyURL",
 			"callbackData":"callbackData"
-		}
+		},
+	"referenceCode":"12345"
 	}
 }
 ```
@@ -789,7 +790,9 @@ Response :
       "notifyURL": "notifyURL",
       "callbackData": "callbackData",
       "resourceURL": "http://<host>:<port>/{v1}/credit/{msisdn}/apply"
-    }
+    },
+	"referenceCode":"12345"
+	"serverReferenceCode":"REF_00001"
   }
 }
 ```

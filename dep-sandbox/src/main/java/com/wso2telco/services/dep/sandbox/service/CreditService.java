@@ -21,8 +21,6 @@ import com.wordnik.swagger.annotations.ApiOperation;
 import com.wordnik.swagger.annotations.ApiParam;
 import com.wso2telco.services.dep.sandbox.dao.model.custom.CreditApplyRequestWrapper;
 import com.wso2telco.services.dep.sandbox.dao.model.custom.CreditRequestBean;
-import com.wso2telco.services.dep.sandbox.dao.model.custom.PatialRefundRequestWrapper;
-import com.wso2telco.services.dep.sandbox.dao.model.custom.RefundRequestBean;
 import com.wso2telco.services.dep.sandbox.dao.model.custom.RequestDTO;
 import com.wso2telco.services.dep.sandbox.exception.SandboxException.SandboxErrorType;
 import com.wso2telco.services.dep.sandbox.servicefactory.RequestBuilderFactory;
@@ -30,7 +28,7 @@ import com.wso2telco.services.dep.sandbox.servicefactory.RequestHandleable;
 import com.wso2telco.services.dep.sandbox.servicefactory.Returnable;
 import com.wso2telco.services.dep.sandbox.util.RequestType;
 
-@Path("/credit/{v1}")
+@Path("/credit/{v1}/credit")
 @Consumes({ MediaType.APPLICATION_JSON })
 @Produces({ MediaType.APPLICATION_JSON })
 @Api(value = "/{v1}/credit", description = "Rest Service for Credit API")

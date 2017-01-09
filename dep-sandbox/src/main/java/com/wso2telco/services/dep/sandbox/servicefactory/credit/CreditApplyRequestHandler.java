@@ -11,14 +11,21 @@ import javax.ws.rs.core.Response.Status;
 import org.apache.commons.logging.LogFactory;
 import org.json.simple.JSONObject;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import com.wso2telco.core.dbutils.exception.ServiceError;
 import com.wso2telco.dep.oneapivalidation.exceptions.CustomException;
 import com.wso2telco.dep.oneapivalidation.util.Validation;
 import com.wso2telco.dep.oneapivalidation.util.ValidationRule;
+import com.wso2telco.services.dep.sandbox.dao.CreditDAO;
 import com.wso2telco.services.dep.sandbox.dao.DaoFactory;
 import com.wso2telco.services.dep.sandbox.dao.LoggingDAO;
 import com.wso2telco.services.dep.sandbox.dao.NumberDAO;
 import com.wso2telco.services.dep.sandbox.dao.model.custom.CallbackReference;
+import com.wso2telco.services.dep.sandbox.dao.model.custom.CallbackReferenceRequest;
 import com.wso2telco.services.dep.sandbox.dao.model.custom.CreditApplyRequestWrapper;
 import com.wso2telco.services.dep.sandbox.dao.model.custom.CreditApplyResponseBean;
 import com.wso2telco.services.dep.sandbox.dao.model.custom.CreditApplyResponseBean.CreditApplyResponse;
@@ -33,20 +40,25 @@ import com.wso2telco.services.dep.sandbox.dao.model.domain.ManageNumber;
 import com.wso2telco.services.dep.sandbox.dao.model.domain.MessageLog;
 import com.wso2telco.services.dep.sandbox.servicefactory.AbstractRequestHandler;
 import com.wso2telco.services.dep.sandbox.servicefactory.Returnable;
+import com.wso2telco.services.dep.sandbox.servicefactory.credit.AttributeName;
 import com.wso2telco.services.dep.sandbox.util.CommonUtil;
 import com.wso2telco.services.dep.sandbox.util.CreditStatusCodes;
 import com.wso2telco.services.dep.sandbox.util.MessageLogHandler;
 import com.wso2telco.services.dep.sandbox.util.RequestType;
 import com.wso2telco.services.dep.sandbox.util.ServiceName;
+import com.wso2telco.services.dep.sandbox.util.TableName;
 
 public class CreditApplyRequestHandler extends AbstractRequestHandler<CreditApplyRequestWrapper> {
 
 	private NumberDAO numberDao;
 	private LoggingDAO loggingDao;
+	private CreditDAO creditDAO;
 	private MessageLogHandler logHandler;
 	private CreditApplyRequestWrapper requestWrapperDTO;
 	private CreditApplyResponseWrapper responseWrapperDTO;
-
+	private Integer correlatorid;
+	Integer clientCorrelatorid ;
+	
 	final String TYPE_MONEY = "money";
 	final String NUMBERS_TABLE = "numbers";
 	final String CREDIT_REQUEST = "creditApplyRequest";
@@ -59,10 +71,14 @@ public class CreditApplyRequestHandler extends AbstractRequestHandler<CreditAppl
 	final String RECEIPT = "receiptRequest";
 	final String NOTIFYURL = "notifyURL";
 	final String CALLBACKDATA = "callbackData";
+	final String REFERENCECODE = "referenceCode";
+	final String SERVERREFERENCECODE = "serverReferenceCode";
+	
 
 	{
 		LOG = LogFactory.getLog(CreditApplyRequestHandler.class);
 		numberDao = DaoFactory.getNumberDAO();
+		creditDAO = DaoFactory.getCreditDAO();
 		dao = DaoFactory.getGenaricDAO();
 		loggingDao = DaoFactory.getLoggingDAO();
 		logHandler = MessageLogHandler.getInstance();
@@ -86,17 +102,18 @@ public class CreditApplyRequestHandler extends AbstractRequestHandler<CreditAppl
 		CreditRequestBean requestBean = wrapperDTO.getCreditRequestBean();
 		CreditApplyRequest request = requestBean.getCreditApplyRequest();
 		if (requestBean != null && request != null) {
-			CallbackReference callRef = request.getReceiptRequest();
+			CallbackReferenceRequest callRef = request.getReceiptRequest();
 
 			if (callRef != null) {
 				double amount = request.getAmount();
 				String type = CommonUtil.getNullOrTrimmedValue(request.getType());
-				String msisdn = CommonUtil.getNullOrTrimmedValue("+" + wrapperDTO.getMsisdn());
+				String msisdn = CommonUtil.getNullOrTrimmedValue( wrapperDTO.getMsisdn());
 				String clientCorrelator = CommonUtil.getNullOrTrimmedValue(request.getClientCorrelator());
 				String reasonForCredit = CommonUtil.getNullOrTrimmedValue(request.getReasonForCredit());
 				String merchantIdentification = CommonUtil.getNullOrTrimmedValue(request.getMerchantIdentification());
 				String notifyURL = CommonUtil.getNullOrTrimmedValue(callRef.getNotifyURL());
 				String callbackData = CommonUtil.getNullOrTrimmedValue(callRef.getCallbackData());
+				String referenceCode = CommonUtil.getNullOrTrimmedValue(request.getReferenceCode());
 
 				try {
 					ValidationRule[] validationRules = {
@@ -105,14 +122,15 @@ public class CreditApplyRequestHandler extends AbstractRequestHandler<CreditAppl
 							new ValidationRule(ValidationRule.VALIDATION_TYPE_MANDATORY, "type", type),
 							new ValidationRule(ValidationRule.VALIDATION_TYPE_MANDATORY_TEL_END_USER_ID, "msisdn",
 									msisdn),
-							new ValidationRule(ValidationRule.VALIDATION_TYPE_MANDATORY, "clientCorrelator",
+							new ValidationRule(ValidationRule.VALIDATION_TYPE_OPTIONAL, "clientCorrelator",
 									clientCorrelator),
 							new ValidationRule(ValidationRule.VALIDATION_TYPE_OPTIONAL, "reasonForCredit",
 									reasonForCredit),
 							new ValidationRule(ValidationRule.VALIDATION_TYPE_MANDATORY, "merchantIdentification",
 									merchantIdentification),
 							new ValidationRule(ValidationRule.VALIDATION_TYPE_OPTIONAL_URL, "notifyURL", notifyURL),
-							new ValidationRule(ValidationRule.VALIDATION_TYPE_OPTIONAL, "callbackData", callbackData) };
+							new ValidationRule(ValidationRule.VALIDATION_TYPE_OPTIONAL, "callbackData", callbackData), 
+							new ValidationRule(ValidationRule.VALIDATION_TYPE_MANDATORY, "referenceCode", referenceCode)};
 
 					Validation.checkRequestParams(validationRules);
 				} catch (CustomException ex) {
@@ -128,7 +146,6 @@ public class CreditApplyRequestHandler extends AbstractRequestHandler<CreditAppl
 								ServiceError.INVALID_INPUT_VALUE.getMessage(), wrapperDTO.getMsisdn()));
 				responseWrapperDTO.setHttpStatus(javax.ws.rs.core.Response.Status.BAD_REQUEST);
 			}
-
 		}
 		return false;
 	}
@@ -141,6 +158,7 @@ public class CreditApplyRequestHandler extends AbstractRequestHandler<CreditAppl
 		
 		CreditRequestBean requestBean = extendedRequestDTO.getCreditRequestBean();
 		CreditApplyRequest request = requestBean.getCreditApplyRequest();
+		String  serviceCreditApply = ServiceName.ApplyCredit.toString();
 		
 		APITypes apiType = dao.getAPIType(RequestType.CREDIT.toString().toLowerCase());
 		APIServiceCalls serviceType = dao.getServiceCall(apiType.getId(), ServiceName.ApplyCredit.toString());
@@ -157,32 +175,70 @@ public class CreditApplyRequestHandler extends AbstractRequestHandler<CreditAppl
     	messageLog.setRequest(jsonString);
     	messageLog.setMessageTimestamp(new Date());
 		
-		int txnReference = loggingDao.saveMessageLog(messageLog);
-		String ref_number = String.format("%06d", txnReference);
+		int ref_number = loggingDao.saveMessageLog(messageLog);
+		String serverReferenceCode = String.format("%06d",ref_number );
+		
 		
 		double amount = request.getAmount();
 		String type = CommonUtil.getNullOrTrimmedValue(request.getType());
-		String msisdn = CommonUtil.getNullOrTrimmedValue(extendedRequestDTO.getMsisdn());
+		String msisdn = getLastMobileNumber(extendedRequestDTO.getMsisdn());
 		String clientCorrelator = CommonUtil.getNullOrTrimmedValue(request.getClientCorrelator());
 		String reasonForCredit = CommonUtil.getNullOrTrimmedValue(request.getReasonForCredit());
 		String merchantIdentification = CommonUtil.getNullOrTrimmedValue(request.getMerchantIdentification());
 		String notifyURL = CommonUtil.getNullOrTrimmedValue(request.getReceiptRequest().getNotifyURL());
 		String callbackData = CommonUtil.getNullOrTrimmedValue(request.getReceiptRequest().getCallbackData());
+		String referenceCode = CommonUtil.getNullOrTrimmedValue(request.getReferenceCode());
 
-		try {
+		try {	
+			Boolean isDupplicate = creditDAO.checkDupplicateValue(msisdn, serviceCreditApply, referenceCode);
+			
+			if(clientCorrelator != null){
+				 AttributeValues values	= creditDAO.checkClientCorrelator(msisdn, serviceCreditApply, clientCorrelator);
+				if(values != null){
+					//send the already sent response
+					AttributeValues applyCreditResponse = creditDAO.getTransactionValue(msisdn,values.getAttributeValueId() ,AttributeName.applyCredit.toString());
+					CreditApplyResponseBean bean = new CreditApplyResponseBean();
+
+					ObjectMapper mapper = new ObjectMapper();
+					String responseString = applyCreditResponse.getValue();
+					CreditApplyResponse res =  mapper.readValue(responseString, CreditApplyResponse.class);
+					bean.setCreditApplyResponse(res);
+					responseWrapperDTO.setCreditApplyResponseBean(bean);
+					responseWrapperDTO.setHttpStatus(Response.Status.OK);
+					return responseWrapperDTO;
+					
+				}else{					
+					clientCorrelatorid = saveClientCorrelator(msisdn, clientCorrelator);				
+				}
+			}		
+			//check reference code duplication
+			if(isDupplicate != false){
+				buildJsonResponseBody(amount, type, clientCorrelator, merchantIdentification, reasonForCredit,
+						CreditStatusCodes.FAILED.toString(), callbackData, notifyURL, referenceCode, serverReferenceCode);
+				responseWrapperDTO.setRequestError(constructRequestError(SERVICEEXCEPTION,
+						ServiceError.INVALID_INPUT_VALUE, "Already used reference code for the request"));
+				responseWrapperDTO.setHttpStatus(Status.BAD_REQUEST);
+				return responseWrapperDTO;	
+			}else{
+				saveReferenceCode(msisdn, referenceCode);
+			}
 
 			ManageNumber manageNumber = numberDao.getNumber(msisdn, extendedRequestDTO.getUser().getUserName());
 
 			if (type.equalsIgnoreCase(TYPE_MONEY)) {
 				if (manageNumber != null) {
 					updateBalance(manageNumber, amount);
-					buildJsonResponseBody(amount, type, clientCorrelator, merchantIdentification, reasonForCredit,
-							CreditStatusCodes.SUCCESS.toString(), ref_number,  callbackData, notifyURL);
+					CreditApplyResponseBean responseBean = buildJsonResponseBody(amount, type, clientCorrelator, merchantIdentification, reasonForCredit,
+							CreditStatusCodes.SUCCESS.toString(), callbackData, notifyURL,referenceCode, serverReferenceCode);			
+					if(clientCorrelator != null){
+					saveTransaction(responseBean);
+					}
 					responseWrapperDTO.setHttpStatus(Response.Status.OK);
 					return responseWrapperDTO;
+					
 				} else {
 					buildJsonResponseBody(amount, type, clientCorrelator, merchantIdentification, reasonForCredit,
-							CreditStatusCodes.FAILED.toString(), ref_number, callbackData, notifyURL);
+							CreditStatusCodes.FAILED.toString(), callbackData, notifyURL, referenceCode, serverReferenceCode);
 					responseWrapperDTO.setRequestError(constructRequestError(SERVICEEXCEPTION,
 							ServiceError.INVALID_INPUT_VALUE, "Number is not Registered for the Service"));
 					responseWrapperDTO.setHttpStatus(Status.BAD_REQUEST);
@@ -196,8 +252,11 @@ public class CreditApplyRequestHandler extends AbstractRequestHandler<CreditAppl
 				AttributeValues attributeValues = dao.getAttributeValue(attributeDistribution, manageNumber.getId());
 				if (attributeValues != null) {
 					updateValue(attributeValues, amount);
-					buildJsonResponseBody(amount, type, clientCorrelator, merchantIdentification, reasonForCredit,
-							CreditStatusCodes.SUCCESS.toString(), ref_number, callbackData, notifyURL);
+					CreditApplyResponseBean responseBean = buildJsonResponseBody(amount, type, clientCorrelator, merchantIdentification, reasonForCredit,
+							CreditStatusCodes.SUCCESS.toString(), callbackData, notifyURL, referenceCode, serverReferenceCode);
+					if(clientCorrelator != null){
+					saveTransaction(responseBean);
+					}			
 					responseWrapperDTO.setHttpStatus(Response.Status.OK);
 					return responseWrapperDTO;
 				} else {
@@ -207,8 +266,11 @@ public class CreditApplyRequestHandler extends AbstractRequestHandler<CreditAppl
 					attributeValues.setTobject(NUMBERS_TABLE);
 					attributeValues.setValue(Double.toString(amount));
 					dao.saveAttributeValue(attributeValues);
-					buildJsonResponseBody(amount, type, clientCorrelator, merchantIdentification, reasonForCredit,
-							CreditStatusCodes.SUCCESS.toString(), ref_number, callbackData, notifyURL);
+					CreditApplyResponseBean responseBean = buildJsonResponseBody(amount, type, clientCorrelator, merchantIdentification, reasonForCredit,
+							CreditStatusCodes.SUCCESS.toString(), callbackData, notifyURL, referenceCode, serverReferenceCode);
+					if(clientCorrelator != null){
+					saveTransaction(responseBean);
+					}
 					responseWrapperDTO.setHttpStatus(Response.Status.OK);
 					return responseWrapperDTO;
 				}
@@ -217,13 +279,12 @@ public class CreditApplyRequestHandler extends AbstractRequestHandler<CreditAppl
 		} catch (Exception ex) {
 			LOG.error("###CREDIT### Error in processing credit service request. ", ex);
 			buildJsonResponseBody(amount, type, clientCorrelator, merchantIdentification, reasonForCredit,
-					CreditStatusCodes.ERROR.toString(),ref_number , callbackData, notifyURL);
+					CreditStatusCodes.ERROR.toString(), callbackData, notifyURL, referenceCode, serverReferenceCode);
 			responseWrapperDTO
 					.setRequestError(constructRequestError(SERVICEEXCEPTION, ServiceError.SERVICE_ERROR_OCCURED, null));
 			responseWrapperDTO.setHttpStatus(Status.BAD_REQUEST);
 			return responseWrapperDTO;
 		}
-
 	}
 
 	@Override
@@ -247,8 +308,8 @@ public class CreditApplyRequestHandler extends AbstractRequestHandler<CreditAppl
 		dao.saveAttributeValue(attributeValues);
 	}
 
-	private void buildJsonResponseBody(double amount, String type, String clientCorrelator,
-			String merchantIdentification, String reason, String status, String txnReference,  String callbackData, String notifyURL) {
+	private CreditApplyResponseBean buildJsonResponseBody(double amount, String type, String clientCorrelator,
+			String merchantIdentification, String reason, String status, String callbackData, String notifyURL, String referenceCode, String serverReferenceCode) {
 
 		CallbackReference receiptResponse = new CallbackReference();
 		receiptResponse.setCallbackData(callbackData);
@@ -261,11 +322,13 @@ public class CreditApplyRequestHandler extends AbstractRequestHandler<CreditAppl
 		creditApplyResponse.setMerchantIdentification(merchantIdentification);
 		creditApplyResponse.setReasonForCredit(reason);
 		creditApplyResponse.setStatus(status);
-		creditApplyResponse.setTxnReference(txnReference);
 		creditApplyResponse.setReceiptResponse(receiptResponse);
+		creditApplyResponse.setReferenceCode(referenceCode);
+		creditApplyResponse.setServerReferenceCode(serverReferenceCode);
 		CreditApplyResponseBean creditApplyResponseBean = new CreditApplyResponseBean();
 		creditApplyResponseBean.setCreditApplyResponse(creditApplyResponse);
 		responseWrapperDTO.setCreditApplyResponseBean(creditApplyResponseBean);
+		return creditApplyResponseBean;
 
 	}
 	
@@ -285,9 +348,94 @@ public class CreditApplyRequestHandler extends AbstractRequestHandler<CreditAppl
 		creditRequest.put(REASON, request.getReasonForCredit());
 		creditRequest.put(ID, request.getMerchantIdentification());
 		creditRequest.put(RECEIPT, receiptRequest);
+		creditRequest.put(REFERENCECODE, request.getReferenceCode());
 		
 		obj.put(CREDIT_REQUEST, creditRequest);
 		return obj;
 	}
+	
+	public void saveReferenceCode(String endUserId, String referenceCode) throws Exception {
+		AttributeDistribution distributionId = null;
+		Integer ownerId = null;
+		try {
+			AttributeValues valueObj = new AttributeValues();
+			String tableName = TableName.NUMBERS.toString().toLowerCase();
+			String attributeName = AttributeName.referenceCodeCredit.toString();
+			String apiType = RequestType.CREDIT.toString();
+			String serviceCallRefund = ServiceName.ApplyCredit.toString();
+			distributionId = creditDAO.getDistributionValue(serviceCallRefund, attributeName, apiType);
+			ownerId = creditDAO.getNumber(endUserId);
 
+			valueObj = new AttributeValues();
+			valueObj.setAttributedid(distributionId);
+			valueObj.setOwnerdid(ownerId);
+			valueObj.setTobject(tableName);
+			valueObj.setValue(referenceCode);
+			dao.saveAttributeValue(valueObj);
+
+		} catch (Exception ex) {
+			LOG.error("###CREDIT### Error in processing save of referenceCode request. ", ex);
+			responseWrapperDTO.setHttpStatus(Response.Status.BAD_REQUEST);
+		}
+	}
+	
+	public Integer saveClientCorrelator(String endUserId, String correlator) throws Exception {
+		AttributeDistribution distributionId = null;
+		Integer ownerId = null;
+		try {
+			AttributeValues valueObj = new AttributeValues();
+			String tableName = TableName.NUMBERS.toString().toLowerCase();
+			String attributeName = AttributeName.clientCorrelator.toString();
+			String apiType = RequestType.CREDIT.toString();
+			String serviceCallRefund = ServiceName.ApplyCredit.toString();
+			distributionId = creditDAO.getDistributionValue(serviceCallRefund, attributeName, apiType);
+			ownerId = creditDAO.getNumber(endUserId);
+
+			valueObj = new AttributeValues();
+			valueObj.setAttributedid(distributionId);
+			valueObj.setOwnerdid(ownerId);
+			valueObj.setTobject(tableName);
+			valueObj.setValue(correlator);
+			correlatorid = creditDAO.saveAttributeValue(valueObj);
+
+		} catch (Exception ex) {
+			LOG.error("###CREDIT### Error in processing save of clientCorrelator request. ", ex);
+			responseWrapperDTO.setHttpStatus(Response.Status.BAD_REQUEST);
+		}
+		return correlatorid;
+	}
+	
+	public void saveTransaction(CreditApplyResponseBean responseBean)
+			throws Exception {
+
+		AttributeDistribution distributionId = null;
+		Integer ownerId = null;
+		try {
+			AttributeValues valueObj = new AttributeValues();
+			String tableName = TableName.SBXATTRIBUTEVALUE.toString().toLowerCase();
+			String attributeName = AttributeName.applyCredit.toString();
+			distributionId = creditDAO.getDistributionValue(ServiceName.ApplyCredit.toString(), attributeName,
+					RequestType.CREDIT.toString());
+			ownerId = clientCorrelatorid;
+			
+			Gson gson = new Gson();
+			JsonElement je =new JsonParser().parse(gson.toJson(responseBean));
+			JsonObject asJsonObject = je.getAsJsonObject();
+			JsonElement get = asJsonObject.get("creditApplyResponse");
+			JsonObject asJsonObjectPayment = get.getAsJsonObject();
+			String jsonString = null;
+			jsonString = gson.toJson(asJsonObjectPayment);
+			
+			valueObj = new AttributeValues();
+			valueObj.setAttributedid(distributionId);
+			valueObj.setOwnerdid(ownerId);
+			valueObj.setTobject(tableName);
+			valueObj.setValue(jsonString);
+			dao.saveAttributeValue(valueObj);
+
+		} catch (Exception ex) {
+			LOG.error("###CREDIT### Error in processing save transaction. ", ex);
+			responseWrapperDTO.setHttpStatus(Response.Status.BAD_REQUEST);
+		}
+	}
 }
