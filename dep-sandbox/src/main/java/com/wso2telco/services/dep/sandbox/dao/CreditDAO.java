@@ -20,15 +20,17 @@ import java.util.List;
 import com.wso2telco.services.dep.sandbox.dao.model.domain.AttributeDistribution;
 import com.wso2telco.services.dep.sandbox.dao.model.domain.AttributeValues;
 
-public interface WalletDAO {
+public interface CreditDAO {
 	
-	public List<AttributeValues> getTransactionValue(String endUserId, List<String> attribute, String serviceCall) throws Exception;
 	public String getAttributeValue(String endUserId, String serviceCall, String attribute) throws Exception;
-	public Double checkBalance (String msisdn) throws Exception;
-	public boolean updateBalance(String msisdn, Double updateBalance) throws Exception;
-	public AttributeDistribution getDistributionValue(String serviceCall, String attributeName, String apiType) throws Exception; 
 	public Integer getNumber(String endUserId) throws Exception;
 	public AttributeValues getAttributeValue(AttributeDistribution distributionObj, Integer endUserId) throws Exception;
-	public boolean checkDuplicateValue(String endUserId, String serviceCall, String clientCorrelator) throws Exception;
 	public AttributeValues checkClientCorrelator(String endUserId, String serviceCall, String clientCorrelator) throws Exception;
+	public boolean checkDupplicateValue(String endUserId, String serviceCall, String referenceCode) throws Exception;
+	public AttributeDistribution getDistributionValue(String serviceCall, String attributeName, String apiType) throws Exception; 
+	public AttributeValues getTransactionValue(String endUserId, Integer attributeValue, String serviceCall) throws Exception;
+	public Integer saveAttributeValue(AttributeValues valueObj) throws Exception;
+
+	
+
 }

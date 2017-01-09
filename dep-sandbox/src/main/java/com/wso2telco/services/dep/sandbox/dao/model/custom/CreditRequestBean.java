@@ -27,7 +27,9 @@ public class CreditRequestBean {
 		
 		private String merchantIdentification;
 		
-		private CallbackReference receiptRequest;
+		private CallbackReferenceRequest receiptRequest;
+		
+		private String referenceCode;
 
 		public String getType() {
 			return type;
@@ -69,15 +71,21 @@ public class CreditRequestBean {
 			this.merchantIdentification = merchantIdentification;
 		}
 
-		public CallbackReference getReceiptRequest() {
+		public CallbackReferenceRequest getReceiptRequest() {
 			return receiptRequest;
 		}
 
-		public void setReceiptRequest(CallbackReference receiptRequest) {
+		public void setReceiptRequest(CallbackReferenceRequest receiptRequest) {
 			this.receiptRequest = receiptRequest;
 		}
-		
-		
+
+		public String getReferenceCode() {
+			return referenceCode;
+		}
+
+		public void setReferenceCode(String referenceCode) {
+			this.referenceCode = referenceCode;
+		}
 	}
 
 }
