@@ -261,7 +261,8 @@ public class RefundTransactionRequestHandler extends AbstractRequestHandler<Refu
 
 			// check already charge request against client correlator
 			if (clientCorrelator != null) {
-				boolean isDuplicateClientCorrelator = walletDAO.checkDuplicateValue(endUserId, serviceCallRefund, clientCorrelator);
+				String clientCorrelatorAttribute =  AttributeName.clientCorrelator.toString();
+				boolean isDuplicateClientCorrelator = walletDAO.checkDuplicateValue(endUserId, serviceCallRefund, clientCorrelator, clientCorrelatorAttribute);
 				if (!isDuplicateClientCorrelator) {
 					// save Client Correlator
 					saveClientCorrelator(endUserId, clientCorrelator);
@@ -275,7 +276,8 @@ public class RefundTransactionRequestHandler extends AbstractRequestHandler<Refu
 			}
 			
 			//check already charged request against reference code
-			boolean isDuplicateReferenceCode = walletDAO.checkDuplicateValue(endUserId, serviceCallRefund, referenceCode);
+			String referenceCodeAttribute =  AttributeName.referenceCodeWallet.toString();
+			boolean isDuplicateReferenceCode = walletDAO.checkDuplicateValue(endUserId, serviceCallRefund, referenceCode, referenceCodeAttribute);
 			if(isDuplicateReferenceCode != false){
 				LOG.error("###WALLET### Already charged for this reference code");
 				responseWrapper.setRequestError(constructRequestError(SERVICEEXCEPTION,

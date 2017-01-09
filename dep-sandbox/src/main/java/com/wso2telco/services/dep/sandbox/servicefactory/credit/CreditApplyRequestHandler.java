@@ -207,8 +207,6 @@ public class CreditApplyRequestHandler extends AbstractRequestHandler<CreditAppl
 					responseWrapperDTO.setHttpStatus(Response.Status.OK);
 					return responseWrapperDTO;
 					
-				}else{					
-					clientCorrelatorid = saveClientCorrelator(msisdn, clientCorrelator);				
 				}
 			}		
 			//check reference code duplication
@@ -231,6 +229,7 @@ public class CreditApplyRequestHandler extends AbstractRequestHandler<CreditAppl
 					CreditApplyResponseBean responseBean = buildJsonResponseBody(amount, type, clientCorrelator, merchantIdentification, reasonForCredit,
 							CreditStatusCodes.SUCCESS.toString(), callbackData, notifyURL,referenceCode, serverReferenceCode);			
 					if(clientCorrelator != null){
+					clientCorrelatorid = saveClientCorrelator(msisdn, clientCorrelator);				
 					saveTransaction(responseBean);
 					}
 					responseWrapperDTO.setHttpStatus(Response.Status.OK);
@@ -255,6 +254,7 @@ public class CreditApplyRequestHandler extends AbstractRequestHandler<CreditAppl
 					CreditApplyResponseBean responseBean = buildJsonResponseBody(amount, type, clientCorrelator, merchantIdentification, reasonForCredit,
 							CreditStatusCodes.SUCCESS.toString(), callbackData, notifyURL, referenceCode, serverReferenceCode);
 					if(clientCorrelator != null){
+					clientCorrelatorid = saveClientCorrelator(msisdn, clientCorrelator);				
 					saveTransaction(responseBean);
 					}			
 					responseWrapperDTO.setHttpStatus(Response.Status.OK);
@@ -269,6 +269,7 @@ public class CreditApplyRequestHandler extends AbstractRequestHandler<CreditAppl
 					CreditApplyResponseBean responseBean = buildJsonResponseBody(amount, type, clientCorrelator, merchantIdentification, reasonForCredit,
 							CreditStatusCodes.SUCCESS.toString(), callbackData, notifyURL, referenceCode, serverReferenceCode);
 					if(clientCorrelator != null){
+					clientCorrelatorid = saveClientCorrelator(msisdn, clientCorrelator);				
 					saveTransaction(responseBean);
 					}
 					responseWrapperDTO.setHttpStatus(Response.Status.OK);

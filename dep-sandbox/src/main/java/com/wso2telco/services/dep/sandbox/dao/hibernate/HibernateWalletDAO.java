@@ -28,6 +28,7 @@ import org.hibernate.Transaction;
 import com.wso2telco.services.dep.sandbox.dao.WalletDAO;
 import com.wso2telco.services.dep.sandbox.dao.model.domain.AttributeDistribution;
 import com.wso2telco.services.dep.sandbox.dao.model.domain.AttributeValues;
+import com.wso2telco.services.dep.sandbox.servicefactory.credit.AttributeName;
 import com.wso2telco.services.dep.sandbox.util.RequestType;
 import com.wso2telco.services.dep.sandbox.util.ServiceName;
 import com.wso2telco.services.dep.sandbox.util.TableName;
@@ -296,7 +297,7 @@ return null;
 
 	@Override
 	public boolean checkDuplicateValue(String endUserId, String serviceCall,
-			String clientCorrelator) throws Exception {
+			String value, String attributeName) throws Exception {
 
 
 		Session session = getSession();
@@ -323,7 +324,9 @@ return null;
 		hql.append("AND calls.serviceName =:serviceName ");
 		hql.append("AND val.tobject =:tableName ");
 		hql.append("AND number.Number =:number ");
-		hql.append("AND val.value =:clientCorrelator");
+		hql.append("AND val.value =:value ");
+		hql.append("AND att.attributeName =:attributeName");
+
 
 		try {
 			Query query = session.createQuery(hql.toString());
@@ -331,7 +334,9 @@ return null;
 			query.setParameter("serviceName", serviceCall);
 			query.setParameter("number", endUserId);
 			query.setParameter("tableName", TableName.NUMBERS.toString().toLowerCase());
-			query.setParameter("clientCorrelator", clientCorrelator);
+			query.setParameter("value", value);
+			query.setParameter("attributeName", attributeName);
+
 			resultSet = (AttributeValues) query.uniqueResult();
 			
 			if(resultSet != null){
