@@ -751,7 +751,7 @@ Type - POST
 
 Request URI:
 ```
-http://<host>:<port>/{v1}/credit/{msisdn}/apply 
+http://<host>:<port>/credit/{v1}/credit/{msisdn}/apply 
 ```
 
 Request Body :
@@ -785,9 +785,9 @@ Response :
     "receiptResponse": {
       "notifyURL": "notifyURL",
       "callbackData": "callbackData",
-      "resourceURL": "http://<host>:<port>/{v1}/credit/{msisdn}/apply"
+      "resourceURL": "http://<host>:<port>/credit/{v1}/credit/{msisdn}/apply"
     },
-	"referenceCode":"12345"
+	"referenceCode":"12345",
 	"serverReferenceCode":"REF_00001"
   }
 }
