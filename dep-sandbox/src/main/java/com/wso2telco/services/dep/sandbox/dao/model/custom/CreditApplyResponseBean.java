@@ -1,5 +1,9 @@
 package com.wso2telco.services.dep.sandbox.dao.model.custom;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+
+
 public class CreditApplyResponseBean {
 	
 	private CreditApplyResponse creditApplyResponse;
@@ -14,7 +18,7 @@ public class CreditApplyResponseBean {
 		this.creditApplyResponse = creditApplyResponse;
 	}
 
-
+	@JsonInclude(value=Include.NON_NULL)
 	public static class CreditApplyResponse {
 		
 		private double amount;
@@ -29,9 +33,11 @@ public class CreditApplyResponseBean {
 		
 		private String status;
 		
-		private String txnReference;
-
 		private CallbackReference receiptResponse;
+		
+		private String referenceCode;
+		
+		private String serverReferenceCode;
 
 		public double getAmount() {
 			return amount;
@@ -81,14 +87,6 @@ public class CreditApplyResponseBean {
 			this.status = status;
 		}
 		
-		public String getTxnReference() {
-			return txnReference;
-		}
-
-		public void setTxnReference(String txnReference) {
-			this.txnReference = txnReference;
-		}
-
 		public CallbackReference getReceiptResponse() {
 			return receiptResponse;
 		}
@@ -96,8 +94,21 @@ public class CreditApplyResponseBean {
 		public void setReceiptResponse(CallbackReference receiptResponse) {
 			this.receiptResponse = receiptResponse;
 		}
-		
-		
-	}
 
+		public String getReferenceCode() {
+			return referenceCode;
+		}
+
+		public void setReferenceCode(String referenceCode) {
+			this.referenceCode = referenceCode;
+		}
+
+		public String getServerReferenceCode() {
+			return serverReferenceCode;
+		}
+
+		public void setServerReferenceCode(String serverReferenceCode) {
+			this.serverReferenceCode = serverReferenceCode;
+		}
+	}
 }

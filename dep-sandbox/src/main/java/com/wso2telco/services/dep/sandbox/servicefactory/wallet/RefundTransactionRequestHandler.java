@@ -1,27 +1,33 @@
 package com.wso2telco.services.dep.sandbox.servicefactory.wallet;
 
+import java.io.StringWriter;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Currency;
+import java.util.Date;
 import java.util.List;
 
 import javax.annotation.Nonnull;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import org.apache.commons.lang.math.NumberUtils;
 import org.apache.commons.logging.LogFactory;
 import org.json.simple.JSONObject;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.ibm.icu.math.BigDecimal;
 import com.wso2telco.core.dbutils.exception.ServiceError;
 import com.wso2telco.dep.oneapivalidation.exceptions.CustomException;
 import com.wso2telco.dep.oneapivalidation.util.Validation;
 import com.wso2telco.dep.oneapivalidation.util.ValidationRule;
 import com.wso2telco.services.dep.sandbox.dao.DaoFactory;
+import com.wso2telco.services.dep.sandbox.dao.LoggingDAO;
 import com.wso2telco.services.dep.sandbox.dao.WalletDAO;
 import com.wso2telco.services.dep.sandbox.dao.model.custom.ChargingInformation;
 import com.wso2telco.services.dep.sandbox.dao.model.custom.ChargingMetaData;
@@ -36,9 +42,12 @@ import com.wso2telco.services.dep.sandbox.dao.model.domain.APIServiceCalls;
 import com.wso2telco.services.dep.sandbox.dao.model.domain.APITypes;
 import com.wso2telco.services.dep.sandbox.dao.model.domain.AttributeDistribution;
 import com.wso2telco.services.dep.sandbox.dao.model.domain.AttributeValues;
+import com.wso2telco.services.dep.sandbox.dao.model.domain.MessageLog;
 import com.wso2telco.services.dep.sandbox.servicefactory.AbstractRequestHandler;
 import com.wso2telco.services.dep.sandbox.servicefactory.Returnable;
+import com.wso2telco.services.dep.sandbox.servicefactory.wallet.AttributeName;
 import com.wso2telco.services.dep.sandbox.util.CommonUtil;
+import com.wso2telco.services.dep.sandbox.util.CreditStatusCodes;
 import com.wso2telco.services.dep.sandbox.util.MessageLogHandler;
 import com.wso2telco.services.dep.sandbox.util.RequestType;
 import com.wso2telco.services.dep.sandbox.util.ServiceName;
@@ -47,16 +56,18 @@ import com.wso2telco.services.dep.sandbox.util.TableName;
 public class RefundTransactionRequestHandler extends AbstractRequestHandler<RefundRequestWrapperDTO> {
 
 	private WalletDAO walletDAO;
+	private LoggingDAO loggingDao;
 	private RefundRequestWrapperDTO requestWrapperDTO;
 	private RefundTransactionResponseWrapper responseWrapper;
 	private MessageLogHandler logHandler;
 	private String serviceCallRefund;
 	private boolean isContainsMetaData;
-	public static final String serverReferenceCode = "SERVER0002";
+//	public static final String serverReferenceCode = "SERVER0002";
 
 	{
 		LOG = LogFactory.getLog(RefundTransactionRequestHandler.class);
 		walletDAO = DaoFactory.getWalletDAO();
+		loggingDao = DaoFactory.getLoggingDAO();
 		dao = DaoFactory.getGenaricDAO();
 		logHandler = MessageLogHandler.getInstance();
 	}
@@ -167,8 +178,7 @@ public class RefundTransactionRequestHandler extends AbstractRequestHandler<Refu
 			String originalReferenceCode = CommonUtil.getNullOrTrimmedValue(request.getOriginalReferenceCode());
 			String originalServerReferenceCode = CommonUtil
 					.getNullOrTrimmedValue(request.getOriginalServerReferenceCode());
-			Double chargeAmount = Double
-					.parseDouble(CommonUtil.getNullOrTrimmedValue(chargingInformation.getAmount().toString()));
+			String amount = CommonUtil.getNullOrTrimmedValue(chargingInformation.getAmount());
 			String currency = CommonUtil.getNullOrTrimmedValue(chargingInformation.getCurrency());
 			String description = CommonUtil.getNullOrTrimmedValue(chargingInformation.getDescription());
 			String onBehalfOf = CommonUtil.getNullOrTrimmedValue(metadata.getOnBehalfOf());
@@ -182,13 +192,22 @@ public class RefundTransactionRequestHandler extends AbstractRequestHandler<Refu
 			// Save Request Log
 			APITypes apiTypes = dao.getAPIType(extendedRequestDTO.getRequestType().toString().toLowerCase());
 			APIServiceCalls apiServiceCalls = dao.getServiceCall(apiTypes.getId(), serviceCallRefund);
-			JSONObject object = new JSONObject();
+
 			Gson gson = new Gson();
 			JsonElement je = new JsonParser().parse(gson.toJson(requestBean));
 			JsonObject asJsonObject = je.getAsJsonObject();
-			object.put("RefundTransaction", asJsonObject);
-			logHandler.saveMessageLog(apiServiceCalls.getApiServiceCallId(), extendedRequestDTO.getUser().getId(),
-					"msisdn", endUserIdPath, object);
+			String jsonString = gson.toJson(asJsonObject);
+			MessageLog messageLog = new MessageLog();
+			messageLog.setServicenameid(apiServiceCalls.getApiServiceCallId());
+	    	messageLog.setUserid(extendedRequestDTO.getUser().getId());
+	    	messageLog.setReference("msisdn");
+	    	messageLog.setValue(endUserIdPath);
+	    	messageLog.setRequest(jsonString);
+	    	messageLog.setMessageTimestamp(new Date());
+
+			int ref_number = loggingDao.saveMessageLog(messageLog);
+			String serverReferenceCodeFormat = String.format("%06d",ref_number );
+			String serverReferenceCode = "WALLET_REF_" + serverReferenceCodeFormat;
 
 			// check path param endUserId and request body endUserId
 			if (!(endUserIdPath.equals(endUserIdRequest))) {
@@ -199,17 +218,26 @@ public class RefundTransactionRequestHandler extends AbstractRequestHandler<Refu
 				return responseWrapper;
 			}
 
-			// check account amount decimal format
-			NumberFormat formatter = new DecimalFormat("#.00");
-			String formatChargeAmount = formatter.format(chargeAmount);
-			if (!(chargeAmount % 1 == 0) && !(formatChargeAmount.equals(chargeAmount.toString()))) {
-				LOG.error("###WALLET### amount should be a whole number or two digit decimal");
+			//check valid amount format
+			if ((NumberUtils.isNumber(amount) != true) ){
+				LOG.error("###WALLET### amount should be a valid number");
 				responseWrapper.setRequestError(constructRequestError(SERVICEEXCEPTION,
-						ServiceError.INVALID_INPUT_VALUE, "amount should be a whole number or two digit decimal"));
+						ServiceError.INVALID_INPUT_VALUE, "amount should be a valid number"));
 				responseWrapper.setHttpStatus(Status.BAD_REQUEST);
 				return responseWrapper;
 			}
-
+			// check account amount decimal format
+			Double chargeAmount = Double.parseDouble(amount);
+			BigDecimal bigDecimal = new BigDecimal(amount);
+			Integer decimalDigits = bigDecimal.scale();
+			if (!((decimalDigits <= 2) && (decimalDigits >= 0)) || chargeAmount < 0){
+				LOG.error("###WALLET### amount should be a whole number or two digit decimal");
+				responseWrapper.setRequestError(constructRequestError(SERVICEEXCEPTION,
+						ServiceError.INVALID_INPUT_VALUE, "amount should be a whole or two digit decimal positive number"));
+				responseWrapper.setHttpStatus(Status.BAD_REQUEST);
+				return responseWrapper;
+			}
+			
 			// check valid account currency for endUserId
 			boolean isValidCurrency = currencySymbol(currency);
 			if (!isValidCurrency) {
@@ -233,8 +261,8 @@ public class RefundTransactionRequestHandler extends AbstractRequestHandler<Refu
 
 			// check already charge request against client correlator
 			if (clientCorrelator != null) {
-				boolean isDuplicate = walletDAO.checkClientCorrelator(endUserId, serviceCallRefund, clientCorrelator);
-				if (!isDuplicate) {
+				boolean isDuplicateClientCorrelator = walletDAO.checkDuplicateValue(endUserId, serviceCallRefund, clientCorrelator);
+				if (!isDuplicateClientCorrelator) {
 					// save Client Correlator
 					saveClientCorrelator(endUserId, clientCorrelator);
 				} else {
@@ -244,6 +272,18 @@ public class RefundTransactionRequestHandler extends AbstractRequestHandler<Refu
 					responseWrapper.setHttpStatus(Status.BAD_REQUEST);
 					return responseWrapper;
 				}
+			}
+			
+			//check already charged request against reference code
+			boolean isDuplicateReferenceCode = walletDAO.checkDuplicateValue(endUserId, serviceCallRefund, referenceCode);
+			if(isDuplicateReferenceCode != false){
+				LOG.error("###WALLET### Already charged for this reference code");
+				responseWrapper.setRequestError(constructRequestError(SERVICEEXCEPTION,
+						ServiceError.INVALID_INPUT_VALUE, "Already charged for this reference code"));
+				responseWrapper.setHttpStatus(Status.BAD_REQUEST);
+				return responseWrapper;
+			}else{
+				saveReferenceCode(endUserId, referenceCode);
 			}
 
 			RefundTransactionResponseBean responseBean = new RefundTransactionResponseBean();
@@ -256,7 +296,7 @@ public class RefundTransactionRequestHandler extends AbstractRequestHandler<Refu
 			responseBean.setOriginalReferenceCode(originalReferenceCode);
 			responseBean.setOriginalServerReferenceCode(originalServerReferenceCode);
 
-			chargeInformation.setAmount(formatChargeAmount);
+			chargeInformation.setAmount(amount);
 			chargeInformation.setCurrency(currency);
 			chargeInformation.setDescription(description);
 
@@ -386,4 +426,29 @@ public class RefundTransactionRequestHandler extends AbstractRequestHandler<Refu
 			return false;
 		}
 	}
+	public void saveReferenceCode(String endUserId, String referenceCode) throws Exception {
+		AttributeDistribution distributionId = null;
+		Integer ownerId = null;
+		try {
+			AttributeValues valueObj = new AttributeValues();
+			String tableName = TableName.NUMBERS.toString().toLowerCase();
+			String attributeName = AttributeName.referenceCodeWallet.toString();
+			String apiType = RequestType.WALLET.toString();
+			String serviceCallRefund = ServiceName.RefundPayment.toString();
+			distributionId = walletDAO.getDistributionValue(serviceCallRefund, attributeName, apiType);
+			ownerId = walletDAO.getNumber(endUserId);
+
+			valueObj = new AttributeValues();
+			valueObj.setAttributedid(distributionId);
+			valueObj.setOwnerdid(ownerId);
+			valueObj.setTobject(tableName);
+			valueObj.setValue(referenceCode);
+			dao.saveAttributeValue(valueObj);
+
+		} catch (Exception ex) {
+			LOG.error("###WALLET### Error in processing save of referenceCode request. ", ex);
+			responseWrapper.setHttpStatus(Response.Status.BAD_REQUEST);
+		}
+	}
+	
 }

@@ -39,4 +39,9 @@ public class DaoFactory {
     public static LoggingDAO getLoggingDAO(){
     	return new HibernateFactory().getHibernateLoggingDao();
     }
+    
+    public static CreditDAO getCreditDAO(){
+    	return new HibernateFactory().getHibernateCreditDAO();
+
+    }
 }
