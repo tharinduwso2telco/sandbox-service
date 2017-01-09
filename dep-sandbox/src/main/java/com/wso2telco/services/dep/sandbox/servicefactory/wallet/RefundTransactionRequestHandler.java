@@ -378,8 +378,8 @@ public class RefundTransactionRequestHandler extends AbstractRequestHandler<Refu
 				asJsonObjectPayment.remove("chargingMetaData");
 			}
 			asJsonObject.remove("clientCorrelator");
-			asJsonObject.remove("“originalReferenceCode”");
-			asJsonObject.remove("“originalServReferenceCode”");
+			asJsonObject.remove("originalReferenceCode");
+			asJsonObject.remove("originalServerReferenceCode");
 			asJsonObject.remove("resourceURL");
 			jsonInString = asJsonObject.toString();
 
