@@ -261,7 +261,7 @@ public class RefundTransactionRequestHandler extends AbstractRequestHandler<Refu
 
 			// check already charge request against client correlator
 			if (clientCorrelator != null) {
-				String clientCorrelatorAttribute =  AttributeName.clientCorrelator.toString();
+				String clientCorrelatorAttribute =  AttributeName.clientCorrelatorWallet.toString();
 				boolean isDuplicateClientCorrelator = walletDAO.checkDuplicateValue(endUserId, serviceCallRefund, clientCorrelator, clientCorrelatorAttribute);
 				if (!isDuplicateClientCorrelator) {
 					// save Client Correlator
@@ -402,7 +402,7 @@ public class RefundTransactionRequestHandler extends AbstractRequestHandler<Refu
 		try {
 			AttributeValues valueObj = new AttributeValues();
 			String tableName = TableName.NUMBERS.toString().toLowerCase();
-			String attributeName = AttributeName.clientCorrelator.toString();
+			String attributeName = AttributeName.clientCorrelatorWallet.toString();
 			String serviceCall = ServiceName.RefundPayment.toString();
 			distributionId = walletDAO.getDistributionValue(serviceCall, attributeName, RequestType.WALLET.toString());
 			ownerId = walletDAO.getNumber(endUserId);

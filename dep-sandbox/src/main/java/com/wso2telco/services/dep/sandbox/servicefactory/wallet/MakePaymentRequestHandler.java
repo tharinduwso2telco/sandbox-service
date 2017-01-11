@@ -256,7 +256,7 @@ public class MakePaymentRequestHandler extends AbstractRequestHandler<MakePaymen
 
 			// check already charge request against client correlator
 			if (clientCorrelator != null) {
-				String clientCorrelatorAttribute = AttributeName.clientCorrelator.toString();
+				String clientCorrelatorAttribute = AttributeName.clientCorrelatorWallet.toString();
 				boolean isDuplicate = walletDAO.checkDuplicateValue(endUserId, serviceCallPayment, clientCorrelator, clientCorrelatorAttribute);
 				if (isDuplicate) {
 					LOG.error("###WALLET### Already charged for this client correlator");
@@ -395,7 +395,7 @@ public class MakePaymentRequestHandler extends AbstractRequestHandler<MakePaymen
 		try {
 			AttributeValues valueObj = new AttributeValues();
 			String tableName = TableName.NUMBERS.toString().toLowerCase();
-			String attributeName = AttributeName.clientCorrelator.toString();
+			String attributeName = AttributeName.clientCorrelatorWallet.toString();
 			String apiType = RequestType.WALLET.toString();
 			distributionId = walletDAO.getDistributionValue(serviceCallPayment, attributeName, apiType);
 			ownerId = walletDAO.getNumber(endUserId);
