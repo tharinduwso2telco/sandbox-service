@@ -21,12 +21,7 @@ import com.wso2telco.services.dep.sandbox.dao.model.domain.AttributeDistribution
 import com.wso2telco.services.dep.sandbox.dao.model.domain.AttributeValues;
 
 public interface CreditDAO {
-	
-	public Integer getNumber(String endUserId) throws Exception;
-	public AttributeValues getAttributeValue(AttributeDistribution distributionObj, Integer endUserId) throws Exception;
-	public AttributeValues checkDuplication(String endUserId, String serviceCall, String clientCorrelator, String attributeName) throws Exception;
-//	public boolean checkDupplicateValue(String endUserId, String serviceCall, String referenceCode) throws Exception;
-	public AttributeDistribution getDistributionValue(String serviceCall, String attributeName, String apiType) throws Exception; 
+	public AttributeValues checkDuplication(Integer userId, String serviceCall, String attributeValue, String attributeName) throws Exception;
 	public AttributeValues getTransactionValue(String endUserId, Integer attributeValue, String serviceCall) throws Exception;
 	public Integer saveAttributeValue(AttributeValues valueObj) throws Exception;
 

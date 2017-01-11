@@ -191,9 +191,14 @@ public class CreditApplyRequestHandler extends AbstractRequestHandler<CreditAppl
 
 		try {	
 			String clientCorrelatorAttribute = AttributeName.clientCorrelator.toString();
+			Integer userId = extendedRequestDTO.getUser().getId();
+			 String userName = extendedRequestDTO.getUser().getUserName();
 			if(clientCorrelator != null){
-				 AttributeValues values	= creditDAO.checkDuplication(msisdn, serviceCreditApply, clientCorrelator, clientCorrelatorAttribute);
-				if(values != null){
+				 AttributeValues values	= creditDAO.checkDuplication(userId, serviceCreditApply, clientCorrelator, clientCorrelatorAttribute);
+				 if(values != null){
+				 Integer ownerId = values.getOwnerdid();
+				 ManageNumber manageNumber = numberDao.getNumber(msisdn, userName);
+				 if(ownerId == manageNumber.getId()){
 					//send the already sent response
 					AttributeValues applyCreditResponse = creditDAO.getTransactionValue(msisdn,values.getAttributeValueId() ,AttributeName.applyCredit.toString());
 					CreditApplyResponseBean bean = new CreditApplyResponseBean();
@@ -204,14 +209,20 @@ public class CreditApplyRequestHandler extends AbstractRequestHandler<CreditAppl
 					bean.setCreditApplyResponse(res);
 					responseWrapperDTO.setCreditApplyResponseBean(bean);
 					responseWrapperDTO.setHttpStatus(Response.Status.OK);
-					return responseWrapperDTO;
-					
-				}
+					return responseWrapperDTO;					
+				 	}else{
+						buildJsonResponseBody(amount, type, clientCorrelator, merchantIdentification, reasonForCredit,
+								CreditStatusCodes.FAILED.toString(), callbackData, notifyURL, referenceCode, serverReferenceCode);
+						responseWrapperDTO.setRequestError(constructRequestError(SERVICEEXCEPTION,
+								ServiceError.INVALID_INPUT_VALUE, "Clientcorrelator is already used for different msisdn"));
+						responseWrapperDTO.setHttpStatus(Status.BAD_REQUEST);
+						return responseWrapperDTO;
+					}
+				 }
 			}		
 			//check reference code duplication
 			String referenceCodeAttribute =  AttributeName.referenceCodeCredit.toString();
-			AttributeValues value =	creditDAO.checkDuplication(msisdn, serviceCreditApply, referenceCode, referenceCodeAttribute);
-			//Boolean isDupplicate = creditDAO.checkDupplicateValue(msisdn, serviceCreditApply, referenceCode);
+			AttributeValues value =	creditDAO.checkDuplication(userId, serviceCreditApply, referenceCode, referenceCodeAttribute);
 			if(value != null){
 				buildJsonResponseBody(amount, type, clientCorrelator, merchantIdentification, reasonForCredit,
 						CreditStatusCodes.FAILED.toString(), callbackData, notifyURL, referenceCode, serverReferenceCode);
@@ -220,10 +231,10 @@ public class CreditApplyRequestHandler extends AbstractRequestHandler<CreditAppl
 				responseWrapperDTO.setHttpStatus(Status.BAD_REQUEST);
 				return responseWrapperDTO;	
 			}else{
-				saveReferenceCode(msisdn, referenceCode);
+				saveReferenceCode(msisdn, referenceCode, userName);
 			}
 
-			ManageNumber manageNumber = numberDao.getNumber(msisdn, extendedRequestDTO.getUser().getUserName());
+			ManageNumber manageNumber = numberDao.getNumber(msisdn, userName);
 
 			if (type.equalsIgnoreCase(TYPE_MONEY)) {
 				if (manageNumber != null) {
@@ -231,7 +242,7 @@ public class CreditApplyRequestHandler extends AbstractRequestHandler<CreditAppl
 					CreditApplyResponseBean responseBean = buildJsonResponseBody(amount, type, clientCorrelator, merchantIdentification, reasonForCredit,
 							CreditStatusCodes.SUCCESS.toString(), callbackData, notifyURL,referenceCode, serverReferenceCode);			
 					if(clientCorrelator != null){
-					clientCorrelatorid = saveClientCorrelator(msisdn, clientCorrelator);				
+					clientCorrelatorid = saveClientCorrelator(msisdn, clientCorrelator, userName);				
 					saveTransaction(responseBean);
 					}
 					responseWrapperDTO.setHttpStatus(Response.Status.OK);
@@ -256,7 +267,7 @@ public class CreditApplyRequestHandler extends AbstractRequestHandler<CreditAppl
 					CreditApplyResponseBean responseBean = buildJsonResponseBody(amount, type, clientCorrelator, merchantIdentification, reasonForCredit,
 							CreditStatusCodes.SUCCESS.toString(), callbackData, notifyURL, referenceCode, serverReferenceCode);
 					if(clientCorrelator != null){
-					clientCorrelatorid = saveClientCorrelator(msisdn, clientCorrelator);				
+					clientCorrelatorid = saveClientCorrelator(msisdn, clientCorrelator,userName);				
 					saveTransaction(responseBean);
 					}			
 					responseWrapperDTO.setHttpStatus(Response.Status.OK);
@@ -271,7 +282,7 @@ public class CreditApplyRequestHandler extends AbstractRequestHandler<CreditAppl
 					CreditApplyResponseBean responseBean = buildJsonResponseBody(amount, type, clientCorrelator, merchantIdentification, reasonForCredit,
 							CreditStatusCodes.SUCCESS.toString(), callbackData, notifyURL, referenceCode, serverReferenceCode);
 					if(clientCorrelator != null){
-					clientCorrelatorid = saveClientCorrelator(msisdn, clientCorrelator);				
+					clientCorrelatorid = saveClientCorrelator(msisdn, clientCorrelator,userName);				
 					saveTransaction(responseBean);
 					}
 					responseWrapperDTO.setHttpStatus(Response.Status.OK);
@@ -357,20 +368,22 @@ public class CreditApplyRequestHandler extends AbstractRequestHandler<CreditAppl
 		return obj;
 	}
 	
-	public void saveReferenceCode(String endUserId, String referenceCode) throws Exception {
-		AttributeDistribution distributionId = null;
-		Integer ownerId = null;
+	public void saveReferenceCode(String endUserId, String referenceCode, String userName) throws Exception {
 		try {
 			AttributeValues valueObj = new AttributeValues();
 			String tableName = TableName.NUMBERS.toString().toLowerCase();
 			String attributeName = AttributeName.referenceCodeCredit.toString();
 			String apiType = RequestType.CREDIT.toString();
-			String serviceCallRefund = ServiceName.ApplyCredit.toString();
-			distributionId = creditDAO.getDistributionValue(serviceCallRefund, attributeName, apiType);
-			ownerId = creditDAO.getNumber(endUserId);
-
+			String serviceCallApplyCredit = ServiceName.ApplyCredit.toString();
+			APITypes api = dao.getAPIType(apiType);
+			APIServiceCalls serviceCall = dao.getServiceCall(api.getId(), serviceCallApplyCredit);
+			Attributes attribute = dao.getAttribute(attributeName);
+			AttributeDistribution distribution = dao.getAttributeDistribution(serviceCall.getApiServiceCallId(), attribute.getAttributeId());
+			ManageNumber manageNumber = numberDao.getNumber(endUserId, userName);
+			Integer ownerId = manageNumber.getId();
+			
 			valueObj = new AttributeValues();
-			valueObj.setAttributedid(distributionId);
+			valueObj.setAttributedid(distribution);
 			valueObj.setOwnerdid(ownerId);
 			valueObj.setTobject(tableName);
 			valueObj.setValue(referenceCode);
@@ -382,20 +395,23 @@ public class CreditApplyRequestHandler extends AbstractRequestHandler<CreditAppl
 		}
 	}
 	
-	public Integer saveClientCorrelator(String endUserId, String correlator) throws Exception {
-		AttributeDistribution distributionId = null;
-		Integer ownerId = null;
+	public Integer saveClientCorrelator(String endUserId, String correlator, String userName) throws Exception {
 		try {
 			AttributeValues valueObj = new AttributeValues();
 			String tableName = TableName.NUMBERS.toString().toLowerCase();
 			String attributeName = AttributeName.clientCorrelator.toString();
 			String apiType = RequestType.CREDIT.toString();
-			String serviceCallRefund = ServiceName.ApplyCredit.toString();
-			distributionId = creditDAO.getDistributionValue(serviceCallRefund, attributeName, apiType);
-			ownerId = creditDAO.getNumber(endUserId);
+			String serviceCallApplyCredit = ServiceName.ApplyCredit.toString();
+			APITypes api = dao.getAPIType(apiType);
+			APIServiceCalls serviceCall = dao.getServiceCall(api.getId(), serviceCallApplyCredit);
+			Attributes attribute = dao.getAttribute(attributeName);
+			AttributeDistribution distribution = dao.getAttributeDistribution(serviceCall.getApiServiceCallId(), attribute.getAttributeId());
+			ManageNumber manageNumber = numberDao.getNumber(endUserId, userName);
+			Integer ownerId = manageNumber.getId();
+			//ownerId = creditDAO.getNumber(endUserId);
 
 			valueObj = new AttributeValues();
-			valueObj.setAttributedid(distributionId);
+			valueObj.setAttributedid(distribution);
 			valueObj.setOwnerdid(ownerId);
 			valueObj.setTobject(tableName);
 			valueObj.setValue(correlator);
@@ -417,8 +433,12 @@ public class CreditApplyRequestHandler extends AbstractRequestHandler<CreditAppl
 			AttributeValues valueObj = new AttributeValues();
 			String tableName = TableName.SBXATTRIBUTEVALUE.toString().toLowerCase();
 			String attributeName = AttributeName.applyCredit.toString();
-			distributionId = creditDAO.getDistributionValue(ServiceName.ApplyCredit.toString(), attributeName,
-					RequestType.CREDIT.toString());
+			String apiType = RequestType.CREDIT.toString();
+			String serviceCallApplyCredit = ServiceName.ApplyCredit.toString();
+			APITypes api = dao.getAPIType(apiType);
+			APIServiceCalls serviceCall = dao.getServiceCall(api.getId(), serviceCallApplyCredit);
+			Attributes attribute = dao.getAttribute(attributeName);
+			AttributeDistribution distribution = dao.getAttributeDistribution(serviceCall.getApiServiceCallId(), attribute.getAttributeId());
 			ownerId = clientCorrelatorid;
 			
 			Gson gson = new Gson();
@@ -430,7 +450,7 @@ public class CreditApplyRequestHandler extends AbstractRequestHandler<CreditAppl
 			jsonString = gson.toJson(asJsonObjectPayment);
 			
 			valueObj = new AttributeValues();
-			valueObj.setAttributedid(distributionId);
+			valueObj.setAttributedid(distribution);
 			valueObj.setOwnerdid(ownerId);
 			valueObj.setTobject(tableName);
 			valueObj.setValue(jsonString);

@@ -50,7 +50,7 @@ CREATE TABLE IF NOT EXISTS `sbxattribute` (
 -- Dumping data for table `sbxattribute`
 --
 
-INSERT INTO `sbxattribute` VALUES (16,'clientCorrelator'),(17,'transactionStatus'),(18,'status'),(19,'currency'),(20,'payment'),(21,'refund'),(28,'referenceCodeWallet');
+INSERT INTO `sbxattribute` VALUES (16,'clientCorrelatorWallet'),(17,'transactionStatus'),(18,'status'),(19,'currency'),(20,'payment'),(21,'refund'),(28,'referenceCodeWallet');
 
 --
 -- Table structure for table `sbtattributedistribution`
