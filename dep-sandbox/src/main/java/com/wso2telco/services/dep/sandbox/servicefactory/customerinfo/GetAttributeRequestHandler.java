@@ -76,7 +76,7 @@ public class GetAttributeRequestHandler extends
 	String schema = CommonUtil.getNullOrTrimmedValue((wrapperDTO
 		.getSchema()).replace(",", ""));
 	String onBehalfOf = CommonUtil.getNullOrTrimmedValue(wrapperDTO.getOnBehalfOf());
-	String purchaseCategoryCode = CommonUtil.getNullOrTrimmedValue(wrapperDTO.getPurchaseCatergoryCode());
+	String purchaseCategoryCode = CommonUtil.getNullOrTrimmedValue(wrapperDTO.getPurchaseCategoryCode());
 	String requestIdentifier = CommonUtil.getNullOrTrimmedValue(wrapperDTO.getRequestIdentifier());
 	
 
@@ -263,7 +263,7 @@ public class GetAttributeRequestHandler extends
 	
 	
 	customerInfo.setOnBehalfOf(CommonUtil.getNullOrTrimmedValue(extendedRequestDTO.getOnBehalfOf()));
-	customerInfo.setPurchaseCatergoryCode(CommonUtil.getNullOrTrimmedValue(extendedRequestDTO.getPurchaseCatergoryCode()));
+	customerInfo.setPurchaseCategoryCode(CommonUtil.getNullOrTrimmedValue(extendedRequestDTO.getPurchaseCategoryCode()));
 	customerInfo.setRequestIdentifier( CommonUtil.getNullOrTrimmedValue(extendedRequestDTO.getRequestIdentifier()));
 	customerInfo.setResponseIdentifier("RES" + RandomStringUtils.randomAlphabetic(8));
 	

@@ -13,7 +13,7 @@ public class ListCustomerInfoAttributesDTO
 	/** The IMSI **/
 	private String imsi;
 	private String onBehalfOf;
-	private String purchaseCatergoryCode;
+	private String purchaseCategoryCode;
 	private String requestIdentifier;
 	private String responseIdentifier;
 	
@@ -97,12 +97,12 @@ public class ListCustomerInfoAttributesDTO
 		this.onBehalfOf = onBehalfOf;
 	}
 
-	public String getPurchaseCatergoryCode() {
-		return purchaseCatergoryCode;
+	public String getPurchaseCategoryCode() {
+		return purchaseCategoryCode;
 	}
 
-	public void setPurchaseCatergoryCode(String purchaseCatergoryCode) {
-		this.purchaseCatergoryCode = purchaseCatergoryCode;
+	public void setPurchaseCategoryCode(String purchaseCategoryCode) {
+		this.purchaseCategoryCode = purchaseCategoryCode;
 	}
 
 	public String getRequestIdentifier() {
