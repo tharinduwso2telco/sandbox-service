@@ -87,7 +87,7 @@ public class GetProfileRequestHandler extends AbstractRequestHandler<GetProfileR
 	String mcc = CommonUtil.getNullOrTrimmedValue(wrapperDTO.getMcc());
 	String mnc = CommonUtil.getNullOrTrimmedValue(wrapperDTO.getMnc());
 	String onBehalfOf = CommonUtil.getNullOrTrimmedValue(wrapperDTO.getOnBehalfOf());
-	String purchaseCategoryCode = CommonUtil.getNullOrTrimmedValue(wrapperDTO.getPurchaseCatergoryCode());
+	String purchaseCategoryCode = CommonUtil.getNullOrTrimmedValue(wrapperDTO.getPurchaseCategoryCode());
 	String requestIdentifier = CommonUtil.getNullOrTrimmedValue(wrapperDTO.getRequestIdentifier());
 	
 	List<ValidationRule> validationRulesList = new ArrayList<>();
@@ -229,7 +229,7 @@ public class GetProfileRequestHandler extends AbstractRequestHandler<GetProfileR
 	customer.setLastName(customerInfoDTO.getLastName());
 	customer.setImsi(number.getIMSI());
 	customer.setOnBehalfOf(CommonUtil.getNullOrTrimmedValue(extendedRequestDTO.getOnBehalfOf()));
-	customer.setPurchaseCatergoryCode(CommonUtil.getNullOrTrimmedValue(extendedRequestDTO.getPurchaseCatergoryCode()));
+	customer.setPurchaseCategoryCode(CommonUtil.getNullOrTrimmedValue(extendedRequestDTO.getPurchaseCategoryCode()));
 	customer.setRequestIdentifier( CommonUtil.getNullOrTrimmedValue(extendedRequestDTO.getRequestIdentifier()));
 	customer.setResponseIdentifier("RES" + RandomStringUtils.randomAlphabetic(8));
 	

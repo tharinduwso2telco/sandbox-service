@@ -60,7 +60,7 @@ public class CustomerInfoService {
 	    @ApiParam(value = "mcc", required = false) @QueryParam("mcc") String mcc,
 	    @ApiParam(value = "mnc", required = false) @QueryParam("mnc") String mnc,
 	    @ApiParam(value = "onBehalfOf", required = false) @QueryParam("onBehalfOf") String onBehalfOf,
-	    @ApiParam(value = "purchaseCatergoryCode", required = false) @QueryParam("purchaseCatergoryCode") String purchaseCatergoryCode,
+	    @ApiParam(value = "purchaseCategoryCode", required = false) @QueryParam("purchaseCategoryCode") String purchaseCategoryCode,
 	    @ApiParam(value = "requestIdentifier", required = true) @QueryParam("requestIdentifier") String requestIdentifier,
 	    @Context HttpServletRequest request) {
 	LOG.debug("/profile invoked" + msisdn + imsi + mcc + mnc);
@@ -73,7 +73,7 @@ public class CustomerInfoService {
 	requestDTO.setMnc(mnc);
 	requestDTO.setMsisdn(msisdn);
 	requestDTO.setOnBehalfOf(onBehalfOf);
-	requestDTO.setPurchaseCatergoryCode(purchaseCatergoryCode);
+	requestDTO.setPurchaseCategoryCode(purchaseCategoryCode);
 	requestDTO.setRequestIdentifier(requestIdentifier);
 	
 	RequestHandleable handler = RequestBuilderFactory.getInstance(requestDTO);
@@ -108,7 +108,7 @@ public class CustomerInfoService {
 			@ApiParam(value = "mcc", required = false) @QueryParam("mcc") String mcc,
 			@ApiParam(value = "mnc", required = false) @QueryParam("mnc") String mnc,
 			@ApiParam(value = "onBehalfOf", required = false) @QueryParam("onBehalfOf") String onBehalfOf,
-			@ApiParam(value = "purchaseCatergoryCode", required = false) @QueryParam("purchaseCatergoryCode") String purchaseCatergoryCode,
+			@ApiParam(value = "purchaseCategoryCode", required = false) @QueryParam("purchaseCategoryCode") String purchaseCategoryCode,
 			@ApiParam(value = "requestIdentifier", required = true) @QueryParam("requestIdentifier") String requestIdentifier,
 			@Context HttpServletRequest request) {
 		LOG.debug("/{schema}/{mcc}/{mnc}/attribute invorked :" + msisdn + imsi + schema + mcc + mnc);
@@ -122,7 +122,7 @@ public class CustomerInfoService {
 		requestDTO.setMnc(mnc);
 		requestDTO.setRequestType(RequestType.CUSTOMERINFO);
 		requestDTO.setOnBehalfOf(onBehalfOf);
-		requestDTO.setPurchaseCatergoryCode(purchaseCatergoryCode);
+		requestDTO.setPurchaseCategoryCode(purchaseCategoryCode);
 		requestDTO.setRequestIdentifier(requestIdentifier);
 
 		RequestHandleable handler = RequestBuilderFactory.getInstance(requestDTO);
