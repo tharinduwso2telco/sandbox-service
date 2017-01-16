@@ -35,6 +35,16 @@ public class ListProvisionedRequestWrapperDTO extends RequestDTO {
 	/** The limit param **/
 	private String limit;
 
+	private String mcc;
+
+	private String mnc;
+
+	private String onBehalfOf;
+
+	private String purchaseCatergoryCode;
+
+	private String requestIdentifier;
+
 	/**
 	 * @return the msisdn
 	 */
@@ -78,6 +88,46 @@ public class ListProvisionedRequestWrapperDTO extends RequestDTO {
 	 */
 	public void setLimit(String limit) {
 		this.limit = limit;
+	}
+
+	public String getMcc() {
+		return mcc;
+	}
+
+	public void setMcc(String mcc) {
+		this.mcc = mcc;
+	}
+
+	public String getMnc() {
+		return mnc;
+	}
+
+	public void setMnc(String mnc) {
+		this.mnc = mnc;
+	}
+
+	public String getOnBehalfOf() {
+		return onBehalfOf;
+	}
+
+	public void setOnBehalfOf(String onBehalfOf) {
+		this.onBehalfOf = onBehalfOf;
+	}
+
+	public String getPurchaseCatergoryCode() {
+		return purchaseCatergoryCode;
+	}
+
+	public void setPurchaseCatergoryCode(String purchaseCatergoryCode) {
+		this.purchaseCatergoryCode = purchaseCatergoryCode;
+	}
+
+	public String getRequestIdentifier() {
+		return requestIdentifier;
+	}
+
+	public void setRequestIdentifier(String requestIdentifier) {
+		this.requestIdentifier = requestIdentifier;
 	}
 
 }
