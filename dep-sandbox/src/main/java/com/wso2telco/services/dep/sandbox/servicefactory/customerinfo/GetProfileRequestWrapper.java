@@ -19,77 +19,81 @@ import com.wso2telco.services.dep.sandbox.dao.model.custom.RequestDTO;
 
 public class GetProfileRequestWrapper extends RequestDTO {
 
-    private static final long serialVersionUID = -8313221428178752422L;
-    
-    private String msisdn;
-    
-    private String imsi;
-    
-    private String mcc;
-    
-    private String mnc;
-    
-    private String onBehalfOf;
-    
-    private String purchaseCatergoryCode;
-    
-    private String requestIdentifier;
+	private static final long serialVersionUID = -8313221428178752422L;
 
-    /**
-     * @return the msisdn
-     */
-    public String getMsisdn() {
-        return msisdn;
-    }
+	private String msisdn;
 
-    /**
-     * @param msisdn the msisdn to set
-     */
-    public void setMsisdn(String msisdn) {
-        this.msisdn = msisdn;
-    }
+	private String imsi;
 
-    /**
-     * @return the imsi
-     */
-    public String getImsi() {
-        return imsi;
-    }
+	private String mcc;
 
-    /**
-     * @param imsi the imsi to set
-     */
-    public void setImsi(String imsi) {
-        this.imsi = imsi;
-    }
+	private String mnc;
 
-    /**
-     * @return the mcc
-     */
-    public String getMcc() {
-        return mcc;
-    }
+	private String onBehalfOf;
 
-    /**
-     * @param mcc the mcc to set
-     */
-    public void setMcc(String mcc) {
-        this.mcc = mcc;
-    }
+	private String purchaseCategoryCode;
 
-    /**
-     * @return the mnc
-     */
-    public String getMnc() {
-        return mnc;
-    }
+	private String requestIdentifier;
 
-    /**
-     * @param mnc the mnc to set
-     */
-    public void setMnc(String mnc) {
-        this.mnc = mnc;
-    }
+	/**
+	 * @return the msisdn
+	 */
+	public String getMsisdn() {
+		return msisdn;
+	}
+
+	/**
+	 * @param msisdn
+	 *            the msisdn to set
+	 */
+	public void setMsisdn(String msisdn) {
+		this.msisdn = msisdn;
+	}
+
+	/**
+	 * @return the imsi
+	 */
+	public String getImsi() {
+		return imsi;
+	}
+
+	/**
+	 * @param imsi
+	 *            the imsi to set
+	 */
+	public void setImsi(String imsi) {
+		this.imsi = imsi;
+	}
+
+	/**
+	 * @return the mcc
+	 */
+	public String getMcc() {
+		return mcc;
+	}
+
+	/**
+	 * @param mcc
+	 *            the mcc to set
+	 */
+	public void setMcc(String mcc) {
+		this.mcc = mcc;
+	}
+
+	/**
+	 * @return the mnc
+	 */
+	public String getMnc() {
+		return mnc;
+	}
+
+	/**
+	 * @param mnc
+	 *            the mnc to set
+	 */
+	public void setMnc(String mnc) {
+		this.mnc = mnc;
+	}
 
 	public String getOnBehalfOf() {
 		return onBehalfOf;
@@ -99,12 +103,12 @@ public class GetProfileRequestWrapper extends RequestDTO {
 		this.onBehalfOf = onBehalfOf;
 	}
 
-	public String getPurchaseCatergoryCode() {
-		return purchaseCatergoryCode;
+	public String getPurchaseCategoryCode() {
+		return purchaseCategoryCode;
 	}
 
-	public void setPurchaseCatergoryCode(String purchaseCatergoryCode) {
-		this.purchaseCatergoryCode = purchaseCatergoryCode;
+	public void setPurchaseCategoryCode(String purchaseCategoryCode) {
+		this.purchaseCategoryCode = purchaseCategoryCode;
 	}
 
 	public String getRequestIdentifier() {
@@ -114,11 +118,5 @@ public class GetProfileRequestWrapper extends RequestDTO {
 	public void setRequestIdentifier(String requestIdentifier) {
 		this.requestIdentifier = requestIdentifier;
 	}
-
-	public static long getSerialversionuid() {
-		return serialVersionUID;
-	}
-    
-    
 
 }
