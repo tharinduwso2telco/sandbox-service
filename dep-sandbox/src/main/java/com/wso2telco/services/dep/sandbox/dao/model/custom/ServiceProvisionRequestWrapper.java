@@ -26,6 +26,10 @@ public class ServiceProvisionRequestWrapper extends RequestDTO {
 
 	private String msisdn;
 
+	private String mcc;
+
+	private String mnc;
+
 	private ProvisionRequestBean provisionRequestBean;
 
 	/**
@@ -54,9 +58,25 @@ public class ServiceProvisionRequestWrapper extends RequestDTO {
 	 * @param provisionRequestBean
 	 *            the provisionRequestBean to set
 	 */
-	public void setProvisionRequestBean(ProvisionRequestBean provisionRequestBean) {
+	public void setProvisionRequestBean(
+			ProvisionRequestBean provisionRequestBean) {
 		this.provisionRequestBean = provisionRequestBean;
 	}
-	
+
+	public String getMcc() {
+		return mcc;
+	}
+
+	public void setMcc(String mcc) {
+		this.mcc = mcc;
+	}
+
+	public String getMnc() {
+		return mnc;
+	}
+
+	public void setMnc(String mnc) {
+		this.mnc = mnc;
+	}
 
 }

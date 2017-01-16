@@ -53,7 +53,6 @@ import com.wso2telco.services.dep.sandbox.servicefactory.RequestHandleable;
 import com.wso2telco.services.dep.sandbox.servicefactory.Returnable;
 import com.wso2telco.services.dep.sandbox.util.RequestType;
 
-
 @Path("/provisioning/{v1}")
 @Consumes({ MediaType.APPLICATION_JSON })
 @Produces({ MediaType.APPLICATION_JSON })
@@ -65,49 +64,66 @@ public class ProvisionService {
 	@GET
 	@Path("/{msisdn}/list/applicable")
 	@ApiOperation(value = "getApplicableServices", notes = "getApplicableServices", response = Response.class)
-	@ApiImplicitParams({
-	    @ApiImplicitParam(name = "sandbox", value = "Authorization token", 
-	                     required = true, dataType = "string", paramType = "header")
-	})
-	public Response getApplicableServices( @ApiParam(value = "msisdn", required = true) @PathParam("msisdn") String msisdn, 
+	@ApiImplicitParams({ @ApiImplicitParam(name = "sandbox", value = "Authorization token", required = true, dataType = "string", paramType = "header") })
+	public Response getApplicableServices(
+			@ApiParam(value = "msisdn", required = true) @PathParam("msisdn") String msisdn,
+			@ApiParam(value = "mcc", required = false) @QueryParam("mcc") String mcc,
+			@ApiParam(value = "mnc", required = false) @QueryParam("mnc") String mnc,
+			@ApiParam(value = "onBehalfOf", required = false) @QueryParam("onBehalfOf") String onBehalfOf,
+			@ApiParam(value = "purchaseCatergoryCode", required = false) @QueryParam("purchaseCatergoryCode") String purchaseCatergoryCode,
+			@ApiParam(value = "requestIdentifier", required = true) @QueryParam("requestIdentifier") String requestIdentifier,
 			@ApiParam(value = "offset", required = false) @QueryParam("offset") String offSet,
-			@ApiParam(value = "limit", required = false)  @QueryParam("limit") String limit, @Context HttpServletRequest request) {
-		LOG.debug("/{msisdn}/list/applicable invorked :" + msisdn + offSet + limit);
+			@ApiParam(value = "limit", required = false) @QueryParam("limit") String limit,
+			@Context HttpServletRequest request) {
+		LOG.debug("/{msisdn}/list/applicable invorked :" + msisdn + offSet
+				+ limit);
 		QueryProvisioningServicesRequestWrapper requestDTO = new QueryProvisioningServicesRequestWrapper();
 		requestDTO.setHttpRequest(request);
 		requestDTO.setOffSet(offSet);
 		requestDTO.setLimit(limit);
 		requestDTO.setMsisdn(msisdn);
 		requestDTO.setRequestType(RequestType.PROVISIONING);
+		requestDTO.setMcc(mcc);
+		requestDTO.setMnc(mnc);
+		requestDTO.setOnBehalfOf(onBehalfOf);
+		requestDTO.setPurchaseCatergoryCode(purchaseCatergoryCode);
+		requestDTO.setRequestIdentifier(requestIdentifier);
 
-		RequestHandleable handler = RequestBuilderFactory.getInstance(requestDTO);
+		RequestHandleable handler = RequestBuilderFactory
+				.getInstance(requestDTO);
 		Returnable returnable = null;
 
 		try {
 			returnable = handler.execute(requestDTO);
-			Response response = Response.status(returnable.getHttpStatus()).entity(returnable.getResponse()).build();
+			Response response = Response.status(returnable.getHttpStatus())
+					.entity(returnable.getResponse()).build();
 			LOG.debug("QUERY APPLICABLE SERVICE RESPONSE : " + response);
 			return response;
 		} catch (Exception ex) {
 			LOG.error("QUERY SERVICE ERROR : ", ex);
-			return Response.status(Response.Status.BAD_REQUEST).entity(
-					SandboxErrorType.SERVICE_ERROR.getCode() + " " + SandboxErrorType.SERVICE_ERROR.getMessage())
+			return Response
+					.status(Response.Status.BAD_REQUEST)
+					.entity(SandboxErrorType.SERVICE_ERROR.getCode() + " "
+							+ SandboxErrorType.SERVICE_ERROR.getMessage())
 					.build();
 		}
 
 	}
-	
 
 	@GET
 	@Path("/{msisdn}/list/active")
 	@ApiOperation(value = "getActiveProvisionedServices", notes = "getActiveProvisionedServices", response = Response.class)
-	@ApiImplicitParams({
-	    @ApiImplicitParam(name = "sandbox", value = "Authorization token", 
-	                     required = true, dataType = "string", paramType = "header")
-	})
-	public Response getActiveProvisionedServices( @ApiParam(value = "msisdn", required = true) @PathParam("msisdn") String msisdn, 
+	@ApiImplicitParams({ @ApiImplicitParam(name = "sandbox", value = "Authorization token", required = true, dataType = "string", paramType = "header") })
+	public Response getActiveProvisionedServices(
+			@ApiParam(value = "msisdn", required = true) @PathParam("msisdn") String msisdn,
+			@ApiParam(value = "mcc", required = false) @QueryParam("mcc") String mcc,
+			@ApiParam(value = "mnc", required = false) @QueryParam("mnc") String mnc,
+			@ApiParam(value = "onBehalfOf", required = false) @QueryParam("onBehalfOf") String onBehalfOf,
+			@ApiParam(value = "purchaseCatergoryCode", required = false) @QueryParam("purchaseCatergoryCode") String purchaseCatergoryCode,
+			@ApiParam(value = "requestIdentifier", required = true) @QueryParam("requestIdentifier") String requestIdentifier,
 			@ApiParam(value = "offset", required = false) @QueryParam("offset") String offSet,
-			@ApiParam(value = "limit", required = false)  @QueryParam("limit") String limit, @Context HttpServletRequest request) {
+			@ApiParam(value = "limit", required = false) @QueryParam("limit") String limit,
+			@Context HttpServletRequest request) {
 		LOG.debug("/{msisdn}/list/active invoked :" + msisdn + offSet + limit);
 		ListProvisionedRequestWrapperDTO requestDTO = new ListProvisionedRequestWrapperDTO();
 		requestDTO.setHttpRequest(request);
@@ -115,32 +131,43 @@ public class ProvisionService {
 		requestDTO.setLimit(limit);
 		requestDTO.setMsisdn(msisdn);
 		requestDTO.setRequestType(RequestType.PROVISIONING);
-
-		RequestHandleable handler = RequestBuilderFactory.getInstance(requestDTO);
+		requestDTO.setMcc(mcc);
+		requestDTO.setMnc(mnc);
+		requestDTO.setOnBehalfOf(onBehalfOf);
+		requestDTO.setPurchaseCatergoryCode(purchaseCatergoryCode);
+		requestDTO.setRequestIdentifier(requestIdentifier);
+		RequestHandleable handler = RequestBuilderFactory
+				.getInstance(requestDTO);
 		Returnable returnable = null;
 
 		try {
 			returnable = handler.execute(requestDTO);
-			Response response = Response.status(returnable.getHttpStatus()).entity(returnable.getResponse()).build();
+			Response response = Response.status(returnable.getHttpStatus())
+					.entity(returnable.getResponse()).build();
 			LOG.debug("LIST ACTIVE PROVISIONED SERVICES RESPONSE : " + response);
 			return response;
 		} catch (Exception ex) {
-			LOG.error("LIST ACTIVE PROVISIONED SERVICESE ERROR : " , ex);
-			return Response.status(Response.Status.BAD_REQUEST).entity(SandboxErrorType.SERVICE_ERROR.getCode() + " " + SandboxErrorType.SERVICE_ERROR.getMessage()).build();
+			LOG.error("LIST ACTIVE PROVISIONED SERVICESE ERROR : ", ex);
+			return Response
+					.status(Response.Status.BAD_REQUEST)
+					.entity(SandboxErrorType.SERVICE_ERROR.getCode() + " "
+							+ SandboxErrorType.SERVICE_ERROR.getMessage())
+					.build();
 		}
 
 	}
-	
+
 	@POST
 	@Path("/{msisdn}/remove")
 	@ApiOperation(value = "removeProvisionedServices", notes = "removeProvisionedServices", response = Response.class)
-	@ApiImplicitParams({
-	    @ApiImplicitParam(name = "sandbox", value = "Authorization token", 
-	                     required = true, dataType = "string", paramType = "header")
-	})
-	public Response removeProvisionedServices(@ApiParam(value = "msisdn", required = true) @PathParam("msisdn") String msisdn, 
-			@Context HttpServletRequest httpRequest, RemoveProvisionRequestBean removeProvisionRequestBean) {
-		
+	@ApiImplicitParams({ @ApiImplicitParam(name = "sandbox", value = "Authorization token", required = true, dataType = "string", paramType = "header") })
+	public Response removeProvisionedServices(
+			@ApiParam(value = "msisdn", required = true) @PathParam("msisdn") String msisdn,
+			@ApiParam(value = "mcc", required = false) @QueryParam("mcc") String mcc,
+			@ApiParam(value = "mnc", required = false) @QueryParam("mnc") String mnc,
+			@Context HttpServletRequest httpRequest,
+			RemoveProvisionRequestBean removeProvisionRequestBean) {
+
 		LOG.debug("/{msisdn}/remove invoked :" + msisdn);
 		if (removeProvisionRequestBean != null) {
 			LOG.debug(removeProvisionRequestBean);
@@ -150,31 +177,39 @@ public class ProvisionService {
 		requestDTO.setMsisdn(msisdn);
 		requestDTO.setRemoveProvisionRequestBean(removeProvisionRequestBean);
 		requestDTO.setRequestType(RequestType.PROVISIONING);
-		
-		RequestHandleable handler = RequestBuilderFactory.getInstance(requestDTO);
+		requestDTO.setMcc(mcc);
+		requestDTO.setMnc(mnc);
+
+		RequestHandleable handler = RequestBuilderFactory
+				.getInstance(requestDTO);
 		Returnable returnable = null;
 
 		try {
 			returnable = handler.execute(requestDTO);
-			Response response = Response.status(returnable.getHttpStatus()).entity(returnable.getResponse()).build();
+			Response response = Response.status(returnable.getHttpStatus())
+					.entity(returnable.getResponse()).build();
 			LOG.debug("REMOVE PROVISIONED SERVICES RESPONSE : " + response);
 			return response;
-		}catch (Exception ex) {
-			LOG.error("REMOVE PROVISIONED SERVICESE ERROR : " , ex);
-			return Response.status(Response.Status.BAD_REQUEST).entity(SandboxErrorType.SERVICE_ERROR.getCode() + " " + SandboxErrorType.SERVICE_ERROR.getMessage()).build();
+		} catch (Exception ex) {
+			LOG.error("REMOVE PROVISIONED SERVICESE ERROR : ", ex);
+			return Response
+					.status(Response.Status.BAD_REQUEST)
+					.entity(SandboxErrorType.SERVICE_ERROR.getCode() + " "
+							+ SandboxErrorType.SERVICE_ERROR.getMessage())
+					.build();
 		}
 	}
-		
+
 	@POST
 	@Path("/{msisdn}")
 	@ApiOperation(value = "provisionForRequestedService", notes = "provision requested service", response = Response.class)
-	@ApiImplicitParams({
-	    @ApiImplicitParam(name = "sandbox", value = "Authorization token", 
-	                     required = true, dataType = "string", paramType = "header")
-	})
+	@ApiImplicitParams({ @ApiImplicitParam(name = "sandbox", value = "Authorization token", required = true, dataType = "string", paramType = "header") })
 	public Response provisionForRequestedService(
 			@ApiParam(value = "msisdn", required = true) @PathParam("msisdn") String msisdn,
-			ProvisionRequestBean provisionRequest, @Context HttpServletRequest request) {
+			@ApiParam(value = "mcc", required = false) @QueryParam("mcc") String mcc,
+			@ApiParam(value = "mnc", required = false) @QueryParam("mnc") String mnc,
+			ProvisionRequestBean provisionRequest,
+			@Context HttpServletRequest request) {
 		LOG.debug("###PROVISION### /{msisdn} invoked : msisdn - " + msisdn);
 		if (provisionRequest != null) {
 			LOG.debug(provisionRequest);
@@ -184,17 +219,25 @@ public class ProvisionService {
 		requestDTO.setMsisdn(msisdn);
 		requestDTO.setProvisionRequestBean(provisionRequest);
 		requestDTO.setRequestType(RequestType.PROVISIONING);
-		
-		RequestHandleable<RequestDTO> handler = RequestBuilderFactory.getInstance(requestDTO);
+		requestDTO.setMcc(mcc);
+		requestDTO.setMnc(mnc);
+
+		RequestHandleable<RequestDTO> handler = RequestBuilderFactory
+				.getInstance(requestDTO);
 		Returnable returnable = null;
-		
+
 		try {
 			returnable = handler.execute(requestDTO);
-			Response response = Response.status(returnable.getHttpStatus()).entity(returnable.getResponse()).build();
+			Response response = Response.status(returnable.getHttpStatus())
+					.entity(returnable.getResponse()).build();
 			return response;
 		} catch (Exception ex) {
 			LOG.error("###PROVISION### Error in Provision Service", ex);
-			Response response = Response.status(Status.BAD_REQUEST).entity(SandboxErrorType.SERVICE_ERROR.getCode() + " " + SandboxErrorType.SERVICE_ERROR.getMessage()).build();
+			Response response = Response
+					.status(Status.BAD_REQUEST)
+					.entity(SandboxErrorType.SERVICE_ERROR.getCode() + " "
+							+ SandboxErrorType.SERVICE_ERROR.getMessage())
+					.build();
 			return response;
 		}
 	}
