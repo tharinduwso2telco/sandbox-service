@@ -42,6 +42,6 @@ public interface GenaricDAO {
     
     public AttributeValues getAttributeValue(AttributeDistribution distributionObj, int ownerdid) throws Exception ;
 
-
+    public ManageNumber getMSISDN (String msisdn, String imsi, String mcc, String mnc) throws Exception;
 
 }

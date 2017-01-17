@@ -44,6 +44,10 @@ public class ProvisionRequestBean {
 		
 		private String clientReferenceCode;
 		
+		private String onBehalfOf;
+
+		private String purchaseCategoryCode;
+		
 		private CallbackReference callbackReference;
 
 		/**
@@ -58,6 +62,21 @@ public class ProvisionRequestBean {
 		 */
 		public void setServiceCode(String serviceCode) {
 			this.serviceCode = serviceCode;
+		}
+
+		/**
+		 * @return the serviceName
+		 */
+		public String getServiceName() {
+			return serviceName;
+		}
+
+		/**
+		 * @param serviceName
+		 *            the serviceName to set
+		 */
+		public void setServiceName(String serviceName) {
+			this.serviceName = serviceName;
 		}
 
 		/**
@@ -87,6 +106,23 @@ public class ProvisionRequestBean {
 		public void setClientReferenceCode(String clientReferenceCode) {
 			this.clientReferenceCode = clientReferenceCode;
 		}
+		
+		public String getOnBehalfOf() {
+			return onBehalfOf;
+		}
+
+		public void setOnBehalfOf(String onBehalfOf) {
+			this.onBehalfOf = onBehalfOf;
+		}
+
+		public String getPurchaseCategoryCode() {
+			return purchaseCategoryCode;
+		}
+
+		public void setPurchaseCategoryCode(String purchaseCategoryCode) {
+			this.purchaseCategoryCode = purchaseCategoryCode;
+		}
+
 
 		/**
 		 * @return the callbackReference
@@ -100,21 +136,6 @@ public class ProvisionRequestBean {
 		 */
 		public void setCallbackReference(CallbackReference callbackReference) {
 			this.callbackReference = callbackReference;
-		}
-
-		/**
-		 * @return the serviceName
-		 */
-		public String getServiceName() {
-			return serviceName;
-		}
-
-		/**
-		 * @param serviceName
-		 *            the serviceName to set
-		 */
-		public void setServiceName(String serviceName) {
-			this.serviceName = serviceName;
 		}
 
 		public String toString() {

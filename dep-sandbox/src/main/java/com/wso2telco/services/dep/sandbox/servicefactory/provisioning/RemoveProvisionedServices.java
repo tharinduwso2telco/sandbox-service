@@ -244,7 +244,7 @@ public class RemoveProvisionedServices extends AbstractRequestHandler<RemoveProv
 		CallbackReference ref = new CallbackReference();
 		ref.setCallbackData(callbackData);
 		ref.setNotifyURL(notifyURL);
-		ref.setResourceURL(ProvisioningUtil.getResourceUrl(requestWrapperDTO));
+		ref.setResourceURL(CommonUtil.getResourceUrl(requestWrapperDTO));
 		ServiceRemoveResponse serviceRemovalResponse = new ServiceRemoveResponse();
 		serviceRemovalResponse.setCallbackReference(ref);
 		serviceRemovalResponse.setServiceCode(serviceCode);
@@ -264,7 +264,7 @@ public class RemoveProvisionedServices extends AbstractRequestHandler<RemoveProv
 		CallbackReference ref = new CallbackReference();
 		ref.setCallbackData(deletedServiceList.getCallbackData());
 		ref.setNotifyURL(deletedServiceList.getNotifyURL());
-		ref.setResourceURL(ProvisioningUtil.getResourceUrl(requestWrapperDTO));
+		ref.setResourceURL(CommonUtil.getResourceUrl(requestWrapperDTO));
 		ServiceRemoveResponse serviceRemovalResponse = new ServiceRemoveResponse();
 		serviceRemovalResponse.setCallbackReference(ref);
 		serviceRemovalResponse.setServiceCode(deletedServiceList.getMSISDNServicesMapId().getServiceId().getServiceCode());

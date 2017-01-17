@@ -185,7 +185,7 @@ public class GetProfileRequestHandler extends AbstractRequestHandler<GetProfileR
 	    phoneNumber = CommonUtil.extractNumberFromMsisdn(msisdn);
 	}
 
-	ManageNumber number = customerInfoDAO.getMSISDN(phoneNumber, imsi, mcc, mnc);
+	ManageNumber number = dao.getMSISDN(phoneNumber, imsi, mcc, mnc);
 
 	if (number == null) {
 	    LOG.error("###CUSTOMERINFO### Valid MSISDN doesn't exists for the given inputs");
