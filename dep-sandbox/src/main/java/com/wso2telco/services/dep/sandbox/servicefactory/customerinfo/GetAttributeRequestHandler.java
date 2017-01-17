@@ -233,7 +233,7 @@ public class GetAttributeRequestHandler extends
 		userid, imsi, schema);
 	
 	
-	if (customerInfoServices == null) {
+	if (customerInfoServices.isEmpty()) {
 	    LOG.error("###CUSTOMERINFO### Customer information does not available");
 	    responseWrapperDTO.setRequestError(constructRequestError(SERVICEEXCEPTION, ServiceError.INVALID_INPUT_VALUE,
 		    " No Valid Customer schema information configured for the given input parameters"));
