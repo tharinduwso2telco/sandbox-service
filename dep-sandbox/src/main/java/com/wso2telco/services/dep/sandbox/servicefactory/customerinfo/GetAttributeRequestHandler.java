@@ -231,6 +231,16 @@ public class GetAttributeRequestHandler extends
 
 	customerInfoServices = customerInfoDao.getAttributeServices(msisdn,
 		userid, imsi, schema);
+	
+	
+	if (customerInfoServices == null) {
+	    LOG.error("###CUSTOMERINFO### Customer information does not available");
+	    responseWrapperDTO.setRequestError(constructRequestError(SERVICEEXCEPTION, ServiceError.INVALID_INPUT_VALUE,
+		    " No Valid Customer schema information configured for the given input parameters"));
+	    responseWrapperDTO.setHttpStatus(Status.BAD_REQUEST);
+	    return responseWrapperDTO;
+	}
+	
 
 	for (AttributeValues values : customerInfoServices) {
 	    schemaValues = ((values.getAttributedid()).getAttribute())
