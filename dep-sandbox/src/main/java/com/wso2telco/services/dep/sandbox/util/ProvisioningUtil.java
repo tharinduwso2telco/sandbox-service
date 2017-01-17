@@ -33,9 +33,9 @@ public class ProvisioningUtil {
 	
 	public static final String QUERY_STRING_SEPARATOR = "?";
 	
-	public static final ProvisioningStatusCodes DEFAULT_PROVISION_STATUS = ProvisioningStatusCodes.PRV_PROVISION_PENDING;
+	public static final ProvisioningStatusCodes DEFAULT_PROVISION_STATUS = ProvisioningStatusCodes.PRV_PROVISION_SUCCESS;
 	
-	public static final ProvisioningStatusCodes DEFAULT_REMOVE_STATUS = ProvisioningStatusCodes.PRV_DELETE_PENDING;
+	public static final ProvisioningStatusCodes DEFAULT_REMOVE_STATUS = ProvisioningStatusCodes.PRV_DELETE_SUCCESS;
 	
 	public static final String SERVER_REFERENCE_CODE = "SERVER0001";
 

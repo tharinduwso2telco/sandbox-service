@@ -101,10 +101,29 @@ public class ProvisionRequestedServiceHandler extends AbstractRequestHandler<Ser
 	protected boolean validate(ServiceProvisionRequestWrapper wrapperDTO) throws Exception {
 		try {
 			String msisdn = wrapperDTO.getMsisdn();
+			String mcc = CommonUtil.getNullOrTrimmedValue(wrapperDTO.getMcc());
+			String mnc = CommonUtil.getNullOrTrimmedValue(wrapperDTO.getMnc());
+			
 			List<ValidationRule> validationRules = new ArrayList<>();
+			
+			if (mcc != null) {
+				validationRules.add(new ValidationRule(
+						ValidationRule.VALIDATION_TYPE_OPTIONAL_INT_GE_ZERO,
+						"mcc", mcc));
+				validationRules.add(new ValidationRule(
+						ValidationRule.VALIDATION_TYPE_MANDATORY_INT_GE_ZERO,
+						"mnc", mnc));
+			} else if (mnc != null) {
+				validationRules.add(new ValidationRule(
+						ValidationRule.VALIDATION_TYPE_OPTIONAL_INT_GE_ZERO,
+						"mnc", mnc));
+			}
 
 			ProvisionRequestBean requestBean = wrapperDTO.getProvisionRequestBean();
 
+			String onBehalfOf = CommonUtil.getNullOrTrimmedValue(wrapperDTO.getOnBehalfOf());
+			String purchaseCategoryCode = CommonUtil.getNullOrTrimmedValue(wrapperDTO.getPurchaseCategoryCode());
+			
 			if (requestBean == null || requestBean.getServiceProvisionRequest() == null) {
 				responseWrapperDTO.setRequestError(constructRequestError(SERVICEEXCEPTION,
 						ServiceError.INVALID_INPUT_VALUE, "Empty or Invalid Request Body"));
@@ -122,10 +141,22 @@ public class ProvisionRequestedServiceHandler extends AbstractRequestHandler<Ser
 			String serviceCode = requestBean.getServiceProvisionRequest().getServiceCode();
 			String serviceName = requestBean.getServiceProvisionRequest().getServiceName();
 			String clientCorrelator = requestBean.getServiceProvisionRequest().getClientCorrelator();
+			String onBehalfOf = CommonUtil.getNullOrTrimmedValue(requestBean.getServiceProvisionRequest().getOnBehalfOf());
+			String purchaseCategoryCode = CommonUtil.getNullOrTrimmedValue(wrapperDTO.getPurchaseCategoryCode());
+			
 			String clientReferenceCode = requestBean.getServiceProvisionRequest().getClientReferenceCode();
 			String notifyUrl = requestBean.getServiceProvisionRequest().getCallbackReference().getNotifyURL();
 			String callbackData = requestBean.getServiceProvisionRequest().getCallbackReference().getCallbackData();
 
+			validationRules.add(new ValidationRule(
+					ValidationRule.VALIDATION_TYPE_OPTIONAL, "onBehalfOf",
+					onBehalfOf));
+			validationRules.add(new ValidationRule(
+					ValidationRule.VALIDATION_TYPE_OPTIONAL,
+					"purchaseCategoryCode", purchaseCategoryCode));
+
+			
+			
 			if (CommonUtil.getNullOrTrimmedValue(serviceCode) == null
 					&& CommonUtil.getNullOrTrimmedValue(serviceName) == null) {
 				responseWrapperDTO.setRequestError(constructRequestError(SERVICEEXCEPTION,
@@ -188,6 +219,12 @@ public class ProvisionRequestedServiceHandler extends AbstractRequestHandler<Ser
 
 		User user = extendedRequestDTO.getUser();
 		String msisdn = extendedRequestDTO.getMsisdn();
+		
+		String mcc = CommonUtil.getNullOrTrimmedValue(extendedRequestDTO.getMcc());
+		String mnc = CommonUtil.getNullOrTrimmedValue(extendedRequestDTO.getMnc());
+		String phoneNumber = null;
+
+		
 		String serviceCode = CommonUtil
 				.getNullOrTrimmedValue(requestBean.getServiceProvisionRequest().getServiceCode());
 		String serviceName = CommonUtil
@@ -208,12 +245,20 @@ public class ProvisionRequestedServiceHandler extends AbstractRequestHandler<Ser
 
 		try {
 
-			MSISDNUtil msisdnUtil = new MSISDNUtil();
-			MSISDN parsedMsisdn = msisdnUtil.parse(msisdn);
+			if (msisdn != null) {
+			    phoneNumber = CommonUtil.extractNumberFromMsisdn(msisdn);
+			}
+			ManageNumber mappedNumber = dao.getMSISDN(phoneNumber, null, mcc, mnc);
 
-			String phoneNumber = Integer.toString(parsedMsisdn.getCountryCode())
-					+ Long.toString(parsedMsisdn.getNationalNumber());
-
+			if (mappedNumber == null) {
+			    LOG.error("###PROVISION### Valid MSISDN doesn't exists for the given inputs");
+			    responseWrapperDTO.setRequestError(constructRequestError(SERVICEEXCEPTION, ServiceError.INVALID_INPUT_VALUE,
+				    "Valid MSISDN does not exist for the given mnc,mcc parameters"));
+			    responseWrapperDTO.setHttpStatus(Status.BAD_REQUEST);
+			    return responseWrapperDTO;
+			} else {
+			    phoneNumber = mappedNumber.getNumber();
+			}
 			ProvisionAllService availableService = provisioningDao.getProvisionService(serviceCode, serviceName, user);
 
 			checkServiceCodeAndServiceNameValidity(serviceName, serviceCode, availableService);
@@ -348,7 +393,7 @@ public class ProvisionRequestedServiceHandler extends AbstractRequestHandler<Ser
 		CallbackReference callbackReference = new CallbackReference();
 		callbackReference.setCallbackData(reference.getCallbackData());
 		callbackReference.setNotifyURL(reference.getNotifyURL());
-		callbackReference.setResourceURL(ProvisioningUtil.getResourceUrl(requestWrapperDTO));
+		callbackReference.setResourceURL(CommonUtil.getResourceUrl(requestWrapperDTO));
 
 		serviceProvisionResponse.setCallbackReference(callbackReference);
 		if (status != null) {

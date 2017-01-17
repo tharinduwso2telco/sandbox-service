@@ -28,6 +28,14 @@ public class ServiceListProvisioned {
 
 	/** The outer service info list **/
 	private List<ServiceInfoListProvisionedDTO> serviceInfo = new ArrayList<>();
+	
+	private String onBehalfOf;
+
+	private String purchaseCatergoryCode;
+
+	private String requestIdentifier;
+
+	private String responseIdentifier;
 
 	private String resourceURL;
 
@@ -59,6 +67,40 @@ public class ServiceListProvisioned {
 	 */
 	public void setResourceURL(String resourceURL) {
 		this.resourceURL = resourceURL;
+	}
+	
+	
+
+	public String getOnBehalfOf() {
+		return onBehalfOf;
+	}
+
+	public void setOnBehalfOf(String onBehalfOf) {
+		this.onBehalfOf = onBehalfOf;
+	}
+
+	public String getPurchaseCatergoryCode() {
+		return purchaseCatergoryCode;
+	}
+
+	public void setPurchaseCatergoryCode(String purchaseCatergoryCode) {
+		this.purchaseCatergoryCode = purchaseCatergoryCode;
+	}
+
+	public String getRequestIdentifier() {
+		return requestIdentifier;
+	}
+
+	public void setRequestIdentifier(String requestIdentifier) {
+		this.requestIdentifier = requestIdentifier;
+	}
+
+	public String getResponseIdentifier() {
+		return responseIdentifier;
+	}
+
+	public void setResponseIdentifier(String responseIdentifier) {
+		this.responseIdentifier = responseIdentifier;
 	}
 
 	/**

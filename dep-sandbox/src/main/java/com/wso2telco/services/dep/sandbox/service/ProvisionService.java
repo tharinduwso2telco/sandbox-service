@@ -70,7 +70,7 @@ public class ProvisionService {
 			@ApiParam(value = "mcc", required = false) @QueryParam("mcc") String mcc,
 			@ApiParam(value = "mnc", required = false) @QueryParam("mnc") String mnc,
 			@ApiParam(value = "onBehalfOf", required = false) @QueryParam("onBehalfOf") String onBehalfOf,
-			@ApiParam(value = "purchaseCatergoryCode", required = false) @QueryParam("purchaseCatergoryCode") String purchaseCatergoryCode,
+			@ApiParam(value = "purchaseCategoryCode", required = false) @QueryParam("purchaseCategoryCode") String purchaseCategoryCode,
 			@ApiParam(value = "requestIdentifier", required = true) @QueryParam("requestIdentifier") String requestIdentifier,
 			@ApiParam(value = "offset", required = false) @QueryParam("offset") String offSet,
 			@ApiParam(value = "limit", required = false) @QueryParam("limit") String limit,
@@ -86,7 +86,7 @@ public class ProvisionService {
 		requestDTO.setMcc(mcc);
 		requestDTO.setMnc(mnc);
 		requestDTO.setOnBehalfOf(onBehalfOf);
-		requestDTO.setPurchaseCatergoryCode(purchaseCatergoryCode);
+		requestDTO.setPurchaseCategoryCode(purchaseCategoryCode);
 		requestDTO.setRequestIdentifier(requestIdentifier);
 
 		RequestHandleable handler = RequestBuilderFactory
@@ -119,7 +119,7 @@ public class ProvisionService {
 			@ApiParam(value = "mcc", required = false) @QueryParam("mcc") String mcc,
 			@ApiParam(value = "mnc", required = false) @QueryParam("mnc") String mnc,
 			@ApiParam(value = "onBehalfOf", required = false) @QueryParam("onBehalfOf") String onBehalfOf,
-			@ApiParam(value = "purchaseCatergoryCode", required = false) @QueryParam("purchaseCatergoryCode") String purchaseCatergoryCode,
+			@ApiParam(value = "purchaseCategoryCode", required = false) @QueryParam("purchaseCategoryCode") String purchaseCategoryCode,
 			@ApiParam(value = "requestIdentifier", required = true) @QueryParam("requestIdentifier") String requestIdentifier,
 			@ApiParam(value = "offset", required = false) @QueryParam("offset") String offSet,
 			@ApiParam(value = "limit", required = false) @QueryParam("limit") String limit,
@@ -134,7 +134,7 @@ public class ProvisionService {
 		requestDTO.setMcc(mcc);
 		requestDTO.setMnc(mnc);
 		requestDTO.setOnBehalfOf(onBehalfOf);
-		requestDTO.setPurchaseCatergoryCode(purchaseCatergoryCode);
+		requestDTO.setPurchaseCategoryCode(purchaseCategoryCode);
 		requestDTO.setRequestIdentifier(requestIdentifier);
 		RequestHandleable handler = RequestBuilderFactory
 				.getInstance(requestDTO);
@@ -221,7 +221,7 @@ public class ProvisionService {
 		requestDTO.setRequestType(RequestType.PROVISIONING);
 		requestDTO.setMcc(mcc);
 		requestDTO.setMnc(mnc);
-
+		
 		RequestHandleable<RequestDTO> handler = RequestBuilderFactory
 				.getInstance(requestDTO);
 		Returnable returnable = null;
