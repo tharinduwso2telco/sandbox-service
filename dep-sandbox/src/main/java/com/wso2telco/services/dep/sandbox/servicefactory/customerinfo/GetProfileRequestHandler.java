@@ -64,10 +64,10 @@ public class GetProfileRequestHandler extends AbstractRequestHandler<GetProfileR
 
     }
 
-    @Override
-    protected Returnable getResponseDTO() {
-	return null;
-    }
+	@Override
+	protected Returnable getResponseDTO() {
+		return responseWrapperDTO;
+	}
 
     @Override
     protected List<String> getAddress() {
@@ -202,7 +202,7 @@ public class GetProfileRequestHandler extends AbstractRequestHandler<GetProfileR
 	if (customerInfoDTO == null) {
 	    LOG.error("###CUSTOMERINFO### Customer information does not available");
 	    responseWrapperDTO.setRequestError(constructRequestError(SERVICEEXCEPTION, ServiceError.INVALID_INPUT_VALUE,
-		    " No Valid Customer information available for the given input parameters"));
+		    " No Valid Customer profile information configured for the given input parameters"));
 	    responseWrapperDTO.setHttpStatus(Status.BAD_REQUEST);
 	    return responseWrapperDTO;
 	}
@@ -227,7 +227,7 @@ public class GetProfileRequestHandler extends AbstractRequestHandler<GetProfileR
 	customer.setTitle(customerInfoDTO.getTitle());
 	customer.setFirstName(customerInfoDTO.getFirstName());
 	customer.setLastName(customerInfoDTO.getLastName());
-	customer.setImsi(number.getIMSI());
+	customer.setImsi(CommonUtil.getNullOrTrimmedValue(extendedRequestDTO.getImsi()));
 	customer.setOnBehalfOf(CommonUtil.getNullOrTrimmedValue(extendedRequestDTO.getOnBehalfOf()));
 	customer.setPurchaseCategoryCode(CommonUtil.getNullOrTrimmedValue(extendedRequestDTO.getPurchaseCategoryCode()));
 	customer.setRequestIdentifier( CommonUtil.getNullOrTrimmedValue(extendedRequestDTO.getRequestIdentifier()));
