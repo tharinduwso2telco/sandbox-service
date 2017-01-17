@@ -33,7 +33,7 @@ public class QueryProvisioningServicesRequestWrapper extends RequestDTO {
     
     private String onBehalfOf;
     
-    private String purchaseCatergoryCode;
+    private String purchaseCategoryCode;
     
     private String requestIdentifier;
 
@@ -121,11 +121,11 @@ public class QueryProvisioningServicesRequestWrapper extends RequestDTO {
 	}
 
 	public String getPurchaseCatergoryCode() {
-		return purchaseCatergoryCode;
+		return purchaseCategoryCode;
 	}
 
-	public void setPurchaseCatergoryCode(String purchaseCatergoryCode) {
-		this.purchaseCatergoryCode = purchaseCatergoryCode;
+	public void setPurchaseCategoryCode(String purchaseCategoryCode) {
+		this.purchaseCategoryCode = purchaseCategoryCode;
 	}
 
 	public String getRequestIdentifier() {

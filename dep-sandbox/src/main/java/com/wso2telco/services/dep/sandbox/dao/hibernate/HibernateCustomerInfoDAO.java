@@ -49,6 +49,7 @@ public class HibernateCustomerInfoDAO extends AbstractDAO implements CustomerInf
     }
 
     @Override
+
     public ManageNumber getMSISDN(String msisdn, String imsi, String mcc, String mnc,String user) throws Exception {
 	Session session = getSession();
 	ManageNumber number = null;
@@ -111,6 +112,7 @@ public class HibernateCustomerInfoDAO extends AbstractDAO implements CustomerInf
     }
 
     @Override
+
     public CustomerInfoDTO getProfileData(String msisdn, User user) throws Exception {
 	Session session = getSession();
 	CustomerInfoDTO customerInfoDTO = null;
