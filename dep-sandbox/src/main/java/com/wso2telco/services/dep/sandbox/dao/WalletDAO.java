@@ -17,18 +17,17 @@ package com.wso2telco.services.dep.sandbox.dao;
 
 import java.util.List;
 
-import com.wso2telco.services.dep.sandbox.dao.model.domain.AttributeDistribution;
 import com.wso2telco.services.dep.sandbox.dao.model.domain.AttributeValues;
+import com.wso2telco.services.dep.sandbox.dao.model.domain.ManageNumber;
 
 public interface WalletDAO {
-	
-	public List<AttributeValues> getTransactionValue(String endUserId, List<String> attribute, String serviceCall) throws Exception;
-	public String getAttributeValue(String endUserId, String serviceCall, String attribute) throws Exception;
-	public Double checkBalance (String msisdn) throws Exception;
-	public boolean updateBalance(String msisdn, Double updateBalance) throws Exception;
-	public AttributeDistribution getDistributionValue(String serviceCall, String attributeName, String apiType) throws Exception; 
-	public Integer getNumber(String endUserId) throws Exception;
-	public AttributeValues getAttributeValue(AttributeDistribution distributionObj, Integer endUserId) throws Exception;
-	public boolean checkDuplicateValue(String endUserId, String serviceCall, String value, String attributeName) throws Exception;
-	public AttributeValues checkClientCorrelator(String endUserId, String serviceCall, String clientCorrelator) throws Exception;
+	public List<AttributeValues> getTransactionValue(String endUserId, List<String> attribute, String tableName,
+			Integer userId) throws Exception;
+	public AttributeValues getAttributeValue(String endUserId, String serviceCall, String attribute, Integer userId)
+			throws Exception;
+	public AttributeValues checkDuplicateValue(String serviceCall, String value, String attributeName, String tableName)
+			throws Exception;
+	public Integer saveAttributeValue(AttributeValues valueObj) throws Exception;
+	public AttributeValues getResponse(Integer id) throws Exception;
+	public boolean saveManageNumbers(ManageNumber manageNumber) throws Exception;
 }

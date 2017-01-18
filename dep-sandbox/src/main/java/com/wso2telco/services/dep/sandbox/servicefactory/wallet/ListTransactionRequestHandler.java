@@ -11,22 +11,29 @@ import org.json.simple.JSONObject;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import com.wso2telco.core.dbutils.exception.ServiceError;
 import com.wso2telco.dep.oneapivalidation.exceptions.CustomException;
 import com.wso2telco.dep.oneapivalidation.util.Validation;
 import com.wso2telco.dep.oneapivalidation.util.ValidationRule;
 import com.wso2telco.services.dep.sandbox.dao.DaoFactory;
+import com.wso2telco.services.dep.sandbox.dao.NumberDAO;
 import com.wso2telco.services.dep.sandbox.dao.WalletDAO;
 import com.wso2telco.services.dep.sandbox.dao.model.custom.ListTransactionResponseBean;
 import com.wso2telco.services.dep.sandbox.dao.model.custom.ListTransactionDTO;
 import com.wso2telco.services.dep.sandbox.dao.model.domain.APIServiceCalls;
 import com.wso2telco.services.dep.sandbox.dao.model.domain.APITypes;
 import com.wso2telco.services.dep.sandbox.dao.model.domain.AttributeValues;
+import com.wso2telco.services.dep.sandbox.dao.model.domain.ManageNumber;
 import com.wso2telco.services.dep.sandbox.servicefactory.AbstractRequestHandler;
 import com.wso2telco.services.dep.sandbox.servicefactory.Returnable;
 import com.wso2telco.services.dep.sandbox.util.CommonUtil;
 import com.wso2telco.services.dep.sandbox.util.MessageLogHandler;
 import com.wso2telco.services.dep.sandbox.util.ServiceName;
+import com.wso2telco.services.dep.sandbox.util.TableName;
 
 public class ListTransactionRequestHandler extends AbstractRequestHandler<ListTransactionRequestWrapper> {
 
@@ -70,7 +77,7 @@ public class ListTransactionRequestHandler extends AbstractRequestHandler<ListTr
 			LOG.error("###WALLET### Error in Validation : " + ex);
 			responseWrapper.setRequestError(constructRequestError(SERVICEEXCEPTION, ex.getErrcode(), ex.getErrmsg(),
 					wrapperDTO.getEndUserId()));
-			responseWrapper.setHttpStatus(Response.Status.BAD_REQUEST);
+			responseWrapper.setHttpStatus(Status.BAD_REQUEST);
 		}
 		return true;
 	}
@@ -82,13 +89,13 @@ public class ListTransactionRequestHandler extends AbstractRequestHandler<ListTr
 			return responseWrapper;
 		}
 		try {
-
 			String msisdn = extendedRequestDTO.getEndUserId();
 			String endUserId = getLastMobileNumber(msisdn);
 			List<AttributeValues> amounTransaction = null;
 			List<String> attributeName = new ArrayList<String>();
 			attributeName.add(AttributeName.Payment.toString().toLowerCase());
 			attributeName.add(AttributeName.Refund.toString().toLowerCase());
+			Integer userId = extendedRequestDTO.getUser().getId();
 
 			// Save Request Log
 			APITypes apiTypes = dao.getAPIType(extendedRequestDTO.getRequestType().toString().toLowerCase());
@@ -98,17 +105,30 @@ public class ListTransactionRequestHandler extends AbstractRequestHandler<ListTr
 			logHandler.saveMessageLog(apiServiceCalls.getApiServiceCallId(), extendedRequestDTO.getUser().getId(),
 					"msisdn", msisdn, object);
 
+			String tableName = TableName.NUMBERS.toString().toLowerCase();
 			ListTransactionResponseBean paymentTransaction = new ListTransactionResponseBean();
-			amounTransaction = walletDAO.getTransactionValue(endUserId, attributeName, null);
+			amounTransaction = walletDAO.getTransactionValue(endUserId, attributeName, tableName, userId);
 
 			List<JsonNode> listNodes = new ArrayList<JsonNode>();
 
 			if (amounTransaction != null && !amounTransaction.isEmpty()) {
 				for (AttributeValues values : amounTransaction) {
+					JsonParser parser = new JsonParser();
+					JsonObject jsonObject = parser.parse(values.getValue()).getAsJsonObject();
+					JsonElement get = jsonObject.get("paymentAmount");
+					JsonObject asJsonObjectPayment = get.getAsJsonObject();
+					asJsonObjectPayment.remove("chargingMetaData");
+					jsonObject.remove("clientCorrelator");
+					jsonObject.remove("notifyURL");
+					jsonObject.remove("originalReferenceCode");
+					jsonObject.remove("originalServerReferenceCode");
+					jsonObject.remove("resourceURL");
+					String jsonInString = null;
+					jsonInString = jsonObject.toString();
 
 					JsonNode node = null;
 					ObjectMapper mapper = new ObjectMapper();
-					node = mapper.readValue(values.getValue(), JsonNode.class);
+					node = mapper.readValue(jsonInString, JsonNode.class);
 					listNodes.add(node);
 				}
 				paymentTransaction.setAmountTransaction(listNodes);
@@ -117,7 +137,6 @@ public class ListTransactionRequestHandler extends AbstractRequestHandler<ListTr
 				responseWrapper.setHttpStatus(Status.NO_CONTENT);
 				responseWrapper.setHttpStatus(Response.Status.OK);
 				return responseWrapper;
-
 			}
 			paymentTransaction.setResourceURL(CommonUtil.getResourceUrl(extendedRequestDTO));
 
@@ -138,7 +157,6 @@ public class ListTransactionRequestHandler extends AbstractRequestHandler<ListTr
 
 	@Override
 	protected void init(ListTransactionRequestWrapper extendedRequestDTO) throws Exception {
-
 		requestWrapper = extendedRequestDTO;
 		responseWrapper = new ListTransactionResponseWrapper();
 	}
