@@ -1048,6 +1048,8 @@ Response :
 
 - Balance lookup - Check the account balance of an end user
 
+The account status and currency should configure using "Add account information for msisdn" in wallet api related user configuration before call "Balance lookup" service
+
 Request :
 
 Type - GET
