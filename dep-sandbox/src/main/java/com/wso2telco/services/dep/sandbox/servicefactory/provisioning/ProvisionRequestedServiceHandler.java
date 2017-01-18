@@ -118,21 +118,21 @@ public class ProvisionRequestedServiceHandler extends AbstractRequestHandler<Ser
 				validationRules.add(new ValidationRule(
 						ValidationRule.VALIDATION_TYPE_OPTIONAL_INT_GE_ZERO,
 						"mnc", mnc));
+				validationRules.add(new ValidationRule(
+						ValidationRule.VALIDATION_TYPE_MANDATORY_INT_GE_ZERO,
+						"mcc", mcc));
 			}
-
 			ProvisionRequestBean requestBean = wrapperDTO.getProvisionRequestBean();
 			
 			if (requestBean == null || requestBean.getServiceProvisionRequest() == null) {
 				responseWrapperDTO.setRequestError(constructRequestError(SERVICEEXCEPTION,
 						ServiceError.INVALID_INPUT_VALUE, "Empty or Invalid Request Body"));
-				responseWrapperDTO.setHttpStatus(Status.BAD_REQUEST);
 				return false;
 			}
 
 			if (requestBean.getServiceProvisionRequest().getCallbackReference() == null) {
 				responseWrapperDTO.setRequestError(constructRequestError(SERVICEEXCEPTION,
 						ServiceError.INVALID_INPUT_VALUE, "Empty or Invalid CallbackReference"));
-				responseWrapperDTO.setHttpStatus(Status.BAD_REQUEST);
 				return false;
 			}
 
@@ -159,7 +159,6 @@ public class ProvisionRequestedServiceHandler extends AbstractRequestHandler<Ser
 					&& CommonUtil.getNullOrTrimmedValue(serviceName) == null) {
 				responseWrapperDTO.setRequestError(constructRequestError(SERVICEEXCEPTION,
 						ServiceError.INVALID_INPUT_VALUE, "ServiceCode and ServiceName Both are Empty"));
-				responseWrapperDTO.setHttpStatus(Status.BAD_REQUEST);
 				return false;
 			}
 
@@ -189,11 +188,14 @@ public class ProvisionRequestedServiceHandler extends AbstractRequestHandler<Ser
 
 			Validation.checkRequestParams(validationRules.toArray(validationRuleArray));
 		} catch (CustomException ex) {
-			LOG.error("###PROVISION### Error in Validations. ", ex);
-			responseWrapperDTO.setRequestError(
-					constructRequestError(SERVICEEXCEPTION, ex.getErrcode(), ex.getErrmsg(), ex.getErrvar()[0]));
-			responseWrapperDTO.setHttpStatus(Status.BAD_REQUEST);
-			return false;
+			LOG.error("###PROVISION### Error in Validation : " + ex);
+			 String errorMessage = "";
+			    if (ex.getErrvar() != null && ex.getErrvar().length > 0) {
+				errorMessage = ex.getErrvar()[0];
+			    }
+			    responseWrapperDTO.setRequestError(
+				    constructRequestError(SERVICEEXCEPTION, ex.getErrcode(), ex.getErrmsg(), errorMessage));
+
 		}
 
 		return true;
@@ -210,6 +212,7 @@ public class ProvisionRequestedServiceHandler extends AbstractRequestHandler<Ser
 	protected Returnable process(ServiceProvisionRequestWrapper extendedRequestDTO) throws Exception {
 
 		if (responseWrapperDTO.getRequestError() != null) {
+			responseWrapperDTO.setHttpStatus(Status.BAD_REQUEST);
 			return responseWrapperDTO;
 		}
 
