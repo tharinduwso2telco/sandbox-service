@@ -110,39 +110,97 @@ public class RemoveProvisionedServices extends AbstractRequestHandler<RemoveProv
 			
 			RequestCallbackReference callRef = request.getCallbackReference();
 			
-			if (callRef != null){
-				
-				String msisdn = CommonUtil.getNullOrTrimmedValue(wrapperDTO.getMsisdn());
-				String serviceCode= CommonUtil.getNullOrTrimmedValue(request.getServiceCode());
-				String clientCorrelator = CommonUtil.getNullOrTrimmedValue(request.getClientCorrelator());
-				String clientReferenceCode = CommonUtil.getNullOrTrimmedValue(request.getClientReferenceCode());	
-				String onBehalfOf = CommonUtil.getNullOrTrimmedValue(request.getOnBehalfOf());
-				String purchaseCategoryCode = CommonUtil.getNullOrTrimmedValue(request.getPurchaseCategoryCode());
-				String notifyURL = CommonUtil.getNullOrTrimmedValue(callRef.getNotifyURL());
-				String callbackData =CommonUtil.getNullOrTrimmedValue(callRef.getCallbackData());
-			
-				try {
-					ValidationRule[] validationRules = {
-						new ValidationRule(ValidationRule.VALIDATION_TYPE_MANDATORY_TEL_END_USER_ID, "msisdn", msisdn),
-						new ValidationRule(ValidationRule.VALIDATION_TYPE_MANDATORY, "serviceCode", serviceCode),
-						new ValidationRule(ValidationRule.VALIDATION_TYPE_OPTIONAL, "clientCorrelator", clientCorrelator),
-						new ValidationRule(ValidationRule.VALIDATION_TYPE_MANDATORY, "clientReferenceCode", clientReferenceCode),
-						new ValidationRule(ValidationRule.VALIDATION_TYPE_OPTIONAL, "onBehalfOf", onBehalfOf),
-						new ValidationRule(ValidationRule.VALIDATION_TYPE_OPTIONAL,"purchaseCategoryCode", purchaseCategoryCode),
-						new ValidationRule(ValidationRule.VALIDATION_TYPE_MANDATORY_URL, "notifyURL", notifyURL),
-						new ValidationRule(ValidationRule.VALIDATION_TYPE_MANDATORY, "callbackData", callbackData) 
-						};
+			if (callRef != null) {
 
-					Validation.checkRequestParams(validationRules);
+				String msisdn = CommonUtil.getNullOrTrimmedValue(wrapperDTO
+						.getMsisdn());
+				String serviceCode = CommonUtil.getNullOrTrimmedValue(request
+						.getServiceCode());
+				String clientCorrelator = CommonUtil
+						.getNullOrTrimmedValue(request.getClientCorrelator());
+				String clientReferenceCode = CommonUtil
+						.getNullOrTrimmedValue(request.getClientReferenceCode());
+				String onBehalfOf = CommonUtil.getNullOrTrimmedValue(request
+						.getOnBehalfOf());
+				String purchaseCategoryCode = CommonUtil
+						.getNullOrTrimmedValue(request
+								.getPurchaseCategoryCode());
+				String notifyURL = CommonUtil.getNullOrTrimmedValue(callRef
+						.getNotifyURL());
+				String callbackData = CommonUtil.getNullOrTrimmedValue(callRef
+						.getCallbackData());
+				String mcc = CommonUtil.getNullOrTrimmedValue(wrapperDTO
+						.getMcc());
+				String mnc = CommonUtil.getNullOrTrimmedValue(wrapperDTO
+						.getMnc());
+				List<ValidationRule> validationRules = new ArrayList<>();
+
+				try {
+
+					if (mcc != null) {
+						validationRules
+								.add(new ValidationRule(
+										ValidationRule.VALIDATION_TYPE_OPTIONAL_INT_GE_ZERO,
+										"mcc", mcc));
+						validationRules
+								.add(new ValidationRule(
+										ValidationRule.VALIDATION_TYPE_MANDATORY_INT_GE_ZERO,
+										"mnc", mnc));
+					} else if (mnc != null) {
+						validationRules
+								.add(new ValidationRule(
+										ValidationRule.VALIDATION_TYPE_OPTIONAL_INT_GE_ZERO,
+										"mnc", mnc));
+						validationRules
+								.add(new ValidationRule(
+										ValidationRule.VALIDATION_TYPE_MANDATORY_INT_GE_ZERO,
+										"mcc", mcc));
+					}
+
+					validationRules
+							.add(new ValidationRule(
+									ValidationRule.VALIDATION_TYPE_MANDATORY_TEL_END_USER_ID,
+									"msisdn", msisdn));
+					validationRules.add(new ValidationRule(
+							ValidationRule.VALIDATION_TYPE_MANDATORY,
+							"serviceCode", serviceCode));
+					validationRules.add(new ValidationRule(
+							ValidationRule.VALIDATION_TYPE_OPTIONAL,
+							"clientCorrelator", clientCorrelator));
+					validationRules.add(new ValidationRule(
+							ValidationRule.VALIDATION_TYPE_MANDATORY,
+							"clientReferenceCode", clientReferenceCode));
+					validationRules.add(new ValidationRule(
+							ValidationRule.VALIDATION_TYPE_OPTIONAL,
+							"onBehalfOf", onBehalfOf));
+					validationRules.add(new ValidationRule(
+							ValidationRule.VALIDATION_TYPE_OPTIONAL,
+							"purchaseCategoryCode", purchaseCategoryCode));
+					validationRules.add(new ValidationRule(
+							ValidationRule.VALIDATION_TYPE_MANDATORY_URL,
+							"notifyURL", notifyURL));
+					validationRules.add(new ValidationRule(
+							ValidationRule.VALIDATION_TYPE_MANDATORY,
+							"callbackData", callbackData));
+
+					ValidationRule[] validationRuleArray = new ValidationRule[validationRules
+							.size()];
+
+					Validation.checkRequestParams(validationRules
+							.toArray(validationRuleArray));
 				} catch (CustomException ex) {
 					LOG.error("###PROVISION### Error in Validation : " + ex);
-					responseWrapper.setRequestError(constructRequestError(SERVICEEXCEPTION, ex.getErrcode(), ex.getErrmsg(),wrapperDTO.getMsisdn()));
-					responseWrapper.setHttpStatus(javax.ws.rs.core.Response.Status.BAD_REQUEST);
+					String errorMessage = "";
+					if (ex.getErrvar() != null && ex.getErrvar().length > 0) {
+						errorMessage = ex.getErrvar()[0];
+					}
+					responseWrapper.setRequestError(constructRequestError(
+							SERVICEEXCEPTION, ex.getErrcode(), ex.getErrmsg(),
+							errorMessage));
 				}
 				return true;
 			} else {
 				responseWrapper.setRequestError(constructRequestError(SERVICEEXCEPTION,ServiceError.INVALID_INPUT_VALUE.getCode(),ServiceError.INVALID_INPUT_VALUE.getMessage(),wrapperDTO.getMsisdn()));
-				responseWrapper.setHttpStatus(javax.ws.rs.core.Response.Status.BAD_REQUEST);
 			}
 
 		}
@@ -160,6 +218,7 @@ public class RemoveProvisionedServices extends AbstractRequestHandler<RemoveProv
 	protected Returnable process(RemoveProvisionedRequestWrapperDTO extendedRequestDTO) throws Exception {
 		
 		if (responseWrapper.getRequestError() != null) {
+			responseWrapper.setHttpStatus(javax.ws.rs.core.Response.Status.BAD_REQUEST);
 			return responseWrapper;
 		}
 			
@@ -168,28 +227,44 @@ public class RemoveProvisionedServices extends AbstractRequestHandler<RemoveProv
 		
 		User user = extendedRequestDTO.getUser();
 		String serviceCode = CommonUtil.getNullOrTrimmedValue(request.getServiceCode());
-		String msisdn = getLastMobileNumber(extendedRequestDTO.getMsisdn());
+		String msisdn = extendedRequestDTO.getMsisdn();
 		String clientCorrelator = CommonUtil.getNullOrTrimmedValue(request.getClientCorrelator());
 		String clientReferenceCode = CommonUtil.getNullOrTrimmedValue(request.getClientReferenceCode());
 		String notifyURL = CommonUtil.getNullOrTrimmedValue(request.getCallbackReference().getNotifyURL());
 		String callbackData = CommonUtil.getNullOrTrimmedValue(request.getCallbackReference().getCallbackData());
 		Map<ProvisioningStatusCodes, Status> statusMap = new HashMap<ProvisioningStatusCodes, Status>();
+		String mcc = CommonUtil.getNullOrTrimmedValue(extendedRequestDTO.getMcc());
+		String mnc = CommonUtil.getNullOrTrimmedValue(extendedRequestDTO.getMnc());
+		String phoneNumber = null;
 		
 		try{	
-			
+			if (msisdn != null) {
+			    phoneNumber = CommonUtil.extractNumberFromMsisdn(msisdn);
+			}
+			ManageNumber mappedNumber = dao.getMSISDN(phoneNumber, null, mcc, mnc);
+
+			if (mappedNumber == null) {
+			    LOG.error("###PROVISION### Valid MSISDN doesn't exists for the given inputs");
+			    responseWrapper.setRequestError(constructRequestError(SERVICEEXCEPTION, ServiceError.INVALID_INPUT_VALUE,
+				    "Valid MSISDN does not exist for the given mnc,mcc parameters"));
+			    responseWrapper.setHttpStatus(javax.ws.rs.core.Response.Status.BAD_REQUEST);
+			    return responseWrapper;
+			} else {
+			    phoneNumber = mappedNumber.getNumber();
+			}
 			ProvisioningUtil.saveProvisioningRequestDataLog(ProvisionRequestTypes.DELETE_PROVISION_SERVICE.toString(),
 					extendedRequestDTO.getMsisdn(), user, clientCorrelator, clientReferenceCode, notifyURL, callbackData,
 					new Date());
 			// check whether the requested service is valid
 			ProvisionAllService availableService = checkServiceCodeValidity(serviceCode,user);
 			// check whether the msisdn is registered for the requested service
-			checkServiceValidityForMSISDN(msisdn, user.getUserName(),availableService);
+			checkServiceValidityForMSISDN(phoneNumber, user.getUserName(),availableService);
 			// check whether the SP desire any Fail Error Messages
-			checkIfErrorMessageSet(msisdn, user.getUserName(),serviceCode);
+			checkIfErrorMessageSet(phoneNumber, user.getUserName(),serviceCode);
 			// Returns map of all available transaction status
 			statusMap = getAllTransactionStatus();
 			// this returns the servie which is eligible for removing
-			ProvisionedServices provisionedCheckList = provisioningDao.getAlreadyProvisioned(msisdn, user.getUserName(),serviceCode);
+			ProvisionedServices provisionedCheckList = provisioningDao.getAlreadyProvisioned(phoneNumber, user.getUserName(),serviceCode);
 			
 			if (provisionedCheckList != null) {	
 				// update db for removal of provisioned service
@@ -200,7 +275,7 @@ public class RemoveProvisionedServices extends AbstractRequestHandler<RemoveProv
 				return responseWrapper;
 			} else {
 				// check for already removed provisioned service for request duplication against client correlator
-				boolean isDuplicate = checkRequestDuplication(msisdn, user.getUserName(),serviceCode, clientCorrelator);
+				boolean isDuplicate = checkRequestDuplication(phoneNumber, user.getUserName(),serviceCode, clientCorrelator);
 				// non matching client correlator
 				if(!isDuplicate){
 					buildJsonResponseBody(serviceCode,clientCorrelator,clientReferenceCode,callbackData,notifyURL,statusMap.get(ProvisioningStatusCodes.PRV_DELETE_NOT_ACTIVE).getStatus());
