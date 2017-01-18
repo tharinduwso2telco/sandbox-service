@@ -93,30 +93,40 @@ public class GetProfileRequestHandler extends AbstractRequestHandler<GetProfileR
 	List<ValidationRule> validationRulesList = new ArrayList<>();
 
 	try {
-	    if (msisdn == null && imsi == null) {
-		responseWrapperDTO.setRequestError(constructRequestError(SERVICEEXCEPTION,
-			ServiceError.INVALID_INPUT_VALUE, "MSISDN and IMSI are missing"));
-	    }
+			if (msisdn == null && imsi == null) {
+				responseWrapperDTO.setRequestError(constructRequestError(
+						SERVICEEXCEPTION, ServiceError.INVALID_INPUT_VALUE,
+						"MSISDN and IMSI are missing"));
+			}
 
-	    if (msisdn != null) {
-		validationRulesList.add(
-			new ValidationRule(ValidationRule.VALIDATION_TYPE_MANDATORY_TEL_END_USER_ID, "msisdn", msisdn));
-	    }
+			if (msisdn != null) {
+				validationRulesList
+						.add(new ValidationRule(
+								ValidationRule.VALIDATION_TYPE_MANDATORY_TEL_END_USER_ID,
+								"msisdn", msisdn));
+			}
 
-	    if (imsi != null) {
-		validationRulesList
-			.add(new ValidationRule(ValidationRule.VALIDATION_TYPE_MANDATORY_NUMBER, "imsi", imsi));
-	    }
+			if (imsi != null) {
+				validationRulesList.add(new ValidationRule(
+						ValidationRule.VALIDATION_TYPE_MANDATORY_NUMBER,
+						"imsi", imsi));
+			}
 
-	    if (mcc != null) {
-		validationRulesList
-			.add(new ValidationRule(ValidationRule.VALIDATION_TYPE_OPTIONAL_INT_GE_ZERO, "mcc", mcc));
-		validationRulesList
-			.add(new ValidationRule(ValidationRule.VALIDATION_TYPE_MANDATORY_INT_GE_ZERO, "mnc", mnc));
-	    } else if (mnc != null) {
-		validationRulesList
-			.add(new ValidationRule(ValidationRule.VALIDATION_TYPE_OPTIONAL_INT_GE_ZERO, "mnc", mnc));
-	    }
+			if (mcc != null) {
+				validationRulesList.add(new ValidationRule(
+						ValidationRule.VALIDATION_TYPE_OPTIONAL_INT_GE_ZERO,
+						"mcc", mcc));
+				validationRulesList.add(new ValidationRule(
+						ValidationRule.VALIDATION_TYPE_MANDATORY_INT_GE_ZERO,
+						"mnc", mnc));
+			} else if (mnc != null) {
+				validationRulesList.add(new ValidationRule(
+						ValidationRule.VALIDATION_TYPE_OPTIONAL_INT_GE_ZERO,
+						"mnc", mnc));
+				validationRulesList.add(new ValidationRule(
+						ValidationRule.VALIDATION_TYPE_MANDATORY_INT_GE_ZERO,
+						"mcc", mcc));
+			}
 	    
 	    
 	    

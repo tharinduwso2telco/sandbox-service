@@ -24,12 +24,10 @@ public class ListCustomerInfoDTO {
 	/**
 	 * @return the customerInfo
 	 */
-	@JsonProperty ("Customer")
 	public ListCustomerInfoAttributesDTO getCustomer() {
 		return customerInfo;
 	}
 
-	@JsonProperty("Customer")
 	public void setCustomer(ListCustomerInfoAttributesDTO customerInfo) {
 		this.customerInfo =  customerInfo;
 	}
