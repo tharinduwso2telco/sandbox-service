@@ -74,14 +74,16 @@ public class RetrieveAccountStatusConfigRequestHandler extends AbstractRequestHa
 			return responseWrapper;
 		}try{
 			String apiType = extendedRequestDTO.getApiType();
+			String apiTypeRequest = apiType.toLowerCase();
 			String serviceCall = extendedRequestDTO.getServiceCall();
+			String serviceCallRequest = serviceCall.toLowerCase();
 			List<String> accountStatus = new ArrayList<String>();
 			accountStatus.add(AccountStatus.ACTIVE.toString());
 			accountStatus.add(AccountStatus.SUSPENDED.toString());
 			accountStatus.add(AccountStatus.TERMINATED.toString());
 			
 			//check the valid api type
-			if(!(apiType.equals(RequestType.WALLET.toString()))){
+			if(!(apiTypeRequest.equals(RequestType.WALLET.toString().toLowerCase()))){
 				LOG.error("###WALLET### valid api type not provided. " );
 				responseWrapper.setHttpStatus(Status.BAD_REQUEST);
 				responseWrapper
@@ -90,7 +92,7 @@ public class RetrieveAccountStatusConfigRequestHandler extends AbstractRequestHa
 				return responseWrapper;
 			}
 			
-			if(!(serviceCall.equals(ServiceName.BalanceLookup.toString()))){
+			if(!(serviceCallRequest.equals(ServiceName.BalanceLookup.toString().toLowerCase()))){
 				LOG.error("###WALLET### valid service call not provided. " );
 				responseWrapper.setHttpStatus(Status.BAD_REQUEST);
 				responseWrapper

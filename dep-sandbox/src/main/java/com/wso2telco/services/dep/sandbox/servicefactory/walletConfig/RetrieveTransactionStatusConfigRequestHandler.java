@@ -82,11 +82,13 @@ public class RetrieveTransactionStatusConfigRequestHandler extends AbstractReque
 			return responseWrapper;
 		}try{
 			String apiType = extendedRequestDTO.getApiType();
+			String apiTypeRequest = apiType.toLowerCase();
 			String serviceCall = extendedRequestDTO.getServiceCall();
+			String serviceCallRequest = serviceCall.toLowerCase();
 			String status = TransactionStatus.Refused.toString();
 			
 			//check the valid api type
-			if(!(apiType.equals(RequestType.WALLET.toString()))){
+			if(!(apiTypeRequest.equals(RequestType.WALLET.toString().toLowerCase()))){
 				LOG.error("###WALLET### valid api type not provided. " );
 				responseWrapper.setHttpStatus(Status.BAD_REQUEST);
 				responseWrapper
@@ -95,7 +97,7 @@ public class RetrieveTransactionStatusConfigRequestHandler extends AbstractReque
 				return responseWrapper;
 			}
 			
-			if(!(serviceCall.equals(ServiceName.MakePayment.toString()) || serviceCall.equals(ServiceName.RefundPayment.toString()))){
+			if(!(serviceCallRequest.equals(ServiceName.MakePayment.toString().toLowerCase()) || serviceCallRequest.equals(ServiceName.RefundPayment.toString().toLowerCase()))){
 				LOG.error("###WALLET### valid service call not provided. " );
 				responseWrapper.setHttpStatus(Status.BAD_REQUEST);
 				responseWrapper

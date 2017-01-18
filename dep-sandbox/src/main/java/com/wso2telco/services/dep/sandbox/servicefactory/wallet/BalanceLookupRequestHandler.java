@@ -11,15 +11,13 @@ import org.apache.commons.logging.LogFactory;
 import org.json.simple.JSONObject;
 
 import com.google.gson.Gson;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import com.wso2telco.core.dbutils.exception.ServiceError;
 import com.wso2telco.dep.oneapivalidation.exceptions.CustomException;
 import com.wso2telco.dep.oneapivalidation.util.Validation;
 import com.wso2telco.dep.oneapivalidation.util.ValidationRule;
 import com.wso2telco.services.dep.sandbox.dao.DaoFactory;
 import com.wso2telco.services.dep.sandbox.dao.LoggingDAO;
+import com.wso2telco.services.dep.sandbox.dao.NumberDAO;
 import com.wso2telco.services.dep.sandbox.dao.WalletDAO;
 import com.wso2telco.services.dep.sandbox.dao.model.custom.AccountInfo;
 import com.wso2telco.services.dep.sandbox.dao.model.custom.BalanceLookupDTO;
@@ -27,26 +25,29 @@ import com.wso2telco.services.dep.sandbox.dao.model.custom.BalanceLookupResponse
 import com.wso2telco.services.dep.sandbox.dao.model.domain.APIServiceCalls;
 import com.wso2telco.services.dep.sandbox.dao.model.domain.APITypes;
 import com.wso2telco.services.dep.sandbox.dao.model.domain.AttributeValues;
+import com.wso2telco.services.dep.sandbox.dao.model.domain.ManageNumber;
 import com.wso2telco.services.dep.sandbox.dao.model.domain.MessageLog;
 import com.wso2telco.services.dep.sandbox.servicefactory.AbstractRequestHandler;
 import com.wso2telco.services.dep.sandbox.servicefactory.Returnable;
 import com.wso2telco.services.dep.sandbox.util.CommonUtil;
 import com.wso2telco.services.dep.sandbox.util.MessageLogHandler;
 import com.wso2telco.services.dep.sandbox.util.ServiceName;
+import com.wso2telco.services.dep.sandbox.util.TableName;
 
 public class BalanceLookupRequestHandler extends AbstractRequestHandler<BalanceLookupRequestWrapper> {
 
 	private WalletDAO walletDAO;
-	private LoggingDAO loggingDao;
+	private LoggingDAO loggingDAO;
+	private NumberDAO numberDAO;
 	private BalanceLookupRequestWrapper requestWrapper;
 	private BalanceLookupResponseWrapper responseWrapper;
 	private MessageLogHandler logHandler;
-	//public static final String serverReferenceCode = "SERVER0003";
 
 	{
 		LOG = LogFactory.getLog(BalanceLookupRequestHandler.class);
 		walletDAO = DaoFactory.getWalletDAO();
-		loggingDao = DaoFactory.getLoggingDAO();
+		loggingDAO = DaoFactory.getLoggingDAO();
+		numberDAO = DaoFactory.getNumberDAO();
 		dao = DaoFactory.getGenaricDAO();
 		logHandler = MessageLogHandler.getInstance();
 	}
@@ -76,9 +77,9 @@ public class BalanceLookupRequestHandler extends AbstractRequestHandler<BalanceL
 
 		} catch (CustomException ex) {
 			LOG.error("###WALLET### Error in Validation : " + ex);
-			responseWrapper.setRequestError(constructRequestError(SERVICEEXCEPTION, ex.getErrcode(), ex.getErrmsg(),
-					wrapperDTO.getEndUserId()));
-			responseWrapper.setHttpStatus(Response.Status.BAD_REQUEST);
+			responseWrapper.setRequestError(constructRequestError(SERVICEEXCEPTION, ex.getErrcode(),
+					ex.getErrmsg(), wrapperDTO.getEndUserId()));
+			responseWrapper.setHttpStatus(Status.BAD_REQUEST);
 		}
 		return true;
 	}
@@ -93,15 +94,17 @@ public class BalanceLookupRequestHandler extends AbstractRequestHandler<BalanceL
 			String msisdn = extendedRequestDTO.getEndUserId();
 			String endUserId = getLastMobileNumber(msisdn);
 			String serviceCall = ServiceName.BalanceLookup.toString();
+			String userName = extendedRequestDTO.getUser().getUserName();
+			Integer userId = extendedRequestDTO.getUser().getId();
 
 			// Save Request Log
 			APITypes apiTypes = dao.getAPIType(extendedRequestDTO.getRequestType().toString().toLowerCase());
 			APIServiceCalls apiServiceCalls = dao.getServiceCall(apiTypes.getId(), serviceCall);
 			
 			Gson gson = new Gson();
-			JsonElement je = new JsonParser().parse(gson.toJson(extendedRequestDTO));
-			JsonObject asJsonObject = je.getAsJsonObject();
-			String jsonString = gson.toJson(asJsonObject);
+			JSONObject object = new JSONObject();
+			object.put("endUserId", msisdn);
+			String jsonString = gson.toJson(object);
 			MessageLog messageLog = new MessageLog();
 			messageLog.setServicenameid(apiServiceCalls.getApiServiceCallId());
 	    	messageLog.setUserid(extendedRequestDTO.getUser().getId());
@@ -110,23 +113,25 @@ public class BalanceLookupRequestHandler extends AbstractRequestHandler<BalanceL
 	    	messageLog.setRequest(jsonString);
 	    	messageLog.setMessageTimestamp(new Date());
 
-			int ref_number = loggingDao.saveMessageLog(messageLog);
+			int ref_number = loggingDAO.saveMessageLog(messageLog);
 			String serverReferenceCodeFormat = String.format("%06d",ref_number );
 			String serverReferenceCode = "WALLET_REF_" + serverReferenceCodeFormat;
-
-			Double accountBalance = walletDAO.checkBalance(endUserId);
+			ManageNumber numberBalance = numberDAO.getNumber(endUserId, extendedRequestDTO.getUser().getUserName().toString());
+			Double accountBalance = numberBalance.getBalance();
 			String attributeName = null;
 			List<AttributeValues> accountValue = new ArrayList<AttributeValues>();
 			List<String> attribute = new ArrayList<String>();
 			attribute.add(AttributeName.Currency.toString());
 			attribute.add(AttributeName.Status.toString());
-
-			accountValue = walletDAO.getTransactionValue(endUserId, attribute, null);
+			
+			String tableName = TableName.NUMBERS.toString().toLowerCase();
+			accountValue = walletDAO.getTransactionValue(endUserId, attribute,tableName,userId);
 			if (accountValue.isEmpty()) {
-				LOG.error("###WALLET### Error Occured in Wallet Service. ");
+				LOG.error("###WALLET### Account currecy and status not configured ");
 				responseWrapper.setHttpStatus(Status.BAD_REQUEST);
 				responseWrapper.setRequestError(
-						constructRequestError(SERVICEEXCEPTION, ServiceError.SERVICE_ERROR_OCCURED, "Error Occured in Wallet Service"));
+						constructRequestError(SERVICEEXCEPTION, ServiceError.SERVICE_ERROR_OCCURED, "Account currecy and status not configured"));
+				return responseWrapper;
 			}
 			BalanceLookupResponseBean responseBean = new BalanceLookupResponseBean();
 			AccountInfo accountInfo = new AccountInfo();
@@ -167,5 +172,4 @@ public class BalanceLookupRequestHandler extends AbstractRequestHandler<BalanceL
 		requestWrapper = extendedRequestDTO;
 		responseWrapper = new BalanceLookupResponseWrapper();
 	}
-
 }
