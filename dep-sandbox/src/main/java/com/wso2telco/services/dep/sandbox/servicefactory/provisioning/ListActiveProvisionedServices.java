@@ -175,7 +175,7 @@ public class ListActiveProvisionedServices extends AbstractRequestHandler<ListPr
 				ManageNumber number = dao.getMSISDN(phoneNumber, null, mcc, mnc);
 
 				if (number == null) {
-				    LOG.error("###CUSTOMERINFO### Valid MSISDN doesn't exists for the given inputs");
+				    LOG.error("###PROVISION### Valid MSISDN doesn't exists for the given inputs");
 				    responseWrapper.setRequestError(constructRequestError(SERVICEEXCEPTION, ServiceError.INVALID_INPUT_VALUE,
 					    "Valid MSISDN does not exist for the given mnc,mcc parameters"));
 				    responseWrapper.setHttpStatus(Status.BAD_REQUEST);

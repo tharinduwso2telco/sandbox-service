@@ -14,11 +14,16 @@
  * limitations under the License.
  ******************************************************************************/
 package com.wso2telco.services.dep.sandbox.dao.model.custom;
+
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+
 /**
  * 
  * @author WSO2.Telco
  *
  */
+@JsonInclude(value=Include.NON_NULL)
 public class ProvisionCommonResponseDTO {
 
 	/** The service code **/
@@ -32,6 +37,10 @@ public class ProvisionCommonResponseDTO {
 
 	/** The reference for server callback **/
 	private String serverReferenceCode;
+	
+	private String onBehalfOf;
+    
+    private String purchaseCatergoryCode;
 
 	/** The reference for callback **/
 	private CallbackReference callbackReference;
@@ -97,6 +106,22 @@ public class ProvisionCommonResponseDTO {
 	 */
 	public void setServerReferenceCode(String serverReferenceCode) {
 		this.serverReferenceCode = serverReferenceCode;
+	}
+
+	public String getOnBehalfOf() {
+		return onBehalfOf;
+	}
+
+	public void setOnBehalfOf(String onBehalfOf) {
+		this.onBehalfOf = onBehalfOf;
+	}
+
+	public String getPurchaseCatergoryCode() {
+		return purchaseCatergoryCode;
+	}
+
+	public void setPurchaseCatergoryCode(String purchaseCatergoryCode) {
+		this.purchaseCatergoryCode = purchaseCatergoryCode;
 	}
 
 	/**
