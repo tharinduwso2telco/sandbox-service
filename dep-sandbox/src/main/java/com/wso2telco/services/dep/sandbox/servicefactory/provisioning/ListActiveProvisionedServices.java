@@ -115,6 +115,9 @@ public class ListActiveProvisionedServices extends AbstractRequestHandler<ListPr
 				validationRulesList.add(new ValidationRule(
 						ValidationRule.VALIDATION_TYPE_OPTIONAL_INT_GE_ZERO,
 						"mnc", mnc));
+				validationRulesList.add(new ValidationRule(
+						ValidationRule.VALIDATION_TYPE_MANDATORY_INT_GE_ZERO,
+						"mcc", mcc));
 			}
 
 			validationRulesList.add(new ValidationRule(
@@ -145,8 +148,14 @@ public class ListActiveProvisionedServices extends AbstractRequestHandler<ListPr
 			Validation.checkRequestParams(validationRules);
 		} catch (CustomException ex) {
 			LOG.error("###PROVISION### Error in Validation : " + ex);
-			responseWrapper.setRequestError(constructRequestError(SERVICEEXCEPTION, ex.getErrcode(), ex.getErrmsg(),wrapperDTO.getMsisdn()));
-			responseWrapper.setHttpStatus(Response.Status.BAD_REQUEST);
+			 String errorMessage = "";
+			    if (ex.getErrvar() != null && ex.getErrvar().length > 0) {
+				errorMessage = ex.getErrvar()[0];
+			    }
+			    responseWrapper.setRequestError(
+				    constructRequestError(SERVICEEXCEPTION, ex.getErrcode(), ex.getErrmsg(), errorMessage));
+				responseWrapper.setHttpStatus(Status.BAD_REQUEST);
+
 		}
 
 		return true;
