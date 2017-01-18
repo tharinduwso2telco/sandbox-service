@@ -111,17 +111,21 @@ public class GetAttributeRequestHandler extends
 			"imsi", imsi));
 	    }
 	    if (mcc != null) {
-		validationRulesList.add(new ValidationRule(
-			ValidationRule.VALIDATION_TYPE_OPTIONAL_INT_GE_ZERO,
-			"mcc", mcc));
-		validationRulesList.add(new ValidationRule(
-			ValidationRule.VALIDATION_TYPE_MANDATORY_INT_GE_ZERO,
-			"mnc", mnc));
-	    } else {
-		validationRulesList.add(new ValidationRule(
-			ValidationRule.VALIDATION_TYPE_OPTIONAL_INT_GE_ZERO,
-			"mnc", mnc));
-	    }
+			validationRulesList.add(new ValidationRule(
+					ValidationRule.VALIDATION_TYPE_OPTIONAL_INT_GE_ZERO,
+					"mcc", mcc));
+			validationRulesList.add(new ValidationRule(
+					ValidationRule.VALIDATION_TYPE_MANDATORY_INT_GE_ZERO,
+					"mnc", mnc));
+		} else if (mnc != null) {
+			validationRulesList.add(new ValidationRule(
+					ValidationRule.VALIDATION_TYPE_OPTIONAL_INT_GE_ZERO,
+					"mnc", mnc));
+			validationRulesList.add(new ValidationRule(
+					ValidationRule.VALIDATION_TYPE_MANDATORY_INT_GE_ZERO,
+					"mcc", mcc));
+		}
+    
 
 	    validationRulesList.add(new ValidationRule(ValidationRule.VALIDATION_TYPE_OPTIONAL, "onBehalfOf", onBehalfOf));
 	    validationRulesList.add(new ValidationRule(ValidationRule.VALIDATION_TYPE_OPTIONAL, "purchaseCategoryCode",

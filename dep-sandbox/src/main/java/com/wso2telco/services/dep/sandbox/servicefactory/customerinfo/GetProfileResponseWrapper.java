@@ -54,7 +54,6 @@ public class GetProfileResponseWrapper extends AbstractReturnWrapperDTO {
 	 * @return the customer
 	 */
 	
-	@JsonProperty ("Customer")
 	public Customer getCustomer() {
 	    return customer;
 	}
