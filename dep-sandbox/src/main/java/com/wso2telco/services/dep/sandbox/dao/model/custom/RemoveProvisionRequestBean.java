@@ -48,7 +48,7 @@ public class RemoveProvisionRequestBean {
 
 		private String purchaseCategoryCode;
 
-		private CallbackReference callbackReference;
+		private RequestCallbackReference callbackReference;
 
 		/**
 		 * @return the serviceCode
@@ -113,7 +113,7 @@ public class RemoveProvisionRequestBean {
 		/**
 		 * @return the callbackReference
 		 */
-		public CallbackReference getCallbackReference() {
+		public RequestCallbackReference getCallbackReference() {
 			return callbackReference;
 		}
 
@@ -121,7 +121,7 @@ public class RemoveProvisionRequestBean {
 		 * @param callbackReference
 		 *            to set
 		 */
-		public void setCallbackReference(CallbackReference callbackReference) {
+		public void setCallbackReference(RequestCallbackReference callbackReference) {
 			this.callbackReference = callbackReference;
 		}
 		

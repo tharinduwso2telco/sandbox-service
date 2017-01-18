@@ -36,6 +36,7 @@ import com.wso2telco.services.dep.sandbox.dao.model.custom.CallbackReference;
 import com.wso2telco.services.dep.sandbox.dao.model.custom.RemoveProvisionRequestBean;
 import com.wso2telco.services.dep.sandbox.dao.model.custom.RemoveProvisionRequestBean.ServiceRemoveRequest;
 import com.wso2telco.services.dep.sandbox.dao.model.custom.RemoveProvisionedRequestWrapperDTO;
+import com.wso2telco.services.dep.sandbox.dao.model.custom.RequestCallbackReference;
 import com.wso2telco.services.dep.sandbox.dao.model.domain.ManageNumber;
 import com.wso2telco.services.dep.sandbox.dao.model.domain.ProvisionAllService;
 import com.wso2telco.services.dep.sandbox.dao.model.domain.ProvisionMSISDNServicesMap;
@@ -107,14 +108,16 @@ public class RemoveProvisionedServices extends AbstractRequestHandler<RemoveProv
 		
 		if (requestBean != null && request != null ) {
 			
-			CallbackReference callRef = request.getCallbackReference();
+			RequestCallbackReference callRef = request.getCallbackReference();
 			
 			if (callRef != null){
 				
 				String msisdn = CommonUtil.getNullOrTrimmedValue(wrapperDTO.getMsisdn());
 				String serviceCode= CommonUtil.getNullOrTrimmedValue(request.getServiceCode());
 				String clientCorrelator = CommonUtil.getNullOrTrimmedValue(request.getClientCorrelator());
-				String clientReferenceCode = CommonUtil.getNullOrTrimmedValue(request.getClientReferenceCode());			
+				String clientReferenceCode = CommonUtil.getNullOrTrimmedValue(request.getClientReferenceCode());	
+				String onBehalfOf = CommonUtil.getNullOrTrimmedValue(request.getOnBehalfOf());
+				String purchaseCategoryCode = CommonUtil.getNullOrTrimmedValue(request.getPurchaseCategoryCode());
 				String notifyURL = CommonUtil.getNullOrTrimmedValue(callRef.getNotifyURL());
 				String callbackData =CommonUtil.getNullOrTrimmedValue(callRef.getCallbackData());
 			
@@ -124,6 +127,8 @@ public class RemoveProvisionedServices extends AbstractRequestHandler<RemoveProv
 						new ValidationRule(ValidationRule.VALIDATION_TYPE_MANDATORY, "serviceCode", serviceCode),
 						new ValidationRule(ValidationRule.VALIDATION_TYPE_OPTIONAL, "clientCorrelator", clientCorrelator),
 						new ValidationRule(ValidationRule.VALIDATION_TYPE_MANDATORY, "clientReferenceCode", clientReferenceCode),
+						new ValidationRule(ValidationRule.VALIDATION_TYPE_OPTIONAL, "onBehalfOf", onBehalfOf),
+						new ValidationRule(ValidationRule.VALIDATION_TYPE_OPTIONAL,"purchaseCategoryCode", purchaseCategoryCode),
 						new ValidationRule(ValidationRule.VALIDATION_TYPE_MANDATORY_URL, "notifyURL", notifyURL),
 						new ValidationRule(ValidationRule.VALIDATION_TYPE_MANDATORY, "callbackData", callbackData) 
 						};
@@ -252,6 +257,8 @@ public class RemoveProvisionedServices extends AbstractRequestHandler<RemoveProv
 		serviceRemovalResponse.setServerReferenceCode(ProvisioningUtil.SERVER_REFERENCE_CODE);
 		serviceRemovalResponse.setClientReferenceCode(clientReferenceCode);
 		serviceRemovalResponse.setTransactionStatus(status);
+		serviceRemovalResponse.setOnBehalfOf(requestWrapperDTO.getRemoveProvisionRequestBean().getServiceRemoveRequest().getOnBehalfOf());
+		serviceRemovalResponse.setPurchaseCatergoryCode(requestWrapperDTO.getRemoveProvisionRequestBean().getServiceRemoveRequest().getPurchaseCategoryCode());
 		RemoveProvisionedResponseBean removeProvisionResponseBean = new RemoveProvisionedResponseBean();
 		removeProvisionResponseBean.setServiceRemoveResponse(serviceRemovalResponse);
 		responseWrapper.setRemoveProvisionedResponseBean(removeProvisionResponseBean);
@@ -272,6 +279,8 @@ public class RemoveProvisionedServices extends AbstractRequestHandler<RemoveProv
 		serviceRemovalResponse.setServerReferenceCode(ProvisioningUtil.SERVER_REFERENCE_CODE);
 		serviceRemovalResponse.setClientReferenceCode(deletedServiceList.getClientReferenceCode());
 		serviceRemovalResponse.setTransactionStatus(deletedServiceList.getStatus().getStatus());
+		serviceRemovalResponse.setOnBehalfOf(requestWrapperDTO.getRemoveProvisionRequestBean().getServiceRemoveRequest().getOnBehalfOf());
+		serviceRemovalResponse.setPurchaseCatergoryCode(requestWrapperDTO.getRemoveProvisionRequestBean().getServiceRemoveRequest().getPurchaseCategoryCode());
 		RemoveProvisionedResponseBean removeProvisionResponseBean = new RemoveProvisionedResponseBean();
 		removeProvisionResponseBean.setServiceRemoveResponse(serviceRemovalResponse);
 		responseWrapper.setRemoveProvisionedResponseBean(removeProvisionResponseBean);
