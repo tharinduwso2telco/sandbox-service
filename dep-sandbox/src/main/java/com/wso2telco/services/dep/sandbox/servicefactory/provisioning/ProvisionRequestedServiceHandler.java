@@ -36,6 +36,7 @@ import com.wso2telco.services.dep.sandbox.dao.model.custom.CallbackReference;
 import com.wso2telco.services.dep.sandbox.dao.model.custom.ProvisionRequestBean;
 import com.wso2telco.services.dep.sandbox.dao.model.custom.ProvisionResponseBean;
 import com.wso2telco.services.dep.sandbox.dao.model.custom.ProvisionResponseBean.ServiceProvisionResponse;
+import com.wso2telco.services.dep.sandbox.dao.model.custom.RequestCallbackReference;
 import com.wso2telco.services.dep.sandbox.dao.model.custom.ServiceProvisionRequestWrapper;
 import com.wso2telco.services.dep.sandbox.dao.model.domain.ManageNumber;
 import com.wso2telco.services.dep.sandbox.dao.model.domain.ProvisionAllService;
@@ -120,9 +121,6 @@ public class ProvisionRequestedServiceHandler extends AbstractRequestHandler<Ser
 			}
 
 			ProvisionRequestBean requestBean = wrapperDTO.getProvisionRequestBean();
-
-			String onBehalfOf = CommonUtil.getNullOrTrimmedValue(wrapperDTO.getOnBehalfOf());
-			String purchaseCategoryCode = CommonUtil.getNullOrTrimmedValue(wrapperDTO.getPurchaseCategoryCode());
 			
 			if (requestBean == null || requestBean.getServiceProvisionRequest() == null) {
 				responseWrapperDTO.setRequestError(constructRequestError(SERVICEEXCEPTION,
@@ -142,7 +140,7 @@ public class ProvisionRequestedServiceHandler extends AbstractRequestHandler<Ser
 			String serviceName = requestBean.getServiceProvisionRequest().getServiceName();
 			String clientCorrelator = requestBean.getServiceProvisionRequest().getClientCorrelator();
 			String onBehalfOf = CommonUtil.getNullOrTrimmedValue(requestBean.getServiceProvisionRequest().getOnBehalfOf());
-			String purchaseCategoryCode = CommonUtil.getNullOrTrimmedValue(wrapperDTO.getPurchaseCategoryCode());
+			String purchaseCategoryCode = CommonUtil.getNullOrTrimmedValue(requestBean.getServiceProvisionRequest().getPurchaseCategoryCode());
 			
 			String clientReferenceCode = requestBean.getServiceProvisionRequest().getClientReferenceCode();
 			String notifyUrl = requestBean.getServiceProvisionRequest().getCallbackReference().getNotifyURL();
@@ -237,7 +235,7 @@ public class ProvisionRequestedServiceHandler extends AbstractRequestHandler<Ser
 				.getNullOrTrimmedValue(requestBean.getServiceProvisionRequest().getCallbackReference().getNotifyURL());
 		String callbackData = CommonUtil.getNullOrTrimmedValue(
 				requestBean.getServiceProvisionRequest().getCallbackReference().getCallbackData());
-		CallbackReference callbackReference = requestBean.getServiceProvisionRequest().getCallbackReference();
+		RequestCallbackReference callbackReference = requestBean.getServiceProvisionRequest().getCallbackReference();
 
 		ProvisioningUtil.saveProvisioningRequestDataLog(ProvisionRequestTypes.PROVISION_REQUESTED_SERVICE.toString(),
 				extendedRequestDTO.getMsisdn(), user, clientCorrelator, clientReferenceCode, notifyUrl, callbackData,
@@ -381,7 +379,7 @@ public class ProvisionRequestedServiceHandler extends AbstractRequestHandler<Ser
 	}
 
 	private void buildProvisionResponse(ProvisionedServices provisionedService,
-			com.wso2telco.services.dep.sandbox.dao.model.domain.Status status, String clientReferenceCode, CallbackReference reference) {
+			com.wso2telco.services.dep.sandbox.dao.model.domain.Status status, String clientReferenceCode, RequestCallbackReference reference) {
 		ProvisionResponseBean responseBean = new ProvisionResponseBean();
 		ServiceProvisionResponse serviceProvisionResponse = new ServiceProvisionResponse();
 		serviceProvisionResponse
@@ -389,6 +387,14 @@ public class ProvisionRequestedServiceHandler extends AbstractRequestHandler<Ser
 		serviceProvisionResponse.setClientCorrelator(provisionedService.getClientCorrelator());
 		serviceProvisionResponse.setClientReferenceCode(clientReferenceCode);
 		serviceProvisionResponse.setServerReferenceCode(ProvisioningUtil.SERVER_REFERENCE_CODE);
+		serviceProvisionResponse.setOnBehalfOf(CommonUtil
+				.getNullOrTrimmedValue(requestWrapperDTO
+						.getProvisionRequestBean().getServiceProvisionRequest()
+						.getOnBehalfOf()));
+		serviceProvisionResponse.setPurchaseCatergoryCode(CommonUtil
+				.getNullOrTrimmedValue(requestWrapperDTO
+						.getProvisionRequestBean().getServiceProvisionRequest()
+						.getPurchaseCategoryCode()));
 
 		CallbackReference callbackReference = new CallbackReference();
 		callbackReference.setCallbackData(reference.getCallbackData());

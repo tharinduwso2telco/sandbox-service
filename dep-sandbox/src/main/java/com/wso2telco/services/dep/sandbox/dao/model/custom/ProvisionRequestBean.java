@@ -48,7 +48,7 @@ public class ProvisionRequestBean {
 
 		private String purchaseCategoryCode;
 		
-		private CallbackReference callbackReference;
+		private RequestCallbackReference callbackReference;
 
 		/**
 		 * @return the serviceCode
@@ -127,21 +127,21 @@ public class ProvisionRequestBean {
 		/**
 		 * @return the callbackReference
 		 */
-		public CallbackReference getCallbackReference() {
+		public RequestCallbackReference getCallbackReference() {
 			return callbackReference;
 		}
 
 		/**
 		 * @param callbackReference the callbackReference to set
 		 */
-		public void setCallbackReference(CallbackReference callbackReference) {
+		public void setCallbackReference(RequestCallbackReference callbackReference) {
 			this.callbackReference = callbackReference;
 		}
 
 		public String toString() {
 			StringBuilder builder = new StringBuilder();
 			builder.append("Service Code : " + getServiceCode());
-			builder.append(" Service Name : " + serviceName);
+			builder.append(" Service Name : " + getServiceCode());
 			builder.append(" Client Correlator : " + getClientCorrelator());
 			builder.append(" Client Reference Code : " + getClientReferenceCode());
 
