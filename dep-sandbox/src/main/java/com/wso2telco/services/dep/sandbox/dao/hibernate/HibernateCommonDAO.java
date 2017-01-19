@@ -42,25 +42,6 @@ class HibernateCommonDAO extends AbstractDAO implements GenaricDAO {
 	return false;
     }
 
-    public User getUser(String username) {
-
-	Session sess = getSession();
-	User usr = null;
-	try {
-	    usr = (User) sess.createQuery("from User where userName = ?")
-		    .setParameter(0, username).uniqueResult();
-	    if (usr == null) {
-		throw new Exception("User Not Found");
-	    }
-
-	} catch (Exception e) {
-	    LOG.error("getUser", e);
-	} finally {
-	    sess.close();
-	}
-
-	return usr;
-    }
 
     @SuppressWarnings("deprecation")
     public List<ManageNumber> getWhitelisted(int userid, List numbers) {
