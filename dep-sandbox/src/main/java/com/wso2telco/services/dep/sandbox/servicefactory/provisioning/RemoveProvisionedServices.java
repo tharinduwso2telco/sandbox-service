@@ -319,26 +319,37 @@ public class RemoveProvisionedServices extends AbstractRequestHandler<RemoveProv
 		return false;
 	}
 	
-	private void buildJsonResponseBody(String serviceCode,String clientCorrelator, String clientReferenceCode,String callbackData, String notifyURL, String status) {
-		
+	private void buildJsonResponseBody(String serviceCode,
+			String clientCorrelator, String clientReferenceCode,
+			String callbackData, String notifyURL, String status) {
+
 		CallbackReference ref = new CallbackReference();
 		ref.setCallbackData(callbackData);
 		ref.setNotifyURL(notifyURL);
-		ref.setResourceURL(CommonUtil.getResourceUrl(requestWrapperDTO));
+		ref.setResourceURL(CommonUtil.getPostResourceUrl(requestWrapperDTO));
 		ServiceRemoveResponse serviceRemovalResponse = new ServiceRemoveResponse();
 		serviceRemovalResponse.setCallbackReference(ref);
 		serviceRemovalResponse.setServiceCode(serviceCode);
 		serviceRemovalResponse.setClientCorrelator(clientCorrelator);
-		serviceRemovalResponse.setServerReferenceCode(ProvisioningUtil.SERVER_REFERENCE_CODE);
+		serviceRemovalResponse
+				.setServerReferenceCode(ProvisioningUtil.SERVER_REFERENCE_CODE);
 		serviceRemovalResponse.setClientReferenceCode(clientReferenceCode);
 		serviceRemovalResponse.setTransactionStatus(status);
-		serviceRemovalResponse.setOnBehalfOf(requestWrapperDTO.getRemoveProvisionRequestBean().getServiceRemoveRequest().getOnBehalfOf());
-		serviceRemovalResponse.setPurchaseCatergoryCode(requestWrapperDTO.getRemoveProvisionRequestBean().getServiceRemoveRequest().getPurchaseCategoryCode());
+		serviceRemovalResponse.setOnBehalfOf(CommonUtil
+				.getNullOrTrimmedValue(requestWrapperDTO
+						.getRemoveProvisionRequestBean()
+						.getServiceRemoveRequest().getOnBehalfOf()));
+		serviceRemovalResponse.setPurchaseCatergoryCode(CommonUtil
+				.getNullOrTrimmedValue(requestWrapperDTO
+						.getRemoveProvisionRequestBean()
+						.getServiceRemoveRequest().getPurchaseCategoryCode()));
 		RemoveProvisionedResponseBean removeProvisionResponseBean = new RemoveProvisionedResponseBean();
-		removeProvisionResponseBean.setServiceRemoveResponse(serviceRemovalResponse);
-		responseWrapper.setRemoveProvisionedResponseBean(removeProvisionResponseBean);
+		removeProvisionResponseBean
+				.setServiceRemoveResponse(serviceRemovalResponse);
+		responseWrapper
+				.setRemoveProvisionedResponseBean(removeProvisionResponseBean);
 		responseWrapper.setHttpStatus(Response.Status.BAD_REQUEST);
-		
+
 	}
 
 	private void buildJsonResponseBody(ProvisionedServices deletedServiceList) {
@@ -346,19 +357,32 @@ public class RemoveProvisionedServices extends AbstractRequestHandler<RemoveProv
 		CallbackReference ref = new CallbackReference();
 		ref.setCallbackData(deletedServiceList.getCallbackData());
 		ref.setNotifyURL(deletedServiceList.getNotifyURL());
-		ref.setResourceURL(CommonUtil.getResourceUrl(requestWrapperDTO));
+		ref.setResourceURL(CommonUtil.getPostResourceUrl(requestWrapperDTO));
 		ServiceRemoveResponse serviceRemovalResponse = new ServiceRemoveResponse();
 		serviceRemovalResponse.setCallbackReference(ref);
-		serviceRemovalResponse.setServiceCode(deletedServiceList.getMSISDNServicesMapId().getServiceId().getServiceCode());
-		serviceRemovalResponse.setClientCorrelator(deletedServiceList.getClientCorrelator());
-		serviceRemovalResponse.setServerReferenceCode(ProvisioningUtil.SERVER_REFERENCE_CODE);
-		serviceRemovalResponse.setClientReferenceCode(deletedServiceList.getClientReferenceCode());
-		serviceRemovalResponse.setTransactionStatus(deletedServiceList.getStatus().getStatus());
-		serviceRemovalResponse.setOnBehalfOf(requestWrapperDTO.getRemoveProvisionRequestBean().getServiceRemoveRequest().getOnBehalfOf());
-		serviceRemovalResponse.setPurchaseCatergoryCode(requestWrapperDTO.getRemoveProvisionRequestBean().getServiceRemoveRequest().getPurchaseCategoryCode());
+		serviceRemovalResponse.setServiceCode(deletedServiceList
+				.getMSISDNServicesMapId().getServiceId().getServiceCode());
+		serviceRemovalResponse.setClientCorrelator(deletedServiceList
+				.getClientCorrelator());
+		serviceRemovalResponse
+				.setServerReferenceCode(ProvisioningUtil.SERVER_REFERENCE_CODE);
+		serviceRemovalResponse.setClientReferenceCode(deletedServiceList
+				.getClientReferenceCode());
+		serviceRemovalResponse.setTransactionStatus(deletedServiceList
+				.getStatus().getStatus());
+		serviceRemovalResponse.setOnBehalfOf(CommonUtil
+				.getNullOrTrimmedValue(requestWrapperDTO
+						.getRemoveProvisionRequestBean()
+						.getServiceRemoveRequest().getOnBehalfOf()));
+		serviceRemovalResponse.setPurchaseCatergoryCode(CommonUtil
+				.getNullOrTrimmedValue(requestWrapperDTO
+						.getRemoveProvisionRequestBean()
+						.getServiceRemoveRequest().getPurchaseCategoryCode()));
 		RemoveProvisionedResponseBean removeProvisionResponseBean = new RemoveProvisionedResponseBean();
-		removeProvisionResponseBean.setServiceRemoveResponse(serviceRemovalResponse);
-		responseWrapper.setRemoveProvisionedResponseBean(removeProvisionResponseBean);
+		removeProvisionResponseBean
+				.setServiceRemoveResponse(serviceRemovalResponse);
+		responseWrapper
+				.setRemoveProvisionedResponseBean(removeProvisionResponseBean);
 	}
 
 
