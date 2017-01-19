@@ -146,7 +146,7 @@ public class RefundTransactionRequestHandler extends AbstractRequestHandler<Refu
 
 			Validation.checkRequestParams(validationRules);
 		} catch (CustomException ex) {
-			LOG.error("###WALLET### Error in Validation : " + ex);
+			LOG.error("###WALLET### Error in Validation : " , ex);
 			responseWrapper.setRequestError(constructRequestError(SERVICEEXCEPTION, ex.getErrcode(), ex.getErrmsg(),
 					wrapperDTO.getEndUserId()));
 			responseWrapper.setHttpStatus(Status.BAD_REQUEST);
@@ -363,7 +363,7 @@ public class RefundTransactionRequestHandler extends AbstractRequestHandler<Refu
 			// save client correlator
 			saveReferenceCode(endUserId, referenceCode, userName);
 		} catch (Exception ex) {
-			LOG.error("###WALLET### Error Occured in WALLET Service. " + ex);
+			LOG.error("###WALLET### Error Occured in WALLET Service. " , ex);
 			responseWrapper.setHttpStatus(Status.BAD_REQUEST);
 			responseWrapper
 					.setRequestError(constructRequestError(SERVICEEXCEPTION, ServiceError.SERVICE_ERROR_OCCURED, null));

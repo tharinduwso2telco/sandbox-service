@@ -140,7 +140,7 @@ public class MakePaymentRequestHandler extends AbstractRequestHandler<MakePaymen
 			Validation.checkRequestParams(validationRules);
 
 		} catch (CustomException ex) {
-			LOG.error("###WALLET### Error in Validation : " + ex);
+			LOG.error("###WALLET### Error in Validation : " , ex);
 			responseWrapper.setRequestError(constructRequestError(SERVICEEXCEPTION, ex.getErrcode(), ex.getErrmsg(),
 					wrapperDTO.getEndUserId()));
 			responseWrapper.setHttpStatus(Status.BAD_REQUEST);
@@ -366,7 +366,7 @@ public class MakePaymentRequestHandler extends AbstractRequestHandler<MakePaymen
 			}
 			saveReferenceCode(endUserId, referenceCode, userName);
 		} catch (Exception ex) {
-			LOG.error("###WALLET### Error Occured in WALLET Service. " + ex);
+			LOG.error("###WALLET### Error Occured in WALLET Service. ", ex);
 			responseWrapper.setHttpStatus(Status.BAD_REQUEST);
 			responseWrapper
 					.setRequestError(constructRequestError(SERVICEEXCEPTION, ServiceError.SERVICE_ERROR_OCCURED, null));
@@ -445,24 +445,17 @@ public class MakePaymentRequestHandler extends AbstractRequestHandler<MakePaymen
 	}
 
 	public void saveReferenceCode(String endUserId, String referenceCode, String userName) throws Exception {
-		// AttributeDistribution distributionId = null;
 		try {
 			AttributeValues valueObj = new AttributeValues();
 			String tableName = TableName.NUMBERS.toString().toLowerCase();
 			String attributeName = AttributeName.referenceCodeWallet.toString();
-			// String apiType = RequestType.WALLET.toString();
-			// String serviceCallRefund = ServiceName.MakePayment.toString();
 			APITypes api = dao.getAPIType(RequestType.WALLET.toString());
 			APIServiceCalls call = dao.getServiceCall(api.getId(), serviceCallPayment);
 			Attributes attributes = dao.getAttribute(attributeName);
 			AttributeDistribution dis = dao.getAttributeDistribution(call.getApiServiceCallId(),
 					attributes.getAttributeId());
-			// distributionId =
-			// walletDAO.getDistributionValue(serviceCallRefund, attributeName,
-			// apiType);
 			ManageNumber manageNumber = numberDAO.getNumber(endUserId, userName);
 			Integer ownerId = manageNumber.getId();
-			// ownerId = walletDAO.getNumber(endUserId);
 
 			valueObj = new AttributeValues();
 			valueObj.setAttributedid(dis);
