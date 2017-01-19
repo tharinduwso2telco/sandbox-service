@@ -263,7 +263,7 @@ Type - GET
 
 Resource URI:
 ```
-http://<host>:<port>/provisioning/v1/{msisdn}
+http://<host>:<port>/provisioning/v1/{msisdn}/list/applicable?mcc={mcc}&mnc={mnc}&onBehalfOf={onBehalfOf}&purchaseCategoryCode={purchase category code}&requestIdentifier={unique request id}&offset={offset}&limit={limit}
 ```
 
 Response :
@@ -285,7 +285,11 @@ Response :
       }
     ],
     "currencyCode": currencyCode,
-    "resourceURL": "http://<host>:<port>/provisioning/v1/{msisdn}/list/applicable"
+    “onBehalfOf”:”my_Merchant”,
+	“purchaseCategoryCode”:”Game”,
+	“requestIdentifier”:”REQ12345678”,
+	“responseIdentifier”:”RES12345678”,
+    "resourceURL": "http://<host>:<port>/provisioning/v1/{msisdn}/list/applicable/{UniqueID}"
   }
 }
 ```
@@ -298,7 +302,7 @@ Type - POST
 
 Resource URI :
 ```
-http://<host>:<port>/provisioning/v1/{msisdn}
+http://<host>:<port>/provisioning/v1/{msisdn}?mcc={mcc}&mnc={mnc}
 ```
 Request Body :
 ```
@@ -307,6 +311,8 @@ Request Body :
 		"serviceCode":"SRV0001",
 		"clientCorrelator": "clientCorrelator",
 		"clientReferenceCode" : "clientReferenceCode",
+		“onBehalfOf”:”my_Merchant”,
+		“purchaseCategoryCode”:”Game”,
 		"callbackReference":{
 			"notifyURL":"notifyURL",
 			"callbackData":"callbackData"
@@ -324,6 +330,8 @@ Response :
     "clientCorrelator": "clientCorrelator",
     "clientReferenceCode": "clientReferenceCode",
     "serverReferenceCode": "serverReferenceCode",
+    “onBehalfOf”:”my_Merchant”,
+	“purchaseCategoryCode”:”Game”,
     "callbackReference": {
       "notifyURL": "notifyURL",
       "callbackData": "callbackData",
@@ -342,7 +350,7 @@ Type - POST
 
 Request URI:
 ```
-http://<host>:<port>/provisioning/v1/{msisdn}/remove
+http://<host>:<port>/provisioning/v1/{msisdn}/remove?mcc={mcc}&mnc={mnc}
 ```
 Request Body :
 ```
@@ -351,6 +359,8 @@ Request Body :
 				"serviceCode": "SRV0001",
 				"clientCorrelator": "clientCorrelator",
 				"clientReferenceCode" : "clientReferenceCode",
+				“onBehalfOf”:”my_Merchant”,
+				“purchaseCategoryCode”:”Game”,
 				"callbackReference" : {
         					"notifyURL": "notifyURL",
             				"callbackData": "callbackData"
@@ -367,6 +377,8 @@ Response :
     "clientCorrelator": "clientCorrelator",
     "clientReferenceCode": "clientReferenceCode",
     "serverReferenceCode": "serverReferenceCode",
+    “onBehalfOf”:”my_Merchant”,
+	“purchaseCategoryCode”:”Game”,
     "callbackReference": {
       "notifyURL": "notifyURL",
       "callbackData": "callbackData",
@@ -385,7 +397,7 @@ Type - GET
 
 Request URI-
 ```
-http://<host>:<port>/provisioning/v1/{msisdn}/list/active
+http://<host>:<port>/provisioning/v1/{msisdn}/list/active?mcc={mcc}&mnc={mnc}&onBehalfOf={onBehalfOf}&purchaseCategoryCode={purchase category code}&requestIdentifier={unique request id}&offset={offset}&limit={limit} 
 ```
 
 Response :
@@ -416,7 +428,11 @@ Response :
         "timeStamp": "timestamp"
       }
     ],
-    "resourceURL": "http://<host>:<port>/provisioning/v1/{msisdn}/list/active"
+    “onBehalfOf”:”my_Merchant”,
+	“purchaseCategoryCode”:”Game”,
+	“requestIdentifier”:”REQ12345678”,
+	“responseIdentifier”:”RES12345678”,
+    "resourceURL": "http://<host>:<port>/provisioning/v1/{msisdn}/list/active/{UniqueID}"
   }
 }
 ```
@@ -506,11 +522,7 @@ Unless 400 Bad Request will be returned
 
 ###6.2.4 Current Limitations for Service Provider
 
-- Provision and Un-Provision Service calls are designed to give "Pending" as default Transaction Status. So "Success" status cannot be generated for both Provision and Un-Provision.
-
-- Un-Provision cannot be invoked from SP side due to the above mentioned limitation (In order to invoke Un-Provision, the Database should have successfully provisioned data.)
-
-- Notification Trigger is not implemented so that Service Provider's notify url will not be notified at all for sandbox.
+- Provision and Un-Provision Service calls are designed to give "Success" as default Transaction Status. So Notification Trigger is not implemented so that Service Provider's notify url will not be notified at all for sandbox.
 
 - Provisioning API and it's configurations can only be catered through sandbox microservice (Swagger), other existing non-api specific thing such as Manage Numbers should be done in existing flow from Sandbox UI.
 
