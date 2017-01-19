@@ -402,7 +402,7 @@ public class ProvisionRequestedServiceHandler extends AbstractRequestHandler<Ser
 		CallbackReference callbackReference = new CallbackReference();
 		callbackReference.setCallbackData(reference.getCallbackData());
 		callbackReference.setNotifyURL(reference.getNotifyURL());
-		callbackReference.setResourceURL(CommonUtil.getResourceUrl(requestWrapperDTO));
+		callbackReference.setResourceURL(CommonUtil.getPostResourceUrl(requestWrapperDTO));
 
 		serviceProvisionResponse.setCallbackReference(callbackReference);
 		if (status != null) {
