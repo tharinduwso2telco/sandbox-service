@@ -17,6 +17,7 @@ import com.wso2telco.dep.oneapivalidation.exceptions.PolicyException;
 import com.wso2telco.dep.oneapivalidation.exceptions.ServiceException;
 import com.wso2telco.services.dep.sandbox.dao.DaoFactory;
 import com.wso2telco.services.dep.sandbox.dao.GenaricDAO;
+import com.wso2telco.services.dep.sandbox.dao.UserDAO;
 import com.wso2telco.services.dep.sandbox.dao.model.custom.RequestDTO;
 import com.wso2telco.services.dep.sandbox.dao.model.domain.ManageNumber;
 import com.wso2telco.services.dep.sandbox.dao.model.domain.User;
@@ -25,9 +26,11 @@ import com.wso2telco.services.dep.sandbox.util.RequestError;
 public abstract class AbstractRequestHandler<E2 extends RequestDTO> implements RequestHandleable<RequestDTO> {
 	protected Log LOG;
 	protected GenaricDAO dao;
+	protected UserDAO userDAO;
 
 	{
 		dao =DaoFactory.getGenaricDAO();
+		userDAO = DaoFactory.getUserDAO();
 	}
 	/**
 	 * internally used to indicate the type of exception being stored is a
@@ -58,7 +61,7 @@ public abstract class AbstractRequestHandler<E2 extends RequestDTO> implements R
 		/**
 		 * load user domain object from db
 		 */
-		final User user = dao.getUser(sandboxusr);
+		final User user = userDAO.getUser(sandboxusr);
 		requestDTO.setUser(user);
 		validate(wrapperDTO);
 		/**
