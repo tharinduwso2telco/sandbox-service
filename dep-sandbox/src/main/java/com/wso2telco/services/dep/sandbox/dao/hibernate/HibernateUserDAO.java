@@ -15,39 +15,50 @@
  ******************************************************************************/
 
 package com.wso2telco.services.dep.sandbox.dao.hibernate;
+
 import javax.persistence.NoResultException;
+import javax.persistence.NonUniqueResultException;
+
+import org.apache.commons.logging.LogFactory;
+import org.hibernate.HibernateException;
 import org.hibernate.Session;
+
 import com.wso2telco.services.dep.sandbox.dao.UserDAO;
-import com.wso2telco.services.dep.sandbox.dao.hibernate.AbstractDAO;
 import com.wso2telco.services.dep.sandbox.dao.model.domain.User;
 
 public class HibernateUserDAO extends AbstractDAO implements UserDAO {
 
-    public User getUser(final String username) throws Exception {
-	User user = null;
-	try {
-	    Session sess = getSession();
-	    user = (User) sess.createQuery("from User where userName = :userName").setParameter("userName", username)
-		    .getSingleResult();
-	} catch (NoResultException e) {
-	    return null;
-	} catch (Exception e) {
-	    throw e;
+	{
+		LOG = LogFactory.getLog(HibernateUserDAO.class);
 	}
-	return user;
-    }
+	public User getUser(final String username) throws Exception {
+		User user = null;
+		try {
+			Session sess = getSession();
+			user = (User) sess.createQuery("from User where userName = :userName").setParameter("userName", username)
+					.getSingleResult();
 
-    public boolean saveUser(final User user) throws Exception {
-
-	try {
-	    saveOrUpdate(user);
-
-	} catch (final Exception e) {
-	    LOG.error("Error in save user...!", e);
-	    return false;
+		} catch (NoResultException ex) {
+			LOG.debug("No user found as : "+username);
+		} catch (NonUniqueResultException ex2) {
+			LOG.warn("Duplicate user found like : "+username);
+		} catch (HibernateException e) {
+			throw e;
+		}
+		return user;
 	}
 
-	return true;
-    }
+	public boolean saveUser(final User user) throws Exception {
+
+		try {
+			saveOrUpdate(user);
+
+		} catch (final Exception e) {
+			LOG.error("Error in save user...!", e);
+			return false;
+		}
+
+		return true;
+	}
 
 }
