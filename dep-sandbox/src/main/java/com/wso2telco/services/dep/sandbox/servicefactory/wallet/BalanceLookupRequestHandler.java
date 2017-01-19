@@ -76,9 +76,9 @@ public class BalanceLookupRequestHandler extends AbstractRequestHandler<BalanceL
 			Validation.checkRequestParams(validationRules);
 
 		} catch (CustomException ex) {
-			LOG.error("###WALLET### Error in Validation : " + ex);
-			responseWrapper.setRequestError(constructRequestError(SERVICEEXCEPTION, ex.getErrcode(),
-					ex.getErrmsg(), wrapperDTO.getEndUserId()));
+			LOG.error("###WALLET### Error in Validation : " , ex);
+			responseWrapper.setRequestError(constructRequestError(SERVICEEXCEPTION, ex.getErrcode(), ex.getErrmsg(),
+					wrapperDTO.getEndUserId()));
 			responseWrapper.setHttpStatus(Status.BAD_REQUEST);
 		}
 		return true;
@@ -100,37 +100,38 @@ public class BalanceLookupRequestHandler extends AbstractRequestHandler<BalanceL
 			// Save Request Log
 			APITypes apiTypes = dao.getAPIType(extendedRequestDTO.getRequestType().toString().toLowerCase());
 			APIServiceCalls apiServiceCalls = dao.getServiceCall(apiTypes.getId(), serviceCall);
-			
+
 			Gson gson = new Gson();
 			JSONObject object = new JSONObject();
 			object.put("endUserId", msisdn);
 			String jsonString = gson.toJson(object);
 			MessageLog messageLog = new MessageLog();
 			messageLog.setServicenameid(apiServiceCalls.getApiServiceCallId());
-	    	messageLog.setUserid(extendedRequestDTO.getUser().getId());
-	    	messageLog.setReference("msisdn");
-	    	messageLog.setValue(endUserId);
-	    	messageLog.setRequest(jsonString);
-	    	messageLog.setMessageTimestamp(new Date());
+			messageLog.setUserid(extendedRequestDTO.getUser().getId());
+			messageLog.setReference("msisdn");
+			messageLog.setValue(endUserId);
+			messageLog.setRequest(jsonString);
+			messageLog.setMessageTimestamp(new Date());
 
 			int ref_number = loggingDAO.saveMessageLog(messageLog);
-			String serverReferenceCodeFormat = String.format("%06d",ref_number );
+			String serverReferenceCodeFormat = String.format("%06d", ref_number);
 			String serverReferenceCode = "WALLET_REF_" + serverReferenceCodeFormat;
-			ManageNumber numberBalance = numberDAO.getNumber(endUserId, extendedRequestDTO.getUser().getUserName().toString());
+			ManageNumber numberBalance = numberDAO.getNumber(endUserId,
+					extendedRequestDTO.getUser().getUserName().toString());
 			Double accountBalance = numberBalance.getBalance();
 			String attributeName = null;
 			List<AttributeValues> accountValue = new ArrayList<AttributeValues>();
 			List<String> attribute = new ArrayList<String>();
 			attribute.add(AttributeName.Currency.toString());
 			attribute.add(AttributeName.Status.toString());
-			
+
 			String tableName = TableName.NUMBERS.toString().toLowerCase();
-			accountValue = walletDAO.getTransactionValue(endUserId, attribute,tableName,userId);
+			accountValue = walletDAO.getTransactionValue(endUserId, attribute, tableName, userId);
 			if (accountValue.isEmpty()) {
 				LOG.error("###WALLET### Account currecy and status not configured ");
 				responseWrapper.setHttpStatus(Status.BAD_REQUEST);
-				responseWrapper.setRequestError(
-						constructRequestError(SERVICEEXCEPTION, ServiceError.SERVICE_ERROR_OCCURED, "Account currecy and status not configured"));
+				responseWrapper.setRequestError(constructRequestError(SERVICEEXCEPTION,
+						ServiceError.SERVICE_ERROR_OCCURED, "Account currecy and status not configured"));
 				return responseWrapper;
 			}
 			BalanceLookupResponseBean responseBean = new BalanceLookupResponseBean();
@@ -158,7 +159,7 @@ public class BalanceLookupRequestHandler extends AbstractRequestHandler<BalanceL
 			responseWrapper.setHttpStatus(Response.Status.OK);
 
 		} catch (Exception ex) {
-			LOG.error("###WALLET### Error Occured in Wallet Service. " + ex);
+			LOG.error("###WALLET### Error Occured in Wallet Service. " , ex);
 			responseWrapper.setHttpStatus(Status.BAD_REQUEST);
 			responseWrapper
 					.setRequestError(constructRequestError(SERVICEEXCEPTION, ServiceError.SERVICE_ERROR_OCCURED, null));
