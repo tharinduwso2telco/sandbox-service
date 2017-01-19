@@ -112,6 +112,26 @@ public class CommonUtil {
 
 		return resourceUrlBuilder.toString();
 	}
+	
+	public static String getPostResourceUrl(RequestDTO extendedRequestDTO) {
+		StringBuilder resourceUrlBuilder = new StringBuilder();
+		String protocolVersion = extendedRequestDTO.getHttpRequest()
+				.getProtocol();
+		String[] protocolDetail = protocolVersion.split("/");
+		resourceUrlBuilder.append(protocolDetail[0].toLowerCase() + "://");
+		resourceUrlBuilder.append(extendedRequestDTO.getHttpRequest()
+				.getHeader("Host"));
+		resourceUrlBuilder.append(extendedRequestDTO.getHttpRequest()
+				.getPathInfo());
+		
+		/*if (extendedRequestDTO.getHttpRequest().getQueryString() != null) {
+			resourceUrlBuilder.append(QUERY_STRING_SEPARATOR);
+			resourceUrlBuilder.append(extendedRequestDTO.getHttpRequest()
+					.getQueryString());
+		}*/
+
+		return resourceUrlBuilder.toString();
+	}
 
 	public static String[] getStringToArray(String schema) {
 		String[] schemaList = schema.split(",", -1);
