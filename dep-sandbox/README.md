@@ -940,6 +940,7 @@ Response :
 ```
 
 - List Transactions - Return all the transactions of the end user for the calling application
+Maximum no of returned results is 20
 
 Request :
 
