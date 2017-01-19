@@ -83,7 +83,7 @@ public class AssignTransactionStatusConfigRequestHandler extends AbstractRequest
 				Validation.checkRequestParams(validationRules);
 
 			} catch (CustomException ex) {
-				LOG.error("###WALLETCONFIG### Error in Validation : " + ex);
+				LOG.error("###WALLETCONFIG### Error in Validation : " , ex);
 				responseWrapper.setRequestError(constructRequestError(
 						SERVICEEXCEPTION, ex.getErrcode(), ex.getErrmsg(),
 						wrapperDTO.getEndUserId()));
@@ -173,7 +173,7 @@ public class AssignTransactionStatusConfigRequestHandler extends AbstractRequest
 					errorMessage));
 			responseWrapper.setHttpStatus(Status.BAD_REQUEST);
 		}catch(Exception ex){
-			LOG.error("###WALLETCONFIG### Error Occured in WALLET Service. " + ex);
+			LOG.error("###WALLETCONFIG### Error Occured in WALLET Service. " , ex);
 			responseWrapper.setHttpStatus(Status.BAD_REQUEST);
 			responseWrapper
 					.setRequestError(constructRequestError(SERVICEEXCEPTION, ServiceError.SERVICE_ERROR_OCCURED, null));

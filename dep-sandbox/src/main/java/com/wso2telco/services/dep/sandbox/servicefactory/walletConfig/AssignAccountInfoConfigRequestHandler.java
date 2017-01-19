@@ -89,7 +89,7 @@ public class AssignAccountInfoConfigRequestHandler
 			Validation.checkRequestParams(validationRules);
 
 		} catch (CustomException ex) {
-			LOG.error("###WALLET### Error in Validation : " + ex);
+			LOG.error("###WALLET### Error in Validation : " , ex);
 			responseWrapper.setRequestError(constructRequestError(SERVICEEXCEPTION, ex.getErrcode(), ex.getErrmsg(),
 					wrapperDTO.getEndUserId()));
 			responseWrapper.setHttpStatus(Status.BAD_REQUEST);
@@ -126,7 +126,8 @@ public class AssignAccountInfoConfigRequestHandler
 				return responseWrapper;
 			}
 			// check valid account status
-			if (!(accountStatus.equals(activeStatus) || accountStatus.equals(suspendedStatus)) || accountStatus.equals(terminatedStatus)) {
+			if (!(accountStatus.equals(activeStatus) || accountStatus.equals(suspendedStatus))
+					|| accountStatus.equals(terminatedStatus)) {
 				LOG.error("###WALLETCONFIG### Invalid status");
 				responseWrapper.setRequestError(
 						constructRequestError(SERVICEEXCEPTION, ServiceError.INVALID_INPUT_VALUE, "Invalid status"));
@@ -182,7 +183,7 @@ public class AssignAccountInfoConfigRequestHandler
 			responseWrapper.setHttpStatus(Response.Status.CREATED);
 
 		} catch (CustomException ex) {
-			LOG.error("###WALLETCONFIG### Error Occured in WALLETCONFIG Service. " + ex);
+			LOG.error("###WALLETCONFIG### Error Occured in WALLETCONFIG Service. " , ex);
 			responseWrapper.setHttpStatus(Status.BAD_REQUEST);
 			responseWrapper
 					.setRequestError(constructRequestError(SERVICEEXCEPTION, ServiceError.SERVICE_ERROR_OCCURED, null));
