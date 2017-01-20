@@ -15,26 +15,33 @@
  ******************************************************************************/
 package com.wso2telco.services.dep.sandbox.servicefactory.customerinfoConfig;
 
+import com.wso2telco.services.dep.sandbox.dao.model.custom.CommonSuccessResponse;
+import com.wso2telco.services.dep.sandbox.dao.model.custom.ErrorResponseDTO;
 import com.wso2telco.services.dep.sandbox.servicefactory.AbstractReturnWrapperDTO;
 
 public class GetProfileConfigResponseWrapper extends
 	AbstractReturnWrapperDTO {
-    private String status;
-
-    public String getStatus() {
-	return status;
-    }
-
-    public void setStatus(String status) {
-	this.status = status;
-    }
-
-    @Override
-    public Object getResponse() {
-
-	if (getRequestError() != null) {
-	    return getRequestError();
+	
+    private CommonSuccessResponse message;
+   
+    public CommonSuccessResponse getMessage() {
+		return message;
 	}
-	return getStatus();
-    }
+
+
+	public void setMessage(CommonSuccessResponse message) {
+		this.message = message;
+	}
+
+
+	@Override
+    public Object getResponse() {
+		
+		if(getRequestError()==null)		
+			return message;
+		else{
+			ErrorResponseDTO response= new ErrorResponseDTO(getRequestError());
+			return response;
+		}
+	}
 }

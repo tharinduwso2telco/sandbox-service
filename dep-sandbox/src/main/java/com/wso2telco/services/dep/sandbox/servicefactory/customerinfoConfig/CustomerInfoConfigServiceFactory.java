@@ -27,16 +27,20 @@ public class CustomerInfoConfigServiceFactory {
 
     private static Log LOG = LogFactory
 	    .getLog(ProvisioningConfigServiceFactory.class);
+   
 
     public static RequestHandleable getInstance(final RequestDTO requestDTO) {
-	if (requestDTO.isPost()) {
-	    if (requestDTO.getRequestPath().toLowerCase()
-		    .contains(ServiceName.GetProfile.toString().toLowerCase())) {
-		LOG.debug("###CUSTOMERINFOCONFIG### LOADING GET PROFILE CONFIG SERVICES FOR USER");
+    	
+    	 final String GET_PROFILE = "profile";
+    	 final String GET_ATTRIBUTE = "attribute";
+    	    
+	if (requestDTO.isPut()) {
+	    if (requestDTO.getRequestPath().toLowerCase().contains(GET_PROFILE)) {
+		LOG.debug("###CUSTOMERINFOCONFIG### LOADING PROFILE CONFIG SERVICES FOR USER");
 		return new GetProfileConfigHandler();
 	    } else if (requestDTO.getRequestPath().toLowerCase()
-		    .contains(ServiceName.GetAttribute.toString().toLowerCase())) {
-		LOG.debug("###CUSTOMERINFOCONFIG### LOADING GET ATTRIBUTE CONFIG SERVICES FOR USER");
+		    .contains(GET_ATTRIBUTE)) {
+		LOG.debug("###CUSTOMERINFOCONFIG### LOADING ATTRIBUTE CONFIG SERVICES FOR USER");
 		return new GetAttributeConfigHandler();
 	    }
 	}

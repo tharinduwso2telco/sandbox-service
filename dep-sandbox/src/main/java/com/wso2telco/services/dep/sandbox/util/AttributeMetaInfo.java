@@ -72,7 +72,7 @@ public class AttributeMetaInfo {
 
     public enum BillingField implements AttributeEnum {
 
-	creditLimit(OPTIONAL), balance(OPTIONAL), outstanding(OPTIONAL), currency(
+	creditLimit(OPTIONAL), balance(OPTIONAL), outStanding(OPTIONAL), currency(
 		OPTIONAL);
 
 	private String fieldType;

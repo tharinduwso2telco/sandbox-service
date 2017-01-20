@@ -15,6 +15,7 @@
  ******************************************************************************/
 package com.wso2telco.services.dep.sandbox.servicefactory.provisioning;
 
+import com.wso2telco.services.dep.sandbox.dao.model.custom.ErrorResponseDTO;
 import com.wso2telco.services.dep.sandbox.dao.model.custom.ProvisionResponseBean;
 import com.wso2telco.services.dep.sandbox.servicefactory.AbstractReturnWrapperDTO;
 
@@ -31,11 +32,13 @@ public class ProvisionRequestedServiceResponseWrapper extends AbstractReturnWrap
 	 */
 	@Override
 	public Object getResponse() {
-		if (getRequestError() != null) {
-			return getRequestError();
+		
+		if(getRequestError()==null)		
+			return provisionResponseBean;
+		else{
+			ErrorResponseDTO response= new ErrorResponseDTO(getRequestError());
+			return response;
 		}
-
-		return provisionResponseBean;
 	}
 
 	/**

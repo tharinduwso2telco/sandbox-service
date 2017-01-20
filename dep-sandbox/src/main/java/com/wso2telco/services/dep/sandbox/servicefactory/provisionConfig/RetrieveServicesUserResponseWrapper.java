@@ -1,12 +1,6 @@
 package com.wso2telco.services.dep.sandbox.servicefactory.provisionConfig;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import com.wso2telco.services.dep.sandbox.dao.model.custom.ProvisionErrorResponseDTO;
-import com.wso2telco.services.dep.sandbox.dao.model.custom.ServiceDetail;
-import com.wso2telco.services.dep.sandbox.dao.model.custom.ServiceInfoListProvisionedDTO;
-import com.wso2telco.services.dep.sandbox.dao.model.custom.ServiceListProvisionedDTO;
+import com.wso2telco.services.dep.sandbox.dao.model.custom.ErrorResponseDTO;
 import com.wso2telco.services.dep.sandbox.dao.model.custom.UserServiceList;
 import com.wso2telco.services.dep.sandbox.servicefactory.AbstractReturnWrapperDTO;
 
@@ -20,7 +14,7 @@ public class RetrieveServicesUserResponseWrapper extends AbstractReturnWrapperDT
 		if(getRequestError()==null)		
 			return serviceListDTO;
 		else{
-			ProvisionErrorResponseDTO response= new ProvisionErrorResponseDTO(getRequestError());
+			ErrorResponseDTO response= new ErrorResponseDTO(getRequestError());
 			return response;
 		}
 	}

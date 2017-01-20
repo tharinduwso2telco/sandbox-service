@@ -29,7 +29,7 @@ public class CustomerInfoDTO {
     
     private String lastName;
 
-    private Date dob;
+    private String dob;
 
     private String identificationType;
 
@@ -93,7 +93,7 @@ public class CustomerInfoDTO {
     /**
      * @return the dob
      */
-    public Date getDob() {
+    public String getDob() {
 	return dob;
     }
 
@@ -101,7 +101,7 @@ public class CustomerInfoDTO {
      * @param dob
      *            the dob to set
      */
-    public void setDob(Date dob) {
+    public void setDob(String dob) {
 	this.dob = dob;
     }
 
