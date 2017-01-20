@@ -83,8 +83,8 @@ public class HibernateCustomerInfoDAO extends AbstractDAO implements CustomerInf
 		parameterMap.put("mnc", mnc);
 	    }
 	    
-	    hqlBuilder.append(" and number.user.userName = :user ");
-	    parameterMap.put("user", user);
+	    hqlBuilder.append(" and lower(number.user.userName) = :user ");
+	    parameterMap.put("user", user.toLowerCase());
 
 	    Query query = session.createQuery(hqlBuilder.toString());
 
