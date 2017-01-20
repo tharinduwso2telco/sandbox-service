@@ -24,7 +24,7 @@ import com.wso2telco.services.dep.sandbox.dao.model.domain.User;
 
 public interface CustomerInfoDAO {
     
-    public ManageNumber getMSISDN (String msisdn, String imsi, String mcc, String mnc) throws Exception;
+    public ManageNumber getMSISDN (String msisdn, String imsi, String mcc, String mnc, String userId) throws Exception;
     
     public CustomerInfoDTO getProfileData(String msisdn, User user) throws Exception;
     
