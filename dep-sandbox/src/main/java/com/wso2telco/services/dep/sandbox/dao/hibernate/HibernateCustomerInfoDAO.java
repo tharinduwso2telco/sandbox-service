@@ -49,7 +49,7 @@ public class HibernateCustomerInfoDAO extends AbstractDAO implements CustomerInf
     }
 
     @Override
-    public ManageNumber getMSISDN(String msisdn, String imsi, String mcc, String mnc) throws Exception {
+    public ManageNumber getMSISDN(String msisdn, String imsi, String mcc, String mnc,String user) throws Exception {
 	Session session = getSession();
 	ManageNumber number = null;
 	Map<String, String> parameterMap = new HashMap<>();
@@ -82,13 +82,16 @@ public class HibernateCustomerInfoDAO extends AbstractDAO implements CustomerInf
 		hqlBuilder.append(" number.mnc=:mnc ");
 		parameterMap.put("mnc", mnc);
 	    }
+	    
+	    hqlBuilder.append(" and number.user.userName = :user ");
+	    parameterMap.put("user", user);
 
 	    Query query = session.createQuery(hqlBuilder.toString());
 
 	    Set<Entry<String, String>> entrySet = parameterMap.entrySet();
 
 	    for (Entry<String, String> parameterEntry : entrySet) {
-		if (parameterEntry.getKey().equals("mcc") || parameterEntry.getKey().equals("mnc")) {
+		if (parameterEntry.getKey().equals("mcc") || parameterEntry.getKey().equals("mnc") ) {
 		    query.setParameter(parameterEntry.getKey(), Integer.parseInt(parameterEntry.getValue()));
 		} else {
 		    query.setParameter(parameterEntry.getKey(), parameterEntry.getValue());
