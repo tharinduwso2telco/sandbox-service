@@ -25,6 +25,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
 import org.apache.commons.logging.LogFactory;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import com.wso2telco.core.dbutils.exception.ServiceError;
@@ -32,6 +33,7 @@ import com.wso2telco.dep.oneapivalidation.exceptions.CustomException;
 import com.wso2telco.dep.oneapivalidation.util.Validation;
 import com.wso2telco.dep.oneapivalidation.util.ValidationRule;
 import com.wso2telco.services.dep.sandbox.dao.DaoFactory;
+import com.wso2telco.services.dep.sandbox.dao.model.custom.CommonSuccessResponse;
 import com.wso2telco.services.dep.sandbox.dao.model.custom.GetAttributeConfigRequestBean;
 import com.wso2telco.services.dep.sandbox.dao.model.custom.GetAttributeConfigRequestWrapperDTO;
 import com.wso2telco.services.dep.sandbox.dao.model.custom.GetProfileConfigRequestBean.Address;
@@ -39,6 +41,7 @@ import com.wso2telco.services.dep.sandbox.dao.model.domain.APIServiceCalls;
 import com.wso2telco.services.dep.sandbox.dao.model.domain.APITypes;
 import com.wso2telco.services.dep.sandbox.dao.model.domain.AttributeDistribution;
 import com.wso2telco.services.dep.sandbox.dao.model.domain.AttributeValues;
+import com.wso2telco.services.dep.sandbox.service.addedattrib.AttributeService;
 import com.wso2telco.services.dep.sandbox.servicefactory.AbstractRequestHandler;
 import com.wso2telco.services.dep.sandbox.servicefactory.AddressIgnorerable;
 import com.wso2telco.services.dep.sandbox.servicefactory.Returnable;
@@ -50,9 +53,11 @@ import com.wso2telco.services.dep.sandbox.util.AttributeMetaInfo.Attribute;
 import com.wso2telco.services.dep.sandbox.util.AttributeMetaInfo.BasicField;
 import com.wso2telco.services.dep.sandbox.util.AttributeMetaInfo.BillingField;
 import com.wso2telco.services.dep.sandbox.util.AttributeMetaInfo.IdentificationField;
+import com.wso2telco.services.dep.sandbox.util.AttributeMetaInfo.Profile;
 import com.wso2telco.services.dep.sandbox.util.CommonUtil;
 import com.wso2telco.services.dep.sandbox.util.RequestType;
 import com.wso2telco.services.dep.sandbox.util.ServiceName;
+import com.wso2telco.services.dep.sandbox.util.TableName;
 
 public class GetAttributeConfigHandler extends
 	AbstractRequestHandler<GetAttributeConfigRequestWrapperDTO> implements
@@ -222,63 +227,39 @@ public class GetAttributeConfigHandler extends
 	    return responseWrapperDTO;
 	}
 
-	APITypes apiType = dao.getAPIType(RequestType.CUSTOMERINFO.toString()
-		.toLowerCase());
+	final Map<String,String> attributeVsValueMap = populateAttributeValues(extendedRequestDTO.getRequestObject());
+	
+	AttributeService attribService = new AttributeService();
+	attribService.saveOrUpdate(attributeVsValueMap, 
+								ServiceName.GetAttribute,
+								RequestType.CUSTOMERINFO, 
+								TableName.USER.toString(),
+								extendedRequestDTO.getUser().getId());
 
-	APIServiceCalls serviceType = dao.getServiceCall(apiType.getId(),
-		ServiceName.GetAttribute.toString());
-
-	List<AttributeDistribution> availableDistribution = dao
-		.getAttributeDistributionByServiceCall(apiType.getId(),
-			serviceType.getApiServiceCallId());
-
-	for (Map.Entry<String, String> eachMapValue : valuesInRequset
-		.entrySet()) {
-	    for (AttributeDistribution eachDistribution : availableDistribution) {
-		if (eachDistribution.getAttribute().getAttributeName()
-			.toLowerCase()
-			.equals(eachMapValue.getKey().toLowerCase())) {
-		    attributeValueDistribution.put(eachDistribution,
-			    eachMapValue.getValue());
-		    break;
-		}
-	    }
-	}
-
-	AttributeValues valueObj = new AttributeValues();
-	List<AttributeValues> attributeValues = new ArrayList<AttributeValues>();
-
-	for (Map.Entry<AttributeDistribution, String> eachValuedDistribution : attributeValueDistribution
-		.entrySet()) {
-	    valueObj = dao.getAttributeValue(eachValuedDistribution.getKey());
-
-	    if (valueObj != null) {
-
-		valueObj.setValue(eachValuedDistribution.getValue());
-		attributeValues.add(valueObj);
-
-	    } else {
-
-		valueObj = new AttributeValues();
-		valueObj.setAttributedid(eachValuedDistribution.getKey());
-		valueObj.setOwnerdid(extendedRequestDTO.getUser().getId());
-		valueObj.setTobject(getToObject(eachValuedDistribution.getKey()
-			.getAPIServiceCall().getAPIType()));
-		valueObj.setValue(eachValuedDistribution.getValue());
-
-		attributeValues.add(valueObj);
-	    }
-	}
-	dao.saveAttributeValue(attributeValues);
-
-	responseWrapperDTO
-		.setStatus("Successfully Updated attribute for getAttribute!!");
-	responseWrapperDTO.setHttpStatus(Response.Status.CREATED);
+	CommonSuccessResponse success = new CommonSuccessResponse();
+	success.setStatus("Successfully Updated user attribute!!!");
+	responseWrapperDTO.setMessage(success);
+	responseWrapperDTO.setHttpStatus(Response.Status.OK);
 
 	return responseWrapperDTO;
     }
 
-    private String getToObject(APITypes api) throws Exception {
+	private Map<String, String> populateAttributeValues(
+			GetAttributeConfigRequestBean requestObject) {
+		Map<String, String> valueMap = new HashMap<String, String>();
+
+		valueMap.put(Attribute.basic.toString(), new JSONObject(requestObject.getBasic())
+				.toString());
+		valueMap.put(Attribute.billing.toString(), new JSONObject(requestObject.getBilling())
+				.toString());
+		valueMap.put(Attribute.account.toString(), new JSONObject(requestObject.getAccount())
+				.toString());
+		valueMap.put(Attribute.identification.toString(),new JSONObject( requestObject
+				.getIdentification()).toString());
+		return valueMap;
+	}
+
+	private String getToObject(APITypes api) throws Exception {
 
 	String apiEnum = api.getAPIName().toUpperCase();
 	String toObj = "";

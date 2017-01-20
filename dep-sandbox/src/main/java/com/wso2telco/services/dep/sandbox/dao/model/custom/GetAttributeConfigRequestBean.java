@@ -61,28 +61,28 @@ public class GetAttributeConfigRequestBean {
 
     public static class Billing {
 
-	private String creditLimt;
+	private String creditLimit;
 
-	private String outstanding;
+	private String outStanding;
 
 	private String currency;
 
 	private String balance;
 
 	public String getCreditLimit() {
-	    return creditLimt;
+	    return creditLimit;
 	}
 
-	public void setCreditLimit(String creditLimt) {
-	    this.creditLimt = creditLimt;
+	public void setCreditLimit(String creditLimit) {
+	    this.creditLimit = creditLimit;
 	}
 
-	public String getOutstanding() {
-	    return outstanding;
+	public String getOutStanding() {
+	    return outStanding;
 	}
 
-	public void setOutstanding(String outstanding) {
-	    this.outstanding = outstanding;
+	public void setOutStanding(String outStanding) {
+	    this.outStanding = outStanding;
 	}
 
 	public String getCurrency() {

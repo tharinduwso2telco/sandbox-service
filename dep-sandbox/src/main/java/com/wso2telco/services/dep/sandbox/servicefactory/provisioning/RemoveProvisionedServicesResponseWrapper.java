@@ -16,7 +16,7 @@
 
 package com.wso2telco.services.dep.sandbox.servicefactory.provisioning;
 
-import com.wso2telco.services.dep.sandbox.dao.model.custom.ProvisionErrorResponseDTO;
+import com.wso2telco.services.dep.sandbox.dao.model.custom.ErrorResponseDTO;
 import com.wso2telco.services.dep.sandbox.servicefactory.AbstractReturnWrapperDTO;
 
 public class RemoveProvisionedServicesResponseWrapper extends AbstractReturnWrapperDTO {
@@ -38,7 +38,7 @@ public class RemoveProvisionedServicesResponseWrapper extends AbstractReturnWrap
 		if(getRequestError()==null)		
 			return removeProvisionResponseBean;
 		else{
-			ProvisionErrorResponseDTO response= new ProvisionErrorResponseDTO(getRequestError());
+			ErrorResponseDTO response= new ErrorResponseDTO(getRequestError());
 			return response;
 		}
 	}

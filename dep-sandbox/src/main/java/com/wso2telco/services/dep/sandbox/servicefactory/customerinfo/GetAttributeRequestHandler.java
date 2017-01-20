@@ -73,8 +73,7 @@ public class GetAttributeRequestHandler extends
 	String imsi = CommonUtil.getNullOrTrimmedValue(wrapperDTO.getImsi());
 	String mcc = CommonUtil.getNullOrTrimmedValue(wrapperDTO.getMcc());
 	String mnc = CommonUtil.getNullOrTrimmedValue(wrapperDTO.getMnc());
-	String schema = CommonUtil.getNullOrTrimmedValue((wrapperDTO
-		.getSchema()).replace(",", ""));
+	String schema = CommonUtil.getNullOrTrimmedValue((wrapperDTO.getSchema()));
 	String onBehalfOf = CommonUtil.getNullOrTrimmedValue(wrapperDTO.getOnBehalfOf());
 	String purchaseCategoryCode = CommonUtil.getNullOrTrimmedValue(wrapperDTO.getPurchaseCategoryCode());
 	String requestIdentifier = CommonUtil.getNullOrTrimmedValue(wrapperDTO.getRequestIdentifier());
@@ -84,21 +83,19 @@ public class GetAttributeRequestHandler extends
 
 	try {
 	    if (msisdn == null && imsi == null) {
-		responseWrapperDTO.setRequestError(constructRequestError(
-			SERVICEEXCEPTION, ServiceError.INVALID_INPUT_VALUE,
-			"MSISDN and IMSI are missing"));
-		responseWrapperDTO.setHttpStatus(Status.BAD_REQUEST);
-	    }
-	    if (schema != null) {
-		validationRulesList.add(new ValidationRule(
-			ValidationRule.VALIDATION_TYPE_MANDATORY_INT_GE_ZERO,
-			"schema", schema));
-	    } else {
-		responseWrapperDTO.setRequestError(constructRequestError(
-			SERVICEEXCEPTION, ServiceError.INVALID_INPUT_VALUE,
-			"No valid schema provided"));
-		responseWrapperDTO.setHttpStatus(Status.BAD_REQUEST);
-	    }
+			
+			validationRulesList.add(new ValidationRule(
+					ValidationRule.VALIDATION_TYPE_MANDATORY_INT_GE_ZERO,
+					"mcc", mcc));
+			
+			validationRulesList.add(new ValidationRule(
+					ValidationRule.VALIDATION_TYPE_MANDATORY_INT_GE_ZERO,
+					"mnc", mnc));
+	    	
+		}
+	   
+	    validationRulesList.add(new ValidationRule(ValidationRule.VALIDATION_TYPE_MANDATORY, "schema", schema));
+	  
 	    if (msisdn != null) {
 		validationRulesList.add(new ValidationRule(
 			ValidationRule.VALIDATION_TYPE_OPTIONAL_TEL, "msisdn",
@@ -130,6 +127,8 @@ public class GetAttributeRequestHandler extends
 	    validationRulesList.add(new ValidationRule(ValidationRule.VALIDATION_TYPE_OPTIONAL, "onBehalfOf", onBehalfOf));
 	    validationRulesList.add(new ValidationRule(ValidationRule.VALIDATION_TYPE_OPTIONAL, "purchaseCategoryCode",
 				purchaseCategoryCode));
+	    validationRulesList.add(new ValidationRule(ValidationRule.VALIDATION_TYPE_MANDATORY, "requestIdentifier", requestIdentifier));
+
 
 		if (requestIdentifier != null && checkRequestIdentifierSize(requestIdentifier)) {
 
@@ -217,7 +216,7 @@ public class GetAttributeRequestHandler extends
 	    responseWrapperDTO.setRequestError(constructRequestError(
 		    SERVICEEXCEPTION,
 		    ServiceError.INVALID_INPUT_VALUE,
-		    "No valid schema provided "
+		    "No valid schema available as "
 			    + extendedRequestDTO.getSchema()));
 	    responseWrapperDTO.setHttpStatus(Status.BAD_REQUEST);
 	    return responseWrapperDTO;
@@ -245,29 +244,40 @@ public class GetAttributeRequestHandler extends
 	    return responseWrapperDTO;
 	}
 	
+	 boolean isNullObject = true;
 
 	for (AttributeValues values : customerInfoServices) {
+		
 	    schemaValues = ((values.getAttributedid()).getAttribute())
 		    .getAttributeName().toString();
-	    if ((Attribute.basic.toString()).equals(schemaValues)) {
-
+	    if (values.getValue()!=null && (Attribute.basic.toString()).equals(schemaValues)) {
+	    	isNullObject = false;
 		node = mapper.readValue(values.getValue(), JsonNode.class);
 		customerInfo.setBasic(node);
 
-	    } else if ((Attribute.billing.toString()).equals(schemaValues)) {
+	    } else if (values.getValue()!=null && (Attribute.billing.toString()).equals(schemaValues)) {
+	    	isNullObject = false;
 		node = mapper.readValue(values.getValue(), JsonNode.class);
 		customerInfo.setBilling(node);
-	    } else if (Attribute.account.toString().equals(schemaValues)) {
+	    } else if (values.getValue()!=null && Attribute.account.toString().equals(schemaValues)) {
+	    	isNullObject = false;
 		node = mapper.readValue(values.getValue(), JsonNode.class);
 
 		customerInfo.setAccount(node);
-	    } else if (Attribute.identification.toString().equals(schemaValues)) {
+	    } else if (values.getValue()!=null &&  Attribute.identification.toString().equals(schemaValues)) {
+	    	isNullObject = false;
 		node = mapper.readValue(values.getValue(), JsonNode.class);
 
 		customerInfo.setIdentification(node);
 	    }
 	}
-
+	if(isNullObject){
+		 LOG.error("###CUSTOMERINFO### Customer information does not available");
+		    responseWrapperDTO.setRequestError(constructRequestError(SERVICEEXCEPTION, ServiceError.INVALID_INPUT_VALUE,
+			    " No Valid Customer schema information configured for the given input parameters"));
+		    responseWrapperDTO.setHttpStatus(Status.BAD_REQUEST);
+		    return responseWrapperDTO;
+	}
 	customerInfo.setMsisdn(msisdn);
 	if (imsi != null) {
 	    customerInfo.setImsi(imsi);

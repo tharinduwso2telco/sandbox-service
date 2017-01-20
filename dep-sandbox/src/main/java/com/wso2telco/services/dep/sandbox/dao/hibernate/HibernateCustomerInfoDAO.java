@@ -164,13 +164,13 @@ public class HibernateCustomerInfoDAO extends AbstractDAO implements CustomerInf
 		customerInfoDTO.setTitle((String) resultMap.get("title"));
 		customerInfoDTO.setFirstName((String) resultMap.get("firstName"));
 		customerInfoDTO.setLastName((String) resultMap.get("lastName"));
-		String dateOfBirth = (String) resultMap.get("dob");
-		if (CommonUtil.getNullOrTrimmedValue(dateOfBirth) != null) {
-		    Date date;
-		    DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-		    date = dateFormat.parse(dateOfBirth);
-		    customerInfoDTO.setDob(date);
-		}
+		//String dateOfBirth = (String) resultMap.get("dob");
+		//if (CommonUtil.getNullOrTrimmedValue(dateOfBirth) != null) {
+		//    Date date;
+		//    DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+		//    date = dateFormat.parse(dateOfBirth);
+		    customerInfoDTO.setDob((String) resultMap.get("dob"));
+		
 		customerInfoDTO.setMsisdn((String) resultMap.get("msisdn"));
 		customerInfoDTO.setAddress((String) resultMap.get("address"));
 		customerInfoDTO.setAccountType((String) resultMap.get("accountType"));
@@ -207,7 +207,7 @@ public class HibernateCustomerInfoDAO extends AbstractDAO implements CustomerInf
 		hql.append("WHERE ");
 		hql.append("api.id = calls.apiType.id ");
 		hql.append("AND calls.apiServiceCallId = dist.serviceCall.apiServiceCallId ");
-		hql.append("AND dist.distributionId = val.attributeDistributionId.distributionId ");
+		hql.append("AND dist.distributionId = val.attributeDistribution.distributionId ");
 		hql.append("AND att.attributeId = dist.attribute.attributeId ");
 		hql.append("AND val.ownerdid = :userId ");
 		hql.append("AND api.apiname = :apiName ");

@@ -94,9 +94,15 @@ public class GetProfileRequestHandler extends AbstractRequestHandler<GetProfileR
 
 	try {
 			if (msisdn == null && imsi == null) {
-				responseWrapperDTO.setRequestError(constructRequestError(
-						SERVICEEXCEPTION, ServiceError.INVALID_INPUT_VALUE,
-						"MSISDN and IMSI are missing"));
+				
+				validationRulesList.add(new ValidationRule(
+						ValidationRule.VALIDATION_TYPE_MANDATORY_INT_GE_ZERO,
+						"mcc", mcc));
+				
+				validationRulesList.add(new ValidationRule(
+						ValidationRule.VALIDATION_TYPE_MANDATORY_INT_GE_ZERO,
+						"mnc", mnc));
+		    	
 			}
 
 			if (msisdn != null) {
@@ -133,7 +139,7 @@ public class GetProfileRequestHandler extends AbstractRequestHandler<GetProfileR
 	    validationRulesList.add(new ValidationRule(ValidationRule.VALIDATION_TYPE_OPTIONAL, "onBehalfOf", onBehalfOf));
 	    validationRulesList.add(new ValidationRule(ValidationRule.VALIDATION_TYPE_OPTIONAL, "purchaseCategoryCode",
 				purchaseCategoryCode));
-
+	    validationRulesList.add(new ValidationRule(ValidationRule.VALIDATION_TYPE_MANDATORY, "requestIdentifier", requestIdentifier));
 		if (requestIdentifier != null && checkRequestIdentifierSize(requestIdentifier)) {
 
 			validationRulesList.add(new ValidationRule(ValidationRule.VALIDATION_TYPE_MANDATORY, "requestIdentifier",
@@ -241,26 +247,21 @@ public class GetProfileRequestHandler extends AbstractRequestHandler<GetProfileR
 	customer.setOnBehalfOf(CommonUtil.getNullOrTrimmedValue(extendedRequestDTO.getOnBehalfOf()));
 	customer.setPurchaseCategoryCode(CommonUtil.getNullOrTrimmedValue(extendedRequestDTO.getPurchaseCategoryCode()));
 	customer.setRequestIdentifier( CommonUtil.getNullOrTrimmedValue(extendedRequestDTO.getRequestIdentifier()));
-	customer.setResponseIdentifier("RES" + RandomStringUtils.randomAlphabetic(8));
-	
-	
-	Date dateOfBirth = customerInfoDTO.getDob();
-	if (dateOfBirth != null) {
-	    String dob = new SimpleDateFormat(DOB_DATE_FORMAT).format(dateOfBirth);
-	    customer.setDob(dob);
-	}
-
+	customer.setResponseIdentifier("RES" + RandomStringUtils.randomAlphabetic(8));	
+	customer.setDob(customerInfoDTO.getDob());
 	customer.setIdentificationType(customerInfoDTO.getIdentificationType());
 	customer.setIdentificationNumber(customerInfoDTO.getIdentificationNumber());
 	customer.setAccountType(customerInfoDTO.getAccountType());
 	customer.setOwnerType(customerInfoDTO.getOwnerType());
 	customer.setStatus(customerInfoDTO.getStatus());
+	if(customerInfoDTO.getAddress()!=null){
 	customer.setAddress(mapper.readValue(customerInfoDTO.getAddress(), JsonNode.class));
+	}
+	if(customerInfoDTO.getAdditionalInfo()!=null){
 	customer.setAdditionalInfo(mapper.readValue(customerInfoDTO.getAdditionalInfo(), JsonNode.class));
+	}
 	customer.setResourceURL(CommonUtil.getResourceUrl(requestWrapperDTO));
-
 	customerDTOWrapper.setCustomer(customer);
-
 	responseWrapperDTO.setCustomerDTOWrapper(customerDTOWrapper);
 
     }

@@ -15,6 +15,7 @@
  ******************************************************************************/
 package com.wso2telco.services.dep.sandbox.servicefactory.customerinfo;
 
+import com.wso2telco.services.dep.sandbox.dao.model.custom.ErrorResponseDTO;
 import com.wso2telco.services.dep.sandbox.dao.model.custom.ListCustomerInfoAttributesDTO;
 import com.wso2telco.services.dep.sandbox.dao.model.custom.ListCustomerInfoDTO;
 import com.wso2telco.services.dep.sandbox.servicefactory.AbstractReturnWrapperDTO;
@@ -27,10 +28,13 @@ public class GetAttributeResponseWrapper extends AbstractReturnWrapperDTO {
 
 	@Override
 	public Object getResponse() {
-		if (getRequestError() != null) {
-			return getRequestError();
+		
+		if(getRequestError()==null)		
+			return Customer;
+		else{
+			ErrorResponseDTO response= new ErrorResponseDTO(getRequestError());
+			return response;
 		}
-		return Customer;
 	}
 
 	public ListCustomerInfoDTO getCustomer() {

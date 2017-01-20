@@ -15,6 +15,7 @@
  ******************************************************************************/
 package com.wso2telco.services.dep.sandbox.servicefactory.provisioning;
 
+import com.wso2telco.services.dep.sandbox.dao.model.custom.ErrorResponseDTO;
 import com.wso2telco.services.dep.sandbox.dao.model.custom.ServiceListDTO;
 import com.wso2telco.services.dep.sandbox.servicefactory.AbstractReturnWrapperDTO;
 
@@ -25,7 +26,13 @@ public class QueryApplicableProvisioningServiceResponseWrapper extends AbstractR
 	@Override
 	public Object getResponse() {
 		if (getRequestError() != null) {
-			return getRequestError();
+			
+			if(getRequestError()==null)		
+				return serviceListDTO;
+			else{
+				ErrorResponseDTO response= new ErrorResponseDTO(getRequestError());
+				return response;
+			}
 		}
 		return serviceListDTO;
 	}
