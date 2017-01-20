@@ -34,7 +34,7 @@ public class CustomerInfoConfigServiceFactory {
     	 final String GET_PROFILE = "profile";
     	 final String GET_ATTRIBUTE = "attribute";
     	    
-	if (requestDTO.isPut()) {
+	if (requestDTO.isPost()) {
 	    if (requestDTO.getRequestPath().toLowerCase().contains(GET_PROFILE)) {
 		LOG.debug("###CUSTOMERINFOCONFIG### LOADING PROFILE CONFIG SERVICES FOR USER");
 		return new GetProfileConfigHandler();
