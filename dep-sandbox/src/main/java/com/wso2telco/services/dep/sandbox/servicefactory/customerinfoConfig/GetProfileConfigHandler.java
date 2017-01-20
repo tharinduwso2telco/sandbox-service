@@ -33,14 +33,14 @@ import com.wso2telco.dep.oneapivalidation.exceptions.CustomException;
 import com.wso2telco.dep.oneapivalidation.util.Validation;
 import com.wso2telco.dep.oneapivalidation.util.ValidationRule;
 import com.wso2telco.services.dep.sandbox.dao.DaoFactory;
+import com.wso2telco.services.dep.sandbox.dao.model.custom.CommonSuccessResponse;
 import com.wso2telco.services.dep.sandbox.dao.model.custom.GetProfileConfigRequestBean;
 import com.wso2telco.services.dep.sandbox.dao.model.custom.GetProfileConfigRequestBean.AdditionalInfo;
 import com.wso2telco.services.dep.sandbox.dao.model.custom.GetProfileConfigRequestBean.Address;
 import com.wso2telco.services.dep.sandbox.dao.model.custom.GetProfileConfigRequestWrapperDTO;
-import com.wso2telco.services.dep.sandbox.dao.model.domain.APIServiceCalls;
 import com.wso2telco.services.dep.sandbox.dao.model.domain.APITypes;
 import com.wso2telco.services.dep.sandbox.dao.model.domain.AttributeDistribution;
-import com.wso2telco.services.dep.sandbox.dao.model.domain.AttributeValues;
+import com.wso2telco.services.dep.sandbox.service.addedattrib.AttributeService;
 import com.wso2telco.services.dep.sandbox.servicefactory.AbstractRequestHandler;
 import com.wso2telco.services.dep.sandbox.servicefactory.AddressIgnorerable;
 import com.wso2telco.services.dep.sandbox.servicefactory.Returnable;
@@ -52,6 +52,7 @@ import com.wso2telco.services.dep.sandbox.util.AttributeMetaInfo.Profile;
 import com.wso2telco.services.dep.sandbox.util.CommonUtil;
 import com.wso2telco.services.dep.sandbox.util.RequestType;
 import com.wso2telco.services.dep.sandbox.util.ServiceName;
+import com.wso2telco.services.dep.sandbox.util.TableName;
 
 public class GetProfileConfigHandler extends
 	AbstractRequestHandler<GetProfileConfigRequestWrapperDTO> implements
@@ -82,7 +83,27 @@ public class GetProfileConfigHandler extends
     protected List<String> getAddress() {
 	return null;
     }
-
+    private Map<String,String> populateAttributeValues(GetProfileConfigRequestBean requestBean){
+    	
+    	Map<String,String> valueMap = new HashMap<String,String>();
+    	
+    	valueMap.put(Profile.title.toString(), requestBean.getTitle());
+    	valueMap.put(Profile.firstName.toString(), requestBean.getFirstName());
+    	valueMap.put(Profile.lastName.toString(), requestBean.getLastName());
+    	valueMap.put(Profile.dob.toString(), requestBean.getDob());
+    	if(requestBean.getAddress()!=null)
+    	valueMap.put(Profile.address.toString(), new JSONObject(requestBean.getAddress()).toString());
+    	valueMap.put(Profile.identificationType.toString(), requestBean.getIdentificationType());
+    	valueMap.put(Profile.identificationNumber.toString(), requestBean.getIdentificationNumber());
+    	valueMap.put(Profile.accountType.toString(), requestBean.getAccountType());
+    	valueMap.put(Profile.ownerType.toString(), requestBean.getOwnerType());
+    	valueMap.put(Profile.status.toString(), requestBean.getStatus());
+    	if(requestBean.getAdditionalInfo()!=null){
+    	valueMap.put(Profile.additionalInfo.toString(),new JSONArray( requestBean.getAdditionalInfo()).toString());    	
+    	}
+    	return valueMap;
+    }
+    
     @Override
     protected boolean validate(GetProfileConfigRequestWrapperDTO wrapperDTO)
 	    throws Exception {
@@ -203,70 +224,28 @@ public class GetProfileConfigHandler extends
     }
 
     @Override
-    protected Returnable process(
-	    GetProfileConfigRequestWrapperDTO extendedRequestDTO)
-	    throws Exception {
+	protected Returnable process( GetProfileConfigRequestWrapperDTO extendedRequestDTO)	throws Exception {
 
-	if (responseWrapperDTO.getRequestError() != null) {
-	    responseWrapperDTO.setHttpStatus(Response.Status.BAD_REQUEST);
-	    return responseWrapperDTO;
-	}
-
-	APITypes apiType = dao.getAPIType(RequestType.CUSTOMERINFO.toString()
-		.toLowerCase());
-
-	APIServiceCalls serviceType = dao.getServiceCall(apiType.getId(),
-		ServiceName.GetProfile.toString());
-
-	List<AttributeDistribution> availableDistribution = dao
-		.getAttributeDistributionByServiceCall(apiType.getId(),
-			serviceType.getApiServiceCallId());
-
-	for (Map.Entry<String, String> eachMapValue : valuesInRequset
-		.entrySet()) {
-	    for (AttributeDistribution eachDistribution : availableDistribution) {
-		if (eachDistribution.getAttribute().getAttributeName()
-			.toLowerCase()
-			.equals(eachMapValue.getKey().toLowerCase())) {
-		    attributeValueDistribution.put(eachDistribution,
-			    eachMapValue.getValue());
-		    break;
+		if (responseWrapperDTO.getRequestError() != null) {
+			responseWrapperDTO.setHttpStatus(Response.Status.BAD_REQUEST);
+			return responseWrapperDTO;
 		}
-	    }
+		final Map<String,String> attributeVsValueMap = populateAttributeValues(extendedRequestDTO.getRequestObject());
+		
+		AttributeService attribService = new AttributeService();
+		attribService.saveOrUpdate(attributeVsValueMap, 
+									ServiceName.GetProfile,
+									RequestType.CUSTOMERINFO, 
+									TableName.USER.toString(),
+									extendedRequestDTO.getUser().getId());
+
+		CommonSuccessResponse success = new CommonSuccessResponse();
+		success.setStatus("Successfully Updated user profile!!!");
+		responseWrapperDTO.setMessage(success);
+		responseWrapperDTO.setHttpStatus(Response.Status.OK);
+
+		return responseWrapperDTO;
 	}
-
-	AttributeValues valueObj = new AttributeValues();
-	List<AttributeValues> attributeValues = new ArrayList<AttributeValues>();
-
-	for (Map.Entry<AttributeDistribution, String> eachValuedDistribution : attributeValueDistribution
-		.entrySet()) {
-	    valueObj = dao.getAttributeValue(eachValuedDistribution.getKey());
-
-	    if (valueObj != null) {
-
-		valueObj.setValue(eachValuedDistribution.getValue());
-		attributeValues.add(valueObj);
-
-	    } else {
-
-		valueObj = new AttributeValues();
-		valueObj.setAttributedid(eachValuedDistribution.getKey());
-		valueObj.setOwnerdid(extendedRequestDTO.getUser().getId());
-		valueObj.setTobject(getToObject(eachValuedDistribution.getKey()
-			.getAPIServiceCall().getAPIType()));
-		valueObj.setValue(eachValuedDistribution.getValue());
-		attributeValues.add(valueObj);
-
-	    }
-	}
-
-	dao.saveAttributeValue(attributeValues);
-	responseWrapperDTO
-		.setStatus("Successfully Updated attribute for getProfile!!");
-	responseWrapperDTO.setHttpStatus(Response.Status.CREATED);
-
-	return responseWrapperDTO;
-    }
 
     private String getToObject(APITypes api) throws Exception {
 

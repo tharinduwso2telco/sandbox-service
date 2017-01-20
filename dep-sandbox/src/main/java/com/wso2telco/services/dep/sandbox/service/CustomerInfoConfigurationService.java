@@ -21,6 +21,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -54,7 +55,7 @@ import com.wso2telco.services.dep.sandbox.servicefactory.RequestHandleable;
 import com.wso2telco.services.dep.sandbox.servicefactory.Returnable;
 import com.wso2telco.services.dep.sandbox.util.RequestType;
 
-@Path("/customerinfo/{v1}/config")
+@Path("/customerinfo/{v1}")
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.TEXT_PLAIN })
 @Produces({ MediaType.APPLICATION_JSON })
 @Api(value = "/customerinfo/{v1}/config", description = "Rest Services for CustomerInfo API related Configurations")
@@ -62,8 +63,8 @@ public class CustomerInfoConfigurationService {
 
     Log LOG = LogFactory.getLog(CustomerInfoConfigurationService.class);
 
-    @POST
-    @Path("/customer/getProfile")
+    @PUT
+    @Path("/customer/profile")
     @ApiOperation(value = "addProfile", notes = "Add new Profiles for user", response = Response.class)
     @ApiImplicitParams({ @ApiImplicitParam(name = "sandbox", value = "username", required = true, dataType = "string", paramType = "header") })
     public Response addProfile(GetProfileConfigRequestBean requestbody,
@@ -85,7 +86,7 @@ public class CustomerInfoConfigurationService {
 	    return response;
 	} catch (Exception ex) {
 	    LOG.error(
-		    "###CUSTOMERINFOCONFIG### Error in CustomerInfo Configuration getProfile Service",
+		    "###CUSTOMERINFOCONFIG### Error in CustomerInfo Configuration Profile Service",
 		    ex);
 	    Response response = Response
 		    .status(Status.BAD_REQUEST)
@@ -96,8 +97,8 @@ public class CustomerInfoConfigurationService {
 	}
     }
 
-    @POST
-    @Path("/customer/getAttribute")
+    @PUT
+    @Path("/customer/attribute")
     @ApiOperation(value = "addAttribute", notes = "Add new Attributes for user", response = Response.class)
     @ApiImplicitParams({ @ApiImplicitParam(name = "sandbox", value = "username", required = true, dataType = "string", paramType = "header") })
     public Response addAttribute(GetAttributeConfigRequestBean requestbody,
@@ -119,7 +120,7 @@ public class CustomerInfoConfigurationService {
 	    return response;
 	} catch (Exception ex) {
 	    LOG.error(
-		    "###CUSTOMERINFOCONFIG### Error in CustomerInfo Configuration getAttribute Service",
+		    "###CUSTOMERINFOCONFIG### Error in CustomerInfo Configuration Attribute Service",
 		    ex);
 	    Response response = Response
 		    .status(Status.BAD_REQUEST)

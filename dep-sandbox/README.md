@@ -529,8 +529,119 @@ Customer Info service will provide the Service providers a list of customer info
 - Get Profile - Get a customer’s basic profile information 
 - Get Attributes- Get a customer’s basic profile information and registered schema
 
+####6.3.2 CustomerInfo API Related User Pre-Configurations postman testing
 
-####6.3.2 API features with postman testing
+The customerinfo configurations are made to respond irrespective of different msisdn added by a specific user. So the configured details will be stored against user, not the msisdn. Trying with different msisdn to set details will overwrite the existing records of specific user. 
+
+Use the below provided seperate rest calls to insert records seperately for get profile & get attribute call. So it will be stored per service call configuration per user.
+
+- Post values for APIServiceType specific Attributes
+
+This service can be used to insert values for the attributes that are using for customerinto rest service.
+The values that are inserted using this service will be retrieved when actual CutomerInfo API GET service calls are invoked.
+
+- Add new Profiles for user
+
+Request :
+
+Type - PUT
+
+Request URI:
+```
+http://<host>:<port>/customerinfo/{v1}/customer/profile
+```
+Request Body :
+```
+{
+		"title": "Mr",
+        "firstName": "Bilbo",
+        "lastName": "Baggins",
+        "dob": "2006/10/21",
+        "identificationType": "PP",
+        "identificationNumber": "PP12345DC",
+        "accountType": "Postpaid",
+        "ownerType": "Paymaster",
+        "status": "Confirmed",
+        "address":{
+			"line1": "Bag End",
+			"line2": "",
+			"line3": "",
+			"city": "The Shire",
+			"country": "Middle Earth"
+		},
+        "additionalInfo":[{
+			"tag": "creditLimit",
+			"value": "2500"
+	},{
+			"tag": "creditLimit",
+			"value": "2500"
+	}]
+}
+```
+Response :
+200 OK with body as below, if the service is successfully added for the user.
+
+```
+{
+  "status": "Successfully Updated user profile!!!"
+}
+```
+Unless 400 Bad Request will be returned
+
+- Add new Attributes for user
+
+Request :
+
+Type - PUT
+
+Request URI:
+```
+http://<host>:<port>/customerinfo/{v1}/customer/attribute
+```
+Request Body :
+```
+{
+		"basic": {
+			"title": "Mr",
+			"firstName": "Bilbo",
+			"lastName": "Baggins",
+			"dob": "2006/10/21",
+			"address": {
+				"line1": "Bag End",
+				"line2": "",
+				"line3": "",
+				"city": "The Shire",
+				"country": "Middle Earth"
+			}
+		},
+		"billing": {
+			"creditLimit": "2500",
+			"balance": "1000",
+			"outStanding": "0",
+			"currency": "LKR"
+		},
+		"identification": {
+			"type": "Passport",
+			"number": "N123456",
+			"expiry": "2026/01/01"
+		},
+		"account": {
+			"type": "Postpaid",
+			"status": "Active"
+		}
+}
+```
+Response :
+
+200 OK with body as below, if the attribute is successfully added for the user.
+```
+{
+  "status": "Successfully Updated user attribute!!!"
+}
+```
+Unless 400 Bad Request will be returned
+
+####6.3.3 API features with postman testing
 
 - Get Profile- Get a customer’s basic profile information
 
@@ -569,7 +680,7 @@ Response :
 			"city": "The Shire",
 			"country": "Middle Earth"
 		},
-        "additionalInfo	":[{
+        "additionalInfo":[{
 			"tag": "creditLimit",
 			"value": "2500"
 	},{
@@ -606,7 +717,7 @@ Response :
 			"title": "Mr",
 			"firstName": "Bilbo",
 			"lastName": "Baggins",
-			"dob": "21/10/2006",
+			"dob": "2006/10/21",
 			"address": {
 				"line1": "Bag End",
 				"line2": "",
@@ -616,9 +727,9 @@ Response :
 			}
 		},
 		"billing": {
-			"creditLimit": 2500,
-			"balance": 1000,
-			"outStanding": 0,
+			"creditLimit": "2500",
+			"balance": "1000",
+			"outStanding": "0",
 			"currency": "LKR"
 		},
 		"identification": {
@@ -634,102 +745,6 @@ Response :
 	}
 }
 ```
-
-####6.3.3 CustomerInfo API Related User Configurations postman testing
-
-The customerinfo configurations are made to respond irrespective of different msisdn added by a specific user. So the configured details will be stored against user, not the msisdn. Trying with different msisdn to set details will overwrite the existing records of specific user. 
-
-Use the below provided seperate rest calls to insert records seperately for get profile & get attribute call. So it will be stored per service call configuration per user.
-
-- Post values for APIServiceType specific Attributes
-
-This service can be used to insert values for the attributes that are using for customerinto rest service.
-The values that are inserted using this service will be retrieved when actual CutomerInfo API GET service calls are invoked.
-
-- Add new Profiles for user
-
-Request :
-
-Type - POST
-
-Request URI:
-```
-http://<host>:<port>/customerinfo/{v1}/config/customer/getProfile
-```
-Request Body :
-```
-{
-	"title": "",
-	"firstName": "",
-	"lastName": "",
-	"dob": "",
-	"identificationType": "",
-	"identificationNumber": "",
-	"accountType": "",
-	"ownerType": "",
-	"status": "",
-	"address": {
-		"line1": "",
-		"line2": "",
-		"line3": "",
-		"city": "",
-		"country": ""
-	},
-	"additionalInfo": "List[AdditionalInfo]"
-}
-```
-Response :
-200 OK will be returned if the service is successfully added for the user.
-Unless 400 Bad Request will be returned
-
-
-- Add new Attributes for user
-
-Request :
-
-Type - POST
-
-Request URI:
-```
-http://<host>:<port>/customerinfo/{v1}/config/customer/getAttribute
-```
-Request Body :
-```
-{
-	"basic": {
-		"title": "",
-		"firstName": "",
-		"lastName": "",
-		"dob": "",
-		"address": {
-			"line1": "",
-			"line2": "",
-			"line3": "",
-			"city": "",
-			"country": ""
-		}
-	},
-	"billing": {
-		"outstanding": "",
-		"currency": "",
-		"balance": "",
-		"creditLimit": ""
-	},
-	"account": {
-		"type": "",
-		"status": ""
-	},
-	"identification": {
-		"type": "",
-		"number": "",
-		"expiry": ""
-	}
-}
-```
-Response :
-200 OK will be returned if the service is successfully added for the user.
-Unless 400 Bad Request will be returned
-
 
 
 

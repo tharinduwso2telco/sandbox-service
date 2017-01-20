@@ -2,12 +2,12 @@ package com.wso2telco.services.dep.sandbox.dao.model.custom;
 
 import com.wso2telco.services.dep.sandbox.util.RequestError;
 
-public class ProvisionErrorResponseDTO {
+public class ErrorResponseDTO {
 
 	private RequestError requestError;
 	
 	
-	public ProvisionErrorResponseDTO(RequestError requestError){
+	public ErrorResponseDTO(RequestError requestError){
 		this.requestError=requestError;
 	}
 	

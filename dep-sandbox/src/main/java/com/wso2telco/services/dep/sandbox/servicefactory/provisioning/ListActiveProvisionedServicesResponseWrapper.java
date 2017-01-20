@@ -15,10 +15,9 @@
  ******************************************************************************/
 package com.wso2telco.services.dep.sandbox.servicefactory.provisioning;
 
-import com.wso2telco.services.dep.sandbox.dao.model.custom.ProvisionErrorResponseDTO;
+import com.wso2telco.services.dep.sandbox.dao.model.custom.ErrorResponseDTO;
 import com.wso2telco.services.dep.sandbox.dao.model.custom.ServiceListProvisionedDTO;
 import com.wso2telco.services.dep.sandbox.servicefactory.AbstractReturnWrapperDTO;
-import com.wso2telco.services.dep.sandbox.util.RequestError;
 
 /**
  * 
@@ -37,7 +36,7 @@ public class ListActiveProvisionedServicesResponseWrapper extends
 		if(getRequestError()==null)		
 			return serviceListDTO;
 		else{
-			ProvisionErrorResponseDTO response= new ProvisionErrorResponseDTO(getRequestError());
+			ErrorResponseDTO response= new ErrorResponseDTO(getRequestError());
 			return response;
 		}
 	}
