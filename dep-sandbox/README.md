@@ -745,8 +745,9 @@ Response :
 	}
 }
 ```
+####6.3.4 Current Limitations for Service Provider
 
-
+purchaseCategoryCode is currently not maintained in DB level of sandbox, where it is actually maintained for validation at HUB level. So the validation for this parameter will pass in sandbox validation eventhough it fails at HUB.
 
 
 ###6.4 Credit Service
@@ -760,7 +761,7 @@ Credit service will provide the Service providers a list of credit services avai
 - Partial Refund - Perform a partial refund
 
 
-####6.3.2 API features with postman testing
+####6.4.2 API features with postman testing
 
 - Apply a Credit - Apply a credit
 
