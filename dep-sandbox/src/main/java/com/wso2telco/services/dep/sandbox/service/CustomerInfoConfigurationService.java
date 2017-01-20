@@ -63,7 +63,7 @@ public class CustomerInfoConfigurationService {
 
     Log LOG = LogFactory.getLog(CustomerInfoConfigurationService.class);
 
-    @PUT
+    @POST
     @Path("/customer/profile")
     @ApiOperation(value = "addProfile", notes = "Add new Profiles for user", response = Response.class)
     @ApiImplicitParams({ @ApiImplicitParam(name = "sandbox", value = "username", required = true, dataType = "string", paramType = "header") })
@@ -97,7 +97,7 @@ public class CustomerInfoConfigurationService {
 	}
     }
 
-    @PUT
+    @POST
     @Path("/customer/attribute")
     @ApiOperation(value = "addAttribute", notes = "Add new Attributes for user", response = Response.class)
     @ApiImplicitParams({ @ApiImplicitParam(name = "sandbox", value = "username", required = true, dataType = "string", paramType = "header") })
