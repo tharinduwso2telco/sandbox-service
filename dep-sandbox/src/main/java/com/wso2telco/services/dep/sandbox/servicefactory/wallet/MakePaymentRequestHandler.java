@@ -140,10 +140,11 @@ public class MakePaymentRequestHandler extends AbstractRequestHandler<MakePaymen
 			Validation.checkRequestParams(validationRules);
 
 		} catch (CustomException ex) {
-			LOG.error("###WALLET### Error in Validation : " , ex);
-			responseWrapper.setRequestError(constructRequestError(SERVICEEXCEPTION, ex.getErrcode(), ex.getErrmsg(),
-					wrapperDTO.getEndUserId()));
+			LOG.error("###WALLET### Error in Validations. ", ex);
+			responseWrapper.setRequestError(
+					constructRequestError(SERVICEEXCEPTION, ex.getErrcode(), ex.getErrmsg(), ex.getErrvar()[0]));
 			responseWrapper.setHttpStatus(Status.BAD_REQUEST);
+			return false;
 		}
 		return true;
 	}
@@ -284,6 +285,15 @@ public class MakePaymentRequestHandler extends AbstractRequestHandler<MakePaymen
 					responseWrapper.setHttpStatus(Status.BAD_REQUEST);
 					return responseWrapper;
 				}
+			}
+			// check channel
+
+			if (channel != null && !containsChannel(channel)) {
+				LOG.error("###WALLET### Valid channel doesn't exists for the given inputs");
+				responseWrapper.setRequestError(constructRequestError(SERVICEEXCEPTION,
+						ServiceError.INVALID_INPUT_VALUE, "Valid channel doesn't exists for the given inputs"));
+				responseWrapper.setHttpStatus(Status.BAD_REQUEST);
+				return responseWrapper;
 			}
 
 			// check already charged request against reference code
@@ -468,5 +478,16 @@ public class MakePaymentRequestHandler extends AbstractRequestHandler<MakePaymen
 			LOG.error("###WALLET### Error in processing save of referenceCode request. ", ex);
 			responseWrapper.setHttpStatus(Response.Status.BAD_REQUEST);
 		}
+	}
+
+	public boolean containsChannel(String channelValue) {
+
+		for (Channel channel : Channel.values()) {
+			if (channel.name().toLowerCase().equals(channelValue.toLowerCase())) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 }
