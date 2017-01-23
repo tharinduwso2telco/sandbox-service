@@ -16,13 +16,15 @@ No need to install Maven if you install by downloading and extracting the binary
 
 MySQL Server’s time zone setting should be set to UTC time zone as ‘+00:00'.
 
-The database script relevant for this particular service can be found at /dbscripts folder with the name of service
+The database script relevant for this particular release version can be found at /dbscripts folder with the name of version
 
 - If the sandbox DataBase is going to be set-up for the first time then refer the sql script with the name of dep-sandbox.sql
 
-- If the existing sandbox Database is going to be used then refer the sql script with name of the service
+- If the existing sandbox Database is going to be used then refer the sql script with name of the version
 
 DB tables can be created through running the script under the selection of particular sandbox Database.
+
+Note: If there is no any versioned script under dbscripts folder, then that means there is no any db related changes with particular release version.
 
 ###2.2 Configuration Setup
 
@@ -99,6 +101,7 @@ In order to get the service up and running, execute the following command.
 ```
 java -jar target/dep-sanbox-<VERSION>.jar server deploy/config.yml
 ```
+The rest calls should be exposed to SP publicly through LB as this is a standalone micro service which will cater apis : provisioning,customerInfo,credit upto now.
 
 ##5 Swagger Annotations
 
@@ -746,6 +749,7 @@ Response :
 	}
 }
 ```
+
 ####6.3.4 Current Limitations for Service Provider
 
 purchaseCategoryCode is currently not maintained in DB level of sandbox, where it is actually maintained for validation at HUB level. So the validation for this parameter will pass in sandbox, eventhough it fails at HUB.
@@ -1151,28 +1155,4 @@ Request Body :
 Response :
 200 OK will be returned if the service is successfully added for the msisdn.
 Unless 400 Bad Request will be returned
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
