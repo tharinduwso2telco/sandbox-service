@@ -22,7 +22,6 @@ The database script relevant for this particular service can be found at /dbscri
 
 - If the existing sandbox Database is going to be used then refer the sql script with name of the service
 
-
 DB tables can be created through running the script under the selection of particular sandbox Database.
 
 ###2.2 Configuration Setup
@@ -133,7 +132,7 @@ Request Body :
   "numberBalance": 0,
   "reservedAmount": 0,
   "description": "",
-  "status": 0,
+  "status": 1,
   "imsi": "",
   "mcc": 0,
   "mnc": 0
@@ -548,7 +547,7 @@ Type - POST
 
 Request URI:
 ```
-http://<host>:<port>/customerinfo/{v1}/customer/profile
+http://<host>:<port>/customerinfo/{v1}/config/customer/profile
 ```
 Request Body :
 ```
@@ -596,7 +595,7 @@ Type - POST
 
 Request URI:
 ```
-http://<host>:<port>/customerinfo/{v1}/customer/attribute
+http://<host>:<port>/customerinfo/{v1}/config/customer/attribute
 ```
 Request Body :
 ```
@@ -640,6 +639,8 @@ Response :
 }
 ```
 Unless 400 Bad Request will be returned
+
+Note : Service Provider should be aware of the mandatory/optional parameters according to specification so that they will be validated while data insertion in customerInfo configuration service.
 
 ####6.3.3 API features with postman testing
 
@@ -747,7 +748,7 @@ Response :
 ```
 ####6.3.4 Current Limitations for Service Provider
 
-purchaseCategoryCode is currently not maintained in DB level of sandbox, where it is actually maintained for validation at HUB level. So the validation for this parameter will pass in sandbox validation eventhough it fails at HUB.
+purchaseCategoryCode is currently not maintained in DB level of sandbox, where it is actually maintained for validation at HUB level. So the validation for this parameter will pass in sandbox, eventhough it fails at HUB.
 
 
 ###6.4 Credit Service
@@ -859,8 +860,6 @@ Response :
 }
 ```
 
-
-Note : Service Provider should be aware of the mandatory/optional parameters according to specification so that they will be validated while data insertion in configuration service.
 
 ###6.5 Wallet Service
 
