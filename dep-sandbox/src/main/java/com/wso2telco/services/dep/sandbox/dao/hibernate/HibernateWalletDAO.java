@@ -57,7 +57,7 @@ public class HibernateWalletDAO extends AbstractDAO implements WalletDAO {
 		hql.append("WHERE ");
 		hql.append("api.id = calls.apiType.id ");
 		hql.append("AND calls.apiServiceCallId = dist.serviceCall.apiServiceCallId ");
-		hql.append("AND dist.distributionId = val.attributeDistributionId.distributionId ");
+		hql.append("AND dist.distributionId = val.attributeDistribution.distributionId ");
 		hql.append("AND att.attributeId = dist.attribute.attributeId ");
 		hql.append("AND api.apiname =:apiName ");
 		hql.append("AND val.tobject =:tableName ");
@@ -107,7 +107,7 @@ public class HibernateWalletDAO extends AbstractDAO implements WalletDAO {
 		hql.append("WHERE ");
 		hql.append("api.id = calls.apiType.id ");
 		hql.append("AND calls.apiServiceCallId = dist.serviceCall.apiServiceCallId ");
-		hql.append("AND dist.distributionId = val.attributeDistributionId.distributionId ");
+		hql.append("AND dist.distributionId = val.attributeDistribution.distributionId ");
 		hql.append("AND att.attributeId = dist.attribute.attributeId ");
 		hql.append("AND number.id = val.ownerdid ");
 		hql.append("AND api.apiname =:apiName ");
@@ -279,7 +279,7 @@ return null;
 		hql.append("FROM ");
 		hql.append("AttributeValues as val ");
 		hql.append("WHERE ");
-		hql.append("val.attributeDistributionId =:attributeDistributionId ");
+		hql.append("val.attributeDistribution =:attributeDistributionId ");
 		hql.append("AND ");
 		hql.append("val.ownerdid =:endUserId ");
 		try {
@@ -317,7 +317,7 @@ return null;
 		hql.append("WHERE ");
 		hql.append("api.id = calls.apiType.id ");
 		hql.append("AND calls.apiServiceCallId = dist.serviceCall.apiServiceCallId ");
-		hql.append("AND dist.distributionId = val.attributeDistributionId.distributionId ");
+		hql.append("AND dist.distributionId = val.attributeDistribution.distributionId ");
 		hql.append("AND att.attributeId = dist.attribute.attributeId ");
 		hql.append("AND number.id = val.ownerdid ");
 		hql.append("AND api.apiname =:apiName ");
@@ -373,7 +373,7 @@ return false;		} catch (Exception ex) {
 		hql.append("WHERE ");
 		hql.append("api.id = calls.apiType.id ");
 		hql.append("AND calls.apiServiceCallId = dist.serviceCall.apiServiceCallId ");
-		hql.append("AND dist.distributionId = val.attributeDistributionId.distributionId ");
+		hql.append("AND dist.distributionId = val.attributeDistribution.distributionId ");
 		hql.append("AND att.attributeId = dist.attribute.attributeId ");
 		hql.append("AND number.id = val.ownerdid ");
 		hql.append("AND api.apiname =:apiName ");
