@@ -49,7 +49,7 @@ CREATE TABLE IF NOT EXISTS `sbxapiservicecalls` (
 -- Dumping data for table `sbxapiservicecalls`
 --
 
-INSERT INTO `sbxapiservicecalls` VALUES (1,8,'GetAttribute'),(2,8,'GetProfile'),(3,7,'GetApplicable');
+INSERT INTO `sbxapiservicecalls` VALUES (1,8,'GetAttribute'),(2,8,'GetProfile'),(3,7,'GetApplicable'),(8,5,'ApplyCredit'),(9,5,'PartialRefund');
 
 
 
@@ -376,7 +376,7 @@ CREATE TABLE IF NOT EXISTS  `sbxattribute` (
 -- Dumping data for table `sbxattribute`
 --
 
-INSERT INTO `sbxattribute` VALUES (1,'title'),(2,'firstName'),(3,'lastName'),(4,'dob'),(5,'address'),(6,'identificationType'),(7,'status'),(8,'ownerType'),(9,'accountType'),(10,'basic'),(11,'billing'),(12,'identification'),(13,'account'),(14,'additionalInfo'),(15,'identificationNumber');
+INSERT INTO `sbxattribute` VALUES (1,'title'),(2,'firstName'),(3,'lastName'),(4,'dob'),(5,'address'),(6,'identificationType'),(7,'status'),(8,'ownerType'),(9,'accountType'),(10,'basic'),(11,'billing'),(12,'identification'),(13,'account'),(14,'additionalInfo'),(15,'identificationNumber'),(22,'sms'),(23,'data'),(24,'minutes'),(25,'referenceCodeCredit'),(26,'clientCorrelator'),(27,'applyCredit');
 --
 -- Table structure for table `sbtattributedistribution`
 --
@@ -394,7 +394,7 @@ CREATE TABLE IF NOT EXISTS `sbtattributedistribution` (
 -- Dumping data for table `sbtattributedistribution`
 --
 
-INSERT INTO `sbtattributedistribution` VALUES (1,1,2),(2,2,2),(3,3,2),(4,4,2),(5,5,2),(6,6,2),(7,7,2),(8,8,2),(9,9,2),(10,10,1),(11,11,1),(12,12,1),(13,13,1),(14,14,2),(15,15,2);
+INSERT INTO `sbtattributedistribution` VALUES (1,1,2),(2,2,2),(3,3,2),(4,4,2),(5,5,2),(6,6,2),(7,7,2),(8,8,2),(9,9,2),(10,10,1),(11,11,1),(12,12,1),(13,13,1),(14,14,2),(15,15,2),(24,22,8),(25,23,8),(26,24,8),(27,25,8),(28,26,8),(29,27,8);
 
 
 --
