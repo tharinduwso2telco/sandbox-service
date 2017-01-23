@@ -176,7 +176,7 @@ class HibernateCommonDAO extends AbstractDAO implements GenaricDAO {
 	try {
 	    value = (AttributeValues) sess
 		    .createQuery(
-			    "from AttributeValues where attributeDistributionId = ?")
+			    "from AttributeValues where attributeDistribution = ?")
 		    .setParameter(0, distributionObj).uniqueResult();
 	} catch (Exception e) {
 	    LOG.error("getAttributeValue", e);
@@ -254,7 +254,7 @@ class HibernateCommonDAO extends AbstractDAO implements GenaricDAO {
 	try {
 	    value = (List<AttributeValues>) sess
 		    .createQuery(
-			    "from AttributeValues where attributeDistributionId IN ( :distributionObj)")
+			    "from AttributeValues where attributeDistribution IN ( :distributionObj)")
 		    			.setParameterList("distributionObj", distributionObj).list();
 	} catch (Exception e) {
 	    LOG.error("getAttributeValue", e);
@@ -271,7 +271,7 @@ class HibernateCommonDAO extends AbstractDAO implements GenaricDAO {
 	try {
 	    value = (AttributeValues) sess
 		    .createQuery(
-			    "from AttributeValues where attributeDistributionId = ? and ownerdid = ?")
+			    "from AttributeValues where attributeDistribution = ? and ownerdid = ?")
 		    .setParameter(0, distributionObj).setParameter(1, ownerdid).uniqueResult();
 	} catch (Exception e) {
 	    LOG.error("getAttributeValue", e);
