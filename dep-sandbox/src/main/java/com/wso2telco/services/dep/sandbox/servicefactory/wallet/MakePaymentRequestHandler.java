@@ -143,7 +143,6 @@ public class MakePaymentRequestHandler extends AbstractRequestHandler<MakePaymen
 			LOG.error("###WALLET### Error in Validations. ", ex);
 			responseWrapper.setRequestError(
 					constructRequestError(SERVICEEXCEPTION, ex.getErrcode(), ex.getErrmsg(), ex.getErrvar()[0]));
-			responseWrapper.setHttpStatus(Status.BAD_REQUEST);
 			return false;
 		}
 		return true;
@@ -153,6 +152,7 @@ public class MakePaymentRequestHandler extends AbstractRequestHandler<MakePaymen
 	protected Returnable process(MakePaymentRequestWrapperDTO extendedRequestDTO) throws Exception {
 
 		if (responseWrapper.getRequestError() != null) {
+			responseWrapper.setHttpStatus(Status.BAD_REQUEST);
 			return responseWrapper;
 		}
 		try {

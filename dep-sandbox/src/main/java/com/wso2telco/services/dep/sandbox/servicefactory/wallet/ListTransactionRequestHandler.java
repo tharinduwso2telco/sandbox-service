@@ -77,7 +77,6 @@ public class ListTransactionRequestHandler extends AbstractRequestHandler<ListTr
 			LOG.error("###WALLET### Error in Validations. ", ex);
 			responseWrapper.setRequestError(
 					constructRequestError(SERVICEEXCEPTION, ex.getErrcode(), ex.getErrmsg(), ex.getErrvar()[0]));
-			responseWrapper.setHttpStatus(Status.BAD_REQUEST);
 			return false;
 		}
 		return true;
@@ -87,6 +86,7 @@ public class ListTransactionRequestHandler extends AbstractRequestHandler<ListTr
 	protected Returnable process(ListTransactionRequestWrapper extendedRequestDTO) throws Exception {
 
 		if (responseWrapper.getRequestError() != null) {
+			responseWrapper.setHttpStatus(Status.BAD_REQUEST);
 			return responseWrapper;
 		}
 		try {
