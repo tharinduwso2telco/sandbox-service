@@ -89,10 +89,11 @@ public class AssignAccountInfoConfigRequestHandler
 			Validation.checkRequestParams(validationRules);
 
 		} catch (CustomException ex) {
-			LOG.error("###WALLET### Error in Validation : " , ex);
-			responseWrapper.setRequestError(constructRequestError(SERVICEEXCEPTION, ex.getErrcode(), ex.getErrmsg(),
-					wrapperDTO.getEndUserId()));
+			LOG.error("###WALLETCONFIG### Error in Validations. ", ex);
+			responseWrapper.setRequestError(
+					constructRequestError(SERVICEEXCEPTION, ex.getErrcode(), ex.getErrmsg(), ex.getErrvar()[0]));
 			responseWrapper.setHttpStatus(Status.BAD_REQUEST);
+			return false;
 		}
 
 		return true;
@@ -142,7 +143,7 @@ public class AssignAccountInfoConfigRequestHandler
 			List<AttributeDistribution> availableDistribution = dao
 					.getAttributeDistributionByServiceCall(apiType.getId(), serviceType.getApiServiceCallId());
 			valuesInRequset.put("currency", currency);
-			valuesInRequset.put("status", accountStatusCapital);
+			valuesInRequset.put("accountStatus", accountStatusCapital);
 
 			for (Map.Entry<String, String> eachMapValue : valuesInRequset.entrySet()) {
 				for (AttributeDistribution eachDistribution : availableDistribution) {
@@ -183,7 +184,7 @@ public class AssignAccountInfoConfigRequestHandler
 			responseWrapper.setHttpStatus(Response.Status.CREATED);
 
 		} catch (CustomException ex) {
-			LOG.error("###WALLETCONFIG### Error Occured in WALLETCONFIG Service. " , ex);
+			LOG.error("###WALLETCONFIG### Error Occured in WALLETCONFIG Service. ", ex);
 			responseWrapper.setHttpStatus(Status.BAD_REQUEST);
 			responseWrapper
 					.setRequestError(constructRequestError(SERVICEEXCEPTION, ServiceError.SERVICE_ERROR_OCCURED, null));

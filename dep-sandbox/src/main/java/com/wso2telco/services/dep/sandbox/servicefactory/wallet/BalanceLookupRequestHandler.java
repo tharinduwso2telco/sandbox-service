@@ -76,10 +76,11 @@ public class BalanceLookupRequestHandler extends AbstractRequestHandler<BalanceL
 			Validation.checkRequestParams(validationRules);
 
 		} catch (CustomException ex) {
-			LOG.error("###WALLET### Error in Validation : " , ex);
-			responseWrapper.setRequestError(constructRequestError(SERVICEEXCEPTION, ex.getErrcode(), ex.getErrmsg(),
-					wrapperDTO.getEndUserId()));
+			LOG.error("###WALLET### Error in Validations. ", ex);
+			responseWrapper.setRequestError(
+					constructRequestError(SERVICEEXCEPTION, ex.getErrcode(), ex.getErrmsg(), ex.getErrvar()[0]));
 			responseWrapper.setHttpStatus(Status.BAD_REQUEST);
+			return false;
 		}
 		return true;
 	}
@@ -123,7 +124,7 @@ public class BalanceLookupRequestHandler extends AbstractRequestHandler<BalanceL
 			List<AttributeValues> accountValue = new ArrayList<AttributeValues>();
 			List<String> attribute = new ArrayList<String>();
 			attribute.add(AttributeName.Currency.toString());
-			attribute.add(AttributeName.Status.toString());
+			attribute.add(AttributeName.accountStatus.toString());
 
 			String tableName = TableName.NUMBERS.toString().toLowerCase();
 			accountValue = walletDAO.getTransactionValue(endUserId, attribute, tableName, userId);
@@ -144,7 +145,7 @@ public class BalanceLookupRequestHandler extends AbstractRequestHandler<BalanceL
 				if (AttributeName.Currency.toString().toLowerCase().equals(attributeName)) {
 					accountInfo.setAccountCurrency(values.getValue());
 
-				} else if (AttributeName.Status.toString().toLowerCase().equals(attributeName)) {
+				} else if (AttributeName.accountStatus.toString().toLowerCase().equals(attributeName)) {
 
 					accountInfo.setAccountStatus(values.getValue());
 				}
@@ -159,7 +160,7 @@ public class BalanceLookupRequestHandler extends AbstractRequestHandler<BalanceL
 			responseWrapper.setHttpStatus(Response.Status.OK);
 
 		} catch (Exception ex) {
-			LOG.error("###WALLET### Error Occured in Wallet Service. " , ex);
+			LOG.error("###WALLET### Error Occured in Wallet Service. ", ex);
 			responseWrapper.setHttpStatus(Status.BAD_REQUEST);
 			responseWrapper
 					.setRequestError(constructRequestError(SERVICEEXCEPTION, ServiceError.SERVICE_ERROR_OCCURED, null));
