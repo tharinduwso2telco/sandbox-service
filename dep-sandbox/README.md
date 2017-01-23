@@ -18,9 +18,9 @@ MySQL Server’s time zone setting should be set to UTC time zone as ‘+00:00'.
 
 The database script relevant for this particular release version can be found at /dbscripts folder.
 
-- If the sandbox DataBase is going to be set-up for the first time then refer the sql script with the name of dep-sandbox<version>.sql
+- If the sandbox DataBase is going to be set-up for the first time then refer the sql script with the name of dep-sandbox<<version>>.sql like "dep-sandbox1_3_0.sql"
 
-- If the existing sandbox Database is going to be used then refer the sql script with name of migration upgrade version.
+- If the existing sandbox Database is going to be used then refer the sql script with name of migration upgrade version like "migration1_2_0to1_3_0.sql"
 
 DB tables can be created through running the script under the selection of particular sandbox Database.
 
