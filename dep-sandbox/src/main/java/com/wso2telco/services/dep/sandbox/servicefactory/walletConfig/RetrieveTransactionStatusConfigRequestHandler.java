@@ -60,10 +60,11 @@ public class RetrieveTransactionStatusConfigRequestHandler
 			Validation.checkRequestParams(validationRules);
 
 		} catch (CustomException ex) {
-			LOG.error("###WALLET### Error in Validation : " , ex);
-			responseWrapper.setRequestError(constructRequestError(SERVICEEXCEPTION, ex.getErrcode(), ex.getErrmsg(),
-					wrapperDTO.getServiceCall()));
-			responseWrapper.setHttpStatus(Response.Status.BAD_REQUEST);
+			LOG.error("###WALLETCONFIG### Error in Validations. ", ex);
+			responseWrapper.setRequestError(
+					constructRequestError(SERVICEEXCEPTION, ex.getErrcode(), ex.getErrmsg(), ex.getErrvar()[0]));
+			responseWrapper.setHttpStatus(Status.BAD_REQUEST);
+			return false;
 		}
 		return true;
 	}
@@ -105,7 +106,7 @@ public class RetrieveTransactionStatusConfigRequestHandler
 			responseWrapper.setHttpStatus(Response.Status.OK);
 
 		} catch (Exception ex) {
-			LOG.error("###WALLET### Error Occured in Wallet Service. " , ex);
+			LOG.error("###WALLET### Error Occured in Wallet Service. ", ex);
 			responseWrapper.setHttpStatus(Status.BAD_REQUEST);
 			responseWrapper
 					.setRequestError(constructRequestError(SERVICEEXCEPTION, ServiceError.SERVICE_ERROR_OCCURED, null));

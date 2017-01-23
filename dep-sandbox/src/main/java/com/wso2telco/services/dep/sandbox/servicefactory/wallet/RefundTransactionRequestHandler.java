@@ -146,10 +146,11 @@ public class RefundTransactionRequestHandler extends AbstractRequestHandler<Refu
 
 			Validation.checkRequestParams(validationRules);
 		} catch (CustomException ex) {
-			LOG.error("###WALLET### Error in Validation : " , ex);
-			responseWrapper.setRequestError(constructRequestError(SERVICEEXCEPTION, ex.getErrcode(), ex.getErrmsg(),
-					wrapperDTO.getEndUserId()));
+			LOG.error("###WALLET### Error in Validations. ", ex);
+			responseWrapper.setRequestError(
+					constructRequestError(SERVICEEXCEPTION, ex.getErrcode(), ex.getErrmsg(), ex.getErrvar()[0]));
 			responseWrapper.setHttpStatus(Status.BAD_REQUEST);
+			return false;
 		}
 		return true;
 	}
@@ -286,6 +287,14 @@ public class RefundTransactionRequestHandler extends AbstractRequestHandler<Refu
 					return responseWrapper;
 				}
 			}
+			// check channel
+			if (channel != null && !containsChannel(channel)) {
+				LOG.error("###WALLET### Valid channel doesn't exists for the given inputs");
+				responseWrapper.setRequestError(constructRequestError(SERVICEEXCEPTION,
+						ServiceError.INVALID_INPUT_VALUE, "Valid channel doesn't exists for the given inputs"));
+				responseWrapper.setHttpStatus(Status.BAD_REQUEST);
+				return responseWrapper;
+			}
 
 			String referenceCodeAttribute = AttributeName.referenceCodeWallet.toString();
 			String tableNumber = TableName.NUMBERS.toString().toLowerCase();
@@ -363,7 +372,7 @@ public class RefundTransactionRequestHandler extends AbstractRequestHandler<Refu
 			// save client correlator
 			saveReferenceCode(endUserId, referenceCode, userName);
 		} catch (Exception ex) {
-			LOG.error("###WALLET### Error Occured in WALLET Service. " , ex);
+			LOG.error("###WALLET### Error Occured in WALLET Service. ", ex);
 			responseWrapper.setHttpStatus(Status.BAD_REQUEST);
 			responseWrapper
 					.setRequestError(constructRequestError(SERVICEEXCEPTION, ServiceError.SERVICE_ERROR_OCCURED, null));
@@ -465,5 +474,16 @@ public class RefundTransactionRequestHandler extends AbstractRequestHandler<Refu
 			LOG.error("###WALLET### Error in processing save of referenceCode request. ", ex);
 			responseWrapper.setHttpStatus(Response.Status.BAD_REQUEST);
 		}
+	}
+
+	public boolean containsChannel(String channelValue) {
+
+		for (Channel channel : Channel.values()) {
+			if (channel.name().toLowerCase().equals(channelValue.toLowerCase())) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 }
