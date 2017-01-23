@@ -55,7 +55,7 @@ import com.wso2telco.services.dep.sandbox.servicefactory.RequestHandleable;
 import com.wso2telco.services.dep.sandbox.servicefactory.Returnable;
 import com.wso2telco.services.dep.sandbox.util.RequestType;
 
-@Path("/customerinfo/{v1}")
+@Path("/customerinfo/{v1}/config")
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.TEXT_PLAIN })
 @Produces({ MediaType.APPLICATION_JSON })
 @Api(value = "/customerinfo/{v1}/config", description = "Rest Services for CustomerInfo API related Configurations")
