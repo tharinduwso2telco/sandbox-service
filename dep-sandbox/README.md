@@ -114,6 +114,8 @@ For example [http://localhost:8181/swagger](http://localhost:8181/swagger)  in d
 
 ##6 API Features
 
+Please use header key as "sandbox" and value as username to invoke below given rest calls for authentication if not routing through APIM.(if not using sandbox token)
+
 ###6.1. User Service
 
 - Manage Numbers
