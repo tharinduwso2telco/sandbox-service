@@ -16,15 +16,15 @@ No need to install Maven if you install by downloading and extracting the binary
 
 MySQL Server’s time zone setting should be set to UTC time zone as ‘+00:00'.
 
-The database script relevant for this particular release version can be found at /dbscripts folder with the name of version
+The database script relevant for this particular release version can be found at /dbscripts folder.
 
-- If the sandbox DataBase is going to be set-up for the first time then refer the sql script with the name of dep-sandbox.sql
+- If the sandbox DataBase is going to be set-up for the first time then refer the sql script with the name of dep-sandbox<version>.sql
 
-- If the existing sandbox Database is going to be used then refer the sql script with name of the version
+- If the existing sandbox Database is going to be used then refer the sql script with name of migration upgrade version.
 
 DB tables can be created through running the script under the selection of particular sandbox Database.
 
-Note: If there is no any versioned script under dbscripts folder, then that means there is no any db related changes with particular release version.
+Note: If there is no any migration versioned script under dbscripts folder, then that means there is no any db upgrade with particular release version.
 
 ###2.2 Configuration Setup
 
