@@ -79,7 +79,6 @@ public class BalanceLookupRequestHandler extends AbstractRequestHandler<BalanceL
 			LOG.error("###WALLET### Error in Validations. ", ex);
 			responseWrapper.setRequestError(
 					constructRequestError(SERVICEEXCEPTION, ex.getErrcode(), ex.getErrmsg(), ex.getErrvar()[0]));
-			responseWrapper.setHttpStatus(Status.BAD_REQUEST);
 			return false;
 		}
 		return true;
@@ -88,6 +87,7 @@ public class BalanceLookupRequestHandler extends AbstractRequestHandler<BalanceL
 	@Override
 	protected Returnable process(BalanceLookupRequestWrapper extendedRequestDTO) throws Exception {
 		if (responseWrapper.getRequestError() != null) {
+			responseWrapper.setHttpStatus(Status.BAD_REQUEST);
 			return responseWrapper;
 
 		}

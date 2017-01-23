@@ -86,7 +86,6 @@ public class AssignTransactionStatusConfigRequestHandler
 			LOG.error("###WALLETCONFIG### Error in Validations. ", ex);
 			responseWrapper.setRequestError(
 					constructRequestError(SERVICEEXCEPTION, ex.getErrcode(), ex.getErrmsg(), ex.getErrvar()[0]));
-			responseWrapper.setHttpStatus(Status.BAD_REQUEST);
 			return false;
 		}
 
@@ -96,6 +95,7 @@ public class AssignTransactionStatusConfigRequestHandler
 	@Override
 	protected Returnable process(AssignTransactionStatusConfigRequestWrapper extendedRequestDTO) throws Exception {
 		if (responseWrapper.getRequestError() != null) {
+			responseWrapper.setHttpStatus(Status.BAD_REQUEST);
 			return responseWrapper;
 		}
 		try {
