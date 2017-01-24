@@ -220,7 +220,7 @@ public class GetAttributeRequestHandler extends
 	}
 	// check msisdn,imsi,mcc&mnc has the matching values
 
-	if ((customerInfoDao.getMSISDN(msisdn, imsi, mcc, mnc,extendedRequestDTO.getUser().getUserName() ) == null)) {
+	if ((dao.getMSISDN(msisdn, imsi, mcc, mnc,extendedRequestDTO.getUser().getUserName() ) == null)) {
 
 	    LOG.error("###CUSTOMERINFO### Valid MSISDN doesn't exists for the given inputssss");
 	    responseWrapperDTO

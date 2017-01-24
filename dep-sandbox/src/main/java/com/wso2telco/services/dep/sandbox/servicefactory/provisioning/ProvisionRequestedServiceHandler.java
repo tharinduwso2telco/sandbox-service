@@ -249,7 +249,7 @@ public class ProvisionRequestedServiceHandler extends AbstractRequestHandler<Ser
 			if (msisdn != null) {
 			    phoneNumber = CommonUtil.extractNumberFromMsisdn(msisdn);
 			}
-			ManageNumber mappedNumber = dao.getMSISDN(phoneNumber, null, mcc, mnc);
+			ManageNumber mappedNumber = dao.getMSISDN(phoneNumber, null, mcc, mnc,extendedRequestDTO.getUser().getUserName());
 
 			if (mappedNumber == null) {
 			    LOG.error("###PROVISION### Valid MSISDN doesn't exists for the given inputs");
