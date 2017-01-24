@@ -278,7 +278,7 @@ public class ProvisionRequestedServiceHandler extends AbstractRequestHandler<Ser
 					com.wso2telco.services.dep.sandbox.dao.model.domain.Status responseStatus = provisioningDao
 							.getStatusFromStatusCode(ProvisioningStatusCodes.PRV_PROVISION_ALREADY_ACTIVE);
 					buildProvisionResponse(provisionedService, responseStatus, clientReferenceCode, callbackReference);
-					responseWrapperDTO.setHttpStatus(Status.BAD_REQUEST);
+					responseWrapperDTO.setHttpStatus(Status.OK);
 					return responseWrapperDTO;
 				}
 			} else {
