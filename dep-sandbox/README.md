@@ -289,10 +289,10 @@ Response :
       }
     ],
     "currencyCode": currencyCode,
-    “onBehalfOf”:”my_Merchant”,
-	“purchaseCategoryCode”:”Game”,
-	“requestIdentifier”:”REQ12345678”,
-	“responseIdentifier”:”RES12345678”,
+    "onBehalfOf":"my_Merchant",
+	"purchaseCategoryCode":"Game",
+	"requestIdentifier":"REQ12345678",
+	"responseIdentifier":"RES12345678",
     "resourceURL": "http://<host>:<port>/provisioning/v1/{msisdn}/list/applicable/{UniqueID}"
   }
 }
@@ -315,8 +315,8 @@ Request Body :
 		"serviceCode":"SRV0001",
 		"clientCorrelator": "clientCorrelator",
 		"clientReferenceCode" : "clientReferenceCode",
-		“onBehalfOf”:”my_Merchant”,
-		“purchaseCategoryCode”:”Game”,
+		"onBehalfOf":"my_Merchant",
+		"purchaseCategoryCode":"Game",
 		"callbackReference":{
 			"notifyURL":"notifyURL",
 			"callbackData":"callbackData"
@@ -334,8 +334,8 @@ Response :
     "clientCorrelator": "clientCorrelator",
     "clientReferenceCode": "clientReferenceCode",
     "serverReferenceCode": "serverReferenceCode",
-    “onBehalfOf”:”my_Merchant”,
-	“purchaseCategoryCode”:”Game”,
+    "onBehalfOf”:"my_Merchant",
+	"purchaseCategoryCode":"Game",
     "callbackReference": {
       "notifyURL": "notifyURL",
       "callbackData": "callbackData",
@@ -363,8 +363,8 @@ Request Body :
 				"serviceCode": "SRV0001",
 				"clientCorrelator": "clientCorrelator",
 				"clientReferenceCode" : "clientReferenceCode",
-				“onBehalfOf”:”my_Merchant”,
-				“purchaseCategoryCode”:”Game”,
+				"onBehalfOf":"my_Merchant",
+				"purchaseCategoryCode":"Game",
 				"callbackReference" : {
         					"notifyURL": "notifyURL",
             				"callbackData": "callbackData"
@@ -381,8 +381,8 @@ Response :
     "clientCorrelator": "clientCorrelator",
     "clientReferenceCode": "clientReferenceCode",
     "serverReferenceCode": "serverReferenceCode",
-    “onBehalfOf”:”my_Merchant”,
-	“purchaseCategoryCode”:”Game”,
+    "onBehalfOf":"my_Merchant",
+	"purchaseCategoryCode":"Game",
     "callbackReference": {
       "notifyURL": "notifyURL",
       "callbackData": "callbackData",
