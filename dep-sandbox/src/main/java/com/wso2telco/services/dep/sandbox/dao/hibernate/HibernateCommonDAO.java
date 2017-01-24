@@ -1,7 +1,13 @@
 package com.wso2telco.services.dep.sandbox.dao.hibernate;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.Map.Entry;
+
+import javax.persistence.NoResultException;
 
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.Session;
@@ -280,5 +286,67 @@ class HibernateCommonDAO extends AbstractDAO implements GenaricDAO {
 	return value;
     }
 
+    @Override
+
+    public ManageNumber getMSISDN(String msisdn, String imsi, String mcc, String mnc,String user) throws Exception {
+	Session session = getSession();
+	ManageNumber number = null;
+	Map<String, String> parameterMap = new HashMap<>();
+
+	try {
+	    StringBuilder hqlBuilder = new StringBuilder();
+	    hqlBuilder.append("from ManageNumber number where ");
+	    if (msisdn != null && imsi != null) {
+		hqlBuilder.append(" number.Number = :msisdn ");
+		hqlBuilder.append(" and ");
+		hqlBuilder.append(" number.imsi = :imsi");
+		parameterMap.put("msisdn", msisdn);
+		parameterMap.put("imsi", imsi);
+	    } else if (msisdn != null) {
+		hqlBuilder.append(" number.Number = :msisdn ");
+		parameterMap.put("msisdn", msisdn);
+	    } else if (imsi != null) {
+		hqlBuilder.append(" number.imsi = :imsi");
+		parameterMap.put("imsi", imsi);
+	    }
+
+	    if (mcc != null) {
+		hqlBuilder.append(" and ");
+		hqlBuilder.append(" number.mcc=:mcc ");
+		parameterMap.put("mcc", mcc);
+	    }
+
+	    if (mnc != null) {
+		hqlBuilder.append(" and ");
+		hqlBuilder.append(" number.mnc=:mnc ");
+		parameterMap.put("mnc", mnc);
+	    }
+	    
+	    hqlBuilder.append(" and lower(number.user.userName) = :user ");
+	    parameterMap.put("user", user.toLowerCase());
+
+	    Query query = session.createQuery(hqlBuilder.toString());
+
+	    Set<Entry<String, String>> entrySet = parameterMap.entrySet();
+
+	    for (Entry<String, String> parameterEntry : entrySet) {
+		if (parameterEntry.getKey().equals("mcc") || parameterEntry.getKey().equals("mnc") ) {
+		    query.setParameter(parameterEntry.getKey(), Integer.parseInt(parameterEntry.getValue()));
+		} else {
+		    query.setParameter(parameterEntry.getKey(), parameterEntry.getValue());
+		}
+
+	    }
+
+	    number = (ManageNumber) query.getSingleResult();
+	} catch (NoResultException e) {
+	    return null;
+	} catch (Exception ex) {
+	    LOG.error("###CUSTOMERINFO### Error While Retriving MSISDN", ex);
+	    throw ex;
+	}
+
+	return number;
+    }
 
 }

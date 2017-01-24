@@ -181,7 +181,7 @@ public class ListActiveProvisionedServices extends AbstractRequestHandler<ListPr
 				if (msisdn != null) {
 				    phoneNumber = CommonUtil.extractNumberFromMsisdn(msisdn);
 				}
-				ManageNumber number = dao.getMSISDN(phoneNumber, null, mcc, mnc);
+				ManageNumber number = dao.getMSISDN(phoneNumber, null, mcc, mnc,extendedRequestDTO.getUser().getUserName());
 
 				if (number == null) {
 				    LOG.error("###PROVISION### Valid MSISDN doesn't exists for the given inputs");
