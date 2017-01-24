@@ -348,7 +348,7 @@ public class RemoveProvisionedServices extends AbstractRequestHandler<RemoveProv
 				.setServiceRemoveResponse(serviceRemovalResponse);
 		responseWrapper
 				.setRemoveProvisionedResponseBean(removeProvisionResponseBean);
-		responseWrapper.setHttpStatus(Response.Status.BAD_REQUEST);
+		responseWrapper.setHttpStatus(Response.Status.OK);
 
 	}
 
