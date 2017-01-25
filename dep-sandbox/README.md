@@ -1142,6 +1142,8 @@ Unless 400 Bad Request will be returned
 
 - Add account information for msisdn
 
+Account information needs to be add before call the "Balance Lookup" service call
+
 Request :
 
 Type - POST

@@ -120,7 +120,7 @@ public class AssignTransactionStatusConfigRequestHandler
 			}
 
 			// check valid account status
-			if (!(accountStatus.equals(statusRefused))) {
+			if (!(accountStatus.toLowerCase().equals(statusRefused))) {
 				LOG.error("###WALLETCONFIG### Invalid status ");
 				responseWrapper.setHttpStatus(Status.BAD_REQUEST);
 				responseWrapper.setRequestError(constructRequestError(SERVICEEXCEPTION,

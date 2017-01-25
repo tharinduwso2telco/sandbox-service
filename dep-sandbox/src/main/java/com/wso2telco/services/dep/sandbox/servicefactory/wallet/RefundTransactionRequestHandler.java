@@ -102,12 +102,13 @@ public class RefundTransactionRequestHandler extends AbstractRequestHandler<Refu
 		ChargingMetaData metaData = paymentAmount.getChargingMetaData();
 
 		String clientCorrelator = CommonUtil.getNullOrTrimmedValue(request.getClientCorrelator());
+		String msisdn = CommonUtil.getNullOrTrimmedValue(wrapperDTO.getEndUserId());
 		String endUserID = CommonUtil.getNullOrTrimmedValue(request.getEndUserId());
 		String originalReferenceCode = CommonUtil.getNullOrTrimmedValue(request.getOriginalReferenceCode());
 		String originalServerReferenceCode = CommonUtil.getNullOrTrimmedValue(request.getOriginalServerReferenceCode());
 		String amount = CommonUtil.getNullOrTrimmedValue(chargingInformation.getAmount());
 		String currency = CommonUtil.getNullOrTrimmedValue(chargingInformation.getCurrency());
-		String decsription = CommonUtil.getNullOrTrimmedValue(chargingInformation.getDescription());
+		String description = CommonUtil.getNullOrTrimmedValue(chargingInformation.getDescription());
 		String onBehalfOf = CommonUtil.getNullOrTrimmedValue(metaData.getOnBehalfOf());
 		String categoryCode = CommonUtil.getNullOrTrimmedValue(metaData.getPurchaseCategoryCode());
 		String channel = CommonUtil.getNullOrTrimmedValue(metaData.getChannel());
@@ -120,6 +121,8 @@ public class RefundTransactionRequestHandler extends AbstractRequestHandler<Refu
 					new ValidationRule(ValidationRule.VALIDATION_TYPE_OPTIONAL, "clientCorrelator", clientCorrelator));
 			validationRulesList.add(new ValidationRule(ValidationRule.VALIDATION_TYPE_MANDATORY_TEL_END_USER_ID,
 					"endUserID", endUserID));
+			validationRulesList.add(new ValidationRule(ValidationRule.VALIDATION_TYPE_MANDATORY_TEL_END_USER_ID,
+					"endUserID", msisdn));
 			validationRulesList.add(new ValidationRule(ValidationRule.VALIDATION_TYPE_MANDATORY,
 					"originalReferenceCode", originalReferenceCode));
 			validationRulesList.add(new ValidationRule(ValidationRule.VALIDATION_TYPE_MANDATORY,
@@ -127,7 +130,7 @@ public class RefundTransactionRequestHandler extends AbstractRequestHandler<Refu
 			validationRulesList.add(new ValidationRule(ValidationRule.VALIDATION_TYPE_MANDATORY, "amount", amount));
 			validationRulesList.add(new ValidationRule(ValidationRule.VALIDATION_TYPE_MANDATORY, "currency", currency));
 			validationRulesList
-					.add(new ValidationRule(ValidationRule.VALIDATION_TYPE_MANDATORY, "decsription", decsription));
+					.add(new ValidationRule(ValidationRule.VALIDATION_TYPE_MANDATORY, "description", description));
 
 			if (metaData != null) {
 				validationRulesList
