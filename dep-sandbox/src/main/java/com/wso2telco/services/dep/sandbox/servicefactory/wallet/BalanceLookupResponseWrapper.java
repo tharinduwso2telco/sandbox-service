@@ -11,7 +11,7 @@ public class BalanceLookupResponseWrapper extends AbstractReturnWrapperDTO {
 	@Override
 	public Object getResponse() {
 		if (getRequestError() == null) {
-			return getBalanceLookupDTO();
+			return balanceLookupDTO;
 		}else{
 			ErrorResponseDTO response= new ErrorResponseDTO(getRequestError());
 			return response;
