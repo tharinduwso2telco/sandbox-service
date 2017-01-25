@@ -100,9 +100,10 @@ public class MakePaymentRequestHandler extends AbstractRequestHandler<MakePaymen
 
 		String clientCorrelator = CommonUtil.getNullOrTrimmedValue(request.getClientCorrelator());
 		String endUserID = CommonUtil.getNullOrTrimmedValue(wrapperDTO.getEndUserId());
+		String msisdn = CommonUtil.getNullOrTrimmedValue(request.getEndUserId());
 		String amount = CommonUtil.getNullOrTrimmedValue(chargingInformation.getAmount().toString());
 		String currency = CommonUtil.getNullOrTrimmedValue(chargingInformation.getCurrency());
-		String decsription = CommonUtil.getNullOrTrimmedValue(chargingInformation.getDescription());
+		String description = CommonUtil.getNullOrTrimmedValue(chargingInformation.getDescription());
 		String onBehalfOf = CommonUtil.getNullOrTrimmedValue(metaData.getOnBehalfOf());
 		String categoryCode = CommonUtil.getNullOrTrimmedValue(metaData.getPurchaseCategoryCode());
 		String channel = CommonUtil.getNullOrTrimmedValue(metaData.getChannel());
@@ -116,11 +117,13 @@ public class MakePaymentRequestHandler extends AbstractRequestHandler<MakePaymen
 					new ValidationRule(ValidationRule.VALIDATION_TYPE_OPTIONAL, "clientCorrelator", clientCorrelator));
 			validationRulesList.add(new ValidationRule(ValidationRule.VALIDATION_TYPE_MANDATORY_TEL_END_USER_ID,
 					"endUserID", endUserID));
+			validationRulesList.add(new ValidationRule(ValidationRule.VALIDATION_TYPE_MANDATORY_TEL_END_USER_ID,
+					"endUserID", msisdn));
 			validationRulesList.add(new ValidationRule(ValidationRule.VALIDATION_TYPE_MANDATORY, "amount", amount));
 			validationRulesList
 					.add(new ValidationRule(ValidationRule.VALIDATION_TYPE_MANDATORY_CURRENCY, "currency", currency));
 			validationRulesList
-					.add(new ValidationRule(ValidationRule.VALIDATION_TYPE_MANDATORY, "decsription", decsription));
+					.add(new ValidationRule(ValidationRule.VALIDATION_TYPE_MANDATORY, "description", description));
 			if (metaData != null) {
 				validationRulesList
 						.add(new ValidationRule(ValidationRule.VALIDATION_TYPE_OPTIONAL, "onBehalfOf", onBehalfOf));
