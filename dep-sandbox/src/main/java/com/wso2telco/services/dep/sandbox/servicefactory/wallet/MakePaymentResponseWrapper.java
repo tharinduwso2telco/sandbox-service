@@ -1,5 +1,6 @@
 package com.wso2telco.services.dep.sandbox.servicefactory.wallet;
 
+import com.wso2telco.services.dep.sandbox.dao.model.custom.ErrorResponseDTO;
 import com.wso2telco.services.dep.sandbox.dao.model.custom.MakePaymentDTO;
 import com.wso2telco.services.dep.sandbox.servicefactory.AbstractReturnWrapperDTO;
 
@@ -17,9 +18,13 @@ public class MakePaymentResponseWrapper extends AbstractReturnWrapperDTO {
 
 	@Override
 	public Object getResponse() {
-		if (getRequestError() != null) {
-			return getRequestError();
+		if (getRequestError() == null) {
+			return makePaymentDTO;
+		} else {
+			ErrorResponseDTO response = new ErrorResponseDTO(getRequestError());
+			return response;
+
 		}
-		return makePaymentDTO;
 	}
+
 }

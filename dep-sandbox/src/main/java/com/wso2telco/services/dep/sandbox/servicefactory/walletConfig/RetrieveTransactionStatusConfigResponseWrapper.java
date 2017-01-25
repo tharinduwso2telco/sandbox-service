@@ -1,20 +1,22 @@
 package com.wso2telco.services.dep.sandbox.servicefactory.walletConfig;
 
+import com.wso2telco.services.dep.sandbox.dao.model.custom.ErrorResponseDTO;
 import com.wso2telco.services.dep.sandbox.dao.model.custom.RetrieveTransactionStatusDTO;
 import com.wso2telco.services.dep.sandbox.servicefactory.AbstractReturnWrapperDTO;
 
-public class RetrieveTransactionStatusConfigResponseWrapper extends AbstractReturnWrapperDTO{
-	
+public class RetrieveTransactionStatusConfigResponseWrapper extends AbstractReturnWrapperDTO {
+
 	private RetrieveTransactionStatusDTO statusValueDTO;
-	
-	
+
 	@Override
 	public Object getResponse() {
-		if (getRequestError() != null) {
-		    return getRequestError();
+		if (getRequestError() == null) {
+			return statusValueDTO;
+		} else {
+			ErrorResponseDTO response = new ErrorResponseDTO(getRequestError());
+			return response;
 		}
-		return geStatusValueDTO();
-	    }
+	}
 
 	public RetrieveTransactionStatusDTO geStatusValueDTO() {
 		return statusValueDTO;
@@ -23,7 +25,5 @@ public class RetrieveTransactionStatusConfigResponseWrapper extends AbstractRetu
 	public void setStatusValueDTO(RetrieveTransactionStatusDTO statusValueDTO) {
 		this.statusValueDTO = statusValueDTO;
 	}
-	
-	
-	
+
 }
