@@ -304,10 +304,35 @@ public class ProvisionRequestedServiceHandler extends AbstractRequestHandler<Ser
 					return responseWrapperDTO;
 				}
 
+				ProvisionedServices service = provisioningDao.checkProvisionClientCorrelator(
+						msisdn, user.getUserName(), serviceCode, clientCorrelator);
+				if(service== null){
 				ProvisionedServices serviceResponse = provisionRequestedService(serviceMapEntry, clientCorrelator,
 						clientReferenceCode, notifyUrl, callbackData);
 				buildProvisionResponse(serviceResponse, null, clientReferenceCode, callbackReference);
 				responseWrapperDTO.setHttpStatus(Status.OK);
+				}else{
+					
+					ProvisionedServices provisionService = new ProvisionedServices();
+					provisionService.setId(service.getId());
+					provisionService.setMSISDNServicesMapId(serviceMapEntry);
+					provisionService.setClientCorrelator(clientCorrelator);
+					provisionService.setClientReferenceCode(clientReferenceCode);
+					provisionService.setNotifyURL(notifyUrl);
+					provisionService.setCallbackData(callbackData);
+					provisionService.setCreatedDate(new Date());
+
+					com.wso2telco.services.dep.sandbox.dao.model.domain.Status status = provisioningDao
+							.getStatusFromStatusCode(ProvisioningUtil.DEFAULT_PROVISION_STATUS);
+
+					provisionService.setStatus(status);
+
+					provisioningDao.saveProvisionedService(provisionService);
+
+					buildProvisionResponse(provisionService, null, clientReferenceCode, callbackReference);
+					responseWrapperDTO.setHttpStatus(Status.OK);
+					
+				}
 
 			}
 
