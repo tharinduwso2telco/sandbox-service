@@ -55,6 +55,8 @@ public class QueryApplicableProvisioningService
 	private ProvisioningDAO provisioningDao;
 	private QueryProvisioningServicesRequestWrapper requestWrapperDTO;
 	private QueryApplicableProvisioningServiceResponseWrapper responseWrapper;
+	private final String NUMERIC_REGEX = "[0-9]+";
+
 
 	{
 		LOG = LogFactory.getLog(QueryApplicableProvisioningService.class);
@@ -101,20 +103,49 @@ public class QueryApplicableProvisioningService
 			validationRulesList.add(new ValidationRule(
 					ValidationRule.VALIDATION_TYPE_OPTIONAL_INT_GE_ZERO,
 					"limit", limit));
-			if (mcc != null) {
+			
+			
+			if ((mcc != null && mcc.trim().length() > 0)
+					|| (mnc != null && mnc.trim().length() > 0)) {
+
+				validationRulesList.add(new ValidationRule(
+						ValidationRule.VALIDATION_TYPE_MANDATORY_NUMBER, "mcc",
+						mcc));
+				validationRulesList.add(new ValidationRule(
+						ValidationRule.VALIDATION_TYPE_MANDATORY_NUMBER, "mnc",
+						mnc));
+			} else {
+
+				validationRulesList.add(new ValidationRule(
+						ValidationRule.VALIDATION_TYPE_OPTIONAL, "mcc", mcc));
+				validationRulesList.add(new ValidationRule(
+						ValidationRule.VALIDATION_TYPE_OPTIONAL, "mnc", mnc));
+			}
+
+			if (offset != null && isNumeric(offset)) {
+
 				validationRulesList.add(new ValidationRule(
 						ValidationRule.VALIDATION_TYPE_OPTIONAL_INT_GE_ZERO,
-						"mcc", mcc));
-				validationRulesList.add(new ValidationRule(
-						ValidationRule.VALIDATION_TYPE_MANDATORY_INT_GE_ZERO,
-						"mnc", mnc));
-			} else if (mnc != null) {
+						"offset", Integer.parseInt(offset)));
+			} else if (offset != null) {
+				responseWrapper
+						.setRequestError(constructRequestError(
+								SERVICEEXCEPTION, "SVC0002",
+								"Invalid input value for message part %1",
+								"Parameter offset expected Numeric received "
+										+ offset));
+			}
+
+			if (limit != null && isNumeric(limit)) {
+
 				validationRulesList.add(new ValidationRule(
 						ValidationRule.VALIDATION_TYPE_OPTIONAL_INT_GE_ZERO,
-						"mnc", mnc));
-				validationRulesList.add(new ValidationRule(
-						ValidationRule.VALIDATION_TYPE_MANDATORY_INT_GE_ZERO,
-						"mcc", mcc));
+						"limit", limit));
+			} else if (limit != null) {
+				responseWrapper.setRequestError(constructRequestError(
+						SERVICEEXCEPTION, "SVC0002",
+						"Invalid input value for message part %1",
+						"Parameter limit expected Numeric received " + limit));
 			}
 
 			validationRulesList.add(new ValidationRule(
@@ -123,6 +154,10 @@ public class QueryApplicableProvisioningService
 			validationRulesList.add(new ValidationRule(
 					ValidationRule.VALIDATION_TYPE_OPTIONAL,
 					"purchaseCategoryCode", purchaseCategoryCode));
+
+			validationRulesList.add(new ValidationRule(
+					ValidationRule.VALIDATION_TYPE_MANDATORY,
+					"requestIdentifier", requestIdentifier));
 
 			if (requestIdentifier != null
 					&& checkRequestIdentifierSize(requestIdentifier)) {
@@ -135,7 +170,6 @@ public class QueryApplicableProvisioningService
 						SERVICEEXCEPTION, "SVC0002",
 						"Invalid input value for message part %1",
 						"requestIdentifier"));
-				responseWrapper.setHttpStatus(Status.BAD_REQUEST);
 
 			}
 			ValidationRule[] validationRules = new ValidationRule[validationRulesList
@@ -258,5 +292,13 @@ public class QueryApplicableProvisioningService
 			}
 		}
 
+	 private boolean isNumeric(String input) {
 
+			if (input.matches(NUMERIC_REGEX)) {
+
+				return true;
+			}
+
+			return false;
+		}
 }

@@ -15,6 +15,7 @@ import com.wso2telco.dep.oneapivalidation.util.Validation;
 import com.wso2telco.dep.oneapivalidation.util.ValidationRule;
 import com.wso2telco.services.dep.sandbox.dao.DaoFactory;
 import com.wso2telco.services.dep.sandbox.dao.ProvisioningDAO;
+import com.wso2telco.services.dep.sandbox.dao.model.custom.CommonSuccessResponse;
 import com.wso2telco.services.dep.sandbox.dao.model.custom.ProvisioningServicesRequestWrapperDTO;
 import com.wso2telco.services.dep.sandbox.dao.model.custom.ServiceDetail;
 import com.wso2telco.services.dep.sandbox.dao.model.domain.ProvisionAllService;
@@ -90,6 +91,8 @@ public class NewProvisioningService extends AbstractRequestHandler<ProvisioningS
 			provisionAllService.setServiceType(serviceDetail.getServiceType());
 			provisionAllService.setDescription(serviceDetail.getDescription());
 			provisionAllService.setServiceCharge(serviceDetail.getServiceCharge());
+			provisionAllService.setTag(serviceDetail.getTag());
+			provisionAllService.setValue(serviceDetail.getValue());
 			provisionAllService.setUser(extendedRequestDTO.getUser());
 			
 			List<ProvisionAllService> serviceList = provisioningDao.getProvisionServices(provisionAllService.getUser().getId());
@@ -103,8 +106,11 @@ public class NewProvisioningService extends AbstractRequestHandler<ProvisioningS
 			}
 			if(!serviceCodes.contains(provisionAllService.getServiceCode()) && !serviceNames.contains(provisionAllService.getServiceName())){
 				provisioningDao.saveProvisionService(provisionAllService);
+				
+				CommonSuccessResponse success = new CommonSuccessResponse();
+				success.setStatus("Service added Successfully!!!");
+				responseWrapperDTO.setMessage(success);
 				responseWrapperDTO.setHttpStatus(Response.Status.OK);
-				responseWrapperDTO.setStatus("Successful");
 			}else{
 				LOG.info("Already exist service");
 				responseWrapperDTO.setHttpStatus(Response.Status.BAD_REQUEST);
