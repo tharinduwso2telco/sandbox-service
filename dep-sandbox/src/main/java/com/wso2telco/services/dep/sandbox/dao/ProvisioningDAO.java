@@ -53,7 +53,9 @@ public interface ProvisioningDAO {
 	public void updateDeleteStatus(ProvisionedServices provisionedCheckList)throws Exception;
 
 	public ProvisionedServices checkClientCorrelator(String msisdn,String userName, String serviceCode, String clientCorrelator) throws Exception;
-	
+
+	public ProvisionedServices checkProvisionClientCorrelator(String msisdn,String userName, String serviceCode, String clientCorrelator) throws Exception;
+
 	public Status getStatusFromStatusCode (ProvisioningStatusCodes statusCode) throws Exception;
 	
 	public ProvisionMSISDNServicesMap getProvisionMsisdnService(ManageNumber number, ProvisionAllService service) throws Exception;

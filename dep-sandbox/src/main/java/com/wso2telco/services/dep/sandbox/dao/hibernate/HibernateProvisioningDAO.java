@@ -616,6 +616,50 @@ public class HibernateProvisioningDAO extends AbstractDAO implements Provisionin
 		}
 		return provisionedCheckList;
 	}
+	
+	public ProvisionedServices checkProvisionClientCorrelator(String msisdn, String userName, String serviceCode, String clientCorrelator)throws Exception {
+		Session session = getSession();
+		ProvisionedServices provisionedCheckList = null;
+		StringBuilder hql=new StringBuilder();
+		
+		hql.append(" SELECT");
+		hql.append(" prservice");
+		hql.append(" FROM");
+		hql.append(" ProvisionedServices AS prservice,");
+		hql.append(" ManageNumber AS number,");
+		hql.append(" ProvisionAllService AS service,");
+		hql.append(" User AS user,");
+		hql.append(" ProvisionMSISDNServicesMap AS map,");
+		hql.append(" Status AS stat");
+		hql.append(" WHERE");
+		hql.append(" number.Number = :msisdn AND");
+		hql.append(" user.userName= :username AND");
+		hql.append(" user.id = number.user.id AND");
+		hql.append(" user.id = service.user.id AND");
+		hql.append(" service.serviceCode = :code AND");
+		hql.append(" map.servicesId.id = service.id AND");
+		hql.append(" map.msisdnId.id = number.id AND");
+		hql.append(" map.id = prservice.msisdnServiceMap.id AND");
+		hql.append(" stat.id = prservice.status.id AND");	
+		hql.append(" prservice.clientCorrelator= :clientCorrelator AND");
+		hql.append(" stat.code= :status1 ");
+		
+		try {
+			Query query = session.createQuery(hql.toString());
+			query.setParameter("status1", ProvisioningStatusCodes.PRV_DELETE_SUCCESS.toString());
+			//query.setParameter("status2", ProvisioningStatusCodes.PRV_DELETE_PENDING.toString());
+			query.setParameter("msisdn", msisdn);
+			query.setParameter("username", userName);
+			query.setParameter("code", serviceCode);
+			query.setParameter("clientCorrelator", clientCorrelator);	
+
+			provisionedCheckList = (ProvisionedServices) query.uniqueResult();
+		}catch (Exception ex) {
+			LOG.error("###PROVISION### Error in checkClientCorrelator " + ex);
+			throw ex;
+		}
+		return provisionedCheckList;
+	}
 
 	@Override
     public void saveServiceForMsisdn(ProvisionMSISDNServicesMap map)
