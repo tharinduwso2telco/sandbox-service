@@ -107,20 +107,21 @@ public class ProvisionRequestedServiceHandler extends AbstractRequestHandler<Ser
 			
 			List<ValidationRule> validationRules = new ArrayList<>();
 			
-			if (mcc != null) {
+			if ((mcc != null && mcc.trim().length() > 0)
+					|| (mnc != null && mnc.trim().length() > 0)) {
+
 				validationRules.add(new ValidationRule(
-						ValidationRule.VALIDATION_TYPE_OPTIONAL_INT_GE_ZERO,
-						"mcc", mcc));
+						ValidationRule.VALIDATION_TYPE_MANDATORY_NUMBER, "mcc",
+						mcc));
 				validationRules.add(new ValidationRule(
-						ValidationRule.VALIDATION_TYPE_MANDATORY_INT_GE_ZERO,
-						"mnc", mnc));
-			} else if (mnc != null) {
+						ValidationRule.VALIDATION_TYPE_MANDATORY_NUMBER, "mnc",
+						mnc));
+			} else {
+
 				validationRules.add(new ValidationRule(
-						ValidationRule.VALIDATION_TYPE_OPTIONAL_INT_GE_ZERO,
-						"mnc", mnc));
+						ValidationRule.VALIDATION_TYPE_OPTIONAL, "mcc", mcc));
 				validationRules.add(new ValidationRule(
-						ValidationRule.VALIDATION_TYPE_MANDATORY_INT_GE_ZERO,
-						"mcc", mcc));
+						ValidationRule.VALIDATION_TYPE_OPTIONAL, "mnc", mnc));
 			}
 			ProvisionRequestBean requestBean = wrapperDTO.getProvisionRequestBean();
 			

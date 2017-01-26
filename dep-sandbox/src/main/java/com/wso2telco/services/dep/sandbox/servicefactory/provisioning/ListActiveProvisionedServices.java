@@ -50,16 +50,19 @@ import com.wso2telco.services.dep.sandbox.util.CommonUtil;
 import com.wso2telco.services.dep.sandbox.util.ProvisioningStatusCodes;
 import com.wso2telco.services.dep.sandbox.util.ProvisioningUtil;
 import com.wso2telco.services.dep.sandbox.util.ProvisioningUtil.ProvisionRequestTypes;
+
 /**
  * 
  * @author WSO2Telco
  *
  */
-public class ListActiveProvisionedServices extends AbstractRequestHandler<ListProvisionedRequestWrapperDTO> {
+public class ListActiveProvisionedServices extends
+		AbstractRequestHandler<ListProvisionedRequestWrapperDTO> {
 
 	private ProvisioningDAO provisioningDao;
 	private ListProvisionedRequestWrapperDTO requestWrapperDTO;
 	private ListActiveProvisionedServicesResponseWrapper responseWrapper;
+	private final String NUMERIC_REGEX = "[0-9]+";
 
 	{
 		LOG = LogFactory.getLog(ListActiveProvisionedServices.class);
@@ -80,19 +83,25 @@ public class ListActiveProvisionedServices extends AbstractRequestHandler<ListPr
 	}
 
 	@Override
-	protected boolean validate(ListProvisionedRequestWrapperDTO wrapperDTO) throws Exception {
+	protected boolean validate(ListProvisionedRequestWrapperDTO wrapperDTO)
+			throws Exception {
 
-		String msisdn = CommonUtil.getNullOrTrimmedValue(wrapperDTO.getMsisdn());
-		String offset = CommonUtil.getNullOrTrimmedValue(wrapperDTO.getOffSet());
+		String msisdn = CommonUtil
+				.getNullOrTrimmedValue(wrapperDTO.getMsisdn());
+		String offset = CommonUtil
+				.getNullOrTrimmedValue(wrapperDTO.getOffSet());
 		String limit = CommonUtil.getNullOrTrimmedValue(wrapperDTO.getLimit());
 		String mcc = CommonUtil.getNullOrTrimmedValue(wrapperDTO.getMcc());
 		String mnc = CommonUtil.getNullOrTrimmedValue(wrapperDTO.getMnc());
-		String onBehalfOf = CommonUtil.getNullOrTrimmedValue(wrapperDTO.getOnBehalfOf());
-		String purchaseCategoryCode = CommonUtil.getNullOrTrimmedValue(wrapperDTO.getPurchaseCategoryCode());
-		String requestIdentifier = CommonUtil.getNullOrTrimmedValue(wrapperDTO.getRequestIdentifier());
+		String onBehalfOf = CommonUtil.getNullOrTrimmedValue(wrapperDTO
+				.getOnBehalfOf());
+		String purchaseCategoryCode = CommonUtil
+				.getNullOrTrimmedValue(wrapperDTO.getPurchaseCategoryCode());
+		String requestIdentifier = CommonUtil.getNullOrTrimmedValue(wrapperDTO
+				.getRequestIdentifier());
 
 		List<ValidationRule> validationRulesList = new ArrayList<>();
-		
+
 		try {
 
 			validationRulesList.add(new ValidationRule(
@@ -104,20 +113,49 @@ public class ListActiveProvisionedServices extends AbstractRequestHandler<ListPr
 			validationRulesList.add(new ValidationRule(
 					ValidationRule.VALIDATION_TYPE_OPTIONAL_INT_GE_ZERO,
 					"limit", limit));
-			if (mcc != null) {
+			
+			
+			if ((mcc != null && mcc.trim().length() > 0)
+					|| (mnc != null && mnc.trim().length() > 0)) {
+
+				validationRulesList.add(new ValidationRule(
+						ValidationRule.VALIDATION_TYPE_MANDATORY_NUMBER, "mcc",
+						mcc));
+				validationRulesList.add(new ValidationRule(
+						ValidationRule.VALIDATION_TYPE_MANDATORY_NUMBER, "mnc",
+						mnc));
+			} else {
+
+				validationRulesList.add(new ValidationRule(
+						ValidationRule.VALIDATION_TYPE_OPTIONAL, "mcc", mcc));
+				validationRulesList.add(new ValidationRule(
+						ValidationRule.VALIDATION_TYPE_OPTIONAL, "mnc", mnc));
+			}
+
+			if (offset != null && isNumeric(offset)) {
+
 				validationRulesList.add(new ValidationRule(
 						ValidationRule.VALIDATION_TYPE_OPTIONAL_INT_GE_ZERO,
-						"mcc", mcc));
-				validationRulesList.add(new ValidationRule(
-						ValidationRule.VALIDATION_TYPE_MANDATORY_INT_GE_ZERO,
-						"mnc", mnc));
-			} else if (mnc != null) {
+						"offset", Integer.parseInt(offset)));
+			} else if (offset != null) {
+				responseWrapper
+						.setRequestError(constructRequestError(
+								SERVICEEXCEPTION, "SVC0002",
+								"Invalid input value for message part %1",
+								"Parameter offset expected Numeric received "
+										+ offset));
+			}
+
+			if (limit != null && isNumeric(limit)) {
+
 				validationRulesList.add(new ValidationRule(
 						ValidationRule.VALIDATION_TYPE_OPTIONAL_INT_GE_ZERO,
-						"mnc", mnc));
-				validationRulesList.add(new ValidationRule(
-						ValidationRule.VALIDATION_TYPE_MANDATORY_INT_GE_ZERO,
-						"mcc", mcc));
+						"limit", limit));
+			} else if (limit != null) {
+				responseWrapper.setRequestError(constructRequestError(
+						SERVICEEXCEPTION, "SVC0002",
+						"Invalid input value for message part %1",
+						"Parameter limit expected Numeric received " + limit));
 			}
 
 			validationRulesList.add(new ValidationRule(
@@ -126,6 +164,10 @@ public class ListActiveProvisionedServices extends AbstractRequestHandler<ListPr
 			validationRulesList.add(new ValidationRule(
 					ValidationRule.VALIDATION_TYPE_OPTIONAL,
 					"purchaseCategoryCode", purchaseCategoryCode));
+
+			validationRulesList.add(new ValidationRule(
+					ValidationRule.VALIDATION_TYPE_MANDATORY,
+					"requestIdentifier", requestIdentifier));
 
 			if (requestIdentifier != null
 					&& checkRequestIdentifierSize(requestIdentifier)) {
@@ -138,7 +180,6 @@ public class ListActiveProvisionedServices extends AbstractRequestHandler<ListPr
 						SERVICEEXCEPTION, "SVC0002",
 						"Invalid input value for message part %1",
 						"requestIdentifier"));
-				responseWrapper.setHttpStatus(Status.BAD_REQUEST);
 
 			}
 			ValidationRule[] validationRules = new ValidationRule[validationRulesList
@@ -148,13 +189,13 @@ public class ListActiveProvisionedServices extends AbstractRequestHandler<ListPr
 			Validation.checkRequestParams(validationRules);
 		} catch (CustomException ex) {
 			LOG.error("###PROVISION### Error in Validation : " + ex);
-			 String errorMessage = "";
-			    if (ex.getErrvar() != null && ex.getErrvar().length > 0) {
+			String errorMessage = "";
+			if (ex.getErrvar() != null && ex.getErrvar().length > 0) {
 				errorMessage = ex.getErrvar()[0];
-			    }
-			    responseWrapper.setRequestError(
-				    constructRequestError(SERVICEEXCEPTION, ex.getErrcode(), ex.getErrmsg(), errorMessage));
-				responseWrapper.setHttpStatus(Status.BAD_REQUEST);
+			}
+			responseWrapper.setRequestError(constructRequestError(
+					SERVICEEXCEPTION, ex.getErrcode(), ex.getErrmsg(),
+					errorMessage));
 
 		}
 
@@ -162,40 +203,62 @@ public class ListActiveProvisionedServices extends AbstractRequestHandler<ListPr
 	}
 
 	@Override
-	protected Returnable process(ListProvisionedRequestWrapperDTO extendedRequestDTO) throws Exception {
+	protected Returnable process(
+			ListProvisionedRequestWrapperDTO extendedRequestDTO)
+			throws Exception {
+
+		if (responseWrapper.getRequestError() != null) {
+			responseWrapper.setHttpStatus(Status.BAD_REQUEST);
+			return responseWrapper;
+
+		} 
 		
-		if (responseWrapper.getRequestError() == null) {
+		User user = extendedRequestDTO.getUser();
+
+		ProvisioningUtil.saveProvisioningRequestDataLog(
+				ProvisionRequestTypes.LIST_ACTIVE_PROVISIONED_SERVICES
+						.toString(), extendedRequestDTO.getMsisdn(),
+				user, null, null, null, null, new Date());
+
+		String msisdn = extendedRequestDTO.getMsisdn();
+		Integer offset = CommonUtil
+				.convertStringToInteger(extendedRequestDTO.getOffSet());
+		Integer limit = CommonUtil
+				.convertStringToInteger(extendedRequestDTO.getLimit());
+		String mcc = CommonUtil
+				.getNullOrTrimmedValue(extendedRequestDTO.getMcc());
+		String mnc = CommonUtil
+				.getNullOrTrimmedValue(extendedRequestDTO.getMnc());
+		String phoneNumber = null;
+		
 			try {
-				User user = extendedRequestDTO.getUser();
-
-				ProvisioningUtil.saveProvisioningRequestDataLog(ProvisionRequestTypes.LIST_ACTIVE_PROVISIONED_SERVICES.toString(), extendedRequestDTO.getMsisdn(),
-						user, null, null, null, null, new Date());
-
-				String msisdn = extendedRequestDTO.getMsisdn();
-				Integer offset = CommonUtil.convertStringToInteger(extendedRequestDTO.getOffSet());
-				Integer limit = CommonUtil.convertStringToInteger(extendedRequestDTO.getLimit());
-				String mcc = CommonUtil.getNullOrTrimmedValue(extendedRequestDTO.getMcc());
-				String mnc = CommonUtil.getNullOrTrimmedValue(extendedRequestDTO.getMnc());
-				String phoneNumber = null;
+				
 
 				if (msisdn != null) {
-				    phoneNumber = CommonUtil.extractNumberFromMsisdn(msisdn);
+					phoneNumber = CommonUtil.extractNumberFromMsisdn(msisdn);
 				}
-				ManageNumber number = dao.getMSISDN(phoneNumber, null, mcc, mnc,extendedRequestDTO.getUser().getUserName());
+				ManageNumber number = dao.getMSISDN(phoneNumber, null, mcc,
+						mnc, extendedRequestDTO.getUser().getUserName());
 
 				if (number == null) {
-				    LOG.error("###PROVISION### Valid MSISDN doesn't exists for the given inputs");
-				    responseWrapper.setRequestError(constructRequestError(SERVICEEXCEPTION, ServiceError.INVALID_INPUT_VALUE,
-					    "Valid MSISDN does not exist for the given mnc,mcc parameters"));
-				    responseWrapper.setHttpStatus(Status.BAD_REQUEST);
-				    return responseWrapper;
+					LOG.error("###PROVISION### Valid MSISDN doesn't exists for the given inputs");
+					responseWrapper
+							.setRequestError(constructRequestError(
+									SERVICEEXCEPTION,
+									ServiceError.INVALID_INPUT_VALUE,
+									"Valid MSISDN does not exist for the given mnc,mcc parameters"));
+					responseWrapper.setHttpStatus(Status.BAD_REQUEST);
+					return responseWrapper;
 				} else {
-				    phoneNumber = number.getNumber();
+					phoneNumber = number.getNumber();
 				}
-				
-				List<ListProvisionedDTO> provisionedServices = provisioningDao.getActiveProvisionedServices(phoneNumber,user.getUserName(), offset, limit);
+
+				List<ListProvisionedDTO> provisionedServices = provisioningDao
+						.getActiveProvisionedServices(phoneNumber,
+								user.getUserName(), offset, limit);
 				ServiceListProvisioned serviceList = new ServiceListProvisioned();
-				if (provisionedServices != null && !provisionedServices.isEmpty()) {
+				if (provisionedServices != null
+						&& !provisionedServices.isEmpty()) {
 					for (ListProvisionedDTO service : provisionedServices) {
 
 						ArrayList<ServiceMetaInfoListProvisionedDTO> metaServiceInfoList = new ArrayList<ServiceMetaInfoListProvisionedDTO>();
@@ -205,56 +268,83 @@ public class ListActiveProvisionedServices extends AbstractRequestHandler<ListPr
 						metaServiceInfoMap.setValue(service.getValue());
 						metaServiceInfoList.add(metaServiceInfoMap);
 
-						ServiceInfoListProvisionedDTO serviceInfo = serviceList.addNewServiceInfo();
+						ServiceInfoListProvisionedDTO serviceInfo = serviceList
+								.addNewServiceInfo();
 						serviceInfo.setServiceCode(service.getServiceCode());
 						serviceInfo.setDescription(service.getDescription());
 						serviceInfo.setTimestamp(service.getCreatedDate());
 						serviceInfo.setServiceInfo(metaServiceInfoList);
 					}
 				} else {
-					LOG.error("###PROVISION### Valid Provisioned Services Not Available for msisdn: "+ msisdn);
-					responseWrapper.setRequestError(constructRequestError(SERVICEEXCEPTION, ServiceError.INVALID_INPUT_VALUE,
-							"Valid Provisioned Services Not Available for "+ extendedRequestDTO.getMsisdn()));
+					LOG.error("###PROVISION### Valid Provisioned Services Not Available for msisdn: "
+							+ msisdn);
+					responseWrapper.setRequestError(constructRequestError(
+							SERVICEEXCEPTION, ServiceError.INVALID_INPUT_VALUE,
+							"Valid Provisioned Services Not Available for "
+									+ extendedRequestDTO.getMsisdn()));
 					responseWrapper.setHttpStatus(Response.Status.BAD_REQUEST);
 					return responseWrapper;
 				}
 
-				serviceList.setResourceURL(CommonUtil.getResourceUrl(extendedRequestDTO));
-				serviceList.setOnBehalfOf(CommonUtil.getNullOrTrimmedValue(extendedRequestDTO.getOnBehalfOf()));
-				serviceList.setPurchaseCatergoryCode(CommonUtil.getNullOrTrimmedValue(extendedRequestDTO.getPurchaseCategoryCode()));
-				serviceList.setRequestIdentifier( CommonUtil.getNullOrTrimmedValue(extendedRequestDTO.getRequestIdentifier()));
-				serviceList.setResponseIdentifier("RES" + RandomStringUtils.randomAlphabetic(8));
+				serviceList.setResourceURL(CommonUtil
+						.getResourceUrl(extendedRequestDTO));
+				serviceList.setOnBehalfOf(CommonUtil
+						.getNullOrTrimmedValue(extendedRequestDTO
+								.getOnBehalfOf()));
+				serviceList.setPurchaseCatergoryCode(CommonUtil
+						.getNullOrTrimmedValue(extendedRequestDTO
+								.getPurchaseCategoryCode()));
+				serviceList.setRequestIdentifier(CommonUtil
+						.getNullOrTrimmedValue(extendedRequestDTO
+								.getRequestIdentifier()));
+				serviceList.setResponseIdentifier("RES"
+						+ RandomStringUtils.randomAlphabetic(8));
 				responseWrapper.setHttpStatus(Response.Status.OK);
 				ServiceListProvisionedDTO serviceListDTO = new ServiceListProvisionedDTO();
 				serviceListDTO.setServiceList(serviceList);
 				responseWrapper.setServiceListDTO(serviceListDTO);
 
 			} catch (Exception ex) {
-				LOG.error("###PROVISION### Error Occured in List Provisioned Service. " + ex);
-				responseWrapper.setRequestError(constructRequestError(SERVICEEXCEPTION, ServiceError.SERVICE_ERROR_OCCURED, "Error Occured in List Provisioned Service for " +extendedRequestDTO.getMsisdn()));
+				LOG.error("###PROVISION### Error Occured in List Provisioned Service. "
+						+ ex);
+				responseWrapper.setRequestError(constructRequestError(
+						SERVICEEXCEPTION, ServiceError.SERVICE_ERROR_OCCURED,
+						"Error Occured in List Provisioned Service for "
+								+ extendedRequestDTO.getMsisdn()));
 				responseWrapper.setHttpStatus(Response.Status.BAD_REQUEST);
 			}
-		}
+		
 		return responseWrapper;
 	}
 
 	@Override
-	protected void init(ListProvisionedRequestWrapperDTO extendedRequestDTO) throws Exception {
+	protected void init(ListProvisionedRequestWrapperDTO extendedRequestDTO)
+			throws Exception {
 		requestWrapperDTO = extendedRequestDTO;
 		responseWrapper = new ListActiveProvisionedServicesResponseWrapper();
 	}
-	
-	 private boolean checkRequestIdentifierSize(String requestIdentifier) {
 
-			int size = SandboxDTO.getRequestIdentifierSize();
+	private boolean checkRequestIdentifierSize(String requestIdentifier) {
 
-			if (requestIdentifier.length() >= size) {
+		int size = SandboxDTO.getRequestIdentifierSize();
 
-				return true;
-			} else {
+		if (requestIdentifier.length() >= size) {
 
-				return false;
-			}
+			return true;
+		} else {
+
+			return false;
 		}
+	}
+
+	private boolean isNumeric(String input) {
+
+		if (input.matches(NUMERIC_REGEX)) {
+
+			return true;
+		}
+
+		return false;
+	}
 
 }
