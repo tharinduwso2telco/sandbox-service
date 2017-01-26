@@ -465,7 +465,9 @@ Request Body :
     "serviceName": "sample2",
     "serviceType": "sample3",
      "description": "sample4",
-    "serviceCharge": 100
+    "serviceCharge": 100,
+    "tag" : "limit",
+    "value" : "1000"
 }
 ```
 Response :
