@@ -201,6 +201,7 @@ public class QueryApplicableProvisioningService
 	protected Returnable process(QueryProvisioningServicesRequestWrapper extendedRequestDTO) throws Exception {
 		
 		if (responseWrapper.getRequestError() != null) {
+			responseWrapper.setHttpStatus(Status.BAD_REQUEST);
 			return responseWrapper;
 		}
 		
