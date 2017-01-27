@@ -464,7 +464,7 @@ Request Body :
     "serviceCode": "sample1",
     "serviceName": "sample2",
     "serviceType": "sample3",
-     "description": "sample4",
+    "description": "sample4",
     "serviceCharge": 100,
     "tag" : "limit",
     "value" : "1000"
@@ -474,6 +474,7 @@ Response :
 200 OK will be returned if the service is successfully added for the user.
 Unless 400 Bad Request will be returned
 
+Note:tag & value are optional parameters 
 
 - Retrieve user defined services
 
