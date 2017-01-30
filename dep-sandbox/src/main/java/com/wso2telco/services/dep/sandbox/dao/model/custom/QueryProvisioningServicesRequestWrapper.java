@@ -120,7 +120,7 @@ public class QueryProvisioningServicesRequestWrapper extends RequestDTO {
 		this.onBehalfOf = onBehalfOf;
 	}
 
-	public String getPurchaseCatergoryCode() {
+	public String getpurchaseCategoryCode() {
 		return purchaseCategoryCode;
 	}
 

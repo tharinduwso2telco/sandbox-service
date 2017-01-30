@@ -40,7 +40,7 @@ public class ProvisionCommonResponseDTO {
 	
 	private String onBehalfOf;
     
-    private String purchaseCatergoryCode;
+    private String purchaseCategoryCode;
 
 	/** The reference for callback **/
 	private CallbackReference callbackReference;
@@ -116,12 +116,12 @@ public class ProvisionCommonResponseDTO {
 		this.onBehalfOf = onBehalfOf;
 	}
 
-	public String getPurchaseCatergoryCode() {
-		return purchaseCatergoryCode;
+	public String getpurchaseCategoryCode() {
+		return purchaseCategoryCode;
 	}
 
-	public void setPurchaseCatergoryCode(String purchaseCatergoryCode) {
-		this.purchaseCatergoryCode = purchaseCatergoryCode;
+	public void setpurchaseCategoryCode(String purchaseCategoryCode) {
+		this.purchaseCategoryCode = purchaseCategoryCode;
 	}
 
 	/**
