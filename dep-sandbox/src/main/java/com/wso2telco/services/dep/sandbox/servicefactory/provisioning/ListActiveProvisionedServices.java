@@ -291,7 +291,7 @@ public class ListActiveProvisionedServices extends
 				serviceList.setOnBehalfOf(CommonUtil
 						.getNullOrTrimmedValue(extendedRequestDTO
 								.getOnBehalfOf()));
-				serviceList.setPurchaseCatergoryCode(CommonUtil
+				serviceList.setpurchaseCategoryCode(CommonUtil
 						.getNullOrTrimmedValue(extendedRequestDTO
 								.getPurchaseCategoryCode()));
 				serviceList.setRequestIdentifier(CommonUtil

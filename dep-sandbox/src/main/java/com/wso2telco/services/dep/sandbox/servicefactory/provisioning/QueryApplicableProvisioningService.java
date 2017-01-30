@@ -87,7 +87,7 @@ public class QueryApplicableProvisioningService
 		String mcc = CommonUtil.getNullOrTrimmedValue(wrapperDTO.getMcc());
 		String mnc = CommonUtil.getNullOrTrimmedValue(wrapperDTO.getMnc());
 		String onBehalfOf = CommonUtil.getNullOrTrimmedValue(wrapperDTO.getOnBehalfOf());
-		String purchaseCategoryCode = CommonUtil.getNullOrTrimmedValue(wrapperDTO.getPurchaseCatergoryCode());
+		String purchaseCategoryCode = CommonUtil.getNullOrTrimmedValue(wrapperDTO.getpurchaseCategoryCode());
 		String requestIdentifier = CommonUtil.getNullOrTrimmedValue(wrapperDTO.getRequestIdentifier());
 
 		List<ValidationRule> validationRulesList = new ArrayList<>();
@@ -256,7 +256,7 @@ public class QueryApplicableProvisioningService
 			serviceList.setCurrencyCode(ProvisioningUtil.DEFAULT_CURRENCY_CODE);
 			serviceList.setResourceURL(CommonUtil.getResourceUrl(extendedRequestDTO));
 			serviceList.setOnBehalfOf(CommonUtil.getNullOrTrimmedValue(extendedRequestDTO.getOnBehalfOf()));
-			serviceList.setPurchaseCatergoryCode(CommonUtil.getNullOrTrimmedValue(extendedRequestDTO.getPurchaseCatergoryCode()));
+			serviceList.setpurchaseCategoryCode(CommonUtil.getNullOrTrimmedValue(extendedRequestDTO.getpurchaseCategoryCode()));
 			serviceList.setRequestIdentifier( CommonUtil.getNullOrTrimmedValue(extendedRequestDTO.getRequestIdentifier()));
 			serviceList.setResponseIdentifier("RES" + RandomStringUtils.randomAlphabetic(8));
 
