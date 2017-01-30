@@ -420,7 +420,7 @@ public class ProvisionRequestedServiceHandler extends AbstractRequestHandler<Ser
 				.getNullOrTrimmedValue(requestWrapperDTO
 						.getProvisionRequestBean().getServiceProvisionRequest()
 						.getOnBehalfOf()));
-		serviceProvisionResponse.setPurchaseCatergoryCode(CommonUtil
+		serviceProvisionResponse.setpurchaseCategoryCode(CommonUtil
 				.getNullOrTrimmedValue(requestWrapperDTO
 						.getProvisionRequestBean().getServiceProvisionRequest()
 						.getPurchaseCategoryCode()));
