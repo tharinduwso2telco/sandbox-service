@@ -387,7 +387,7 @@ public class RemoveProvisionedServices extends
 				.getNullOrTrimmedValue(requestWrapperDTO
 						.getRemoveProvisionRequestBean()
 						.getServiceRemoveRequest().getOnBehalfOf()));
-		serviceRemovalResponse.setPurchaseCatergoryCode(CommonUtil
+		serviceRemovalResponse.setpurchaseCategoryCode(CommonUtil
 				.getNullOrTrimmedValue(requestWrapperDTO
 						.getRemoveProvisionRequestBean()
 						.getServiceRemoveRequest().getPurchaseCategoryCode()));
@@ -422,7 +422,7 @@ public class RemoveProvisionedServices extends
 				.getNullOrTrimmedValue(requestWrapperDTO
 						.getRemoveProvisionRequestBean()
 						.getServiceRemoveRequest().getOnBehalfOf()));
-		serviceRemovalResponse.setPurchaseCatergoryCode(CommonUtil
+		serviceRemovalResponse.setpurchaseCategoryCode(CommonUtil
 				.getNullOrTrimmedValue(requestWrapperDTO
 						.getRemoveProvisionRequestBean()
 						.getServiceRemoveRequest().getPurchaseCategoryCode()));
