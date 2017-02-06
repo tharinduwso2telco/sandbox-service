@@ -95,7 +95,7 @@ public class PatialRefundRequestHandler extends AbstractRequestHandler<PatialRef
 									amount),
 							new ValidationRule(ValidationRule.VALIDATION_TYPE_MANDATORY_TEL_END_USER_ID, "msisdn",
 									msisdn),
-							new ValidationRule(ValidationRule.VALIDATION_TYPE_MANDATORY, "clientCorrelator",
+							new ValidationRule(ValidationRule.VALIDATION_TYPE_OPTIONAL, "clientCorrelator",
 									clientCorrelator),
 							new ValidationRule(ValidationRule.VALIDATION_TYPE_OPTIONAL, "reasonForRefund",
 									reasonForRefund),
