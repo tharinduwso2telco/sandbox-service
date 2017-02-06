@@ -1,0 +1,204 @@
+INFO  [2017-02-06 08:36:25,704] org.eclipse.jetty.util.log: Logging initialized @2198ms
+INFO  [2017-02-06 08:36:25,830] io.dropwizard.assets.AssetsBundle: Registering AssetBundle with name: swagger-assets for path /swagger-static/*
+INFO  [2017-02-06 08:36:26,086] io.dropwizard.server.ServerFactory: Starting Application
+INFO  [2017-02-06 08:36:26,097] io.dropwizard.server.DefaultServerFactory: Registering jersey handler with root path prefix: /
+INFO  [2017-02-06 08:36:26,117] io.dropwizard.server.DefaultServerFactory: Registering admin handler with root path prefix: /
+INFO  [2017-02-06 08:36:26,163] org.eclipse.jetty.setuid.SetUIDListener: Opened application@213deac2{HTTP/1.1}{localhost:8181}
+INFO  [2017-02-06 08:36:26,164] org.eclipse.jetty.setuid.SetUIDListener: Opened admin@23eee4b8{HTTP/1.1}{0.0.0.0:8282}
+INFO  [2017-02-06 08:36:26,168] org.eclipse.jetty.server.Server: jetty-9.2.13.v20150730
+INFO  [2017-02-06 08:36:27,069] io.dropwizard.jersey.DropwizardResourceConfig: The following paths were found for the configured resources:
+
+    GET     /api-docs (com.wordnik.swagger.jaxrs.listing.ApiListingResourceJSON)
+    GET     /api-docs/{route: .+} (com.wordnik.swagger.jaxrs.listing.ApiListingResourceJSON)
+    POST    /credit/{v1}/credit/{msisdn}/apply (com.wso2telco.services.dep.sandbox.service.CreditService)
+    POST    /customerinfo/{v1}/config/customer/attribute (com.wso2telco.services.dep.sandbox.service.CustomerInfoConfigurationService)
+    POST    /customerinfo/{v1}/config/customer/profile (com.wso2telco.services.dep.sandbox.service.CustomerInfoConfigurationService)
+    GET     /customerinfo/{v1}/customer/attribute (com.wso2telco.services.dep.sandbox.service.CustomerInfoService)
+    GET     /customerinfo/{v1}/customer/profile (com.wso2telco.services.dep.sandbox.service.CustomerInfoService)
+    GET     /location/{v1}/queries/location (com.wso2telco.services.dep.sandbox.service.SandboxService)
+    GET     /provisioning/{v1}/config/service (com.wso2telco.services.dep.sandbox.service.ProvisionConfigurationService)
+    POST    /provisioning/{v1}/config/service (com.wso2telco.services.dep.sandbox.service.ProvisionConfigurationService)
+    POST    /provisioning/{v1}/config/{msisdn}/service/{serviceCode} (com.wso2telco.services.dep.sandbox.service.ProvisionConfigurationService)
+    POST    /provisioning/{v1}/{msisdn} (com.wso2telco.services.dep.sandbox.service.ProvisionService)
+    GET     /provisioning/{v1}/{msisdn}/list/active (com.wso2telco.services.dep.sandbox.service.ProvisionService)
+    GET     /provisioning/{v1}/{msisdn}/list/applicable (com.wso2telco.services.dep.sandbox.service.ProvisionService)
+    POST    /provisioning/{v1}/{msisdn}/remove (com.wso2telco.services.dep.sandbox.service.ProvisionService)
+    POST    /smsmessaging/{apiVersion}/outbound/{shortCode}/requests (com.wso2telco.services.dep.sandbox.service.SandboxService)
+    GET     /smsmessaging/{apiVersion}/outbound/{shortCode}/requests/{mtSMSTransactionId}/deliveryInfos (com.wso2telco.services.dep.sandbox.service.SandboxService)
+    GET     /swagger (io.federecio.dropwizard.swagger.SwaggerResource)
+    GET     /user/apiType (com.wso2telco.services.dep.sandbox.service.UserService)
+    POST    /user/managenumber (com.wso2telco.services.dep.sandbox.service.UserService)
+    GET     /user/{apiType}/serviceType (com.wso2telco.services.dep.sandbox.service.UserService)
+    GET     /user/{apiType}/{serviceType}/attribute (com.wso2telco.services.dep.sandbox.service.UserService)
+    POST    /user/{userName}/register (com.wso2telco.services.dep.sandbox.service.UserService)
+    GET     /wallet/{v1}/config/{apiType}/{serviceType}/getAccountStatus (com.wso2telco.services.dep.sandbox.service.WalletConfigurationService)
+    GET     /wallet/{v1}/config/{apiType}/{serviceType}/getTransactionStatus (com.wso2telco.services.dep.sandbox.service.WalletConfigurationService)
+    POST    /wallet/{v1}/config/{endUserId}/addAccountInfo (com.wso2telco.services.dep.sandbox.service.WalletConfigurationService)
+    POST    /wallet/{v1}/config/{endUserId}/addTransactionStatus (com.wso2telco.services.dep.sandbox.service.WalletConfigurationService)
+    GET     /wallet/{v1}/transaction/{endUserId}/balance (com.wso2telco.services.dep.sandbox.service.WalletService)
+    GET     /wallet/{v1}/transaction/{endUserId}/list (com.wso2telco.services.dep.sandbox.service.WalletService)
+    POST    /wallet/{v1}/transaction/{endUserId}/payment (com.wso2telco.services.dep.sandbox.service.WalletService)
+    POST    /wallet/{v1}/transaction/{endUserId}/refund (com.wso2telco.services.dep.sandbox.service.WalletService)
+
+INFO  [2017-02-06 08:36:27,072] org.eclipse.jetty.server.handler.ContextHandler: Started i.d.j.MutableServletContextHandler@5a6d30e2{/,null,AVAILABLE}
+INFO  [2017-02-06 08:36:27,079] io.dropwizard.setup.AdminEnvironment: tasks = 
+
+    POST    /tasks/log-level (io.dropwizard.servlets.tasks.LogConfigurationTask)
+    POST    /tasks/gc (io.dropwizard.servlets.tasks.GarbageCollectionTask)
+
+WARN  [2017-02-06 08:36:27,079] io.dropwizard.setup.AdminEnvironment: 
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!    THIS APPLICATION HAS NO HEALTHCHECKS. THIS MEANS YOU WILL NEVER KNOW      !
+!     IF IT DIES IN PRODUCTION, WHICH MEANS YOU WILL NEVER KNOW IF YOU'RE      !
+!    LETTING YOUR USERS DOWN. YOU SHOULD ADD A HEALTHCHECK FOR EACH OF YOUR    !
+!         APPLICATION'S DEPENDENCIES WHICH FULLY (BUT LIGHTLY) TESTS IT.       !
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+INFO  [2017-02-06 08:36:27,086] org.eclipse.jetty.server.handler.ContextHandler: Started i.d.j.MutableServletContextHandler@3cd9aa64{/,null,AVAILABLE}
+INFO  [2017-02-06 08:36:27,091] org.eclipse.jetty.server.ServerConnector: Started application@213deac2{HTTP/1.1}{localhost:8181}
+INFO  [2017-02-06 08:36:27,092] org.eclipse.jetty.server.ServerConnector: Started admin@23eee4b8{HTTP/1.1}{0.0.0.0:8282}
+INFO  [2017-02-06 08:36:27,092] org.eclipse.jetty.server.Server: Started @3589ms
+INFO  [2017-02-06 08:36:35,687] org.eclipse.jetty.server.ServerConnector: Stopped application@213deac2{HTTP/1.1}{localhost:8181}
+INFO  [2017-02-06 08:36:35,688] org.eclipse.jetty.server.ServerConnector: Stopped admin@23eee4b8{HTTP/1.1}{0.0.0.0:8282}
+INFO  [2017-02-06 08:36:35,690] org.eclipse.jetty.server.handler.ContextHandler: Stopped i.d.j.MutableServletContextHandler@3cd9aa64{/,null,UNAVAILABLE}
+INFO  [2017-02-06 08:36:35,692] org.eclipse.jetty.server.handler.ContextHandler: Stopped i.d.j.MutableServletContextHandler@5a6d30e2{/,null,UNAVAILABLE}
+INFO  [2017-02-06 08:36:48,537] org.eclipse.jetty.util.log: Logging initialized @2655ms
+INFO  [2017-02-06 08:37:28,325] io.dropwizard.assets.AssetsBundle: Registering AssetBundle with name: swagger-assets for path /swagger-static/*
+INFO  [2017-02-06 08:37:59,994] org.eclipse.jetty.util.log: Logging initialized @2460ms
+INFO  [2017-02-06 08:38:00,163] io.dropwizard.assets.AssetsBundle: Registering AssetBundle with name: swagger-assets for path /swagger-static/*
+INFO  [2017-02-06 08:38:00,504] io.dropwizard.server.ServerFactory: Starting Application
+INFO  [2017-02-06 08:38:00,513] io.dropwizard.server.DefaultServerFactory: Registering jersey handler with root path prefix: /
+INFO  [2017-02-06 08:38:00,534] io.dropwizard.server.DefaultServerFactory: Registering admin handler with root path prefix: /
+INFO  [2017-02-06 08:38:00,582] org.eclipse.jetty.setuid.SetUIDListener: Opened application@5b3bb1f7{HTTP/1.1}{localhost:8181}
+INFO  [2017-02-06 08:38:00,583] org.eclipse.jetty.setuid.SetUIDListener: Opened admin@58d6b7b9{HTTP/1.1}{0.0.0.0:8282}
+INFO  [2017-02-06 08:38:00,592] org.eclipse.jetty.server.Server: jetty-9.2.13.v20150730
+INFO  [2017-02-06 08:38:01,738] io.dropwizard.jersey.DropwizardResourceConfig: The following paths were found for the configured resources:
+
+    GET     /api-docs (com.wordnik.swagger.jaxrs.listing.ApiListingResourceJSON)
+    GET     /api-docs/{route: .+} (com.wordnik.swagger.jaxrs.listing.ApiListingResourceJSON)
+    POST    /credit/{v1}/credit/{msisdn}/apply (com.wso2telco.services.dep.sandbox.service.CreditService)
+    POST    /customerinfo/{v1}/config/customer/attribute (com.wso2telco.services.dep.sandbox.service.CustomerInfoConfigurationService)
+    POST    /customerinfo/{v1}/config/customer/profile (com.wso2telco.services.dep.sandbox.service.CustomerInfoConfigurationService)
+    GET     /customerinfo/{v1}/customer/attribute (com.wso2telco.services.dep.sandbox.service.CustomerInfoService)
+    GET     /customerinfo/{v1}/customer/profile (com.wso2telco.services.dep.sandbox.service.CustomerInfoService)
+    GET     /location/{v1}/queries/location (com.wso2telco.services.dep.sandbox.service.SandboxService)
+    GET     /provisioning/{v1}/config/service (com.wso2telco.services.dep.sandbox.service.ProvisionConfigurationService)
+    POST    /provisioning/{v1}/config/service (com.wso2telco.services.dep.sandbox.service.ProvisionConfigurationService)
+    POST    /provisioning/{v1}/config/{msisdn}/service/{serviceCode} (com.wso2telco.services.dep.sandbox.service.ProvisionConfigurationService)
+    POST    /provisioning/{v1}/{msisdn} (com.wso2telco.services.dep.sandbox.service.ProvisionService)
+    GET     /provisioning/{v1}/{msisdn}/list/active (com.wso2telco.services.dep.sandbox.service.ProvisionService)
+    GET     /provisioning/{v1}/{msisdn}/list/applicable (com.wso2telco.services.dep.sandbox.service.ProvisionService)
+    POST    /provisioning/{v1}/{msisdn}/remove (com.wso2telco.services.dep.sandbox.service.ProvisionService)
+    POST    /smsmessaging/{apiVersion}/outbound/{shortCode}/requests (com.wso2telco.services.dep.sandbox.service.SandboxService)
+    GET     /smsmessaging/{apiVersion}/outbound/{shortCode}/requests/{mtSMSTransactionId}/deliveryInfos (com.wso2telco.services.dep.sandbox.service.SandboxService)
+    GET     /swagger (io.federecio.dropwizard.swagger.SwaggerResource)
+    GET     /user/apiType (com.wso2telco.services.dep.sandbox.service.UserService)
+    POST    /user/managenumber (com.wso2telco.services.dep.sandbox.service.UserService)
+    GET     /user/{apiType}/serviceType (com.wso2telco.services.dep.sandbox.service.UserService)
+    GET     /user/{apiType}/{serviceType}/attribute (com.wso2telco.services.dep.sandbox.service.UserService)
+    POST    /user/{userName}/register (com.wso2telco.services.dep.sandbox.service.UserService)
+    GET     /wallet/{v1}/config/{apiType}/{serviceType}/getAccountStatus (com.wso2telco.services.dep.sandbox.service.WalletConfigurationService)
+    GET     /wallet/{v1}/config/{apiType}/{serviceType}/getTransactionStatus (com.wso2telco.services.dep.sandbox.service.WalletConfigurationService)
+    POST    /wallet/{v1}/config/{endUserId}/addAccountInfo (com.wso2telco.services.dep.sandbox.service.WalletConfigurationService)
+    POST    /wallet/{v1}/config/{endUserId}/addTransactionStatus (com.wso2telco.services.dep.sandbox.service.WalletConfigurationService)
+    GET     /wallet/{v1}/transaction/{endUserId}/balance (com.wso2telco.services.dep.sandbox.service.WalletService)
+    GET     /wallet/{v1}/transaction/{endUserId}/list (com.wso2telco.services.dep.sandbox.service.WalletService)
+    POST    /wallet/{v1}/transaction/{endUserId}/payment (com.wso2telco.services.dep.sandbox.service.WalletService)
+    POST    /wallet/{v1}/transaction/{endUserId}/refund (com.wso2telco.services.dep.sandbox.service.WalletService)
+
+INFO  [2017-02-06 08:38:01,744] org.eclipse.jetty.server.handler.ContextHandler: Started i.d.j.MutableServletContextHandler@24a0c58b{/,null,AVAILABLE}
+INFO  [2017-02-06 08:38:01,753] io.dropwizard.setup.AdminEnvironment: tasks = 
+
+    POST    /tasks/log-level (io.dropwizard.servlets.tasks.LogConfigurationTask)
+    POST    /tasks/gc (io.dropwizard.servlets.tasks.GarbageCollectionTask)
+
+WARN  [2017-02-06 08:38:01,753] io.dropwizard.setup.AdminEnvironment: 
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!    THIS APPLICATION HAS NO HEALTHCHECKS. THIS MEANS YOU WILL NEVER KNOW      !
+!     IF IT DIES IN PRODUCTION, WHICH MEANS YOU WILL NEVER KNOW IF YOU'RE      !
+!    LETTING YOUR USERS DOWN. YOU SHOULD ADD A HEALTHCHECK FOR EACH OF YOUR    !
+!         APPLICATION'S DEPENDENCIES WHICH FULLY (BUT LIGHTLY) TESTS IT.       !
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+INFO  [2017-02-06 08:38:01,761] org.eclipse.jetty.server.handler.ContextHandler: Started i.d.j.MutableServletContextHandler@1118d539{/,null,AVAILABLE}
+INFO  [2017-02-06 08:38:01,777] org.eclipse.jetty.server.ServerConnector: Started application@5b3bb1f7{HTTP/1.1}{localhost:8181}
+INFO  [2017-02-06 08:38:01,780] org.eclipse.jetty.server.ServerConnector: Started admin@58d6b7b9{HTTP/1.1}{0.0.0.0:8282}
+INFO  [2017-02-06 08:38:01,783] org.eclipse.jetty.server.Server: Started @4252ms
+DEBUG [2017-02-06 08:39:02,358] com.wso2telco.services.dep.sandbox.service.CreditService: ###CREDIT### /{msisdn}/apply invoked : msisdn - admin
+DEBUG [2017-02-06 08:39:02,358] com.wso2telco.services.dep.sandbox.service.CreditService: com.wso2telco.services.dep.sandbox.dao.model.custom.CreditRequestBean@b5bb258
+DEBUG [2017-02-06 08:39:02,360] com.wso2telco.services.dep.sandbox.servicefactory.RequestBuilderFactory: LOADING CREDIT CONFIGURATION FACTORY
+DEBUG [2017-02-06 08:39:02,361] com.wso2telco.services.dep.sandbox.servicefactory.credit.CreditServiceFactory: ###CREDIT### LOADING CREDIT APPLY SERVICE
+DEBUG [2017-02-06 08:39:02,375] com.wso2telco.services.dep.sandbox.servicefactory.credit.CreditApplyRequestHandler: Sandbox user : admin
+ERROR [2017-02-06 08:39:02,523] com.wso2telco.services.dep.sandbox.servicefactory.credit.CreditApplyRequestHandler: ###CREDIT### Error in Validation : com.wso2telco.dep.oneapivalidation.exceptions.CustomException: SVC0002
+DEBUG [2017-02-06 08:39:02,539] com.wso2telco.services.dep.sandbox.servicefactory.credit.CreditApplyRequestHandler: Location parameters are empty
+INFO  [2017-02-06 08:39:29,778] org.eclipse.jetty.server.ServerConnector: Stopped application@5b3bb1f7{HTTP/1.1}{localhost:8181}
+INFO  [2017-02-06 08:39:29,779] org.eclipse.jetty.server.ServerConnector: Stopped admin@58d6b7b9{HTTP/1.1}{0.0.0.0:8282}
+INFO  [2017-02-06 08:39:29,781] org.eclipse.jetty.server.handler.ContextHandler: Stopped i.d.j.MutableServletContextHandler@1118d539{/,null,UNAVAILABLE}
+INFO  [2017-02-06 08:39:29,784] org.eclipse.jetty.server.handler.ContextHandler: Stopped i.d.j.MutableServletContextHandler@24a0c58b{/,null,UNAVAILABLE}
+INFO  [2017-02-06 08:39:34,855] org.eclipse.jetty.util.log: Logging initialized @2496ms
+INFO  [2017-02-06 08:39:35,030] io.dropwizard.assets.AssetsBundle: Registering AssetBundle with name: swagger-assets for path /swagger-static/*
+INFO  [2017-02-06 08:39:35,424] io.dropwizard.server.ServerFactory: Starting Application
+INFO  [2017-02-06 08:39:35,434] io.dropwizard.server.DefaultServerFactory: Registering jersey handler with root path prefix: /
+INFO  [2017-02-06 08:39:35,454] io.dropwizard.server.DefaultServerFactory: Registering admin handler with root path prefix: /
+INFO  [2017-02-06 08:39:35,509] org.eclipse.jetty.setuid.SetUIDListener: Opened application@5b3bb1f7{HTTP/1.1}{localhost:8181}
+INFO  [2017-02-06 08:39:35,509] org.eclipse.jetty.setuid.SetUIDListener: Opened admin@58d6b7b9{HTTP/1.1}{0.0.0.0:8282}
+INFO  [2017-02-06 08:39:35,513] org.eclipse.jetty.server.Server: jetty-9.2.13.v20150730
+INFO  [2017-02-06 08:39:36,479] io.dropwizard.jersey.DropwizardResourceConfig: The following paths were found for the configured resources:
+
+    GET     /api-docs (com.wordnik.swagger.jaxrs.listing.ApiListingResourceJSON)
+    GET     /api-docs/{route: .+} (com.wordnik.swagger.jaxrs.listing.ApiListingResourceJSON)
+    POST    /credit/{v1}/credit/{msisdn}/apply (com.wso2telco.services.dep.sandbox.service.CreditService)
+    POST    /customerinfo/{v1}/config/customer/attribute (com.wso2telco.services.dep.sandbox.service.CustomerInfoConfigurationService)
+    POST    /customerinfo/{v1}/config/customer/profile (com.wso2telco.services.dep.sandbox.service.CustomerInfoConfigurationService)
+    GET     /customerinfo/{v1}/customer/attribute (com.wso2telco.services.dep.sandbox.service.CustomerInfoService)
+    GET     /customerinfo/{v1}/customer/profile (com.wso2telco.services.dep.sandbox.service.CustomerInfoService)
+    GET     /location/{v1}/queries/location (com.wso2telco.services.dep.sandbox.service.SandboxService)
+    GET     /provisioning/{v1}/config/service (com.wso2telco.services.dep.sandbox.service.ProvisionConfigurationService)
+    POST    /provisioning/{v1}/config/service (com.wso2telco.services.dep.sandbox.service.ProvisionConfigurationService)
+    POST    /provisioning/{v1}/config/{msisdn}/service/{serviceCode} (com.wso2telco.services.dep.sandbox.service.ProvisionConfigurationService)
+    POST    /provisioning/{v1}/{msisdn} (com.wso2telco.services.dep.sandbox.service.ProvisionService)
+    GET     /provisioning/{v1}/{msisdn}/list/active (com.wso2telco.services.dep.sandbox.service.ProvisionService)
+    GET     /provisioning/{v1}/{msisdn}/list/applicable (com.wso2telco.services.dep.sandbox.service.ProvisionService)
+    POST    /provisioning/{v1}/{msisdn}/remove (com.wso2telco.services.dep.sandbox.service.ProvisionService)
+    POST    /smsmessaging/{apiVersion}/outbound/{shortCode}/requests (com.wso2telco.services.dep.sandbox.service.SandboxService)
+    GET     /smsmessaging/{apiVersion}/outbound/{shortCode}/requests/{mtSMSTransactionId}/deliveryInfos (com.wso2telco.services.dep.sandbox.service.SandboxService)
+    GET     /swagger (io.federecio.dropwizard.swagger.SwaggerResource)
+    GET     /user/apiType (com.wso2telco.services.dep.sandbox.service.UserService)
+    POST    /user/managenumber (com.wso2telco.services.dep.sandbox.service.UserService)
+    GET     /user/{apiType}/serviceType (com.wso2telco.services.dep.sandbox.service.UserService)
+    GET     /user/{apiType}/{serviceType}/attribute (com.wso2telco.services.dep.sandbox.service.UserService)
+    POST    /user/{userName}/register (com.wso2telco.services.dep.sandbox.service.UserService)
+    GET     /wallet/{v1}/config/{apiType}/{serviceType}/getAccountStatus (com.wso2telco.services.dep.sandbox.service.WalletConfigurationService)
+    GET     /wallet/{v1}/config/{apiType}/{serviceType}/getTransactionStatus (com.wso2telco.services.dep.sandbox.service.WalletConfigurationService)
+    POST    /wallet/{v1}/config/{endUserId}/addAccountInfo (com.wso2telco.services.dep.sandbox.service.WalletConfigurationService)
+    POST    /wallet/{v1}/config/{endUserId}/addTransactionStatus (com.wso2telco.services.dep.sandbox.service.WalletConfigurationService)
+    GET     /wallet/{v1}/transaction/{endUserId}/balance (com.wso2telco.services.dep.sandbox.service.WalletService)
+    GET     /wallet/{v1}/transaction/{endUserId}/list (com.wso2telco.services.dep.sandbox.service.WalletService)
+    POST    /wallet/{v1}/transaction/{endUserId}/payment (com.wso2telco.services.dep.sandbox.service.WalletService)
+    POST    /wallet/{v1}/transaction/{endUserId}/refund (com.wso2telco.services.dep.sandbox.service.WalletService)
+
+INFO  [2017-02-06 08:39:36,484] org.eclipse.jetty.server.handler.ContextHandler: Started i.d.j.MutableServletContextHandler@24134cbc{/,null,AVAILABLE}
+INFO  [2017-02-06 08:39:36,492] io.dropwizard.setup.AdminEnvironment: tasks = 
+
+    POST    /tasks/log-level (io.dropwizard.servlets.tasks.LogConfigurationTask)
+    POST    /tasks/gc (io.dropwizard.servlets.tasks.GarbageCollectionTask)
+
+WARN  [2017-02-06 08:39:36,492] io.dropwizard.setup.AdminEnvironment: 
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!    THIS APPLICATION HAS NO HEALTHCHECKS. THIS MEANS YOU WILL NEVER KNOW      !
+!     IF IT DIES IN PRODUCTION, WHICH MEANS YOU WILL NEVER KNOW IF YOU'RE      !
+!    LETTING YOUR USERS DOWN. YOU SHOULD ADD A HEALTHCHECK FOR EACH OF YOUR    !
+!         APPLICATION'S DEPENDENCIES WHICH FULLY (BUT LIGHTLY) TESTS IT.       !
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+INFO  [2017-02-06 08:39:36,501] org.eclipse.jetty.server.handler.ContextHandler: Started i.d.j.MutableServletContextHandler@34c7232c{/,null,AVAILABLE}
+INFO  [2017-02-06 08:39:36,508] org.eclipse.jetty.server.ServerConnector: Started application@5b3bb1f7{HTTP/1.1}{localhost:8181}
+INFO  [2017-02-06 08:39:36,509] org.eclipse.jetty.server.ServerConnector: Started admin@58d6b7b9{HTTP/1.1}{0.0.0.0:8282}
+INFO  [2017-02-06 08:39:36,510] org.eclipse.jetty.server.Server: Started @4164ms
+INFO  [2017-02-06 08:41:23,593] org.eclipse.jetty.server.ServerConnector: Stopped application@5b3bb1f7{HTTP/1.1}{localhost:8181}
+INFO  [2017-02-06 08:41:23,593] org.eclipse.jetty.server.ServerConnector: Stopped admin@58d6b7b9{HTTP/1.1}{0.0.0.0:8282}
+INFO  [2017-02-06 08:41:23,595] org.eclipse.jetty.server.handler.ContextHandler: Stopped i.d.j.MutableServletContextHandler@34c7232c{/,null,UNAVAILABLE}
+INFO  [2017-02-06 08:41:23,598] org.eclipse.jetty.server.handler.ContextHandler: Stopped i.d.j.MutableServletContextHandler@24134cbc{/,null,UNAVAILABLE}
