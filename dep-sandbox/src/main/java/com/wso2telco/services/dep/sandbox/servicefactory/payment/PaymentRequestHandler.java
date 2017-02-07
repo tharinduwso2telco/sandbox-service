@@ -188,10 +188,10 @@ public class PaymentRequestHandler extends AbstractRequestHandler<ChargePaymentR
             String userName = extendedRequestDTO.getUser().getUserName();
             Integer userId = extendedRequestDTO.getUser().getId();
 
-            MakePaymentResponseBean responseBean = new MakePaymentResponseBean();
-            PaymentAmountResponse payAmount = new PaymentAmountResponse();
-            ChargingInformation chargeInformation = new ChargingInformation();
-            ChargingMetaData chargeMetaData = new ChargingMetaData();
+            ChargePaymentResponseBean responseBean = new ChargePaymentResponseBean();
+            ChargeAmountResponse payAmount = new ChargeAmountResponse();
+            PaymentChargingInformation chargeInformation = new PaymentChargingInformation();
+            PaymentChargingMetaData chargeMetaData = new PaymentChargingMetaData();
 
             // Save Request Log
             APITypes apiTypes = dao.getAPIType(extendedRequestDTO.getRequestType().toString().toLowerCase());
@@ -214,7 +214,7 @@ public class PaymentRequestHandler extends AbstractRequestHandler<ChargePaymentR
             // check already charge request against client correlator
             if (clientCorrelator != null) {
                 String tableAttributeValue = TableName.SBXATTRIBUTEVALUE.toString().toLowerCase();
-                String clientCorrelatorAttribute = AttributeName.clientCorrelatorWallet.toString();
+                String clientCorrelatorAttribute = AttributeName.clientCorrelatorPayment.toString();
                 AttributeValues duplicateClientCorrelator = paymentDAO.checkDuplicateValue(serviceCallPayment,
                         clientCorrelator, clientCorrelatorAttribute, tableAttributeValue);
                 if (duplicateClientCorrelator != null) {
@@ -225,10 +225,10 @@ public class PaymentRequestHandler extends AbstractRequestHandler<ChargePaymentR
                     AttributeValues response = paymentDAO.getResponse(id);
                     if (serviceCall.equals(serviceCallPayment) && (response.getOwnerdid() == manageNumber.getId())) {
                         // return already sent response
-                        MakePaymentResponseBean obj = null;
-                        obj = gson.fromJson(response.getValue(), MakePaymentResponseBean.class);
-                        MakePaymentDTO dto = new MakePaymentDTO();
-                        dto.setmakePayment(obj);
+                        ChargePaymentResponseBean obj = null;
+                        obj = gson.fromJson(response.getValue(), ChargePaymentResponseBean.class);
+                        ChargePaymentDTO dto = new ChargePaymentDTO();
+                        dto.setAmountTransaction(obj);
                         responseWrapper.setMakePaymentDTO(dto);
                         responseWrapper.setHttpStatus(Response.Status.OK);
                         return responseWrapper;
@@ -308,7 +308,7 @@ public class PaymentRequestHandler extends AbstractRequestHandler<ChargePaymentR
             }
 
             // check already charged request against reference code
-            String referenceCodeAttribue = AttributeName.referenceCodeWallet.toString();
+            String referenceCodeAttribue = AttributeName.referenceCodePayment.toString();
             String tableNumber = TableName.NUMBERS.toString().toLowerCase();
             AttributeValues duplicateReferenceCode = paymentDAO.checkDuplicateValue(serviceCallPayment, referenceCode,
                     referenceCodeAttribue, tableNumber);
@@ -326,6 +326,11 @@ public class PaymentRequestHandler extends AbstractRequestHandler<ChargePaymentR
             chargeInformation.setAmount(amount);
             chargeInformation.setCurrency(currency);
             chargeInformation.setDescription(description);
+
+            // Setting the Total Amount Charged
+            Double tax = Double.parseDouble(taxAmount);
+            Double totle = tax+chargeAmount;
+            payAmount.setTotalAmountCharged(totle.toString());
 
             if (onBehalfOf != null || categoryCode != null || channel != null) {
                 chargeMetaData.setPurchaseCategoryCode(categoryCode);
@@ -372,13 +377,13 @@ public class PaymentRequestHandler extends AbstractRequestHandler<ChargePaymentR
                 responseBean.setTransactionOperationStatus(TransactionStatus.Charged.toString());
             }
 
-            MakePaymentDTO makePaymentDTO = new MakePaymentDTO();
+            ChargePaymentDTO makePaymentDTO = new ChargePaymentDTO();
             payAmount.setChargingInformation(chargeInformation);
             if (onBehalfOf != null || categoryCode != null || channel != null) {
                 payAmount.setChargingMetaData(chargeMetaData);
             }
             responseBean.setPaymentAmount(payAmount);
-            makePaymentDTO.setmakePayment(responseBean);
+            makePaymentDTO.setAmountTransaction(responseBean);
             responseWrapper.setMakePaymentDTO(makePaymentDTO);
             responseWrapper.setHttpStatus(Response.Status.OK);
 
@@ -402,7 +407,7 @@ public class PaymentRequestHandler extends AbstractRequestHandler<ChargePaymentR
     }
 
 
-    private Integer saveTransaction(MakePaymentResponseBean responseBean, String endUserId, String userName)
+    private Integer saveTransaction(ChargePaymentResponseBean responseBean, String endUserId, String userName)
             throws Exception {
         Integer transactionId = null;
         try {
