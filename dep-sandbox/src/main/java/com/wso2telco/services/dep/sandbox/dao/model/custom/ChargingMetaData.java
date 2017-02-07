@@ -27,6 +27,8 @@ public class ChargingMetaData {
 
 	private String channel;
 
+	private  String taxAmount;
+
 	public String getOnBehalfOf() {
 		return onBehalfOf;
 	}
@@ -51,6 +53,14 @@ public class ChargingMetaData {
 		this.channel = channel;
 	}
 
+	public String getTaxAmount() {
+		return taxAmount;
+	}
+
+	public void setTaxAmount(String taxAmount) {
+		this.taxAmount = taxAmount;
+	}
+
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
 
@@ -60,5 +70,6 @@ public class ChargingMetaData {
 
 		return builder.toString();
 	}
+
 
 }
