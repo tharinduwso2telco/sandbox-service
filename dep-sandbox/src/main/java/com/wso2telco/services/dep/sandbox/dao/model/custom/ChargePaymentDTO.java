@@ -13,9 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package com.wso2telco.services.dep.sandbox.servicefactory.wallet;
+package com.wso2telco.services.dep.sandbox.dao.model.custom;
 
-public enum AttributeName {
-	 Payment, Refund, accountStatus, Currency, clientCorrelatorWallet, transactionStatus, referenceCodeWallet, makePayment, clientCorrelatorPayment, referenceCodePayment
+public class ChargePaymentDTO {
 
+	private ChargePaymentResponseBean amountTransaction;
+
+	public ChargePaymentResponseBean getAmountTransaction() {
+		return amountTransaction;
+	}
+
+	public void setAmountTransaction(ChargePaymentResponseBean amountTransaction) {
+		this.amountTransaction = amountTransaction;
+	}
 }

@@ -16,19 +16,20 @@
 
 package com.wso2telco.services.dep.sandbox.servicefactory.payment;
 
+import com.wso2telco.services.dep.sandbox.dao.model.custom.ChargePaymentDTO;
 import com.wso2telco.services.dep.sandbox.dao.model.custom.ErrorResponseDTO;
 import com.wso2telco.services.dep.sandbox.dao.model.custom.MakePaymentDTO;
 import com.wso2telco.services.dep.sandbox.servicefactory.AbstractReturnWrapperDTO;
 
 public class PaymentResponseWrapper extends AbstractReturnWrapperDTO {
 
-    private MakePaymentDTO makePaymentDTO;
+    private ChargePaymentDTO makePaymentDTO;
 
-    public MakePaymentDTO getMakePaymentDTO() {
+    public ChargePaymentDTO getMakePaymentDTO() {
         return makePaymentDTO;
     }
 
-    public void setMakePaymentDTO(MakePaymentDTO makePaymentDTO) {
+    public void setMakePaymentDTO(ChargePaymentDTO makePaymentDTO) {
         this.makePaymentDTO = makePaymentDTO;
     }
 
