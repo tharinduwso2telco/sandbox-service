@@ -17,9 +17,7 @@
 package com.wso2telco.services.dep.sandbox.service;
 
 import com.wordnik.swagger.annotations.*;
-import com.wso2telco.services.dep.sandbox.dao.model.custom.MakePaymentRequestBean;
-import com.wso2telco.services.dep.sandbox.dao.model.custom.MakePaymentRequestWrapperDTO;
-import com.wso2telco.services.dep.sandbox.dao.model.custom.RequestDTO;
+import com.wso2telco.services.dep.sandbox.dao.model.custom.*;
 import com.wso2telco.services.dep.sandbox.exception.SandboxException;
 import com.wso2telco.services.dep.sandbox.servicefactory.RequestBuilderFactory;
 import com.wso2telco.services.dep.sandbox.servicefactory.RequestHandleable;
@@ -51,15 +49,15 @@ public class PaymentService {
             @ApiImplicitParam(name = "sandbox", value = "Authorization token", required = true, dataType = "string", paramType = "header")})
     public Response makePayment(
             @ApiParam(value = "endUserId", required = true) @PathParam("endUserId") String endUserId,
-            MakePaymentRequestBean makePaymentRequestBean, @Context HttpServletRequest request) {
+            AmountTransactionRequestBean makePaymentRequestBean, @Context HttpServletRequest request) {
         LOG.debug("###PAYMENT### /{endUserId} invoked : endUserId - " + endUserId);
         if (makePaymentRequestBean != null) {
             LOG.debug(makePaymentRequestBean);
         }
-        MakePaymentRequestWrapperDTO requestDTO = new MakePaymentRequestWrapperDTO();
+        ChargePaymentRequestWrapperDTO requestDTO = new ChargePaymentRequestWrapperDTO();
         requestDTO.setHttpRequest(request);
         requestDTO.setEndUserId(endUserId);
-        requestDTO.setMakePaymentRequestBean(makePaymentRequestBean);
+        requestDTO.setAmountTransactionRequestBean(makePaymentRequestBean);
         requestDTO.setRequestType(RequestType.PAYMENT);
 
         RequestHandleable<RequestDTO> handler = RequestBuilderFactory.getInstance(requestDTO);

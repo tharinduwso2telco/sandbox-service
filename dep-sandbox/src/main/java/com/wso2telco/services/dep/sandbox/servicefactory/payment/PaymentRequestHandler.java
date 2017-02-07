@@ -42,7 +42,6 @@ import com.wso2telco.services.dep.sandbox.servicefactory.wallet.TransactionStatu
 import com.wso2telco.services.dep.sandbox.util.*;
 import org.apache.commons.lang.math.NumberUtils;
 import org.apache.commons.logging.LogFactory;
-import scala.util.parsing.combinator.testing.Str;
 
 import javax.annotation.Nonnull;
 import javax.ws.rs.core.Response;
@@ -51,13 +50,13 @@ import java.util.Currency;
 import java.util.Date;
 import java.util.List;
 
-public class PaymentRequestHandler extends AbstractRequestHandler<MakePaymentRequestWrapperDTO> {
+public class PaymentRequestHandler extends AbstractRequestHandler<ChargePaymentRequestWrapperDTO> {
 
 
     private PaymentDAO paymentDAO;
     private LoggingDAO loggingDAO;
     private NumberDAO numberDAO;
-    private MakePaymentRequestWrapperDTO requestWrapperDTO;
+    private ChargePaymentRequestWrapperDTO requestWrapperDTO;
     private PaymentResponseWrapper responseWrapper;
     private MessageLogHandler logHandler;
     private String serviceCallPayment;
@@ -86,18 +85,18 @@ public class PaymentRequestHandler extends AbstractRequestHandler<MakePaymentReq
     }
 
     @Override
-    protected void init(MakePaymentRequestWrapperDTO extendedRequestDTO) throws Exception {
+    protected void init(ChargePaymentRequestWrapperDTO extendedRequestDTO) throws Exception {
         responseWrapper = new PaymentResponseWrapper();
         requestWrapperDTO = extendedRequestDTO;
     }
 
     @Override
-    protected boolean validate(MakePaymentRequestWrapperDTO wrapperDTO) throws Exception {
-        MakePaymentRequestBean requestBean = wrapperDTO.getMakePaymentRequestBean();
-        MakePaymentRequestBean.makePayment request = requestBean.getmakePayment();
-        PaymentAmount paymentAmount = request.getPaymentAmount();
-        ChargingInformation chargingInformation = paymentAmount.getChargingInformation();
-        ChargingMetaData metaData = paymentAmount.getChargingMetaData();
+    protected boolean validate(ChargePaymentRequestWrapperDTO wrapperDTO) throws Exception {
+        AmountTransactionRequestBean requestBean = wrapperDTO.getAmountTransactionRequestBean();
+        AmountTransactionRequestBean.amountTransaction request = requestBean.getAmountTransaction();
+        ChargePaymentAmount paymentAmount = request.getPaymentAmount();
+        PaymentChargingInformation chargingInformation = paymentAmount.getChargingInformation();
+        PaymentChargingMetaData metaData = paymentAmount.getChargingMetaData();
 
         String clientCorrelator = CommonUtil.getNullOrTrimmedValue(request.getClientCorrelator());
         String endUserID = CommonUtil.getNullOrTrimmedValue(wrapperDTO.getEndUserId());
@@ -110,7 +109,7 @@ public class PaymentRequestHandler extends AbstractRequestHandler<MakePaymentReq
         String channel = CommonUtil.getNullOrTrimmedValue(metaData.getChannel());
         String taxAmount =CommonUtil.getNullOrTrimmedValue(metaData.getTaxAmount());
         String referenceCode = CommonUtil.getNullOrTrimmedValue(request.getReferenceCode());
-        String notifyURL = CommonUtil.getNullOrTrimmedValue(request.getNotifyURL());
+        String transactionOperationStatus = CommonUtil.getNullOrTrimmedValue(request.getTransactionOperationStatus());
 
         List<ValidationRule> validationRulesList = new ArrayList<>();
 
@@ -141,7 +140,7 @@ public class PaymentRequestHandler extends AbstractRequestHandler<MakePaymentReq
             validationRulesList.add(new ValidationRule(ValidationRule.VALIDATION_TYPE_MANDATORY,
                     "referenceCode", referenceCode));
             validationRulesList.add(new ValidationRule(ValidationRule.VALIDATION_TYPE_OPTIONAL,
-                    "notifyURL", notifyURL));
+                    "transactionOperationStatus", transactionOperationStatus));
 
             ValidationRule[] validationRules = new ValidationRule[validationRulesList.size()];
             validationRules = validationRulesList.toArray(validationRules);
@@ -159,18 +158,18 @@ public class PaymentRequestHandler extends AbstractRequestHandler<MakePaymentReq
     }
 
     @Override
-    protected Returnable process(MakePaymentRequestWrapperDTO extendedRequestDTO) throws Exception {
+    protected Returnable process(ChargePaymentRequestWrapperDTO extendedRequestDTO) throws Exception {
         if (responseWrapper.getRequestError() != null) {
             responseWrapper.setHttpStatus(Response.Status.BAD_REQUEST);
             return responseWrapper;
         }
 
         try {
-            MakePaymentRequestBean requestBean = extendedRequestDTO.getMakePaymentRequestBean();
-            MakePaymentRequestBean.makePayment request = requestBean.getmakePayment();
-            PaymentAmount paymentAmount = request.getPaymentAmount();
-            ChargingInformation chargingInformation = paymentAmount.getChargingInformation();
-            ChargingMetaData metadata = paymentAmount.getChargingMetaData();
+            AmountTransactionRequestBean requestBean = extendedRequestDTO.getAmountTransactionRequestBean();
+            AmountTransactionRequestBean.amountTransaction request = requestBean.getAmountTransaction();
+            ChargePaymentAmount paymentAmount = request.getPaymentAmount();
+            PaymentChargingInformation chargingInformation = paymentAmount.getChargingInformation();
+            PaymentChargingMetaData metadata = paymentAmount.getChargingMetaData();
 
             String clientCorrelator = CommonUtil.getNullOrTrimmedValue(request.getClientCorrelator());
             String endUserIdPath = extendedRequestDTO.getEndUserId();
@@ -184,7 +183,7 @@ public class PaymentRequestHandler extends AbstractRequestHandler<MakePaymentReq
             String channel = CommonUtil.getNullOrTrimmedValue(metadata.getChannel());
             String taxAmount =CommonUtil.getNullOrTrimmedValue(metadata.getTaxAmount());
             String referenceCode = CommonUtil.getNullOrTrimmedValue(request.getReferenceCode());
-            String notifyURL = CommonUtil.getNullOrTrimmedValue(request.getNotifyURL());
+            String transactionOperationStatus = CommonUtil.getNullOrTrimmedValue(request.getTransactionOperationStatus());
             serviceCallPayment = ServiceName.ChargeUser.toString();
             String userName = extendedRequestDTO.getUser().getUserName();
             Integer userId = extendedRequestDTO.getUser().getId();
@@ -337,7 +336,7 @@ public class PaymentRequestHandler extends AbstractRequestHandler<MakePaymentReq
 
             responseBean.setReferenceCode(referenceCode);
             responseBean.setServerReferenceCode(serverReferenceCode);
-            responseBean.setNotifyURL(notifyURL);
+            responseBean.setTransactionOperationStatus(transactionOperationStatus);
 
             ManageNumber manageNumber = numberDAO.getNumber(endUserId,
                     extendedRequestDTO.getUser().getUserName().toString());
