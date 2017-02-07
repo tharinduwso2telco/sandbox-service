@@ -1405,3 +1405,69 @@ INFO  [2017-02-06 06:38:40,221] org.eclipse.jetty.server.ServerConnector: Stoppe
 INFO  [2017-02-06 06:38:40,223] org.eclipse.jetty.server.ServerConnector: Stopped admin@28fa700e{HTTP/1.1}{0.0.0.0:8282}
 INFO  [2017-02-06 06:38:40,225] org.eclipse.jetty.server.handler.ContextHandler: Stopped i.d.j.MutableServletContextHandler@5a2bd7c8{/,null,UNAVAILABLE}
 INFO  [2017-02-06 06:38:40,227] org.eclipse.jetty.server.handler.ContextHandler: Stopped i.d.j.MutableServletContextHandler@2ab0702e{/,null,UNAVAILABLE}
+INFO  [2017-02-07 03:51:51,825] org.eclipse.jetty.util.log: Logging initialized @2819ms
+INFO  [2017-02-07 03:51:51,945] io.dropwizard.assets.AssetsBundle: Registering AssetBundle with name: swagger-assets for path /swagger-static/*
+INFO  [2017-02-07 03:51:52,173] io.dropwizard.server.ServerFactory: Starting Application
+INFO  [2017-02-07 03:51:52,180] io.dropwizard.server.DefaultServerFactory: Registering jersey handler with root path prefix: /
+INFO  [2017-02-07 03:51:52,208] io.dropwizard.server.DefaultServerFactory: Registering admin handler with root path prefix: /
+INFO  [2017-02-07 03:51:52,330] org.eclipse.jetty.setuid.SetUIDListener: Opened application@e041f0c{HTTP/1.1}{localhost:8181}
+INFO  [2017-02-07 03:51:52,332] org.eclipse.jetty.setuid.SetUIDListener: Opened admin@6a175569{HTTP/1.1}{0.0.0.0:8282}
+INFO  [2017-02-07 03:51:52,336] org.eclipse.jetty.server.Server: jetty-9.2.z-SNAPSHOT
+INFO  [2017-02-07 03:51:53,321] io.dropwizard.jersey.DropwizardResourceConfig: The following paths were found for the configured resources:
+
+    GET     /api-docs (com.wordnik.swagger.jaxrs.listing.ApiListingResourceJSON)
+    GET     /api-docs/{route: .+} (com.wordnik.swagger.jaxrs.listing.ApiListingResourceJSON)
+    POST    /credit/{v1}/credit/{msisdn}/apply (com.wso2telco.services.dep.sandbox.service.CreditService)
+    POST    /customerinfo/{v1}/config/customer/attribute (com.wso2telco.services.dep.sandbox.service.CustomerInfoConfigurationService)
+    POST    /customerinfo/{v1}/config/customer/profile (com.wso2telco.services.dep.sandbox.service.CustomerInfoConfigurationService)
+    GET     /customerinfo/{v1}/customer/attribute (com.wso2telco.services.dep.sandbox.service.CustomerInfoService)
+    GET     /customerinfo/{v1}/customer/profile (com.wso2telco.services.dep.sandbox.service.CustomerInfoService)
+    GET     /location/{v1}/queries/location (com.wso2telco.services.dep.sandbox.service.SandboxService)
+    GET     /provisioning/{v1}/config/service (com.wso2telco.services.dep.sandbox.service.ProvisionConfigurationService)
+    POST    /provisioning/{v1}/config/service (com.wso2telco.services.dep.sandbox.service.ProvisionConfigurationService)
+    POST    /provisioning/{v1}/config/{msisdn}/service/{serviceCode} (com.wso2telco.services.dep.sandbox.service.ProvisionConfigurationService)
+    POST    /provisioning/{v1}/{msisdn} (com.wso2telco.services.dep.sandbox.service.ProvisionService)
+    GET     /provisioning/{v1}/{msisdn}/list/active (com.wso2telco.services.dep.sandbox.service.ProvisionService)
+    GET     /provisioning/{v1}/{msisdn}/list/applicable (com.wso2telco.services.dep.sandbox.service.ProvisionService)
+    POST    /provisioning/{v1}/{msisdn}/remove (com.wso2telco.services.dep.sandbox.service.ProvisionService)
+    POST    /smsmessaging/{apiVersion}/outbound/{shortCode}/requests (com.wso2telco.services.dep.sandbox.service.SandboxService)
+    GET     /smsmessaging/{apiVersion}/outbound/{shortCode}/requests/{mtSMSTransactionId}/deliveryInfos (com.wso2telco.services.dep.sandbox.service.SandboxService)
+    GET     /swagger (io.federecio.dropwizard.swagger.SwaggerResource)
+    GET     /user/apiType (com.wso2telco.services.dep.sandbox.service.UserService)
+    POST    /user/managenumber (com.wso2telco.services.dep.sandbox.service.UserService)
+    GET     /user/{apiType}/serviceType (com.wso2telco.services.dep.sandbox.service.UserService)
+    GET     /user/{apiType}/{serviceType}/attribute (com.wso2telco.services.dep.sandbox.service.UserService)
+    POST    /user/{userName}/register (com.wso2telco.services.dep.sandbox.service.UserService)
+    GET     /wallet/{v1}/config/{apiType}/{serviceType}/getAccountStatus (com.wso2telco.services.dep.sandbox.service.WalletConfigurationService)
+    GET     /wallet/{v1}/config/{apiType}/{serviceType}/getTransactionStatus (com.wso2telco.services.dep.sandbox.service.WalletConfigurationService)
+    POST    /wallet/{v1}/config/{endUserId}/addAccountInfo (com.wso2telco.services.dep.sandbox.service.WalletConfigurationService)
+    POST    /wallet/{v1}/config/{endUserId}/addTransactionStatus (com.wso2telco.services.dep.sandbox.service.WalletConfigurationService)
+    GET     /wallet/{v1}/transaction/{endUserId}/balance (com.wso2telco.services.dep.sandbox.service.WalletService)
+    GET     /wallet/{v1}/transaction/{endUserId}/list (com.wso2telco.services.dep.sandbox.service.WalletService)
+    POST    /wallet/{v1}/transaction/{endUserId}/payment (com.wso2telco.services.dep.sandbox.service.WalletService)
+    POST    /wallet/{v1}/transaction/{endUserId}/refund (com.wso2telco.services.dep.sandbox.service.WalletService)
+
+INFO  [2017-02-07 03:51:53,325] org.eclipse.jetty.server.handler.ContextHandler: Started i.d.j.MutableServletContextHandler@102efc59{/,null,AVAILABLE}
+INFO  [2017-02-07 03:51:53,331] io.dropwizard.setup.AdminEnvironment: tasks = 
+
+    POST    /tasks/log-level (io.dropwizard.servlets.tasks.LogConfigurationTask)
+    POST    /tasks/gc (io.dropwizard.servlets.tasks.GarbageCollectionTask)
+
+WARN  [2017-02-07 03:51:53,331] io.dropwizard.setup.AdminEnvironment: 
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!    THIS APPLICATION HAS NO HEALTHCHECKS. THIS MEANS YOU WILL NEVER KNOW      !
+!     IF IT DIES IN PRODUCTION, WHICH MEANS YOU WILL NEVER KNOW IF YOU'RE      !
+!    LETTING YOUR USERS DOWN. YOU SHOULD ADD A HEALTHCHECK FOR EACH OF YOUR    !
+!         APPLICATION'S DEPENDENCIES WHICH FULLY (BUT LIGHTLY) TESTS IT.       !
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+INFO  [2017-02-07 03:51:53,337] org.eclipse.jetty.server.handler.ContextHandler: Started i.d.j.MutableServletContextHandler@6b8280e6{/,null,AVAILABLE}
+INFO  [2017-02-07 03:51:53,387] org.eclipse.jetty.server.ServerConnector: Started application@e041f0c{HTTP/1.1}{localhost:8181}
+INFO  [2017-02-07 03:51:53,387] org.eclipse.jetty.server.ServerConnector: Started admin@6a175569{HTTP/1.1}{0.0.0.0:8282}
+INFO  [2017-02-07 03:51:53,387] org.eclipse.jetty.server.Server: Started @4383ms
+DEBUG [2017-02-07 03:52:18,675] com.wso2telco.services.dep.sandbox.servicefactory.RequestBuilderFactory: LOADING USER FACTORY
+DEBUG [2017-02-07 03:52:18,676] com.wso2telco.services.dep.sandbox.servicefactory.user.UserServiceFactory: LOADING API TYPES
+DEBUG [2017-02-07 03:52:18,683] com.wso2telco.services.dep.sandbox.servicefactory.user.RetrieveAPITypeServiceHandler: Sandbox user : sandbox
+DEBUG [2017-02-07 03:52:18,844] com.wso2telco.services.dep.sandbox.dao.hibernate.HibernateUserDAO: No user found as : sandbox
+DEBUG [2017-02-07 03:52:18,866] com.wso2telco.services.dep.sandbox.service.UserService: GET API TYPES SERVICE RESPONSE : OutboundJaxrsResponse{status=200, reason=OK, hasEntity=true, closed=false, buffered=false}
