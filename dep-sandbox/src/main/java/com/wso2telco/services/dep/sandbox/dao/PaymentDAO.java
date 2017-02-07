@@ -21,6 +21,8 @@ import com.wso2telco.services.dep.sandbox.dao.model.domain.ManageNumber;
 
 public interface PaymentDAO {
 
+    public AttributeValues getAttributeValue(String endUserId, String serviceCall, String attribute, Integer userId)
+            throws Exception;
     public AttributeValues checkDuplicateValue(String serviceCall, String value, String attributeName, String tableName)
             throws Exception;
     public Integer saveAttributeValue(AttributeValues valueObj) throws Exception;

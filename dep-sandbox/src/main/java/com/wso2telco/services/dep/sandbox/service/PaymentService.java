@@ -45,7 +45,7 @@ public class PaymentService {
     Log LOG = LogFactory.getLog(PaymentService.class);
 
     @POST
-    @Path("/transaction/{endUserId}/payment")
+    @Path("/{endUserId}/transactions/amount")
     @ApiOperation(value = "makePaymentService", notes = "make payment service", response = Response.class)
     @ApiImplicitParams({
             @ApiImplicitParam(name = "sandbox", value = "Authorization token", required = true, dataType = "string", paramType = "header")})
