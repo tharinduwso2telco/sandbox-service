@@ -38,6 +38,7 @@ public class Application extends AbstractApplication<SandboxDTO> {
 		listOfObject.add(new CreditService());
 		listOfObject.add(new WalletService());
 		listOfObject.add(new WalletConfigurationService());
+		listOfObject.add(new PaymentService());
 		return listOfObject;
 	}
 
