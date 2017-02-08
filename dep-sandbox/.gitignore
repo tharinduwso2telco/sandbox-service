@@ -13,7 +13,7 @@
 hs_err_pid*
 
 # Ignore everything in this directory
-log
+src/main/resources/assets
 target
 .classpath
 .settings
