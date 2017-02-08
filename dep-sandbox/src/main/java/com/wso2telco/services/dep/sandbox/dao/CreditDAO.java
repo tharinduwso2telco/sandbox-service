@@ -22,7 +22,7 @@ import com.wso2telco.services.dep.sandbox.dao.model.domain.AttributeValues;
 
 public interface CreditDAO {
 	public AttributeValues checkDuplication(Integer userId, String serviceCall, String attributeValue, String attributeName) throws Exception;
-	public AttributeValues getTransactionValue(String endUserId, Integer attributeValue, String serviceCall) throws Exception;
+	public AttributeValues getTransactionValue(String endUserId, Integer attributeValue, String attributeName, String serviceCall) throws Exception;
 	public Integer saveAttributeValue(AttributeValues valueObj) throws Exception;
 
 	

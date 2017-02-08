@@ -200,7 +200,7 @@ public class CreditApplyRequestHandler extends AbstractRequestHandler<CreditAppl
 				 ManageNumber manageNumber = numberDao.getNumber(msisdn, userName);
 				 if(ownerId == manageNumber.getId()){
 					//send the already sent response
-					AttributeValues applyCreditResponse = creditDAO.getTransactionValue(msisdn,values.getAttributeValueId() ,AttributeName.applyCredit.toString());
+					AttributeValues applyCreditResponse = creditDAO.getTransactionValue(msisdn,values.getAttributeValueId() ,AttributeName.applyCredit.toString(), ServiceName.ApplyCredit.toString());
 					CreditApplyResponseBean bean = new CreditApplyResponseBean();
 
 					ObjectMapper mapper = new ObjectMapper();
