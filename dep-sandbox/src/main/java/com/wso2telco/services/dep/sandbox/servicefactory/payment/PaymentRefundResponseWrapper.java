@@ -16,30 +16,31 @@
 
 package com.wso2telco.services.dep.sandbox.servicefactory.payment;
 
-import com.wso2telco.services.dep.sandbox.dao.model.custom.ChargePaymentDTO;
 import com.wso2telco.services.dep.sandbox.dao.model.custom.ErrorResponseDTO;
+import com.wso2telco.services.dep.sandbox.dao.model.custom.RefundPaymentDTO;
 import com.wso2telco.services.dep.sandbox.servicefactory.AbstractReturnWrapperDTO;
 
-public class PaymentResponseWrapper extends AbstractReturnWrapperDTO {
+public class PaymentRefundResponseWrapper extends AbstractReturnWrapperDTO {
 
-    private ChargePaymentDTO makePaymentDTO;
+    private RefundPaymentDTO refundPaymentDTO;
 
-    public ChargePaymentDTO getMakePaymentDTO() {
-        return makePaymentDTO;
+    public RefundPaymentDTO getRefundPaymentDTO() {
+        return refundPaymentDTO;
     }
 
-    public void setMakePaymentDTO(ChargePaymentDTO makePaymentDTO) {
-        this.makePaymentDTO = makePaymentDTO;
+    public void setRefundPaymentDTO(RefundPaymentDTO refundPaymentDTO) {
+        this.refundPaymentDTO = refundPaymentDTO;
     }
 
     @Override
     public Object getResponse() {
         if (getRequestError() == null) {
-            return makePaymentDTO;
+            return refundPaymentDTO;
         } else {
             ErrorResponseDTO response = new ErrorResponseDTO(getRequestError());
             return response;
 
         }
     }
+
 }

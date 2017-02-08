@@ -76,4 +76,38 @@ public class PaymentService {
         }
     }
 
+    /** @path should be changed to ("/{endUserId}/transactions/amount") **/
+    @POST
+    @Path("/{endUserId}/transactions/refund")
+    @ApiOperation(value = "refundService", notes = "refund service", response = Response.class)
+    @ApiImplicitParams({
+            @ApiImplicitParam(name= "sandbox", value = "Authorization token", required = true, dataType = "string", paramType = "header")})
+    public Response refundUser(@ApiParam(value = "endUserId", required = true) @PathParam("endUserId") String endUserId,
+                               PaymentRefundTransactionRequestBean refundRequestBean, @Context HttpServletRequest request) {
+        LOG.debug("###REFUND### /{endUserId}/refund invoked : endUserId - " + endUserId);
+        if (refundRequestBean != null) {
+            LOG.debug(refundRequestBean);
+        }
+        PaymentRefundRequestWrapperDTO requestDTO = new PaymentRefundRequestWrapperDTO();
+        requestDTO.setHttpRequest(request);
+        requestDTO.setEndUserId(endUserId);
+        requestDTO.setRefundRequestBean(refundRequestBean);
+        requestDTO.setRequestType(RequestType.PAYMENT);
+
+        RequestHandleable<RequestDTO> handler = RequestBuilderFactory.getInstance(requestDTO);
+        Returnable returnable = null;
+
+        try {
+            returnable = handler.execute(requestDTO);
+            Response response = Response.status(returnable.getHttpStatus()).entity(returnable.getResponse()).build();
+            return response;
+        } catch (Exception ex) {
+            LOG.error("Refund User SERVICE ERROR", ex);
+            Response response = Response.status(Response.Status.BAD_REQUEST).entity(
+                    SandboxException.SandboxErrorType.SERVICE_ERROR.getCode() + " " + SandboxException.SandboxErrorType.SERVICE_ERROR.getMessage())
+                    .build();
+            return response;
+        }
+    }
+
 }
