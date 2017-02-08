@@ -11,7 +11,12 @@ Run npm install to download and install all node dependencies
 npm install
 ```
 
-Run following commands to generate Angular2 related files
+Globally install angular-cli and
+run following commands to generate Angular2 related files
+
+```bash
+npm install -g @angular/cli
+```
 
 Scaffold  | Usage
 ---       | ---
