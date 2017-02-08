@@ -1,83 +1,123 @@
 package com.wso2telco.services.dep.sandbox.dao.model.custom;
 
 public class RefundResponseBean {
-	
-	private RefundResponse refundResponse;
-	
-	
-	public RefundResponse getRefundResponse() {
-		return refundResponse;
-	}
+
+    private RefundResponse refundResponse;
 
 
-	public void setRefundResponse(RefundResponse refundResponse) {
-		this.refundResponse = refundResponse;
-	}
+    public RefundResponse getRefundResponse() {
+        return refundResponse;
+    }
 
 
-	public static class RefundResponse {
-		
-		private double amount;
-		
-		private String serverTransactionReference;
-		
-		private String clientCorrelator;
-		
-		private String reasonForRefund;
-		
-		private String merchantIdentification;
-		
-		private CallbackReference receiptResponse;
+    public void setRefundResponse(RefundResponse refundResponse) {
+        this.refundResponse = refundResponse;
+    }
 
-		public double getAmount() {
-			return amount;
-		}
 
-		public void setAmount(double amount) {
-			this.amount = amount;
-		}
+    public static class RefundResponse {
 
-		public String getServerTransactionReference() {
-			return serverTransactionReference;
-		}
+        private String clientCorrelator;
 
-		public void setServerTransactionReference(String serverTransactionReference) {
-			this.serverTransactionReference = serverTransactionReference;
-		}
+        private String endUserID;
 
-		public String getClientCorrelator() {
-			return clientCorrelator;
-		}
+        private String originalServerReferenceCode;
 
-		public void setClientCorrelator(String clientCorrelator) {
-			this.clientCorrelator = clientCorrelator;
-		}
+        private String reasonForRefund;
 
-		public String getReasonForRefund() {
-			return reasonForRefund;
-		}
+        private double refundAmount;
 
-		public void setReasonForRefund(String reasonForRefund) {
-			this.reasonForRefund = reasonForRefund;
-		}
+        private PaymentAmountWithTax paymentAmount;
 
-		public String getMerchantIdentification() {
-			return merchantIdentification;
-		}
+        private String referenceCode;
 
-		public void setMerchantIdentification(String merchantIdentification) {
-			this.merchantIdentification = merchantIdentification;
-		}
+        private String resourceURL;
 
-		public CallbackReference getReceiptResponse() {
-			return receiptResponse;
-		}
+        private String transactionOperationStatus;
 
-		public void setReceiptResponse(CallbackReference receiptResponse) {
-			this.receiptResponse = receiptResponse;
-		}
-		
-	
-	}
+        private String serverReferanceCode;
+
+
+        public String getClientCorrelator() {
+            return clientCorrelator;
+        }
+
+        public void setClientCorrelator(String clientCorrelator) {
+            this.clientCorrelator = clientCorrelator;
+        }
+
+        public String getEndUserID() {
+            return endUserID;
+        }
+
+        public void setEndUserID(String endUserID) {
+            this.endUserID = endUserID;
+        }
+
+        public String getOriginalServerReferenceCode() {
+            return originalServerReferenceCode;
+        }
+
+        public void setOriginalServerReferenceCode(String originalServerReferenceCode) {
+            this.originalServerReferenceCode = originalServerReferenceCode;
+        }
+
+        public String getReasonForRefund() {
+            return reasonForRefund;
+        }
+
+        public void setReasonForRefund(String reasonForRefund) {
+            this.reasonForRefund = reasonForRefund;
+        }
+
+        public double getRefundAmount() {
+            return refundAmount;
+        }
+
+        public void setRefundAmount(double refundAmount) {
+            this.refundAmount = refundAmount;
+        }
+
+
+        public String getReferenceCode() {
+            return referenceCode;
+        }
+
+        public void setReferenceCode(String referenceCode) {
+            this.referenceCode = referenceCode;
+        }
+
+        public String getResourceURL() {
+            return resourceURL;
+        }
+
+        public void setResourceURL(String resourceURL) {
+            this.resourceURL = resourceURL;
+        }
+
+        public String getTransactionOperationStatus() {
+            return transactionOperationStatus;
+        }
+
+        public void setTransactionOperationStatus(String transactionOperationStatus) {
+            this.transactionOperationStatus = transactionOperationStatus;
+        }
+
+        public PaymentAmountWithTax getPaymentAmount() {
+            return paymentAmount;
+        }
+
+        public void setPaymentAmount(PaymentAmountWithTax paymentAmount) {
+            this.paymentAmount = paymentAmount;
+        }
+
+        public String getServerReferanceCode() {
+            return serverReferanceCode;
+        }
+
+        public void setServerReferanceCode(String serverReferanceCode) {
+            this.serverReferanceCode = serverReferanceCode;
+        }
+    }
 
 }

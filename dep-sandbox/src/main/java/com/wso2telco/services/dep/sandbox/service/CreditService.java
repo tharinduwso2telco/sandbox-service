@@ -11,6 +11,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import com.wso2telco.services.dep.sandbox.dao.model.custom.*;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -19,9 +20,6 @@ import com.wordnik.swagger.annotations.ApiImplicitParam;
 import com.wordnik.swagger.annotations.ApiImplicitParams;
 import com.wordnik.swagger.annotations.ApiOperation;
 import com.wordnik.swagger.annotations.ApiParam;
-import com.wso2telco.services.dep.sandbox.dao.model.custom.CreditApplyRequestWrapper;
-import com.wso2telco.services.dep.sandbox.dao.model.custom.CreditRequestBean;
-import com.wso2telco.services.dep.sandbox.dao.model.custom.RequestDTO;
 import com.wso2telco.services.dep.sandbox.exception.SandboxException.SandboxErrorType;
 import com.wso2telco.services.dep.sandbox.servicefactory.RequestBuilderFactory;
 import com.wso2telco.services.dep.sandbox.servicefactory.RequestHandleable;
@@ -70,7 +68,7 @@ public class CreditService {
 		}
 	}
 	
-	/*@POST
+	@POST
 	@Path("/{msisdn}/refund")
 	@ApiOperation(value = "patialRefundForRequestedService", notes = "patial refund requested service", response = Response.class)
 	@ApiImplicitParams({
@@ -102,6 +100,6 @@ public class CreditService {
 			Response response = Response.status(Status.BAD_REQUEST).entity(SandboxErrorType.SERVICE_ERROR.getCode() + " " + SandboxErrorType.SERVICE_ERROR.getMessage()).build();
 			return response;
 		}
-	}*/
+	}
 
 }

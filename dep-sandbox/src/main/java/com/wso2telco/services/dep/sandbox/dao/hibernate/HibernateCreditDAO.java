@@ -70,12 +70,12 @@ public class HibernateCreditDAO extends AbstractDAO implements CreditDAO {
 	}
 
 	@Override
-	public AttributeValues getTransactionValue(String endUserId, Integer attributeValue, String serviceCall)
+	public AttributeValues getTransactionValue(String endUserId, Integer attributeValue, String attributeName, String serviceCall)
 			throws Exception {
 
 		Session session = getSession();
 		AttributeValues resultSet = null;
-		String service = ServiceName.ApplyCredit.toString();
+		//String service = ServiceName.ApplyCredit.toString();
 
 		StringBuilder hql = new StringBuilder();
 		hql.append("SELECT ");
@@ -100,9 +100,9 @@ public class HibernateCreditDAO extends AbstractDAO implements CreditDAO {
 			Query query = session.createQuery(hql.toString());
 			query.setParameter("apiName", RequestType.CREDIT.toString());
 			query.setParameter("tableName", TableName.SBXATTRIBUTEVALUE.toString().toLowerCase());
-			query.setParameter("attributeName", serviceCall);
+			query.setParameter("attributeName", attributeName);
 			query.setParameter("attributeValue", attributeValue);
-			query.setParameter("serviceCall", service);
+			query.setParameter("serviceCall", serviceCall);
 
 			resultSet = (AttributeValues) query.uniqueResult();
 

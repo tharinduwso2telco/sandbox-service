@@ -17,25 +17,20 @@ public class RefundRequestBean {
 
 	public static class RefundRequest{
 		
-		private double amount;
-		
+
 		private String clientCorrelator;
+
+		private String msisdn;
 		
+		private String originalServerReferenceCode;
+
 		private String reasonForRefund;
-		
-		private String merchantIdentification;
-		
-		private String serverTransactionReference;
-		
-		private CallbackReference receiptRequest;
 
-		public double getAmount() {
-			return amount;
-		}
+		private double refundAmount;
 
-		public void setAmount(double amount) {
-			this.amount = amount;
-		}
+		private PaymentAmountWithTax paymentAmount;
+
+		private String referenceCode;
 
 		public String getClientCorrelator() {
 			return clientCorrelator;
@@ -43,6 +38,23 @@ public class RefundRequestBean {
 
 		public void setClientCorrelator(String clientCorrelator) {
 			this.clientCorrelator = clientCorrelator;
+		}
+
+
+		public String getMsisdn() {
+			return msisdn;
+		}
+
+		public void setMsisdn(String msisdn) {
+			this.msisdn = msisdn;
+		}
+
+		public String getOriginalServerReferenceCode() {
+			return originalServerReferenceCode;
+		}
+
+		public void setOriginalServerReferenceCode(String originalServerReferenceCode) {
+			this.originalServerReferenceCode = originalServerReferenceCode;
 		}
 
 		public String getReasonForRefund() {
@@ -53,29 +65,50 @@ public class RefundRequestBean {
 			this.reasonForRefund = reasonForRefund;
 		}
 
-		public String getMerchantIdentification() {
-			return merchantIdentification;
+		public double getRefundAmount() {
+			return refundAmount;
 		}
 
-		public void setMerchantIdentification(String merchantIdentification) {
-			this.merchantIdentification = merchantIdentification;
+		public void setRefundAmount(double refundAmount) {
+			this.refundAmount = refundAmount;
 		}
 
-		public String getServerTransactionReference() {
-			return serverTransactionReference;
+
+		public PaymentAmountWithTax getPaymentAmount() {
+			return paymentAmount;
 		}
 
-		public void setServerTransactionReference(String serverTransactionReference) {
-			this.serverTransactionReference = serverTransactionReference;
+		public void setPaymentAmount(PaymentAmountWithTax paymentAmount) {
+			this.paymentAmount = paymentAmount;
 		}
 
-		public CallbackReference getReceiptRequest() {
-			return receiptRequest;
+
+
+
+		public String getReferenceCode() {
+			return referenceCode;
 		}
 
-		public void setReceiptRequest(CallbackReference receiptRequest) {
-			this.receiptRequest = receiptRequest;
+		public void setReferenceCode(String referenceCode) {
+			this.referenceCode = referenceCode;
 		}
+
+
+		public String toString() {
+			StringBuilder builder = new StringBuilder();
+			builder.append("Client Correlator : " + getClientCorrelator());
+			builder.append("msisdn : " + getMsisdn());
+			builder.append("OriginalServerReferenceCode : " +getOriginalServerReferenceCode());
+			builder.append("reasonForRefund : " + getReasonForRefund());
+			builder.append("refundAmount : " + getPaymentAmount());
+
+			if (getPaymentAmount() != null) {
+				builder.append(" " + getPaymentAmount().toString());
+			}
+
+			return builder.toString();
+		}
+
 		
 	}
 
