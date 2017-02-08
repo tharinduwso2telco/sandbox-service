@@ -21,5 +21,6 @@ target
 *.iws
 *.ipr
 .idea
-dep-sanbox/log
 log
+dep-sanbox/log
+
