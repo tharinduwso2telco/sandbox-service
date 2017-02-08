@@ -107,7 +107,7 @@ public class PaymentRequestHandler extends AbstractRequestHandler<ChargePaymentR
         String onBehalfOf = CommonUtil.getNullOrTrimmedValue(metaData.getOnBehalfOf());
         String categoryCode = CommonUtil.getNullOrTrimmedValue(metaData.getPurchaseCategoryCode());
         String channel = CommonUtil.getNullOrTrimmedValue(metaData.getChannel());
-        String taxAmount =CommonUtil.getNullOrTrimmedValue(metaData.getTaxAmount());
+        String taxAmount = CommonUtil.getNullOrTrimmedValue(metaData.getTaxAmount());
         String referenceCode = CommonUtil.getNullOrTrimmedValue(request.getReferenceCode());
         String transactionOperationStatus = CommonUtil.getNullOrTrimmedValue(request.getTransactionOperationStatus());
 
@@ -147,7 +147,7 @@ public class PaymentRequestHandler extends AbstractRequestHandler<ChargePaymentR
 
             Validation.checkRequestParams(validationRules);
 
-        }catch (CustomException ex) {
+        } catch (CustomException ex) {
             LOG.error("###PAYMENT### Error in Validations. ", ex);
             responseWrapper.setRequestError(
                     constructRequestError(SERVICEEXCEPTION, ex.getErrcode(), ex.getErrmsg(), ex.getErrvar()[0]));
@@ -181,7 +181,7 @@ public class PaymentRequestHandler extends AbstractRequestHandler<ChargePaymentR
             String onBehalfOf = CommonUtil.getNullOrTrimmedValue(metadata.getOnBehalfOf());
             String categoryCode = CommonUtil.getNullOrTrimmedValue(metadata.getPurchaseCategoryCode());
             String channel = CommonUtil.getNullOrTrimmedValue(metadata.getChannel());
-            String taxAmount =CommonUtil.getNullOrTrimmedValue(metadata.getTaxAmount());
+            String taxAmount = CommonUtil.getNullOrTrimmedValue(metadata.getTaxAmount());
             String referenceCode = CommonUtil.getNullOrTrimmedValue(request.getReferenceCode());
             String transactionOperationStatus = CommonUtil.getNullOrTrimmedValue(request.getTransactionOperationStatus());
             serviceCallPayment = ServiceName.ChargeUser.toString();
@@ -327,10 +327,12 @@ public class PaymentRequestHandler extends AbstractRequestHandler<ChargePaymentR
             chargeInformation.setCurrency(currency);
             chargeInformation.setDescription(description);
 
+            // Get the tax Amount
+            Double chargeTaxAmount = Double.parseDouble(taxAmount);
+
             // Setting the Total Amount Charged
-            Double tax = Double.parseDouble(taxAmount);
-            Double totle = tax+chargeAmount;
-            payAmount.setTotalAmountCharged(totle.toString());
+            Double total = chargeTaxAmount + chargeAmount;
+            payAmount.setTotalAmountCharged(total.toString());
 
             if (onBehalfOf != null || categoryCode != null || channel != null) {
                 chargeMetaData.setPurchaseCategoryCode(categoryCode);
@@ -348,9 +350,6 @@ public class PaymentRequestHandler extends AbstractRequestHandler<ChargePaymentR
             Double balance = manageNumber.getBalance();
             AttributeValues transactionStatusValue = paymentDAO.getAttributeValue(endUserId, serviceCallPayment,
                     AttributeName.transactionStatus.toString(), userId);
-
-            // Get the tax Amount
-            Double chargeTaxAmount = Double.parseDouble(taxAmount);
 
             // transaction operation status as denied
             if ((balance < chargeAmount)) {
@@ -370,8 +369,7 @@ public class PaymentRequestHandler extends AbstractRequestHandler<ChargePaymentR
                 }
                 // set transaction status as charged
             } else if (balance >= chargeAmount) {
-                balance = balance - (chargeAmount+chargeTaxAmount);
-                // walletDAO.updateBalance(endUserId, balance, userId);
+                balance = balance - (chargeAmount + chargeTaxAmount);
                 manageNumber.setBalance(balance);
                 numberDAO.saveManageNumbers(manageNumber);
                 responseBean.setTransactionOperationStatus(TransactionStatus.Charged.toString());
@@ -396,7 +394,7 @@ public class PaymentRequestHandler extends AbstractRequestHandler<ChargePaymentR
             }
             saveReferenceCode(endUserId, referenceCode, userName);
 
-        }catch (Exception ex) {
+        } catch (Exception ex) {
             LOG.error("###PAYMENT### Error Occured in PAYMENT Service. ", ex);
             responseWrapper.setHttpStatus(Response.Status.BAD_REQUEST);
             responseWrapper
