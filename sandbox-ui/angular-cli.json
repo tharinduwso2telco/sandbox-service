@@ -15,12 +15,13 @@
       "main": "main.ts",
       "test": "test.ts",
       "tsconfig": "tsconfig.json",
-      "prefix": "sb",
+      "prefix": "",
       "mobile": false,
       "styles": [
         "../node_modules/bootstrap/dist/css/bootstrap.min.css",
-        "../node_modules/material-design-icons/iconfont/material-icons.css",
-        "styles.scss"
+        "assets/material/material-icons.css",
+        "../node_modules/animate.css/animate.css",
+        "styles/main.scss"
       ],
       "scripts": [],
       "environments": {
