@@ -29,10 +29,14 @@ public class PaymentRequestFactory {
     public static RequestHandleable getInstance(final RequestDTO requestDTO) {
 
         final String MAKE_PAYMENT = "payment";
+        final String REFUND_PAYMENT = "refund";
 
         if (requestDTO.getRequestPath().contains(MAKE_PAYMENT)) {
             LOG.debug("LOADING MAKE PAYMENT SERVICE");
             return new PaymentRequestHandler();
+        } else if (requestDTO.getRequestPath().contains(REFUND_PAYMENT)) {
+            LOG.debug("LOADING REFUND PAYMENT SERVICE");
+            return new PaymentRefundRequestHandler();
         }
 
         return null;
