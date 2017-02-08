@@ -26,7 +26,6 @@ import com.wso2telco.services.dep.sandbox.servicefactory.RequestHandleable;
 public class PaymentRequestFactory {
     private static Log LOG = LogFactory.getLog(PaymentRequestFactory.class);
 
-    // TODO: based on the json body need to implement request handle
     public static RequestHandleable getInstance(final RequestDTO requestDTO) {
 
         final String MAKE_PAYMENT = "payment";
