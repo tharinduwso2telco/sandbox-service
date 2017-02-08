@@ -34,6 +34,7 @@
 	</prerequisites>
 
 	<modules>
+		<module>sandbox-ui</module>
 		<module>dep-sandbox</module>
 		<module>feature/sandbox</module>
 	</modules>
