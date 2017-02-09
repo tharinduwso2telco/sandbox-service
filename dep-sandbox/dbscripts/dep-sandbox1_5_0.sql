@@ -49,7 +49,7 @@ CREATE TABLE IF NOT EXISTS `sbxapiservicecalls` (
 -- Dumping data for table `sbxapiservicecalls`
 --
 
-INSERT INTO `sbxapiservicecalls` VALUES (1,8,'GetAttribute'),(2,8,'GetProfile'),(3,7,'GetApplicable'),(4,6,'MakePayment'),(5,6,'ListPayment'),(6,6,'RefundPayment'),(7,6,'BalanceLookup'),(8,5,'ApplyCredit'),(9,5,'PartialRefund');
+INSERT INTO `sbxapiservicecalls` VALUES (1,8,'GetAttribute'),(2,8,'GetProfile'),(3,7,'GetApplicable'),(4,6,'MakePayment'),(5,6,'ListPayment'),(6,6,'RefundPayment'),(7,6,'BalanceLookup'),(8,5,'ApplyCredit'),(9,5,'PartialRefund'),(10,4,'chargeUser'),(11,4,'RefundUser');
 
 
 
@@ -300,8 +300,7 @@ INSERT INTO `sbxstatus` VALUES (1,'Pending','PRV_PROVISION_PENDING','Provision T
 -- Dumping data for table `sbtprmsisdnservicessmap`
 --
 
-INSERT INTO `sbtprmsisdnservicessmap` VALUES (1,1,1),(2,1,2),(3,2,1),(4,1,3),(5,2,2),(6,2,3),(7,3,3),(8,3,2),(9,3,1);
-
+sbxapiservicecalls
 --
 -- Table structure for table `sbtprprovisionedservices`
 --
@@ -376,7 +375,7 @@ CREATE TABLE IF NOT EXISTS  `sbxattribute` (
 -- Dumping data for table `sbxattribute`
 --
 
-INSERT INTO `sbxattribute` VALUES (1,'title'),(2,'firstName'),(3,'lastName'),(4,'dob'),(5,'address'),(6,'identificationType'),(7,'status'),(8,'ownerType'),(9,'accountType'),(10,'basic'),(11,'billing'),(12,'identification'),(13,'account'),(14,'additionalInfo'),(15,'identificationNumber'),(16,'clientCorrelatorWallet'),(17,'transactionStatus'),(18,'accountStatus'),(19,'currency'),(20,'payment'),(21,'refund'),(22,'sms'),(23,'data'),(24,'minutes'),(25,'referenceCodeCredit'),(26,'clientCorrelator'),(27,'applyCredit'),(28,'referenceCodeWallet');
+INSERT INTO `sbxattribute` VALUES (1,'title'),(2,'firstName'),(3,'lastName'),(4,'dob'),(5,'address'),(6,'identificationType'),(7,'status'),(8,'ownerType'),(9,'accountType'),(10,'basic'),(11,'billing'),(12,'identification'),(13,'account'),(14,'additionalInfo'),(15,'identificationNumber'),(16,'clientCorrelatorWallet'),(17,'transactionStatus'),(18,'accountStatus'),(19,'currency'),(20,'payment'),(21,'refund'),(22,'sms'),(23,'data'),(24,'minutes'),(25,'referenceCodeCredit'),(26,'clientCorrelator'),(27,'applyCredit'),(28,'referenceCodeWallet'),(29,'makePayment'),(30,'clientCorrelatorPayment'),(31,'referenceCodePayment'),(32,'refundUser');
 --
 -- Table structure for table `sbtattributedistribution`
 --
@@ -394,7 +393,7 @@ CREATE TABLE IF NOT EXISTS `sbtattributedistribution` (
 -- Dumping data for table `sbtattributedistribution`
 --
 
-INSERT INTO `sbtattributedistribution` VALUES (1,1,2),(2,2,2),(3,3,2),(4,4,2),(5,5,2),(6,6,2),(7,7,2),(8,8,2),(9,9,2),(10,10,1),(11,11,1),(12,12,1),(13,13,1),(14,14,2),(15,15,2),(16,16,4),(17,16,6),(18,17,4),(19,17,6),(20,18,7),(21,19,7),(22,20,4),(23,21,6),(24,22,8),(25,23,8),(26,24,8),(27,25,8),(28,26,8),(29,27,8),(30,28,4),(31,28,6);
+INSERT INTO `sbtattributedistribution` VALUES (1,1,2),(2,2,2),(3,3,2),(4,4,2),(5,5,2),(6,6,2),(7,7,2),(8,8,2),(9,9,2),(10,10,1),(11,11,1),(12,12,1),(13,13,1),(14,14,2),(15,15,2),(16,16,4),(17,16,6),(18,17,4),(19,17,6),(20,18,7),(21,19,7),(22,20,4),(23,21,6),(24,22,8),(25,23,8),(26,24,8),(27,25,8),(28,26,8),(29,27,8),(30,28,4),(31,28,6),(32,29,10),(33,30,10),(34,31,10),(35,32,11),(36,30,11),(37,31,11);
 
 
 --

@@ -35,7 +35,6 @@ import com.wso2telco.services.dep.sandbox.servicefactory.AbstractRequestHandler;
 import com.wso2telco.services.dep.sandbox.servicefactory.Returnable;
 import com.wso2telco.services.dep.sandbox.servicefactory.wallet.AttributeName;
 import com.wso2telco.services.dep.sandbox.servicefactory.wallet.Channel;
-import com.wso2telco.services.dep.sandbox.servicefactory.wallet.RefundTransactionRequestHandler;
 import com.wso2telco.services.dep.sandbox.servicefactory.wallet.TransactionStatus;
 import com.wso2telco.services.dep.sandbox.util.*;
 import org.apache.commons.lang.math.NumberUtils;
@@ -61,7 +60,7 @@ public class PaymentRefundRequestHandler extends AbstractRequestHandler<PaymentR
     private Integer transactionId;
 
     {
-        LOG = LogFactory.getLog(RefundTransactionRequestHandler.class);
+        LOG = LogFactory.getLog(PaymentRefundRequestHandler.class);
         paymentDAO = DaoFactory.getPaymentDAO();
         loggingDAO = DaoFactory.getLoggingDAO();
         numberDAO = DaoFactory.getNumberDAO();
@@ -187,16 +186,22 @@ public class PaymentRefundRequestHandler extends AbstractRequestHandler<PaymentR
             String taxAmount = CommonUtil.getNullOrTrimmedValue(metadata.getTaxAmount());
             String referenceCode = CommonUtil.getNullOrTrimmedValue(request.getReferenceCode());
             String transactionOperationStatus = CommonUtil.getNullOrTrimmedValue(request.getTransactionOperationStatus());
-            serviceCallRefund = ServiceName.RefundPayment.toString();
+            serviceCallRefund = ServiceName.RefundUser.toString();
             // Attribute Name Used in wallet
             String accountCurrencyAttribute = AttributeName.Currency.toString().toLowerCase();
             String serviceCallBalanceLookUp = ServiceName.BalanceLookup.toString();
             String userName = extendedRequestDTO.getUser().getUserName();
             Integer userId = extendedRequestDTO.getUser().getId();
-
+           // APITypes api =
             // Save Request Log
+/*
             APITypes apiTypes = dao.getAPIType(extendedRequestDTO.getRequestType().toString().toLowerCase());
-            APIServiceCalls apiServiceCalls = dao.getServiceCall(apiTypes.getId(), serviceCallRefund);
+*/
+
+            APITypes apiTypes = dao.getAPIType(RequestType.PAYMENT.toString());
+
+            //This has Hardcoded value
+            APIServiceCalls apiServiceCalls = dao.getServiceCall(apiTypes.getId(),serviceCallRefund);
 
             Gson gson = new Gson();
             String jsonString = gson.toJson(requestBean);
@@ -252,7 +257,7 @@ public class PaymentRefundRequestHandler extends AbstractRequestHandler<PaymentR
 
             // check valid amount format
             if ((NumberUtils.isNumber(amount) != true)) {
-                LOG.error("###WALLET### amount should be a valid number");
+                LOG.error("###REFUND### amount should be a valid number");
                 responseWrapper.setRequestError(constructRequestError(SERVICEEXCEPTION,
                         ServiceError.INVALID_INPUT_VALUE, "amount should be a valid number"));
                 responseWrapper.setHttpStatus(Response.Status.BAD_REQUEST);
@@ -275,7 +280,7 @@ public class PaymentRefundRequestHandler extends AbstractRequestHandler<PaymentR
             // check valid account currency for endUserId
             boolean isValidCurrency = currencySymbol(currency);
             if (!isValidCurrency) {
-                LOG.error("###WALLET### currency code not as per ISO 4217");
+                LOG.error("###REFUND### currency code not as per ISO 4217");
                 responseWrapper.setRequestError(constructRequestError(SERVICEEXCEPTION,
                         ServiceError.INVALID_INPUT_VALUE, "currency code not as per ISO 4217"));
                 responseWrapper.setHttpStatus(Response.Status.BAD_REQUEST);
@@ -298,7 +303,7 @@ public class PaymentRefundRequestHandler extends AbstractRequestHandler<PaymentR
 
             // check channel
             if (channel != null && !containsChannel(channel)) {
-                LOG.error("###WALLET### Valid channel doesn't exists for the given inputs");
+                LOG.error("###REFUND### Valid channel doesn't exists for the given inputs");
                 responseWrapper.setRequestError(constructRequestError(SERVICEEXCEPTION,
                         ServiceError.INVALID_INPUT_VALUE, "Valid channel doesn't exists for the given inputs"));
                 responseWrapper.setHttpStatus(Response.Status.BAD_REQUEST);
@@ -399,7 +404,8 @@ public class PaymentRefundRequestHandler extends AbstractRequestHandler<PaymentR
         try {
             AttributeValues valueObj = new AttributeValues();
             String tableName = TableName.NUMBERS.toString().toLowerCase();
-            String attributeName = AttributeName.Refund.toString().toLowerCase();
+//            String attributeName = AttributeName.Refund.toString().toLowerCase(); //original
+            String attributeName = AttributeName.refundUser.toString().toLowerCase();
             APITypes api = dao.getAPIType(RequestType.PAYMENT.toString());
             APIServiceCalls call = dao.getServiceCall(api.getId(), serviceCallRefund);
             Attributes attributes = dao.getAttribute(attributeName);
@@ -422,7 +428,7 @@ public class PaymentRefundRequestHandler extends AbstractRequestHandler<PaymentR
             transactionId = paymentDAO.saveAttributeValue(valueObj);
 
         } catch (Exception ex) {
-            LOG.error("###WALLET### Error in processing save transaction. ", ex);
+            LOG.error("###REFUND### Error in processing save transaction. ", ex);
             responseWrapper.setHttpStatus(Response.Status.BAD_REQUEST);
         }
         return transactionId;
@@ -433,7 +439,8 @@ public class PaymentRefundRequestHandler extends AbstractRequestHandler<PaymentR
         try {
             AttributeValues valueObj = new AttributeValues();
             String tableName = TableName.SBXATTRIBUTEVALUE.toString().toLowerCase();
-            String attributeName = AttributeName.clientCorrelatorWallet.toString();
+            // did changed
+            String attributeName = AttributeName.clientCorrelatorPayment.toString();
             APITypes api = dao.getAPIType(RequestType.PAYMENT.toString());
             APIServiceCalls call = dao.getServiceCall(api.getId(), serviceCallRefund);
             Attributes attributes = dao.getAttribute(attributeName);
@@ -449,7 +456,7 @@ public class PaymentRefundRequestHandler extends AbstractRequestHandler<PaymentR
             dao.saveAttributeValue(valueObj);
 
         } catch (Exception ex) {
-            LOG.error("###WALLET### Error in processing save insertion of clientCorrelator request. ", ex);
+            LOG.error("###REFUND### Error in processing save insertion of clientCorrelator request. ", ex);
             responseWrapper.setHttpStatus(Response.Status.BAD_REQUEST);
         }
     }
@@ -467,7 +474,7 @@ public class PaymentRefundRequestHandler extends AbstractRequestHandler<PaymentR
         try {
             AttributeValues valueObj = new AttributeValues();
             String tableName = TableName.NUMBERS.toString().toLowerCase();
-            String attributeName = AttributeName.referenceCodeWallet.toString();
+            String attributeName = AttributeName.referenceCodePayment.toString();
             APITypes api = dao.getAPIType(RequestType.PAYMENT.toString());
             APIServiceCalls call = dao.getServiceCall(api.getId(), serviceCallRefund);
             Attributes attributes = dao.getAttribute(attributeName);
