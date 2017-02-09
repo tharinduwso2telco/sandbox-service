@@ -1,7 +1,7 @@
 <div class="login-container animated fadeInDown">
 
   <div class="logo-container">
-    SANDBOX<span class="man"></span>
+    {{CONST.appName | uppercase}}<span class="man"></span>
   </div>
 
   <!--Form Container - START-->
@@ -53,10 +53,11 @@
 
   </div><!--Form Container - END-->
 
-  <div  class="copyright">  ©2017 WSO2Telco. Workflow Manager. </div>
+  <div  class="copyright">  ©2017 WSO2Telco. {{CONST.appName | uppercase}}. </div>
 
   <div class="error-container animated bounceIn" *ngIf="loginError">{{loginError}}</div>
 
+  <button (click)="onLogout()">LOGOUT</button>
 </div>
 
 

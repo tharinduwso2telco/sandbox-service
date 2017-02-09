@@ -1,0 +1,8 @@
+{
+  "/login": {
+    "target": "https://localhost:9443",
+    "secure": false,
+    "pathRewrite": {"^/login" : ""},
+    "logLevel": "info"
+  }
+}

@@ -1,12 +1,11 @@
 import {BrowserModule} from '@angular/platform-browser';
 import {NgModule} from '@angular/core';
-import {FormsModule} from '@angular/forms';
-import {HttpModule} from '@angular/http';
 
 import {AppComponent} from './app.component';
 import {TopLevelRoutes} from "./app.routes";
 import {SharedModule} from "./shared/shared.module";
 import {AppGuard, LoginGuard} from "./app.guard";
+import {DataStoreModule} from "./data-store/data-store.module";
 
 @NgModule({
     declarations: [
@@ -15,13 +14,22 @@ import {AppGuard, LoginGuard} from "./app.guard";
     imports: [
         BrowserModule,
         TopLevelRoutes,
-        FormsModule,
-        HttpModule,
+        DataStoreModule,
         SharedModule
     ],
     providers: [
         AppGuard,
-        LoginGuard
+        LoginGuard,
+        {
+            provide : 'AUTH_SERVER_URL',
+            useValue : 'https://localhost:9443/services'
+        },
+        {
+            provide : 'APP_CONSTANT',
+            useValue : {
+                appName : 'Sandbox'
+            }
+        }
     ],
     bootstrap: [AppComponent]
 })

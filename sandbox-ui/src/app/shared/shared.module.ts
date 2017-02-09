@@ -8,10 +8,15 @@ import {MainMenuComponent} from "./components/main-menu/main-menu.component";
 import {BreadcrumbsComponent} from "./components/breadcrumbs/breadcrumbs.component";
 import {ToastyModule} from "ng2-toasty";
 import {SlimLoadingBarModule} from "ng2-slim-loading-bar";
+import {FormsModule} from "@angular/forms";
+import {HttpModule} from "@angular/http";
+import {MessageService} from "./services/message.service";
 
 @NgModule({
     imports: [
         CommonModule,
+        FormsModule,
+        HttpModule,
         DropdownModule.forRoot(),
         ToastyModule.forRoot(),
         SlimLoadingBarModule.forRoot(),
@@ -23,7 +28,12 @@ import {SlimLoadingBarModule} from "ng2-slim-loading-bar";
         MainMenuComponent,
         BreadcrumbsComponent
     ],
+    providers : [
+        MessageService
+    ],
     exports: [
+        FormsModule,
+        HttpModule,
         AppHeaderComponent,
         HamburgerMenuComponent,
         UserAvatarComponent,

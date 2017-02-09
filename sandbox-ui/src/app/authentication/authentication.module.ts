@@ -10,6 +10,7 @@ import {FormsModule} from "@angular/forms";
         FormsModule,
         AuthenticationRoutes
     ],
+    providers: [],
     declarations: [LoginComponent]
 })
 export class AuthenticationModule {
