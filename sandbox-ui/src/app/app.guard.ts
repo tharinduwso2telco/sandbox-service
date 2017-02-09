@@ -4,23 +4,29 @@ import {Injectable} from "@angular/core";
 @Injectable()
 export class AppGuard implements CanActivate {
 
-  constructor(private _router: Router) {
-  }
+    constructor(private _router: Router) {
+    }
 
-  canActivate() {
-    return true;
-  }
+    canActivate() {
+      /*  if (this._authenticationService.isLoggedIn()) {
+            return true;
+        } else {*/
+            this._router.navigate(['login']);
+            return false;
+      //  }
+    }
 }
 
 
 @Injectable()
 export class LoginGuard implements CanActivate {
 
-  constructor(private _router: Router ){}
+    constructor(private _router: Router) {
+    }
 
-  canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot){
-    return false;
-  }
+    canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
+        return true;
+    }
 
 }
 

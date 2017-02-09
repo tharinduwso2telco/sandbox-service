@@ -2,24 +2,24 @@ import {RouterModule} from "@angular/router";
 import {AppGuard, LoginGuard} from "./app.guard";
 
 const routes = [
-  /*  {
-        path: 'authentication',
+    {
+        path: 'login',
         loadChildren: 'app/authentication/authentication.module#AuthenticationModule',
         canActivate : [LoginGuard]
-    },*/
+    },
     {
-        path: 'dashboard',
+        path: 'home',
         loadChildren: 'app/dashboard/dashboard.module#DashboardModule',
         canActivate : [AppGuard]
     },
     {
         path : '',
-        redirectTo : '/dashboard',
+        redirectTo : '/home',
         pathMatch : 'full'
     },
     {
         path : '**',
-        redirectTo : '/dashboard'
+        redirectTo : '/home'
     }
 ];
 

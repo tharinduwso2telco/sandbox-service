@@ -6,7 +6,7 @@ import {HttpModule} from '@angular/http';
 import {AppComponent} from './app.component';
 import {TopLevelRoutes} from "./app.routes";
 import {SharedModule} from "./shared/shared.module";
-import {AppGuard} from "./app.guard";
+import {AppGuard, LoginGuard} from "./app.guard";
 
 @NgModule({
     declarations: [
@@ -20,7 +20,8 @@ import {AppGuard} from "./app.guard";
         SharedModule
     ],
     providers: [
-        AppGuard
+        AppGuard,
+        LoginGuard
     ],
     bootstrap: [AppComponent]
 })
