@@ -92,8 +92,8 @@ public class PaymentRequestHandler extends AbstractRequestHandler<ChargePaymentR
 
     @Override
     protected boolean validate(ChargePaymentRequestWrapperDTO wrapperDTO) throws Exception {
-        AmountTransactionRequestBean requestBean = wrapperDTO.getAmountTransactionRequestBean();
-        AmountTransactionRequestBean.amountTransaction request = requestBean.getAmountTransaction();
+        PaymentRefundTransactionRequestBean requestBean = wrapperDTO.getPaymentRefundTransactionRequestBean();
+        PaymentRefundTransactionRequestBean.AmountTransaction request = requestBean.getAmountTransaction();
         ChargePaymentAmount paymentAmount = request.getPaymentAmount();
         PaymentChargingInformation chargingInformation = paymentAmount.getChargingInformation();
         PaymentChargingMetaData metaData = paymentAmount.getChargingMetaData();
@@ -165,8 +165,8 @@ public class PaymentRequestHandler extends AbstractRequestHandler<ChargePaymentR
         }
 
         try {
-            AmountTransactionRequestBean requestBean = extendedRequestDTO.getAmountTransactionRequestBean();
-            AmountTransactionRequestBean.amountTransaction request = requestBean.getAmountTransaction();
+            PaymentRefundTransactionRequestBean requestBean = extendedRequestDTO.getPaymentRefundTransactionRequestBean();
+            PaymentRefundTransactionRequestBean.AmountTransaction request = requestBean.getAmountTransaction();
             ChargePaymentAmount paymentAmount = request.getPaymentAmount();
             PaymentChargingInformation chargingInformation = paymentAmount.getChargingInformation();
             PaymentChargingMetaData metadata = paymentAmount.getChargingMetaData();
