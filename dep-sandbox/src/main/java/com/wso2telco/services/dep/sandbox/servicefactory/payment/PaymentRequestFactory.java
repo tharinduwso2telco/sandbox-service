@@ -27,18 +27,18 @@ public class PaymentRequestFactory {
     private static Log LOG = LogFactory.getLog(PaymentRequestFactory.class);
 
     public static RequestHandleable getInstance(final RequestDTO requestDTO) {
-//        Todo: end points should be same in Payment Service
-        final String MAKE_PAYMENT = "payment";
-        final String REFUND_PAYMENT = "refund";
 
-        if (requestDTO.getRequestPath().contains(MAKE_PAYMENT)) {
-            LOG.debug("LOADING MAKE PAYMENT SERVICE");
-            return new PaymentRequestHandler();
-        } else if (requestDTO.getRequestPath().contains(REFUND_PAYMENT)) {
-            LOG.debug("LOADING REFUND PAYMENT SERVICE");
-            return new PaymentRefundRequestHandler();
-        }
+        final String MAKE_PAYMENT = "ChargePaymentRequestWrapper";
+        final String REFUND_PAYMENT = "PaymentRefundRequestWrapper";
 
+       if(requestDTO.toString().contains(REFUND_PAYMENT)){
+           LOG.debug("LOADING REFUND PAYMENT SERVICE");
+           return new PaymentRefundRequestHandler();
+
+        } else if(requestDTO.toString().contains(MAKE_PAYMENT)){
+           LOG.debug("LOADING MAKE PAYMENT SERVICE");
+           return new PaymentRequestHandler();
+       }
         return null;
     }
 }

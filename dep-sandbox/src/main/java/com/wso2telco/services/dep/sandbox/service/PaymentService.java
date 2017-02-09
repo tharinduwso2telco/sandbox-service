@@ -22,9 +22,13 @@ import com.wso2telco.services.dep.sandbox.exception.SandboxException;
 import com.wso2telco.services.dep.sandbox.servicefactory.RequestBuilderFactory;
 import com.wso2telco.services.dep.sandbox.servicefactory.RequestHandleable;
 import com.wso2telco.services.dep.sandbox.servicefactory.Returnable;
+import com.wso2telco.services.dep.sandbox.servicefactory.payment.PaymentRefundRequestHandler;
+import com.wso2telco.services.dep.sandbox.servicefactory.payment.PaymentRequestHandler;
 import com.wso2telco.services.dep.sandbox.util.RequestType;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.POST;
@@ -49,64 +53,67 @@ public class PaymentService {
             @ApiImplicitParam(name = "sandbox", value = "Authorization token", required = true, dataType = "string", paramType = "header")})
     public Response makePayment(
             @ApiParam(value = "endUserId", required = true) @PathParam("endUserId") String endUserId,
-            AmountTransactionRequestBean makePaymentRequestBean, @Context HttpServletRequest request) {
+            PaymentRefundTransactionRequestBean makePaymentRequestBean, @Context HttpServletRequest request) {
         LOG.debug("###PAYMENT### /{endUserId} invoked : endUserId - " + endUserId);
         if (makePaymentRequestBean != null) {
             LOG.debug(makePaymentRequestBean);
         }
-        ChargePaymentRequestWrapperDTO requestDTO = new ChargePaymentRequestWrapperDTO();
-        requestDTO.setHttpRequest(request);
-        requestDTO.setEndUserId(endUserId);
-        requestDTO.setAmountTransactionRequestBean(makePaymentRequestBean);
-        requestDTO.setRequestType(RequestType.PAYMENT);
 
-        RequestHandleable<RequestDTO> handler = RequestBuilderFactory.getInstance(requestDTO);
-        Returnable returnable = null;
 
-        try {
-            returnable = handler.execute(requestDTO);
-            Response response = Response.status(returnable.getHttpStatus()).entity(returnable.getResponse()).build();
-            return response;
-        } catch (Exception ex) {
-            LOG.error("Make Payment SERVICE ERROR", ex);
-            Response response = Response.status(Response.Status.BAD_REQUEST).entity(
-                    SandboxException.SandboxErrorType.SERVICE_ERROR.getCode() + " " + SandboxException.SandboxErrorType.SERVICE_ERROR.getMessage())
-                    .build();
-            return response;
+        if(makePaymentRequestBean.getAmountTransaction().getTransactionOperationStatus().equals("Charged")){
+
+            ChargePaymentRequestWrapperDTO requestDTO = new ChargePaymentRequestWrapperDTO();
+            requestDTO.setHttpRequest(request);
+            requestDTO.setEndUserId(endUserId);
+            requestDTO.setPaymentRefundTransactionRequestBean(makePaymentRequestBean);
+            requestDTO.setRequestType(RequestType.PAYMENT);
+
+            RequestHandleable<RequestDTO> handler = RequestBuilderFactory.getInstance(requestDTO);
+            Returnable returnable = null;
+
+            try {
+                returnable = handler.execute(requestDTO);
+                Response response = Response.status(returnable.getHttpStatus()).entity(returnable.getResponse()).build();
+                return response;
+            } catch (Exception ex) {
+                LOG.error("Make Payment SERVICE ERROR", ex);
+                Response response = Response.status(Response.Status.BAD_REQUEST).entity(
+                        SandboxException.SandboxErrorType.SERVICE_ERROR.getCode() + " " + SandboxException.SandboxErrorType.SERVICE_ERROR.getMessage())
+                        .build();
+                return response;
+            }
+
+
+        }else {
+
+            PaymentRefundRequestWrapperDTO requestDTO = new PaymentRefundRequestWrapperDTO();
+            requestDTO.setHttpRequest(request);
+            requestDTO.setEndUserId(endUserId);
+            requestDTO.setRefundRequestBean(makePaymentRequestBean);
+            requestDTO.setRequestType(RequestType.PAYMENT);
+            requestDTO.setRequestType(RequestType.PAYMENT);
+
+            RequestHandleable<RequestDTO> handler = RequestBuilderFactory.getInstance(requestDTO);
+            Returnable returnable = null;
+
+            try {
+                returnable = handler.execute(requestDTO);
+                Response response = Response.status(returnable.getHttpStatus()).entity(returnable.getResponse()).build();
+                return response;
+            } catch (Exception ex) {
+                LOG.error("Make Payment SERVICE ERROR", ex);
+                Response response = Response.status(Response.Status.BAD_REQUEST).entity(
+                        SandboxException.SandboxErrorType.SERVICE_ERROR.getCode() + " " + SandboxException.SandboxErrorType.SERVICE_ERROR.getMessage())
+                        .build();
+                return response;
+            }
+
+
+
         }
-    }
 
-    @POST
-    @Path("/{endUserId}/transactions/refund")
-    @ApiOperation(value = "refundService", notes = "refund service", response = Response.class)
-    @ApiImplicitParams({
-            @ApiImplicitParam(name= "sandbox", value = "Authorization token", required = true, dataType = "string", paramType = "header")})
-    public Response refundUser(@ApiParam(value = "endUserId", required = true) @PathParam("endUserId") String endUserId,
-                               PaymentRefundTransactionRequestBean refundRequestBean, @Context HttpServletRequest request) {
-        LOG.debug("###REFUND### /{endUserId}/refund invoked : endUserId - " + endUserId);
-        if (refundRequestBean != null) {
-            LOG.debug(refundRequestBean);
-        }
-        PaymentRefundRequestWrapperDTO requestDTO = new PaymentRefundRequestWrapperDTO();
-        requestDTO.setHttpRequest(request);
-        requestDTO.setEndUserId(endUserId);
-        requestDTO.setRefundRequestBean(refundRequestBean);
-        requestDTO.setRequestType(RequestType.PAYMENT);
 
-        RequestHandleable<RequestDTO> handler = RequestBuilderFactory.getInstance(requestDTO);
-        Returnable returnable = null;
 
-        try {
-            returnable = handler.execute(requestDTO);
-            Response response = Response.status(returnable.getHttpStatus()).entity(returnable.getResponse()).build();
-            return response;
-        } catch (Exception ex) {
-            LOG.error("Refund User SERVICE ERROR", ex);
-            Response response = Response.status(Response.Status.BAD_REQUEST).entity(
-                    SandboxException.SandboxErrorType.SERVICE_ERROR.getCode() + " " + SandboxException.SandboxErrorType.SERVICE_ERROR.getMessage())
-                    .build();
-            return response;
-        }
     }
 
 }

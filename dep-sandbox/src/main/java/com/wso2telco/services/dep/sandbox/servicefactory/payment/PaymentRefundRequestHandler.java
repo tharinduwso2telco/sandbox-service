@@ -49,6 +49,7 @@ import java.util.List;
 
 public class PaymentRefundRequestHandler extends AbstractRequestHandler<PaymentRefundRequestWrapperDTO> {
 
+
     private PaymentDAO paymentDAO;
     private LoggingDAO loggingDAO;
     private NumberDAO numberDAO;
@@ -192,11 +193,8 @@ public class PaymentRefundRequestHandler extends AbstractRequestHandler<PaymentR
             String serviceCallBalanceLookUp = ServiceName.BalanceLookup.toString();
             String userName = extendedRequestDTO.getUser().getUserName();
             Integer userId = extendedRequestDTO.getUser().getId();
-           // APITypes api =
+
             // Save Request Log
-/*
-            APITypes apiTypes = dao.getAPIType(extendedRequestDTO.getRequestType().toString().toLowerCase());
-*/
 
             APITypes apiTypes = dao.getAPIType(RequestType.PAYMENT.toString());
 

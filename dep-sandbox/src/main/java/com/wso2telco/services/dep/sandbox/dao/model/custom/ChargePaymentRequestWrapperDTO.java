@@ -26,7 +26,7 @@ public class ChargePaymentRequestWrapperDTO extends RequestDTO {
 	/** The endUserId param **/
 	private String endUserId;
 
-	private AmountTransactionRequestBean amountTransactionRequestBean;
+	private PaymentRefundTransactionRequestBean paymentRefundTransactionRequestBean;
 
 	public String getEndUserId() {
 		return endUserId;
@@ -36,12 +36,11 @@ public class ChargePaymentRequestWrapperDTO extends RequestDTO {
 		this.endUserId = endUserId;
 	}
 
-	/** The request bean **/
-	public AmountTransactionRequestBean getAmountTransactionRequestBean() {
-		return amountTransactionRequestBean;
+	public PaymentRefundTransactionRequestBean getPaymentRefundTransactionRequestBean() {
+		return paymentRefundTransactionRequestBean;
 	}
 
-	public void setAmountTransactionRequestBean(AmountTransactionRequestBean amountTransactionRequestBean) {
-		this.amountTransactionRequestBean = amountTransactionRequestBean;
+	public void setPaymentRefundTransactionRequestBean(PaymentRefundTransactionRequestBean paymentRefundTransactionRequestBean) {
+		this.paymentRefundTransactionRequestBean = paymentRefundTransactionRequestBean;
 	}
 }
