@@ -76,7 +76,6 @@ public class PaymentService {
         }
     }
 
-    /** @path should be changed to ("/{endUserId}/transactions/amount") **/
     @POST
     @Path("/{endUserId}/transactions/refund")
     @ApiOperation(value = "refundService", notes = "refund service", response = Response.class)

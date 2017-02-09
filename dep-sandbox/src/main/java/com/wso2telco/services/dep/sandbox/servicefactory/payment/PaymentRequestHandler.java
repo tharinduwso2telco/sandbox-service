@@ -474,12 +474,12 @@ public class PaymentRequestHandler extends AbstractRequestHandler<ChargePaymentR
             return false;
         }
     }
-
+        //changes made
     public void saveReferenceCode(String endUserId, String referenceCode, String userName) throws Exception {
         try {
             AttributeValues valueObj = new AttributeValues();
             String tableName = TableName.NUMBERS.toString().toLowerCase();
-            String attributeName = AttributeName.clientCorrelatorPayment.toString();
+            String attributeName = AttributeName.referenceCodePayment.toString();
             APITypes api = dao.getAPIType(RequestType.PAYMENT.toString());
             APIServiceCalls call = dao.getServiceCall(api.getId(), serviceCallPayment);
             Attributes attributes = dao.getAttribute(attributeName);

@@ -27,7 +27,7 @@ public class PaymentRequestFactory {
     private static Log LOG = LogFactory.getLog(PaymentRequestFactory.class);
 
     public static RequestHandleable getInstance(final RequestDTO requestDTO) {
-
+//        Todo: end points should be same in Payment Service
         final String MAKE_PAYMENT = "payment";
         final String REFUND_PAYMENT = "refund";
 
