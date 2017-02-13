@@ -1,8 +1,8 @@
 database:
   driverClass: com.mysql.cj.jdbc.Driver
   user: root
-  password: root
-  url: jdbc:mysql://localhost/sandbox?useSSL=false
+  password:
+  url: jdbc:mysql://<IP_OF_DB_SERVER>/<DB_NAME_OF_SANDBOX>?useSSL=false
 server:
         applicationConnectors:
           - type: http
