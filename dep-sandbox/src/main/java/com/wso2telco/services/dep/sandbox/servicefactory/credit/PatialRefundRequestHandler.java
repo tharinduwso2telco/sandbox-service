@@ -371,6 +371,7 @@ public class PatialRefundRequestHandler extends AbstractRequestHandler<PatialRef
 		} catch (Exception ex) {
 			LOG.error("###PATIAL_REFUND_CREDIT### Error in processing save of clientCorrelator request. ", ex);
 			responseWrapperDTO.setHttpStatus(Response.Status.BAD_REQUEST);
+			throw ex;
 		}
 		return correlatorid;
 	}
@@ -424,6 +425,7 @@ public class PatialRefundRequestHandler extends AbstractRequestHandler<PatialRef
 		} catch (Exception ex) {
 			LOG.error("###PARTIAL_REFUND### Error in processing save transaction. ", ex);
 			responseWrapperDTO.setHttpStatus(Response.Status.BAD_REQUEST);
+			throw ex;
 		}
 	}
 
@@ -453,6 +455,7 @@ public class PatialRefundRequestHandler extends AbstractRequestHandler<PatialRef
 		} catch (Exception ex) {
 			LOG.error("###CREDIT### Error in processing save of referenceCode request. ", ex);
 			responseWrapperDTO.setHttpStatus(Response.Status.BAD_REQUEST);
+			throw ex;
 		}
 	}
 

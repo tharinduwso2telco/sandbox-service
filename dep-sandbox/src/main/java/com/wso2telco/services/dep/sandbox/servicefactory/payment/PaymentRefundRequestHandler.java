@@ -1,18 +1,18 @@
-/*
- * Copyright (c) 2017, WSO2 Inc. (http://wso2.com) All Rights Reserved.
+/*******************************************************************************
+ * Copyright (c) 2015-2017, WSO2.Telco Inc. (http://www.wso2telco.com)
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
+ * All Rights Reserved. WSO2.Telco Inc. licences this file to you under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */
+ ******************************************************************************/
 
 package com.wso2telco.services.dep.sandbox.servicefactory.payment;
 
@@ -175,7 +175,6 @@ public class PaymentRefundRequestHandler extends AbstractRequestHandler<PaymentR
             String endUserIdPath = extendedRequestDTO.getEndUserId();
             String endUserIdRequest = request.getEndUserId();
             String endUserId = getLastMobileNumber(endUserIdPath);
-//            String originalReferenceCode = CommonUtil.getNullOrTrimmedValue(request.getOriginalServerReferenceCode());
             String originalServerReferenceCode = CommonUtil
                     .getNullOrTrimmedValue(request.getOriginalServerReferenceCode());
             String amount = CommonUtil.getNullOrTrimmedValue(chargingInformation.getAmount());
@@ -195,6 +194,7 @@ public class PaymentRefundRequestHandler extends AbstractRequestHandler<PaymentR
             Integer userId = extendedRequestDTO.getUser().getId();
 
             // Save Request Log
+
 
             APITypes apiTypes = dao.getAPIType(RequestType.PAYMENT.toString());
 
@@ -345,10 +345,6 @@ public class PaymentRefundRequestHandler extends AbstractRequestHandler<PaymentR
             responseBean.setServerReferenceCode(serverReferenceCode);
             responseBean.setResourceURL(CommonUtil.getResourceUrl(extendedRequestDTO));
 
-            // Get the Charged Tax Amount
-
-            Double chargedTaxAmount = Double.parseDouble(taxAmount);
-
             // set transaction operation status as charged
             ManageNumber manageNumber = numberDAO.getNumber(endUserId, extendedRequestDTO.getUser().getUserName());
             Double updateBalance = manageNumber.getBalance() + (chargeAmount + chargedTaxAmount);
@@ -402,7 +398,6 @@ public class PaymentRefundRequestHandler extends AbstractRequestHandler<PaymentR
         try {
             AttributeValues valueObj = new AttributeValues();
             String tableName = TableName.NUMBERS.toString().toLowerCase();
-//            String attributeName = AttributeName.Refund.toString().toLowerCase(); //original
             String attributeName = AttributeName.refundUser.toString().toLowerCase();
             APITypes api = dao.getAPIType(RequestType.PAYMENT.toString());
             APIServiceCalls call = dao.getServiceCall(api.getId(), serviceCallRefund);
@@ -428,6 +423,7 @@ public class PaymentRefundRequestHandler extends AbstractRequestHandler<PaymentR
         } catch (Exception ex) {
             LOG.error("###REFUND### Error in processing save transaction. ", ex);
             responseWrapper.setHttpStatus(Response.Status.BAD_REQUEST);
+            throw ex;
         }
         return transactionId;
     }
@@ -456,6 +452,7 @@ public class PaymentRefundRequestHandler extends AbstractRequestHandler<PaymentR
         } catch (Exception ex) {
             LOG.error("###REFUND### Error in processing save insertion of clientCorrelator request. ", ex);
             responseWrapper.setHttpStatus(Response.Status.BAD_REQUEST);
+            throw ex;
         }
     }
 
@@ -491,6 +488,7 @@ public class PaymentRefundRequestHandler extends AbstractRequestHandler<PaymentR
         } catch (Exception ex) {
             LOG.error("###PAYMENT### Error in processing save of referenceCode request. ", ex);
             responseWrapper.setHttpStatus(Response.Status.BAD_REQUEST);
+            throw ex;
         }
     }
 
