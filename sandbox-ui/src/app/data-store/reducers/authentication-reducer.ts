@@ -8,14 +8,19 @@ export function AuthenticationReducer(userInfo: IUserInfo = null, action: Action
     switch (action.type) {
 
         case SET_LOGIN_DATA : {
+            sessionStorage.setItem('userInfo', JSON.stringify(action.payload));
             return action.payload;
         }
 
         case CLEAR_LOGIN_DATA : {
+            sessionStorage.setItem('userInfo', null);
             return null;
         }
 
-        default :
-            return userInfo;
+        default :{
+            let tmp = JSON.parse(sessionStorage.getItem('userInfo'));
+            return userInfo || tmp;
+        }
+
     }
 }

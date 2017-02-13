@@ -13,6 +13,26 @@ const routes = [
         canActivate : [AppGuard]
     },
     {
+        path: 'api',
+        loadChildren: 'app/api/api.module#ApiModule',
+        canActivate : [AppGuard]
+    },
+    {
+        path: 'manage',
+        loadChildren: 'app/manage/manage.module#ManageModule',
+        canActivate : [AppGuard]
+    },
+    {
+        path: 'log',
+        loadChildren: 'app/log/log.module#LogModule',
+        canActivate : [AppGuard]
+    },
+    {
+        path: 'resources',
+        loadChildren: 'app/resources/resources.module#ResourcesModule',
+        canActivate : [AppGuard]
+    },
+    {
         path : '',
         redirectTo : '/home',
         pathMatch : 'full'

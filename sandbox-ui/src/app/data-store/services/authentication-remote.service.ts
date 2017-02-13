@@ -3,6 +3,7 @@ import {Http, Headers, RequestOptions, Response} from "@angular/http";
 import {AuthActionCreatorService} from "../actions/auth-action-creator.service";
 import {LoginRequestParam, IUserInfo} from "../models/authentocation-models";
 import {MessageService} from "../../shared/services/message.service";
+import {Router} from "@angular/router";
 
 @Injectable()
 export class AuthenticationRemoteService {
@@ -15,6 +16,7 @@ export class AuthenticationRemoteService {
     constructor(private http: Http,
                 private authActionCreator: AuthActionCreatorService,
                 private message: MessageService,
+                private router:Router,
                 @Inject('AUTH_SERVER_URL') private baseUrl: string) {
     }
 
@@ -56,6 +58,8 @@ export class AuthenticationRemoteService {
     }
 
     doLogout() {
+        this.authActionCreator.clearLoginData();
+        this.router.navigate(['login']);
     }
 
 }

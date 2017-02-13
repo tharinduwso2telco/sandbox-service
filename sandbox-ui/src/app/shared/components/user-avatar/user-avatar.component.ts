@@ -1,4 +1,6 @@
 import {Component, OnInit, Input} from '@angular/core';
+import {IUserInfo} from "../../../data-store/models/authentocation-models";
+import {AuthenticationRemoteService} from "../../../data-store/services/authentication-remote.service";
 
 
 @Component({
@@ -7,13 +9,13 @@ import {Component, OnInit, Input} from '@angular/core';
     styleUrls: ['./user-avatar.component.scss']
 })
 export class UserAvatarComponent implements OnInit {
-/*
+
     @Input()
-    private userInfo : IUserInfo;*/
+    private userInfo : IUserInfo;
 
     private dropDownStatus: {isOpen: boolean} = {isOpen: false};
 
-    constructor() {
+    constructor(private authService:AuthenticationRemoteService) {
     }
 
     ngOnInit() {
@@ -27,7 +29,7 @@ export class UserAvatarComponent implements OnInit {
     onMenuClick(type: string) {
         switch (type) {
             case 'logout' : {
-
+                this.authService.doLogout();
             }
         }
     }

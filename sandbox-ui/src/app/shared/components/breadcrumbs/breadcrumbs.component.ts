@@ -9,7 +9,7 @@ import {MessageService} from "../../services/message.service";
 })
 export class BreadcrumbsComponent implements OnInit {
 
-    private activeView: any;
+    private activeView: string[] = ['Home'];
 
     constructor(private _router: Router,
                 private message: MessageService) {
@@ -19,7 +19,7 @@ export class BreadcrumbsComponent implements OnInit {
         this._router.events
             .filter((event: any) => event instanceof NavigationEnd)
             .subscribe((event: NavigationEnd) => {
-                this.activeView = event.url.replace('/', '').split('/')
+                this.activeView = event.url.replace('/', '').split('/');
             });
     }
 

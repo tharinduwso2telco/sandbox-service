@@ -87,14 +87,14 @@ ng2-slim-loading-bar{
     background-color: $primary-color_dark;
     position: fixed;
     z-index: 100;
-    padding-left: $main-menu-default-width;
+    padding-left: $main-menu-default-width + 10;
     left: 0px;
     right: 0px;
     min-width: $app-min-width - $main-menu-default-width;
     @include transition(all 0.3s ease-in-out);
 
     &.menu-expand{
-      padding-left: $main-menu-expanded-width;
+      padding-left: $main-menu-expanded-width + 10;
     }
   }
 
