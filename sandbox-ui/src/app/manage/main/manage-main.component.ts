@@ -1,15 +1,25 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
+import {Router} from "@angular/router";
 
 @Component({
-  selector: 'manage-main',
-  templateUrl: './manage-main.component.html',
-  styleUrls: ['./manage-main.component.scss']
+    selector: 'manage-main',
+    templateUrl: './manage-main.component.html',
+    styleUrls: ['./manage-main.component.scss']
 })
 export class ManageMainComponent implements OnInit {
 
-  constructor() { }
+    constructor(private router: Router) {
+    }
 
-  ngOnInit() {
-  }
+    ngOnInit() {
+    }
+
+    onIconClick(type:string) {
+        if (type == 'number') {
+            this.router.navigate(['/manage/number'])
+        }else if (type == 'address') {
+            this.router.navigate(['/manage/address'])
+        }
+    }
 
 }

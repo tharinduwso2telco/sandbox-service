@@ -1,0 +1,42 @@
+@import "../../../styles/colors";
+@import "../../../styles/mixing";
+
+:host{
+  padding-top: 20px;
+  display: block;
+}
+
+.icon-grp {
+  min-height: 100px;
+  cursor: pointer;
+  padding: 20px;
+
+  i, span {
+    display: inline-block;
+    width: 100%;
+    text-align: center;
+    @include transition(all 0.3s ease-in);
+  }
+
+  i {
+    font-size: 5em;
+    color: $gray_6;
+  }
+
+  span{
+    color: $gray_8;
+    font-size: 1.2em;
+    color: $gray_6;
+    font-weight: 600;
+  }
+
+  @include transition(all 0.3s ease-in);
+
+  &:hover{
+    box-shadow: 0px 2px 10px 0px $gray_3;
+
+    i,span{
+      color: $gray_8;
+    }
+  }
+}

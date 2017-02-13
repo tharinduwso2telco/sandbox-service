@@ -36,7 +36,7 @@ export class MainMenuComponent implements OnInit {
     ngOnInit() {
         this._router.events.subscribe((event) => {
             if (event instanceof NavigationEnd) {
-                this.selectedMenu = this.menuSource.filter((menu) => menu.route == event.url)[0];
+                this.selectedMenu = this.menuSource.filter((menu) => event.url.search(menu.route ) >= 0)[0];
             }
         });
 

@@ -27,4 +27,15 @@ export class BreadcrumbsComponent implements OnInit {
         this.message.info('Dashboard Data Refreshed','');
     }
 
+    onLinkClick(path:string){
+        let index = this.activeView.indexOf(path);
+        let myPath:string = '';
+        if(index >=0 ){
+            this.activeView.slice(0,index+1).forEach((subPath)=>{
+                myPath += ('/'+subPath);
+            });
+        }
+        this._router.navigate([myPath]);
+    }
+
 }
