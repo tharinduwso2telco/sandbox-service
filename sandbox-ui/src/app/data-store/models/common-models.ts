@@ -1,5 +1,10 @@
 import {IUserInfo} from "./authentocation-models";
 
+export interface IApplicationData{
+    isMainMenuExpand : boolean
+}
+
 export interface IAppState {
-    userInfo: IUserInfo
+    userInfo: IUserInfo,
+    appSettings : IApplicationData
 }

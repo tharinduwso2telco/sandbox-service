@@ -3,13 +3,15 @@
     <div class="navbar-header">
       <a class="navbar-brand" routerLink="home">
         <span class="logo"><img src="images/wso2telco_logo.png" ></span>
-        <span class="name"><span class="man">WORKFLOW MANAGER</span></span>
+        <span class="name"><span class="man">{{CONST.appName | uppercase}}</span></span>
       </a>
-      <app-hamburger-menu></app-hamburger-menu>
+      <app-hamburger-menu
+              [isExpand]="applicationData?.isMainMenuExpand"></app-hamburger-menu>
     </div>
 
     <div class="navbar-right text-right">
-      <app-user-avatar></app-user-avatar>
+      <app-user-avatar
+            ></app-user-avatar>
     </div>
   </div>
 </nav>

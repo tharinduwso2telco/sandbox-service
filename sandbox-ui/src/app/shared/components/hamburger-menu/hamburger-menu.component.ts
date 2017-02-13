@@ -1,29 +1,27 @@
-import {Component, OnInit} from '@angular/core';
-import {AppCommonService} from "../../services/app-common.service";
+import {Component, Input} from '@angular/core';
+import {ApplicationActionCreatorService} from "../../../data-store/actions/application-action-creator.service";
 
 @Component({
-  selector: 'app-hamburger-menu',
-  template: `
+    selector: 'app-hamburger-menu',
+    template: `
     <div class="hm-menu-container" (click)="onClick()">
       <div class="hamburger-menu" >
-          <div class="bar" [ngClass]="{'animate':isClicked}"></div>	
+          <div class="bar" [ngClass]="{'animate':isExpand}"></div>	
       </div>
     </div>   
   `,
-  styleUrls: ['./hamburger-menu.component.scss']
+    styleUrls: ['./hamburger-menu.component.scss']
 })
-export class HamburgerMenuComponent implements OnInit {
 
-  private isClicked:boolean = false;
+export class HamburgerMenuComponent {
 
-  constructor(private _appCommonService:AppCommonService) {
-  }
+    @Input()
+    private isExpand: boolean = false;
 
-  ngOnInit() {
-  }
+    constructor(private appActionCreator: ApplicationActionCreatorService) {
+    }
 
-  onClick(){
-    this.isClicked = !this.isClicked;
-    this._appCommonService.updateMenuToggleStream(this.isClicked);
-  }
+    onClick() {
+        this.appActionCreator.toggleMainMenu();
+    }
 }

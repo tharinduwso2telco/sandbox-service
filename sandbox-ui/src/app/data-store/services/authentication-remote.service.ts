@@ -3,8 +3,6 @@ import {Http, Headers, RequestOptions, Response} from "@angular/http";
 import {AuthActionCreatorService} from "../actions/auth-action-creator.service";
 import {LoginRequestParam, IUserInfo} from "../models/authentocation-models";
 import {MessageService} from "../../shared/services/message.service";
-import {Store} from "@ngrx/store";
-import {IAppState} from "../models/common-models";
 
 @Injectable()
 export class AuthenticationRemoteService {
@@ -15,7 +13,6 @@ export class AuthenticationRemoteService {
     private options: RequestOptions = new RequestOptions({headers: this.headers});
 
     constructor(private http: Http,
-                private store: Store<IAppState>,
                 private authActionCreator: AuthActionCreatorService,
                 private message: MessageService,
                 @Inject('AUTH_SERVER_URL') private baseUrl: string) {
@@ -51,9 +48,7 @@ export class AuthenticationRemoteService {
     doLogin(loginReq: LoginRequestParam) {
         this.http.post('/login/services/AuthenticationAdmin', this.getLoginRequest(loginReq), this.options)
             .subscribe((response: Response) => {
-                    this.store.dispatch(
-                        this.authActionCreator.setLoginData(this.loginAdaptor(loginReq, response.text()))
-                    )
+                    this.authActionCreator.setLoginData(this.loginAdaptor(loginReq, response.text()))
                 },
                 (error) => {
                     this.message.error(error);

@@ -1,6 +1,7 @@
 import {Component, OnInit} from '@angular/core';
-import {AppCommonService} from "../../services/app-common.service";
 import {Router, NavigationEnd} from "@angular/router";
+import {IAppState, IApplicationData} from "../../../data-store/models/common-models";
+import {Store} from "@ngrx/store";
 
 
 export class MenuItem {
@@ -28,19 +29,23 @@ export class MainMenuComponent implements OnInit {
         {id: 4, route: '/history', name: 'Approval History', iconName: 'history'}
     ];
 
-    constructor(private _appCommonService: AppCommonService,
+    constructor(private store: Store<IAppState>,
                 private _router: Router) {
     }
 
     ngOnInit() {
         this._router.events.subscribe((event) => {
-            if(event instanceof NavigationEnd){
-                this.selectedMenu = this.menuSource.filter((menu)=>menu.route == event.url)[0];
+            if (event instanceof NavigationEnd) {
+                this.selectedMenu = this.menuSource.filter((menu) => menu.route == event.url)[0];
             }
         });
 
         this.selectedMenu = this.menuSource[0];
-        this._appCommonService.MenuToggleProvider.subscribe((flag) => this.isExpand = flag);
+
+        this.store.select('AppData')
+            .subscribe((appData: IApplicationData) => {
+                this.isExpand = (appData && appData.isMainMenuExpand) || false;
+            });
     }
 
     onClick(menu: any) {

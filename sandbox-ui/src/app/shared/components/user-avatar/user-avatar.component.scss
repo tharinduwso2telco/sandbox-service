@@ -73,9 +73,10 @@
       a{
         height: 35px;
         line-height: 27px;
-        @include transition(background-color 0.2s ease-in);
+        @include transition(all 0.2s ease-in);
         &:hover{
-          background-color: $secondary_color;
+          background-color: $accent-color;
+          color: $gray_1;
         }
       }
 

@@ -5,6 +5,7 @@
   line-height: 5rem;
   position: relative;
   display: block;
+  color: $gray_4;
 }
 
 .url-part{
@@ -22,7 +23,7 @@
 
 .refresh-icon {
   position: absolute;
-  right: 50px;
+  right: 0px;
   height: 30px;
   width: 30px;
   background-color: $accent-color;

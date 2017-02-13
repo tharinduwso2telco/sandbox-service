@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnInit, Input} from '@angular/core';
 
 
 @Component({
@@ -7,6 +7,9 @@ import {Component, OnInit} from '@angular/core';
     styleUrls: ['./user-avatar.component.scss']
 })
 export class UserAvatarComponent implements OnInit {
+/*
+    @Input()
+    private userInfo : IUserInfo;*/
 
     private dropDownStatus: {isOpen: boolean} = {isOpen: false};
 
@@ -28,5 +31,6 @@ export class UserAvatarComponent implements OnInit {
             }
         }
     }
-  t
+
+
 }

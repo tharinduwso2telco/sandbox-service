@@ -1,12 +1,15 @@
 <div class="container-fluid">
-    <app-header *ngIf="isLoggedIn"></app-header>
+    <app-header *ngIf="userInfo?.isLoggedIn"
+                [userInfo]="userInfo"
+                [applicationData]="appData"></app-header>
+
     <div class="content-container">
-        <div class="menu-container animated slideInLeft" *ngIf="isLoggedIn">
+        <div class="menu-container animated slideInLeft" *ngIf="userInfo?.isLoggedIn">
             <app-main-menu></app-main-menu>
         </div>
-        <div class="view-container" [ngClass]="{'menu-expand':isMenuExpanded}">
+        <div class="view-container" [ngClass]="{'menu-expand':appData?.isMainMenuExpand}">
             <div>
-                <div class="col-sm-12 breadcrumbs-bar" [ngClass]="{'menu-expand':isMenuExpanded}" *ngIf="isLoggedIn">
+                <div class="col-sm-12 breadcrumbs-bar" [ngClass]="{'menu-expand':appData?.isMainMenuExpand}" *ngIf="userInfo?.isLoggedIn">
                     <app-breadcrumbs></app-breadcrumbs>
                 </div>
                 <div class="col-sm-12 content-div">
