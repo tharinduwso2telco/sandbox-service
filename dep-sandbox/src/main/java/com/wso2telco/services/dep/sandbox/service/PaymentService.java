@@ -58,9 +58,8 @@ public class PaymentService {
         if (makePaymentRequestBean != null) {
             LOG.debug(makePaymentRequestBean);
         }
-
-
-        if(makePaymentRequestBean.getAmountTransaction().getTransactionOperationStatus().equals("Charged")){
+        //Separate Charged and Refunded request calls
+        if (makePaymentRequestBean.getAmountTransaction().getTransactionOperationStatus().equals("Charged")) {
 
             ChargePaymentRequestWrapperDTO requestDTO = new ChargePaymentRequestWrapperDTO();
             requestDTO.setHttpRequest(request);
@@ -83,8 +82,7 @@ public class PaymentService {
                 return response;
             }
 
-
-        }else {
+        } else {
 
             PaymentRefundRequestWrapperDTO requestDTO = new PaymentRefundRequestWrapperDTO();
             requestDTO.setHttpRequest(request);
@@ -115,5 +113,4 @@ public class PaymentService {
 
 
     }
-
 }
