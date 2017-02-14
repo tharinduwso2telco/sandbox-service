@@ -1,18 +1,15 @@
 @import "../../../../styles/colors";
+@import "../../../../styles/varibles";
 
 :host{
   display: block;
 }
 .table-wrapper{
-  padding: 10px;
-  border: solid 1px $gray_3;
-  background-color: white;
   width: 100%;
 
   .tbl-header{
     font-weight: 600;
     font-size: 1.3em;
-    padding: 5px 0px 15px;
   }
 
   .table{
@@ -26,13 +23,14 @@
     .tbl-row{
       display: table-row;
       background-color: #f6f6f6;
+      height: $responsive_row_height;
 
       &:nth-of-type(odd){
         background-color: white;
       }
 
       &.header{
-        background-color: $gray_4;
+        background-color: $gray_3;
         font-weight:600;
       }
 

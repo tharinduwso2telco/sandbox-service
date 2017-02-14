@@ -82,3 +82,13 @@ body *{
   border-top-color: $primary-color_light;
 }
 
+.clear-floats{
+  &:after{
+    content: ".";
+    visibility: hidden;
+    display: block;
+    height: 0;
+    clear: both;
+  }
+}
+

@@ -1,6 +1,6 @@
 import {
-    Component, OnInit, ViewChild, ViewContainerRef, Input, ReflectiveInjector, Injector,
-    ResolvedReflectiveProvider, ComponentFactoryResolver
+    Component, OnInit, ViewChild, ViewContainerRef, Input, ReflectiveInjector,
+    ComponentFactoryResolver
 } from '@angular/core';
 import {DynamicComponentData} from "../../../data-store/models/common-models";
 import {DynamicDataTableDefaultHeaderComponent} from "../dynamic-data-table-default-header/dynamic-data-table-default-header.component";
@@ -11,7 +11,7 @@ import {DynamicDataTableDefaultEditorComponent} from "../dynamic-data-table-defa
     selector: 'dynamic-data-table',
     templateUrl: './dynamic-data-table.component.html',
     styleUrls: ['./dynamic-data-table.component.scss'],
-    entryComponents : [
+    entryComponents: [
         DynamicDataTableDefaultHeaderComponent,
         DynamicDataTableDefaultTableComponent,
         DynamicDataTableDefaultEditorComponent
@@ -19,21 +19,22 @@ import {DynamicDataTableDefaultEditorComponent} from "../dynamic-data-table-defa
 })
 export class DynamicDataTableComponent implements OnInit {
 
-
     @ViewChild('dynamicHeaderContainer', {read: ViewContainerRef}) dynamicHeaderContainer: ViewContainerRef;
 
     @ViewChild('dynamicTableContainer', {read: ViewContainerRef}) dynamicTableContainer: ViewContainerRef;
 
     @ViewChild('dynamicEditContainer', {read: ViewContainerRef}) dynamicEditContainer: ViewContainerRef;
 
-    constructor(private resolver:ComponentFactoryResolver) {
+    constructor(private resolver: ComponentFactoryResolver) {
     }
 
-    private tmpDynamicHeader:any;
+    private tmpDynamicHeader: any;
 
-    private tmpDynamicTable:any;
+    private tmpDynamicTable: any;
 
-    private tmpDynamicEditor:any;
+    private tmpDynamicEditor: any;
+
+    private isEditorOpen:boolean = false;
 
     private getInputProvider(data) {
         return Object.keys(data.inputData).map((fieldName) => ({
@@ -43,22 +44,22 @@ export class DynamicDataTableComponent implements OnInit {
     }
 
 
-
-    private getComponent(data:DynamicComponentData,viewContainerRef:ViewContainerRef){
+    private getComponent(data: DynamicComponentData, viewContainerRef: ViewContainerRef) {
         let inputProvider = this.getInputProvider(data);
         let resolvedInputs = ReflectiveInjector.resolve(inputProvider);
-        let injector = ReflectiveInjector.fromResolvedProviders(resolvedInputs,viewContainerRef.parentInjector);
+        let injector = ReflectiveInjector.fromResolvedProviders(resolvedInputs, viewContainerRef.parentInjector);
         let factory = this.resolver.resolveComponentFactory(data.component);
         let component = factory.create(injector);
         return component;
     }
 
+
     @Input() set headerData(data: DynamicComponentData) {
         if (!!data) {
-            let component = this.getComponent(data,this.dynamicHeaderContainer);
+            let component = this.getComponent(data, this.dynamicHeaderContainer);
             this.dynamicHeaderContainer.insert(component.hostView);
 
-            if(!!this.tmpDynamicHeader){
+            if (!!this.tmpDynamicHeader) {
                 this.tmpDynamicHeader.destroy();
             }
             this.tmpDynamicHeader = component;
@@ -67,10 +68,10 @@ export class DynamicDataTableComponent implements OnInit {
 
     @Input() set tableData(data: DynamicComponentData) {
         if (!!data) {
-            let component = this.getComponent(data,this.dynamicTableContainer);
+            let component = this.getComponent(data, this.dynamicTableContainer);
             this.dynamicTableContainer.insert(component.hostView);
 
-            if(!!this.tmpDynamicTable){
+            if (!!this.tmpDynamicTable) {
                 this.tmpDynamicTable.destroy();
             }
             this.tmpDynamicTable = component;
@@ -79,10 +80,10 @@ export class DynamicDataTableComponent implements OnInit {
 
     @Input() set editorData(data: DynamicComponentData) {
         if (!!data) {
-            let component = this.getComponent(data,this.dynamicEditContainer);
+            let component = this.getComponent(data, this.dynamicEditContainer);
             this.dynamicEditContainer.insert(component.hostView);
 
-            if(!!this.tmpDynamicEditor){
+            if (!!this.tmpDynamicEditor) {
                 this.tmpDynamicEditor.destroy();
             }
             this.tmpDynamicEditor = component;
@@ -90,6 +91,10 @@ export class DynamicDataTableComponent implements OnInit {
     }
 
     ngOnInit() {
+    }
+
+    onOpen(){
+        this.isEditorOpen = !this.isEditorOpen;
     }
 
 }

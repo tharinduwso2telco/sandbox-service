@@ -1,13 +1,18 @@
-<div>
+<div class="ddt-wrapper" [ngClass]="{'is-editor-open':isEditorOpen}">
+
   <div class="header-bar" #dynamicHeaderContainer>
-
   </div>
+
   <div class="content">
-    <div class="tbl-container" #dynamicTableContainer>
 
+    <div class="tbl-container">
+      <div #dynamicTableContainer></div>
     </div>
-    <div class="tbl-edit-container" #dynamicEditContainer>
 
+    <div class="tbl-edit-container">
+      <div  #dynamicEditContainer></div>
     </div>
   </div>
+  <button (click)="onOpen()">open</button>
+
 </div>

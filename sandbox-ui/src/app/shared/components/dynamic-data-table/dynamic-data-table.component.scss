@@ -1,0 +1,36 @@
+@import "../../../../styles/varibles";
+@import "../../../../styles/colors";
+@import "../../../../styles/mixing";
+
+
+.ddt-wrapper{
+
+  .tbl-container{
+    margin-right: 0px;
+    @include transition(margin-right 0.5s);
+  }
+
+  .tbl-edit-container{
+    position: fixed;
+    min-width: $ddt_editor_panel_width;
+    right: -$ddt_editor_panel_width;
+    top: $topbar-height + $main-breadcrumbs-height + $ddt_def_header_height;
+    bottom: 0px;
+    opacity: 0;
+    background-color: beige;
+    @include transition(all 0.3s ease-in);
+  }
+
+  &.is-editor-open{
+    .tbl-container{
+      margin-right: $ddt_editor_panel_width/2;
+      opacity:0.5;
+    }
+
+    .tbl-edit-container{
+      right: 0;
+      opacity: 1;
+    }
+  }
+
+}

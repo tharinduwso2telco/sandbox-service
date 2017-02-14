@@ -1,0 +1,19 @@
+@import "../../../../styles/colors";
+
+.ddt-table{
+  min-width: 500px;
+
+  .tbl-row{
+    .tbl-col{
+      min-width: 100px;
+      min-height: 50px;
+      float: left;
+      padding: 5px 10px;
+    }
+
+    &:nth-child(even){
+      background-color: $gray_2;
+    }
+
+  }
+}

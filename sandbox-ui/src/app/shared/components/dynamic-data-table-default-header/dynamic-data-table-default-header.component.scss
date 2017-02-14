@@ -1,0 +1,69 @@
+@import "../../../../styles/colors";
+@import "../../../../styles/varibles";
+@import "../../../../styles/mixing";
+
+.def-header {
+  background-color: $gray_5;
+  height: $ddt_def_header_height;
+
+  .search-panel {
+    min-width: $ddt_def_search_min_width;
+    background-color: $gray_6;
+    float: left;
+    height: 100%;
+    position: relative;
+    cursor: pointer;
+    text-transform: uppercase;
+    color: $gray_3;
+
+    span{
+      margin-left: 10px;
+      line-height: $ddt_def_header_height;
+    }
+
+    i{
+      position: absolute;
+      right: 5px;
+      line-height: $ddt_def_header_height;
+    }
+
+    @include transition(all 0.2s ease-in);
+
+    &:hover{
+      background-color: $gray_7;
+      color: $gray_2;
+    }
+
+  }
+
+  .addNew {
+    min-width: $ddt_def_add_new_min_width;
+    background-color: $primary-color_main;
+    color: $gray_3;
+    display: inline-block;
+    float: left;
+    height: 100%;
+    position: relative;
+    text-transform: uppercase;
+    cursor: pointer;
+
+    i{
+      position: absolute;
+      right: 5px;
+      line-height: $ddt_def_header_height;
+    }
+
+    span{
+      line-height: $ddt_def_header_height;
+      display: inline-block;
+      margin-left: 10px;
+    }
+
+    @include transition(all 0.2s ease-in);
+
+    &:hover{
+      background-color: $primary-color_dark;
+      color: $gray_2;
+    }
+  }
+}
