@@ -16,9 +16,9 @@ export class ManageMainComponent implements OnInit {
 
     onIconClick(type:string) {
         if (type == 'number') {
-            this.router.navigate(['/manage/number'])
+            this.router.navigate(['/manage/numbers'])
         }else if (type == 'address') {
-            this.router.navigate(['/manage/address'])
+            this.router.navigate(['/manage/addresses'])
         }
     }
 

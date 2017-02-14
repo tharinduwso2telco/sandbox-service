@@ -8,3 +8,8 @@ export interface IAppState {
     userInfo: IUserInfo,
     appSettings : IApplicationData
 }
+
+export interface DynamicComponentData{
+    component:any,
+    inputData:any
+}

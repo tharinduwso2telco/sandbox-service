@@ -11,6 +11,11 @@ import {SlimLoadingBarModule} from "ng2-slim-loading-bar";
 import {FormsModule} from "@angular/forms";
 import {HttpModule} from "@angular/http";
 import {MessageService} from "./services/message.service";
+import {ResponsiveTableComponent} from "./components/responsive-table/responsive-table.component";
+import { DynamicDataTableComponent } from './components/dynamic-data-table/dynamic-data-table.component';
+import { DynamicDataTableDefaultHeaderComponent } from './components/dynamic-data-table-default-header/dynamic-data-table-default-header.component';
+import { DynamicDataTableDefaultEditorComponent } from './components/dynamic-data-table-default-editor/dynamic-data-table-default-editor.component';
+import { DynamicDataTableDefaultTableComponent } from './components/dynamic-data-table-default-table/dynamic-data-table-default-table.component';
 
 @NgModule({
     imports: [
@@ -26,7 +31,12 @@ import {MessageService} from "./services/message.service";
         HamburgerMenuComponent,
         UserAvatarComponent,
         MainMenuComponent,
-        BreadcrumbsComponent
+        BreadcrumbsComponent,
+        ResponsiveTableComponent,
+        DynamicDataTableComponent,
+        DynamicDataTableDefaultHeaderComponent,
+        DynamicDataTableDefaultEditorComponent,
+        DynamicDataTableDefaultTableComponent
     ],
     providers : [
         MessageService
@@ -41,7 +51,12 @@ import {MessageService} from "./services/message.service";
         MainMenuComponent,
         BreadcrumbsComponent,
         ToastyModule,
-        SlimLoadingBarModule
+        SlimLoadingBarModule,
+        ResponsiveTableComponent,
+        DynamicDataTableComponent,
+        DynamicDataTableDefaultHeaderComponent,
+        DynamicDataTableDefaultEditorComponent,
+        DynamicDataTableDefaultTableComponent
     ]
 })
 export class SharedModule {
