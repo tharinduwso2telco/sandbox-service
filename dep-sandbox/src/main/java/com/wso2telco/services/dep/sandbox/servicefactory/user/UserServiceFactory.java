@@ -32,6 +32,7 @@ public class UserServiceFactory {
 	final String API_TYPE_PATH = "apiType";
 	final String API_SERVICE_TYPE_PATH = "serviceType";
 	final String ADD_NUMBER_PATH = "managenumber";
+	final String NUMBER_DETAIL_PATH = "numberDetails";
 
 	if (requestDTO.getRequestPath().contains(ADD_USER_PATH)
 		&& requestDTO.isPost()) {
@@ -55,6 +56,10 @@ public class UserServiceFactory {
 		&& requestDTO.isPost()) {
 	    LOG.debug("LOADING NUMBER SERVICE CALL");
 	    return new ManageNumberServiceHandler();
+	} else if (requestDTO.getRequestPath().contains(NUMBER_DETAIL_PATH)
+		&& requestDTO.isGet()) {
+		LOG.debug("LOADING NUMBER SERVICE CALL");
+		return new RetrieveNumberDetailsServiceHandler();
 	}
 
 	LOG.debug("NO ANY SERVICE FOUND FOR REQUESTED PATH");

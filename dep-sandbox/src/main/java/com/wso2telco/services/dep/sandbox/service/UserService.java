@@ -16,40 +16,21 @@
 
 package com.wso2telco.services.dep.sandbox.service;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
-import com.wordnik.swagger.annotations.Api;
-import com.wordnik.swagger.annotations.ApiImplicitParam;
-import com.wordnik.swagger.annotations.ApiImplicitParams;
-import com.wordnik.swagger.annotations.ApiOperation;
-import com.wordnik.swagger.annotations.ApiParam;
-
-import com.wso2telco.services.dep.sandbox.dao.model.custom.APIServiceCallRequestWrapperDTO;
-import com.wso2telco.services.dep.sandbox.dao.model.custom.APITypeRequestWrapperDTO;
-import com.wso2telco.services.dep.sandbox.dao.model.custom.AttributeRequestBean;
-import com.wso2telco.services.dep.sandbox.dao.model.custom.AttributeRequestWrapperDTO;
-
-import com.wso2telco.services.dep.sandbox.dao.model.custom.ManageNumberRequest;
-import com.wso2telco.services.dep.sandbox.dao.model.custom.ManageNumberRequestWrapperDTO;
-
-import com.wso2telco.services.dep.sandbox.dao.model.custom.RegisterUserServiceRequestWrapperDTO;
+import com.wordnik.swagger.annotations.*;
+import com.wso2telco.services.dep.sandbox.dao.model.custom.*;
 import com.wso2telco.services.dep.sandbox.exception.SandboxException;
 import com.wso2telco.services.dep.sandbox.servicefactory.RequestBuilderFactory;
 import com.wso2telco.services.dep.sandbox.servicefactory.RequestHandleable;
 import com.wso2telco.services.dep.sandbox.servicefactory.Returnable;
 import com.wso2telco.services.dep.sandbox.util.RequestType;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.*;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 @Path("/user")
 @Consumes(MediaType.APPLICATION_JSON)
@@ -238,6 +219,40 @@ public class UserService {
 		} catch (Exception ex) {
 			LOG.error("###ADD MANAGE NUMBER### Error encountered in UserService : ", ex);
 			return Response.status(Response.Status.BAD_REQUEST).entity(ex.getMessage()).build();
+		}
+
+	}
+
+
+	@GET
+	@Path("/numberDetails")
+	@ApiOperation(value = "listNumberDetails", notes = "List of Available Number Details", response = Response.class)
+	@ApiImplicitParams({ @ApiImplicitParam(name = "sandbox", value = "username", required = true, dataType = "string", paramType = "header") })
+	public Response getNumberDetails(@Context HttpServletRequest httpRequest) {
+		NumberDetailsRequestWrapperDTO requestDTO = new NumberDetailsRequestWrapperDTO();
+		requestDTO.setRequestType(RequestType.USER);
+		requestDTO.setHttpRequest(httpRequest);
+		RequestHandleable handler = RequestBuilderFactory.getInstance(requestDTO);
+		Returnable returnable = null;
+
+		try {
+			returnable = handler.execute(requestDTO);
+			Response response = Response.status(returnable.getHttpStatus())
+					.entity(returnable.getResponse()).build();
+			LOG.debug("GET NUMBER DETAILS SERVICE RESPONSE : " + response);
+			return response;
+		} catch (SandboxException ex) {
+			LOG.error("###USER### Error encountered in getNumberDetails Service : ",
+					ex);
+			return Response
+					.status(Response.Status.BAD_REQUEST)
+					.entity(ex.getErrorType().getCode() + " "
+							+ ex.getErrorType().getMessage()).build();
+		} catch (Exception ex) {
+			LOG.error("###USER### Error encountered in getNumberDetails Service : ",
+					ex);
+			return Response.status(Response.Status.BAD_REQUEST)
+					.entity(ex.getMessage()).build();
 		}
 
 	}
