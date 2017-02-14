@@ -89,7 +89,6 @@ public class PaymentService {
             requestDTO.setEndUserId(endUserId);
             requestDTO.setRefundRequestBean(makePaymentRequestBean);
             requestDTO.setRequestType(RequestType.PAYMENT);
-            requestDTO.setRequestType(RequestType.PAYMENT);
 
             RequestHandleable<RequestDTO> handler = RequestBuilderFactory.getInstance(requestDTO);
             Returnable returnable = null;
@@ -105,12 +104,6 @@ public class PaymentService {
                         .build();
                 return response;
             }
-
-
-
         }
-
-
-
     }
 }

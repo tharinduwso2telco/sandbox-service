@@ -849,17 +849,27 @@ http://<host>:<port>/{v1}/credit/{msisdn}/refund
 Request Body :
 ```
 {
-	"refundRequest":{
-		"amount":0,
-		"clientCorrelator":"clientCorrelator",
-		"reasonForRefund":"reasonForRefund",
-		"merchantIdentification":"merchantIdentification",
-		"serverTransactionReference":"serverTransactionReference",
-		"receiptRequest":{
-			"notifyURL":"notifyURL",
-			"callbackData":"callbackData"
-		}
-	}
+  "refundRequest": {
+        "clientCorrelator":"54321",
+        "msisdn": "tel:+12345678901",
+        "originalServerReferenceCode": "ABC-123",
+        "reasonForRefund": "adjustment",
+        "refundAmount": 1,
+        "paymentAmount": {
+          "chargingInformation": {
+            "amount": "10",
+            "currency": "USD",
+            "description": "Alien Invaders Game"
+          },
+          "chargingMetaData": {
+            "onBehalfOf": "Example Games Inc",
+            "purchaseCategoryCode": "Game",
+            "channel": "WAP",
+            "tax": "0"
+          }
+        },
+  "referenceCode": "REF-12345"
+  }
 }
 ```
 
@@ -867,18 +877,31 @@ Response :
 ```
 {
   "refundResponse": {
-    "amount": 0,
-    "serverTransactionReference": "serverTransactionReference",
-    "clientCorrelator": "clientCorrelator",
-    "reasonForRefund": "reasonForRefund",
-    "merchantIdentification": "merchantIdentification",
-    "receiptResponse": {
-      "notifyURL": "notifyURL",
-      "callbackData": "callbackData",
-      "resourceURL": "http://<host>:<port>/{v1}/credit/{msisdn}/refund"
-    }
+    "clientCorrelator": "54321",
+    "endUserID": "tel:+12345678901",
+    "originalServerReferenceCode": "ABC-123",
+    "reasonForRefund": "adjustment",
+    "refundAmount": 1,
+    "paymentAmount": {
+        "chargingInformation": {
+            "amount": "10",
+            "currency": "USD",
+            "description": "Alien Invaders Game"
+        },
+        "chargingMetaData": {
+            "onBehalfOf": "Example Games Inc",
+            "purchaseCategoryCode": "Game",
+            "channel": "WAP",
+            "tax": "0"
+        }
+    },
+    "referenceCode": "REF-12345",
+    "resourceURL": "<Resource URL>",
+    "transactionOperationStatus": "Refunded",
+    "serverReferanceCode": "000014"
   }
 }
+
 ```
 
 
@@ -1178,3 +1201,150 @@ Response :
 200 OK will be returned if the service is successfully added for the msisdn.
 Unless 400 Bad Request will be returned
 
+###6.6 Payment Service
+
+####6.6.1 Introduction
+
+Payment service will provide the Service providers a list of payment services available for the given MSISDN and based on the services available service provider can make/refund payment. Basically Payment API supports 2 operations.
+
+- Charge a User - Charge a subscriber for a service provided by your Web application.
+- Refund a User - Refund a end user
+
+####6.6.2 API features with postman testing
+
+Request : 
+
+Type - POST
+
+Request URI:
+```
+http://<host>:<port>/payment/{v1}/transaction/{endUserId}/amount
+```
+
+Request Body :
+```
+{  
+   "amountTransaction":{  
+      “clientCorrelator”:      ”123456:AIN12345”,
+      "endUserId":"tel:+00123456789",
+      "paymentAmount":{  
+         "chargingInformation":{  
+            "amount":"2",
+            "currency":"LKR",
+            "description":"Alien Invaders Game"
+         },
+         "chargingMetaData":{  
+            "onBehalfOf":"Example Games Inc",
+            "purchaseCategoryCode":"Game",
+            "channel":"WAP",
+            "taxAmount":"0"
+         }
+      },
+      "referenceCode":"REF-12345",
+      "transactionOperationStatus":"Charged"
+   }
+}
+
+```
+
+Response :
+
+```
+{  
+   "amountTransaction":{  
+      “clientCorrelator”:      ”123456:AIN12345”,
+      "endUserId":"tel:+00123456789",
+      "paymentAmount":{  
+         "chargingInformation":{  
+            "amount":"10",
+            "currency":"LKR",
+            "description":"Alien Invaders Game"
+         },
+         "totalAmountCharged":"12.99",
+         "chargingMetaData":{  
+            "onBehalfOf":"Example Games Inc",
+            "purchaseCategoryCode":"Game",
+            "channel":"WAP",
+            "taxAmount":"0"
+         }
+      },
+      "referenceCode":"REF-12345",
+      "transactionOperationStatus":"Charged"
+   }
+}
+
+```
+
+- Refund - Refund an end user
+
+Request : 
+
+Type - POST
+
+Request URI:
+```
+http://<host>:<port>/payment/{v1}/transaction/{endUserId}/amount
+
+```
+Request Body :
+```
+
+{  
+   "amountTransaction":{  
+      “clientCorrelator”:      ”123456:AIN12345”,
+      "endUserId":"tel:+00123456789",
+      "originalServerReferenceCode":"ABC-123",
+      "paymentAmount":{  
+         "chargingInformation":{  
+            "amount":"10",
+            "currency":"USD",
+            "description":"Alien Invaders Game"
+         },
+         "chargingMetaData":{  
+            "onBehalfOf":"Example Games Inc",
+            "purchaseCategoryCode":"Game",
+            "channel":"WAP",
+            "taxAmount":"0"
+         }
+      },
+      "referenceCode":"REF-12345",
+      "originalServerReferenceCode":"ABC-123",
+      "transactionOperationStatus":"Refunded"
+   }
+}
+
+```
+
+Response :
+```
+
+{  
+   "amountTransaction":{  
+      “clientCorrelator”:      ”123456:AIN12345”,
+      "endUserId":"tel:+00123456789",
+      "paymentAmount":{  
+         "chargingInformation":{  
+            "amount":"10",
+            "currency":"USD",
+            "description":"Alien Invaders"
+         },
+         "chargingMetaData":{  
+            "onBehalfOf":"Example Games Inc",
+            "purchaseCategoryCode":"Game",
+            "channel":"WAP",
+            "taxAmount":"0"
+         },
+         "totalAmountRefunded":"10"
+      },
+      "referenceCode":"REF-12345",
+      "originalServerReferenceCode":"ABC-123",
+      "resourceURL":"<Refund User URL> tel%3A%2B16309700001/amount/efg789",
+      "transactionOperationStatus":"Refunded"
+   }
+}
+
+```
+
+Response :
+200 OK will be returned if the service is successfully added for the msisdn.
+Unless 400 Bad Request will be returned
