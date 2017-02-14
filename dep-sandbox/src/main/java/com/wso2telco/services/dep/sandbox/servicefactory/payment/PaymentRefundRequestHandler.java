@@ -345,7 +345,14 @@ public class PaymentRefundRequestHandler extends AbstractRequestHandler<PaymentR
             responseBean.setServerReferenceCode(serverReferenceCode);
             responseBean.setResourceURL(CommonUtil.getResourceUrl(extendedRequestDTO));
 
-            // set transaction operation status as charged
+            // Get the Charged Tax Amount
+            Double chargedTaxAmount = Double.parseDouble(taxAmount);
+            //Total Amount Refunded
+            Double totalAmountRefunded = chargeAmount+chargedTaxAmount;
+            // Setting the total Amount Refund
+            payAmount.setTotalAmountRefunded(totalAmountRefunded.toString());
+
+                    // set transaction operation status as charged
             ManageNumber manageNumber = numberDAO.getNumber(endUserId, extendedRequestDTO.getUser().getUserName());
             Double updateBalance = manageNumber.getBalance() + (chargeAmount + chargedTaxAmount);
             AttributeValues accountStatusValue = paymentDAO.getAttributeValue(endUserId, serviceCallRefund,
