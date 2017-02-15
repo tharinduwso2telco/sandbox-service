@@ -3,8 +3,8 @@
         <span>Filter</span>
         <i class="material-icons">filter_list</i>
     </div>
-    <div class="addNew">
+    <div class="addNew" *ngFor="let btn of buttonCol" (click)="onButtonClick.emit(btn)">
         <i class="material-icons">add_circle_outline</i>
-        <span>Add</span>
+        <span>{{btn?.name}}</span>
     </div>
 </div>

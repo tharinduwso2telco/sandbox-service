@@ -1,6 +1,6 @@
 import {
     Component, OnInit, ViewChild, ViewContainerRef, Input, ReflectiveInjector,
-    ComponentFactoryResolver
+    ComponentFactoryResolver, Renderer, ElementRef
 } from '@angular/core';
 import {DynamicComponentData} from "../../../data-store/models/common-models";
 import {DynamicDataTableDefaultHeaderComponent} from "../dynamic-data-table-default-header/dynamic-data-table-default-header.component";
@@ -28,35 +28,20 @@ export class DynamicDataTableComponent implements OnInit {
     constructor(private resolver: ComponentFactoryResolver) {
     }
 
-    private tmpDynamicHeader: any;
-
-    private tmpDynamicTable: any;
-
-    private tmpDynamicEditor: any;
-
-    private isEditorOpen:boolean = false;
-
-    private getInputProvider(data) {
-        return Object.keys(data.inputData).map((fieldName) => ({
-            provide: fieldName,
-            useValue: data.inputData[fieldName]
-        }));
+    ngOnInit() {
     }
 
-
-    private getComponent(data: DynamicComponentData, viewContainerRef: ViewContainerRef) {
-        let inputProvider = this.getInputProvider(data);
-        let resolvedInputs = ReflectiveInjector.resolve(inputProvider);
-        let injector = ReflectiveInjector.fromResolvedProviders(resolvedInputs, viewContainerRef.parentInjector);
-        let factory = this.resolver.resolveComponentFactory(data.component);
-        let component = factory.create(injector);
-        return component;
-    }
-
+    @Input()
+    private isEditorOpen: boolean = false;
 
     @Input() set headerData(data: DynamicComponentData) {
         if (!!data) {
             let component = this.getComponent(data, this.dynamicHeaderContainer);
+
+            data.eventBinding.map((binding) => {
+                (component.instance as any)[binding.eventName].subscribe(binding.subscriber.bind(binding.context));
+            });
+
             this.dynamicHeaderContainer.insert(component.hostView);
 
             if (!!this.tmpDynamicHeader) {
@@ -90,11 +75,27 @@ export class DynamicDataTableComponent implements OnInit {
         }
     }
 
-    ngOnInit() {
+    private tmpDynamicHeader: any;
+
+    private tmpDynamicTable: any;
+
+    private tmpDynamicEditor: any;
+
+    private getInputProvider(data) {
+        return Object.keys(data.inputData).map((fieldName) => ({
+            provide: fieldName,
+            useValue: data.inputData[fieldName]
+        }));
     }
 
-    onOpen(){
-        this.isEditorOpen = !this.isEditorOpen;
-    }
 
+    private getComponent(data: DynamicComponentData, viewContainerRef: ViewContainerRef) {
+        let inputProvider = this.getInputProvider(data);
+        let resolvedInputs = ReflectiveInjector.resolve(inputProvider);
+        let injector = ReflectiveInjector.fromResolvedProviders(resolvedInputs, viewContainerRef.parentInjector);
+        let factory = this.resolver.resolveComponentFactory(data.component);
+        let component = factory.create(injector);
+
+        return component;
+    }
 }
