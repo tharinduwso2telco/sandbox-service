@@ -1,5 +1,5 @@
-import {IUserInfo} from "../models/authentocation-models";
 import {Action} from '@ngrx/store'
+import {IUserInfo} from "../models/interfaces/userInfo";
 
 export const SET_LOGIN_DATA = 'SET_LOGIN_DATA';
 export const CLEAR_LOGIN_DATA = 'CLEAR_LOGIN_DATA';

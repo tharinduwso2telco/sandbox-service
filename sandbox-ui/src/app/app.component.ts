@@ -1,7 +1,8 @@
 import {Component, OnInit, ChangeDetectionStrategy} from '@angular/core';
 import {Store} from "@ngrx/store";
 import {IAppState, IApplicationData} from "./data-store/models/common-models";
-import {IUserInfo} from "./data-store/models/authentocation-models";
+import {IUserInfo} from "./data-store/models/interfaces/userInfo";
+
 
 @Component({
     selector: 'body',

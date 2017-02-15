@@ -1,5 +1,4 @@
-import {IUserInfo} from "./authentocation-models";
-
+import {IUserInfo} from "./interfaces/userInfo";
 export interface IApplicationData{
     isMainMenuExpand : boolean
 }

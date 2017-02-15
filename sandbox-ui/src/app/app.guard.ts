@@ -2,7 +2,8 @@ import {CanActivate, Router, ActivatedRouteSnapshot, RouterStateSnapshot} from "
 import {Injectable} from "@angular/core";
 import {Store} from "@ngrx/store";
 import {IAppState} from "./data-store/models/common-models";
-import {IUserInfo} from "./data-store/models/authentocation-models";
+import {IUserInfo} from "./data-store/models/interfaces/userInfo";
+
 
 @Injectable()
 export class AppGuard implements CanActivate {

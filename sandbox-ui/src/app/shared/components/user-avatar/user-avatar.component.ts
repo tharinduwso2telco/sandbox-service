@@ -1,6 +1,6 @@
 import {Component, OnInit, Input} from '@angular/core';
-import {IUserInfo} from "../../../data-store/models/authentocation-models";
 import {AuthenticationRemoteService} from "../../../data-store/services/authentication-remote.service";
+import {IUserInfo} from "../../../data-store/models/interfaces/userInfo";
 
 
 @Component({

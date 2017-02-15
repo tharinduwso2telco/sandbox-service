@@ -1,6 +1,6 @@
 import {Component, OnInit, Inject, Input} from '@angular/core';
 import {IApplicationData} from "../../../data-store/models/common-models";
-import {IUserInfo} from "../../../data-store/models/authentocation-models";
+import {IUserInfo} from "../../../data-store/models/interfaces/userInfo";
 
 @Component({
     selector: 'app-header',

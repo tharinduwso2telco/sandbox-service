@@ -3,8 +3,9 @@ import {Store} from '@ngrx/store';
 import {IAppState} from "../../data-store/models/common-models";
 import {AuthActionCreatorService} from "../../data-store/actions/auth-action-creator.service";
 import {AuthenticationRemoteService} from "../../data-store/services/authentication-remote.service";
-import {LoginRequestParam, IUserInfo} from "../../data-store/models/authentocation-models";
+import {LoginRequestParam} from "../../data-store/models/authentocation-models";
 import {Router} from "@angular/router";
+import {IUserInfo} from "../../data-store/models/interfaces/userInfo";
 
 @Component({
     selector: 'login',

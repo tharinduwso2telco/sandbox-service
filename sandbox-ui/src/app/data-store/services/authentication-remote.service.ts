@@ -1,9 +1,10 @@
 import {Injectable, Inject} from '@angular/core';
 import {Http, Headers, RequestOptions, Response} from "@angular/http";
 import {AuthActionCreatorService} from "../actions/auth-action-creator.service";
-import {LoginRequestParam, IUserInfo} from "../models/authentocation-models";
+import {LoginRequestParam} from "../models/authentocation-models";
 import {MessageService} from "../../shared/services/message.service";
 import {Router} from "@angular/router";
+import {IUserInfo} from "../models/interfaces/userInfo";
 
 @Injectable()
 export class AuthenticationRemoteService {
