@@ -21,40 +21,4 @@ export class DynamicDataTableDefaultTableComponent implements OnInit {
         this.tableDataSource = this.injector.get('tableDataSource');
         this.fieldNames = this.injector.get('fieldNames');
     }
-
-    /*private tmpData = [
-        {
-            Number: '9471933270',
-            description: 'Test User',
-            Balance: 100,
-            reserveAmount: 50
-
-        },
-        {
-            Number: '9471933270',
-            description: 'Test User',
-            Balance: 100,
-            reserveAmount: 50
-
-        }
-        , {
-            Number: '9471933270',
-            description: 'Test User',
-            Balance: 100,
-            reserveAmount: 50
-
-        }
-        , {
-            Number: '9471933270',
-            description: 'Test User',
-            Balance: 100,
-            reserveAmount: 50
-
-        }
-    ];*/
-
-  /*  private fields: string[] = ['Number', 'description', 'Balance', 'reserveAmount'];*/
-
-
-
 }

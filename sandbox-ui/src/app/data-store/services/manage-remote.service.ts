@@ -54,7 +54,7 @@ export class ManageRemoteService {
                         return userNumber;
                     });
                 } else {
-                    return [];
+                    return new Array();
                 }
             })
             .subscribe(

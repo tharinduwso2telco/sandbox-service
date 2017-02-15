@@ -1,5 +1,8 @@
 import {Component, OnInit, ElementRef, Renderer} from '@angular/core';
-import {DynamicComponentData, IAppState, IManageNumberState, IUserNumber} from "../../data-store/models/common-models";
+import {
+    DynamicComponentData, IAppState, IManageNumberState, IUserNumber,
+    IApplicationData
+} from "../../data-store/models/common-models";
 import {DynamicDataTableDefaultHeaderComponent} from "../../shared/components/dynamic-data-table-default-header/dynamic-data-table-default-header.component";
 import {DynamicDataTableDefaultTableComponent} from "../../shared/components/dynamic-data-table-default-table/dynamic-data-table-default-table.component";
 import {DynamicDataTableDefaultEditorComponent} from "../../shared/components/dynamic-data-table-default-editor/dynamic-data-table-default-editor.component";
@@ -15,55 +18,29 @@ import {ManageRemoteService} from "../../data-store/services/manage-remote.servi
 export class NumbersComponent implements OnInit {
 
     constructor(private manageActionCreator: ManageActionCreatorService,
-                private manageRemoteService:ManageRemoteService,
+                private manageRemoteService: ManageRemoteService,
                 private store: Store<IAppState>) {
     }
 
     ngOnInit() {
         this.store.select('ManageNumber')
-            .subscribe((manNumState:IManageNumberState)=>{
+            .subscribe((manNumState: IManageNumberState) => {
                 this.isEditorOpen = manNumState.isEditorPanelOpen;
-                this.tableData.inputData.tableDataSource = manNumState.allNumbers;
+                this.tableData  = manNumState.numbersTableData;
             });
+
+        this.store.select('AppData')
+            .subscribe(
+                (appData: IApplicationData) => {
+                    if (appData.isReloadTriggered) {
+                        this.manageRemoteService.getUserNumbers();
+                    }
+                });
 
         this.manageRemoteService.getUserNumbers();
     }
 
-    private isEditorOpen:boolean;
-
-
-    private tmpData = [
-        {
-            Number: '9471933270',
-            description: 'Test User',
-            Balance: 100,
-            reserveAmount: 50
-
-        },
-        {
-            Number: '9471933270',
-            description: 'Test User',
-            Balance: 100,
-            reserveAmount: 50
-
-        }
-        , {
-            Number: '9471933270',
-            description: 'Test User',
-            Balance: 100,
-            reserveAmount: 50
-
-        }
-        , {
-            Number: '9471933270',
-            description: 'Test User',
-            Balance: 100,
-            reserveAmount: 50
-
-        }
-    ];
-
-    private fields: string[] = ['Number', 'description', 'Balance', 'reserveAmount'];
+    private isEditorOpen: boolean;
 
     private headerData: DynamicComponentData = {
         component: DynamicDataTableDefaultHeaderComponent,
@@ -85,13 +62,7 @@ export class NumbersComponent implements OnInit {
         ]
     };
 
-    private tableData = {
-        component: DynamicDataTableDefaultTableComponent,
-        inputData: {
-            tableDataSource : [],
-            fieldNames : ['number','description','balance','reserved_amount','imsi']
-        }
-    };
+    private tableData:any;
 
     private editorData = {
         component: DynamicDataTableDefaultEditorComponent,

@@ -1,5 +1,6 @@
 import {IManageNumberState} from "../models/common-models";
 import {Action} from "@ngrx/store";
+import {DynamicDataTableDefaultTableComponent} from "../../shared/components/dynamic-data-table-default-table/dynamic-data-table-default-table.component";
 
 export const OPEN_ADD_NUMBER: string = 'OPEN_ADD_NUMBER';
 export const UPDATE_USER_NUMBERS: string = 'UPDATE_USER_NUMBERS';
@@ -7,8 +8,39 @@ export const UPDATE_USER_NUMBERS: string = 'UPDATE_USER_NUMBERS';
 const initialState: IManageNumberState = {
     isEditorPanelOpen: false,
     selectedNumber: null,
-    allNumbers:[]
+    numbersTableData: {
+        component: DynamicDataTableDefaultTableComponent,
+        inputData: {
+            tableDataSource: null,
+            fieldNames: [
+                {
+                    dataFieldName: 'number',
+                    tblColumnHead: 'Number'
 
+                },
+                {
+                    dataFieldName: 'description',
+                    tblColumnHead: 'Description'
+
+                },
+                {
+                    dataFieldName: 'balance',
+                    tblColumnHead: 'Balance'
+
+                },
+                {
+                    dataFieldName: 'reserved_amount',
+                    tblColumnHead: 'Reserved Amount'
+
+                },
+                {
+                    dataFieldName: 'imsi',
+                    tblColumnHead: 'IMSI'
+
+                }
+            ]
+        }
+    }
 };
 
 export function ManageNumberReducer(manageNumberState: IManageNumberState = initialState, action: Action): IManageNumberState {
@@ -18,17 +50,19 @@ export function ManageNumberReducer(manageNumberState: IManageNumberState = init
             return Object.assign({}, manageNumberState,
                 {
                     isEditorPanelOpen: !manageNumberState.isEditorPanelOpen,
-                    selectedNumber : null
+                    selectedNumber: null
                 }
             );
         }
 
         case UPDATE_USER_NUMBERS : {
-            return Object.assign({},manageNumberState,
-                {
-                    allNumbers : action.payload || []
-                }
-            )
+            return Object.assign({}, manageNumberState, {
+                numbersTableData: Object.assign({}, manageNumberState.numbersTableData, {
+                    inputData: Object.assign({}, manageNumberState.numbersTableData.inputData, {
+                        tableDataSource: action.payload || []
+                    })
+                })
+            })
         }
 
 

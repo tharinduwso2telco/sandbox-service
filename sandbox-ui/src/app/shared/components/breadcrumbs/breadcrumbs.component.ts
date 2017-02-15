@@ -1,6 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {Router, NavigationEnd} from "@angular/router";
 import {MessageService} from "../../services/message.service";
+import {ApplicationActionCreatorService} from "../../../data-store/actions/application-action-creator.service";
 
 @Component({
     selector: 'app-breadcrumbs',
@@ -12,7 +13,8 @@ export class BreadcrumbsComponent implements OnInit {
     private activeView: string[] = ['Home'];
 
     constructor(private _router: Router,
-                private message: MessageService) {
+                private message: MessageService,
+                private appActionCreator: ApplicationActionCreatorService) {
     }
 
     ngOnInit() {
@@ -24,15 +26,16 @@ export class BreadcrumbsComponent implements OnInit {
     }
 
     onReload() {
-        this.message.info('Dashboard Data Refreshed','');
+        this.appActionCreator.realodData();
+        this.message.info('Dashboard Data Refreshed', '');
     }
 
-    onLinkClick(path:string){
+    onLinkClick(path: string) {
         let index = this.activeView.indexOf(path);
-        let myPath:string = '';
-        if(index >=0 ){
-            this.activeView.slice(0,index+1).forEach((subPath)=>{
-                myPath += ('/'+subPath);
+        let myPath: string = '';
+        if (index >= 0) {
+            this.activeView.slice(0, index + 1).forEach((subPath) => {
+                myPath += ('/' + subPath);
             });
         }
         this._router.navigate([myPath]);

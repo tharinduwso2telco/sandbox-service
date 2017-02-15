@@ -1,6 +1,7 @@
 import {IUserInfo} from "./interfaces/userInfo";
 export interface IApplicationData {
-    isMainMenuExpand: boolean
+    isMainMenuExpand: boolean,
+    isReloadTriggered:boolean
 }
 
 export interface IUserNumber {
@@ -13,10 +14,21 @@ export interface IUserNumber {
     status: number;
 }
 
+export interface ITableFieldData{
+    dataFieldName:string,
+    tblColumnHead:string
+}
+
 export interface IManageNumberState {
     isEditorPanelOpen: boolean,
     selectedNumber: any,
-    allNumbers: IUserNumber[]
+    numbersTableData: {
+        component : any,
+        inputData:{
+            tableDataSource:IUserNumber[],
+            fieldNames:ITableFieldData[]
+        }
+    }
 }
 
 export interface IAppState {

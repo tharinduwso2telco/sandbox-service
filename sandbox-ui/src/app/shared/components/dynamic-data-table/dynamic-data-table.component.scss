@@ -6,24 +6,26 @@
 .ddt-wrapper{
 
   .tbl-container{
-    margin-right: 0px;
-    @include transition(margin-right 0.5s);
+    position: relative;
+    left : 0px;
+    @include transition(left 0.5s 0.2s);
   }
 
   .tbl-edit-container{
     position: fixed;
+    @include box-shadow(-2px 0px 5px 0px #adb5bd);
     min-width: $ddt_editor_panel_width;
     right: -$ddt_editor_panel_width;
     top: $topbar-height + $main-breadcrumbs-height + $ddt_def_header_height;
     bottom: 0px;
     opacity: 0;
-    background-color: beige;
+    background-color: $gray_1;
     @include transition(all 0.3s ease-in);
   }
 
   &.is-editor-open{
     .tbl-container{
-      margin-right: $ddt_editor_panel_width/2;
+      left: -$ddt_editor_panel_width/2;
       opacity:0.5;
     }
 
