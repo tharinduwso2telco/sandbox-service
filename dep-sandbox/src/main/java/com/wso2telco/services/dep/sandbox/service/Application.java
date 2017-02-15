@@ -16,13 +16,11 @@
 
 package com.wso2telco.services.dep.sandbox.service;
 
+import com.wso2telco.core.mi.AbstractApplication;
+import io.dropwizard.setup.Environment;
+
 import java.util.ArrayList;
 import java.util.List;
-
-import com.wso2telco.core.mi.AbstractApplication;
-import com.wso2telco.core.mi.ConfigDTO;
-
-import io.dropwizard.setup.Environment;
 
 public class Application extends AbstractApplication<SandboxDTO> {
 
@@ -39,6 +37,7 @@ public class Application extends AbstractApplication<SandboxDTO> {
 		listOfObject.add(new WalletService());
 		listOfObject.add(new WalletConfigurationService());
 		listOfObject.add(new PaymentService());
+		listOfObject.add(new LocationService());
 		return listOfObject;
 	}
 
