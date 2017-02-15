@@ -49,7 +49,7 @@ CREATE TABLE IF NOT EXISTS `sbxapiservicecalls` (
 -- Dumping data for table `sbxapiservicecalls`
 --
 
-INSERT INTO `sbxapiservicecalls` VALUES (1,8,'GetAttribute'),(2,8,'GetProfile'),(3,7,'GetApplicable'),(4,6,'MakePayment'),(5,6,'ListPayment'),(6,6,'RefundPayment'),(7,6,'BalanceLookup'),(8,5,'ApplyCredit'),(9,5,'PartialRefund'),(10,4,'ChargeUser'),(11,4,'RefundUser');
+INSERT INTO `sbxapiservicecalls` VALUES (1,8,'GetAttribute'),(2,8,'GetProfile'),(3,7,'GetApplicable'),(4,6,'MakePayment'),(5,6,'ListPayment'),(6,6,'RefundPayment'),(7,6,'BalanceLookup'),(8,5,'ApplyCredit'),(9,5,'PartialRefund'),(10,4,'ChargeUser'),(11,4,'RefundUser'),(12,4,'ListPayment');
 
 
 

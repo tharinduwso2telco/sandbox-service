@@ -26,12 +26,63 @@ import org.hibernate.Session;
 import org.hibernate.query.Query;
 
 import javax.persistence.NoResultException;
+import java.util.List;
 
 public class HibernatePaymentDAO extends AbstractDAO implements PaymentDAO {
 
     {
         LOG = LogFactory.getLog(PaymentDAO.class);
     }
+
+    @Override
+    public List<AttributeValues> getTransactionValue(String endUserId, List<String> attribute, String tableName,
+                                                     Integer userId) throws Exception {
+
+        Session session = getSession();
+        List<AttributeValues> resultSet = null;
+
+        StringBuilder hql = new StringBuilder();
+        hql.append("SELECT ");
+        hql.append("val ");
+        hql.append("FROM ");
+        hql.append("AttributeValues AS val, ");
+        hql.append("APIServiceCalls AS calls, ");
+        hql.append("APITypes AS api, ");
+        hql.append("AttributeDistribution AS dist, ");
+        hql.append("Attributes AS att, ");
+        hql.append("ManageNumber AS number ");
+        hql.append("WHERE ");
+        hql.append("api.id = calls.apiType.id ");
+        hql.append("AND calls.apiServiceCallId = dist.serviceCall.apiServiceCallId ");
+        hql.append("AND dist.distributionId = val.attributeDistribution.distributionId ");
+        hql.append("AND att.attributeId = dist.attribute.attributeId ");
+        hql.append("AND api.apiname =:apiName ");
+        hql.append("AND val.tobject =:tableName ");
+        hql.append("AND number.id = val.ownerdid ");
+        hql.append("AND number.Number =:number ");
+        hql.append("AND number.user.id =:userId ");
+        hql.append("AND att.attributeName IN ( :attributeName)");
+
+        try {
+            Query query = session.createQuery(hql.toString());
+            query.setParameter("apiName", RequestType.PAYMENT.toString().toLowerCase());
+            query.setParameter("number", endUserId);
+            query.setParameter("tableName", tableName);
+            query.setParameterList("attributeName", attribute);
+            query.setParameter("userId", userId);
+            query.setFirstResult(0);
+            query.setMaxResults(20);
+            resultSet = (List<AttributeValues>) query.getResultList();
+
+        } catch (NoResultException e) {
+            return null;
+        } catch (Exception ex) {
+            LOG.error("###PAYMENT### Error in getListTransaction Service ", ex);
+            throw ex;
+        }
+        return resultSet;
+    }
+
 
     @Override
     public AttributeValues getAttributeValue(String endUserId, String serviceCall, String attribute, Integer userId)

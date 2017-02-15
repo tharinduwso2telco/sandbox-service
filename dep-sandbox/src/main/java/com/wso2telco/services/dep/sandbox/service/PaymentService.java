@@ -22,6 +22,7 @@ import com.wso2telco.services.dep.sandbox.exception.SandboxException;
 import com.wso2telco.services.dep.sandbox.servicefactory.RequestBuilderFactory;
 import com.wso2telco.services.dep.sandbox.servicefactory.RequestHandleable;
 import com.wso2telco.services.dep.sandbox.servicefactory.Returnable;
+import com.wso2telco.services.dep.sandbox.servicefactory.payment.PaymentListTransactionRequestWrapper;
 import com.wso2telco.services.dep.sandbox.servicefactory.payment.PaymentRefundRequestHandler;
 import com.wso2telco.services.dep.sandbox.servicefactory.payment.PaymentRequestHandler;
 import com.wso2telco.services.dep.sandbox.util.RequestType;
@@ -31,10 +32,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
+import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -106,4 +104,37 @@ public class PaymentService {
             }
         }
     }
+
+    @GET
+    @Path("/{endUserId}/transactions")
+    @ApiOperation(value = "listTransactionService", notes = "listTransactionService", response = Response.class)
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "sandbox", value = "Authorization token", required = true, dataType = "string", paramType = "header")})
+    public Response getAttributeServices(
+            @ApiParam(value = "endUserId", required = false) @PathParam("endUserId") String endUserId,
+            @Context HttpServletRequest request) {
+        LOG.debug("/{endUserId}/transactions invorked :" + endUserId);
+        PaymentListTransactionRequestWrapper requestDTO = new PaymentListTransactionRequestWrapper();
+        requestDTO.setHttpRequest(request);
+        requestDTO.setEndUserId(endUserId);
+        requestDTO.setRequestType(RequestType.PAYMENT);
+
+        RequestHandleable handler = RequestBuilderFactory.getInstance(requestDTO);
+        Returnable returnable = null;
+
+        try {
+            returnable = handler.execute(requestDTO);
+            Response response = Response.status(returnable.getHttpStatus()).entity(returnable.getResponse()).build();
+            LOG.debug("List Transaction SERVICE RESPONSE : " + response);
+            return response;
+        } catch (Exception ex) {
+            LOG.error("List Transaction SERVICE ERROR : ", ex);
+            return Response.status(Response.Status.BAD_REQUEST).entity(
+                    SandboxException.SandboxErrorType.SERVICE_ERROR.getCode() + " " + SandboxException.SandboxErrorType.SERVICE_ERROR.getMessage())
+                    .build();
+        }
+
+    }
+
+
 }
