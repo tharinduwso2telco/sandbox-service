@@ -225,10 +225,10 @@ public class UserService {
 
 
 	@GET
-	@Path("/numberDetails")
+	@Path("{user}/numberDetails")
 	@ApiOperation(value = "listNumberDetails", notes = "List of Available Number Details", response = Response.class)
 	@ApiImplicitParams({ @ApiImplicitParam(name = "sandbox", value = "username", required = true, dataType = "string", paramType = "header") })
-	public Response getNumberDetails(@Context HttpServletRequest httpRequest) {
+	public Response getNumberDetails( @ApiParam(value = "user", required = true) @PathParam("user") String apiType, @Context HttpServletRequest httpRequest) {
 		NumberDetailsRequestWrapperDTO requestDTO = new NumberDetailsRequestWrapperDTO();
 		requestDTO.setRequestType(RequestType.USER);
 		requestDTO.setHttpRequest(httpRequest);
