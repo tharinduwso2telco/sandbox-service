@@ -25,6 +25,7 @@
 
 .form-control{
   border-radius: 0px;
+  height: 40px;
 }
 
 .btn{
@@ -36,11 +37,11 @@
 }
 
 .btn-primary{
-  background-color: $secondary_color;
-  border-color: #29A2AD;
+  background-color: $accent-color;
+  border-color: $accent-dark-color;
 
-  &:hover{
-    background-color: $primary-color_light;
+  &:hover,&:active{
+    background-color: $accent-light-color;
   }
 }
 

@@ -1,18 +1,12 @@
 import {IUserInfo} from "./interfaces/userInfo";
+import {UserNumber} from "./manage-numbers-model";
+
+
 export interface IApplicationData {
     isMainMenuExpand: boolean,
     isReloadTriggered:boolean
 }
 
-export interface IUserNumber {
-    number: string;
-    mnc: number;
-    balance: number;
-    reserved_amount: number;
-    imsi: number;
-    description: string;
-    status: number;
-}
 
 export interface ITableFieldData{
     dataFieldName:string,
@@ -25,7 +19,7 @@ export interface IManageNumberState {
     numbersTableData: {
         component : any,
         inputData:{
-            tableDataSource:IUserNumber[],
+            tableDataSource:UserNumber[],
             fieldNames:ITableFieldData[]
         }
     }

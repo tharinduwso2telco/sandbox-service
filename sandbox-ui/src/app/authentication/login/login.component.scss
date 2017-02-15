@@ -8,11 +8,11 @@
   input {
     background-color: #dde3ec;
     height: 43px;
-    color: #8290a3;
-    border: 1px solid #dde3ec;
+    color: $gray_8;
+    border: 1px solid $gray_3;
 
     &:focus{
-      border: 1px solid #c3ccda;
+      border: 1px solid $gray_4;
     }
   }
 

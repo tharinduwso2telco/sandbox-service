@@ -1,5 +1,6 @@
 import {Component, OnInit, Input, Injector} from '@angular/core';
-import {IUserNumber} from "../../../data-store/models/common-models";
+import {UserNumber} from "../../../data-store/models/manage-numbers-model";
+
 
 @Component({
     selector: 'dynamic-data-table-default-table',
@@ -9,7 +10,7 @@ import {IUserNumber} from "../../../data-store/models/common-models";
 export class DynamicDataTableDefaultTableComponent implements OnInit {
 
     @Input()
-    private tableDataSource:IUserNumber[];
+    private tableDataSource:UserNumber[];
 
     @Input()
     private fieldNames:string[];

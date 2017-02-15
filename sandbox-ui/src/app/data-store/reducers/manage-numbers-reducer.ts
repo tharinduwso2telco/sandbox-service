@@ -4,6 +4,7 @@ import {DynamicDataTableDefaultTableComponent} from "../../shared/components/dyn
 
 export const OPEN_ADD_NUMBER: string = 'OPEN_ADD_NUMBER';
 export const UPDATE_USER_NUMBERS: string = 'UPDATE_USER_NUMBERS';
+export const ADD_USER_NUMBER: string = 'ADD_USER_NUMBER';
 
 const initialState: IManageNumberState = {
     isEditorPanelOpen: false,

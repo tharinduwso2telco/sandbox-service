@@ -1,6 +1,6 @@
 import {Component, OnInit, ElementRef, Renderer} from '@angular/core';
 import {
-    DynamicComponentData, IAppState, IManageNumberState, IUserNumber,
+    DynamicComponentData, IAppState, IManageNumberState,
     IApplicationData
 } from "../../data-store/models/common-models";
 import {DynamicDataTableDefaultHeaderComponent} from "../../shared/components/dynamic-data-table-default-header/dynamic-data-table-default-header.component";
@@ -9,6 +9,7 @@ import {DynamicDataTableDefaultEditorComponent} from "../../shared/components/dy
 import {ManageActionCreatorService} from "../../data-store/actions/manage-action-creator.service";
 import {Store} from "@ngrx/store";
 import {ManageRemoteService} from "../../data-store/services/manage-remote.service";
+import {DDTEditCreateNumberComponent} from "../ddt-edit-create-number/ddt-edit-create-number.component";
 
 @Component({
     selector: 'numbers',
@@ -65,7 +66,7 @@ export class NumbersComponent implements OnInit {
     private tableData:any;
 
     private editorData = {
-        component: DynamicDataTableDefaultEditorComponent,
+        component: DDTEditCreateNumberComponent,
         inputData: {}
     };
 

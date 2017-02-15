@@ -2,9 +2,10 @@ import {Injectable, Inject} from '@angular/core';
 import {ManageActionCreatorService} from "../actions/manage-action-creator.service";
 import {Headers, RequestOptions, Http, Response} from "@angular/http";
 import {Store} from "@ngrx/store";
-import {IAppState, IUserNumber} from "../models/common-models";
+import {IAppState} from "../models/common-models";
 import {IUserInfo} from "../models/interfaces/userInfo";
 import {MessageService} from "../../shared/services/message.service";
+import {UserNumber} from "../models/manage-numbers-model";
 
 @Injectable()
 export class ManageRemoteService {
@@ -42,7 +43,7 @@ export class ManageRemoteService {
                 let tmp = response.json();
                 if (!!tmp) {
                     return tmp.map((responseObk) => {
-                        let userNumber: IUserNumber = {
+                        let userNumber: UserNumber = {
                             number: responseObk.number,
                             balance: responseObk.balance,
                             description: responseObk.description,
@@ -58,7 +59,7 @@ export class ManageRemoteService {
                 }
             })
             .subscribe(
-                (numbers: IUserNumber[]) => {
+                (numbers: UserNumber[]) => {
                     this.manageActionCreator.updateUserNumbers(numbers);
                 },
                 (error) => {

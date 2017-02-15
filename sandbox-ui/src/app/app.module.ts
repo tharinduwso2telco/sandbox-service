@@ -6,6 +6,9 @@ import {TopLevelRoutes} from "./app.routes";
 import {SharedModule} from "./shared/shared.module";
 import {AppGuard, LoginGuard} from "./app.guard";
 import {DataStoreModule} from "./data-store/data-store.module";
+import {DynamicDataTableDefaultHeaderComponent} from "./shared/components/dynamic-data-table-default-header/dynamic-data-table-default-header.component";
+import {DynamicDataTableDefaultTableComponent} from "./shared/components/dynamic-data-table-default-table/dynamic-data-table-default-table.component";
+import {DynamicDataTableDefaultEditorComponent} from "./shared/components/dynamic-data-table-default-editor/dynamic-data-table-default-editor.component";
 
 @NgModule({
     declarations: [
@@ -34,6 +37,11 @@ import {DataStoreModule} from "./data-store/data-store.module";
                 appName : 'Sandbox'
             }
         }
+    ],
+    entryComponents : [
+        DynamicDataTableDefaultHeaderComponent,
+        DynamicDataTableDefaultTableComponent,
+        DynamicDataTableDefaultEditorComponent
     ],
     bootstrap: [AppComponent]
 })

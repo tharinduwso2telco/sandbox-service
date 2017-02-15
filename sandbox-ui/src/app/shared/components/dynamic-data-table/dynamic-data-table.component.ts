@@ -6,16 +6,12 @@ import {DynamicComponentData} from "../../../data-store/models/common-models";
 import {DynamicDataTableDefaultHeaderComponent} from "../dynamic-data-table-default-header/dynamic-data-table-default-header.component";
 import {DynamicDataTableDefaultTableComponent} from "../dynamic-data-table-default-table/dynamic-data-table-default-table.component";
 import {DynamicDataTableDefaultEditorComponent} from "../dynamic-data-table-default-editor/dynamic-data-table-default-editor.component";
+import {DDTEditCreateNumberComponent} from "../../../manage/ddt-edit-create-number/ddt-edit-create-number.component";
 
 @Component({
     selector: 'dynamic-data-table',
     templateUrl: './dynamic-data-table.component.html',
     styleUrls: ['./dynamic-data-table.component.scss'],
-    entryComponents: [
-        DynamicDataTableDefaultHeaderComponent,
-        DynamicDataTableDefaultTableComponent,
-        DynamicDataTableDefaultEditorComponent
-    ]
 })
 export class DynamicDataTableComponent implements OnInit {
 

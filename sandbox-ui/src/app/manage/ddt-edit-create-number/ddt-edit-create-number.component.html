@@ -1,0 +1,40 @@
+<div class=" col-sm-12 add-edit-number-wrapper">
+    <div class="header">
+        {{headerText}} Add Number
+        <span class="close-icon">
+            <i class="material-icons">close</i>
+        </span>
+    </div>
+    <form novalidate (ngSubmit)="onFormSubmit()" #numberForm="ngForm">
+        <div class="form-group">
+            <label for="idNumber">Number</label>
+            <input type="text"
+                   [(ngModel)]="numberModel.number"
+                   name="number" class="form-control" id="idNumber"
+                   placeholder="Number">
+        </div>
+        <div class="form-group">
+            <label for="idBalance">Balance</label>
+            <input type="text"
+                   [(ngModel)]="numberModel.balance"
+                   name="balance" class="form-control" id="idBalance"
+                   placeholder="Balance">
+        </div>
+        <div class="form-group">
+            <label for="idReservedAmount">Reserved Amount</label>
+            <input type="text"
+                   [(ngModel)]="numberModel.reserved_amount"
+                   name="reserved_amount" class="form-control"
+                   id="idReservedAmount" placeholder="Reserved Amount">
+        </div>
+        <div class="form-group">
+            <label for="idDescription">Description</label>
+            <textarea class="form-control"
+                      [(ngModel)]="numberModel.description"
+                      name="description"
+                      id="idDescription" placeholder="Description"></textarea>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Add</button>
+    </form>
+</div>

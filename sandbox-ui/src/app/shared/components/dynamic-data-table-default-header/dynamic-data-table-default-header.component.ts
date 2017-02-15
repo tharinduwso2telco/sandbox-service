@@ -1,5 +1,5 @@
 import {Component, OnInit, Injector, Output, EventEmitter} from '@angular/core';
-import {INumberButtons} from "../../../data-store/models/manage-numbers-model";
+import {NumberButtons} from "../../../data-store/models/manage-numbers-model";
 
 @Component({
     selector: 'dynamic-data-table-default-header',
@@ -11,10 +11,9 @@ export class DynamicDataTableDefaultHeaderComponent implements OnInit {
     buttonCol: any[];
 
     @Output()
-    public onButtonClick:EventEmitter<INumberButtons> = new EventEmitter<INumberButtons>();
+    public onButtonClick:EventEmitter<NumberButtons> = new EventEmitter<NumberButtons>();
 
     constructor(private injector: Injector) {
-
     }
 
     ngOnInit() {
