@@ -1,4 +1,5 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnInit, Input, Injector} from '@angular/core';
+import {IUserNumber} from "../../../data-store/models/common-models";
 
 @Component({
     selector: 'dynamic-data-table-default-table',
@@ -7,7 +8,21 @@ import {Component, OnInit} from '@angular/core';
 })
 export class DynamicDataTableDefaultTableComponent implements OnInit {
 
-    private tmpData = [
+    @Input()
+    private tableDataSource:IUserNumber[];
+
+    @Input()
+    private fieldNames:string[];
+
+    constructor(private injector:Injector) {
+    }
+
+    ngOnInit() {
+        this.tableDataSource = this.injector.get('tableDataSource');
+        this.fieldNames = this.injector.get('fieldNames');
+    }
+
+    /*private tmpData = [
         {
             Number: '9471933270',
             description: 'Test User',
@@ -36,14 +51,10 @@ export class DynamicDataTableDefaultTableComponent implements OnInit {
             reserveAmount: 50
 
         }
-    ];
+    ];*/
 
-    private fields: string[] = ['Number', 'description', 'Balance', 'reserveAmount'];
+  /*  private fields: string[] = ['Number', 'description', 'Balance', 'reserveAmount'];*/
 
-    constructor() {
-    }
 
-    ngOnInit() {
-    }
 
 }

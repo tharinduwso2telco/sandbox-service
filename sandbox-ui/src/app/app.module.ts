@@ -21,8 +21,12 @@ import {DataStoreModule} from "./data-store/data-store.module";
         AppGuard,
         LoginGuard,
         {
-            provide : 'AUTH_SERVER_URL',
-            useValue : 'https://localhost:9443/services'
+            provide : 'AUTH_SERVER_PROXY_PATTERN',
+            useValue : '/authentication'
+        },
+        {
+            provide : 'SANDBOX_SERVER_PROXY_PATTERN',
+            useValue : '/sandbox'
         },
         {
             provide : 'APP_CONSTANT',

@@ -18,7 +18,7 @@ export class AuthenticationRemoteService {
                 private authActionCreator: AuthActionCreatorService,
                 private message: MessageService,
                 private router:Router,
-                @Inject('AUTH_SERVER_URL') private baseUrl: string) {
+                @Inject('AUTH_SERVER_PROXY_PATTERN') private authProxyPattern: string) {
     }
 
     private getLoginRequest(params: LoginRequestParam) {
@@ -49,7 +49,7 @@ export class AuthenticationRemoteService {
     };
 
     doLogin(loginReq: LoginRequestParam) {
-        this.http.post('/login/services/AuthenticationAdmin', this.getLoginRequest(loginReq), this.options)
+        this.http.post(this.authProxyPattern +'/services/AuthenticationAdmin', this.getLoginRequest(loginReq), this.options)
             .subscribe((response: Response) => {
                     this.authActionCreator.setLoginData(this.loginAdaptor(loginReq, response.text()))
                 },

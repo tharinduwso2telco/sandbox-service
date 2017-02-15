@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import {Store} from "@ngrx/store";
-import {IAppState} from "../models/common-models";
-import {OPEN_ADD_NUMBER} from "../reducers/manage-numbers-reducer";
+import {IAppState, IUserNumber} from "../models/common-models";
+import {OPEN_ADD_NUMBER, UPDATE_USER_NUMBERS} from "../reducers/manage-numbers-reducer";
 
 @Injectable()
 export class ManageActionCreatorService {
@@ -12,6 +12,13 @@ export class ManageActionCreatorService {
     openAddNumber() {
         this.store.dispatch({
             type: OPEN_ADD_NUMBER
+        });
+    }
+
+    updateUserNumbers(numbers: IUserNumber[] = []) {
+        this.store.dispatch({
+            type: UPDATE_USER_NUMBERS,
+            payload: numbers
         });
     }
 

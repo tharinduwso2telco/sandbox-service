@@ -9,6 +9,7 @@ import {AppReducer} from "./reducers/app-reducer";
 import {ApplicationActionCreatorService} from "./actions/application-action-creator.service";
 import {ManageActionCreatorService} from "./actions/manage-action-creator.service";
 import {ManageNumberReducer} from "./reducers/manage-numbers-reducer";
+import {ManageRemoteService} from "./services/manage-remote.service";
 
 @NgModule({
     imports: [
@@ -26,7 +27,8 @@ import {ManageNumberReducer} from "./reducers/manage-numbers-reducer";
         AuthActionCreatorService,
         ApplicationActionCreatorService,
         ManageActionCreatorService,
-        AuthenticationRemoteService
+        AuthenticationRemoteService,
+        ManageRemoteService
     ],
     declarations: [],
     exports: [

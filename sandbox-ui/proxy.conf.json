@@ -1,8 +1,14 @@
 {
-  "/login": {
+  "/authentication": {
     "target": "https://localhost:9443",
     "secure": false,
-    "pathRewrite": {"^/login" : ""},
+    "pathRewrite": {"^/authentication" : ""},
+    "logLevel": "info"
+  },
+  "/sandbox": {
+    "target": "http://localhost:8181",
+    "secure": false,
+    "pathRewrite": {"^/sandbox" : ""},
     "logLevel": "info"
   }
 }

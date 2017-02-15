@@ -1,10 +1,11 @@
 import {Component, OnInit, ElementRef, Renderer} from '@angular/core';
-import {DynamicComponentData, IAppState, IManageNumberState} from "../../data-store/models/common-models";
+import {DynamicComponentData, IAppState, IManageNumberState, IUserNumber} from "../../data-store/models/common-models";
 import {DynamicDataTableDefaultHeaderComponent} from "../../shared/components/dynamic-data-table-default-header/dynamic-data-table-default-header.component";
 import {DynamicDataTableDefaultTableComponent} from "../../shared/components/dynamic-data-table-default-table/dynamic-data-table-default-table.component";
 import {DynamicDataTableDefaultEditorComponent} from "../../shared/components/dynamic-data-table-default-editor/dynamic-data-table-default-editor.component";
 import {ManageActionCreatorService} from "../../data-store/actions/manage-action-creator.service";
 import {Store} from "@ngrx/store";
+import {ManageRemoteService} from "../../data-store/services/manage-remote.service";
 
 @Component({
     selector: 'numbers',
@@ -14,6 +15,7 @@ import {Store} from "@ngrx/store";
 export class NumbersComponent implements OnInit {
 
     constructor(private manageActionCreator: ManageActionCreatorService,
+                private manageRemoteService:ManageRemoteService,
                 private store: Store<IAppState>) {
     }
 
@@ -21,10 +23,14 @@ export class NumbersComponent implements OnInit {
         this.store.select('ManageNumber')
             .subscribe((manNumState:IManageNumberState)=>{
                 this.isEditorOpen = manNumState.isEditorPanelOpen;
+                this.tableData.inputData.tableDataSource = manNumState.allNumbers;
             });
+
+        this.manageRemoteService.getUserNumbers();
     }
 
     private isEditorOpen:boolean;
+
 
     private tmpData = [
         {
@@ -81,8 +87,12 @@ export class NumbersComponent implements OnInit {
 
     private tableData = {
         component: DynamicDataTableDefaultTableComponent,
-        inputData: {}
+        inputData: {
+            tableDataSource : [],
+            fieldNames : ['number','description','balance','reserved_amount','imsi']
+        }
     };
+
     private editorData = {
         component: DynamicDataTableDefaultEditorComponent,
         inputData: {}
