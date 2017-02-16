@@ -1,10 +1,12 @@
 <div class=" col-sm-12 add-edit-number-wrapper">
+
     <div class="header">
         {{headerText}} Add Number
-        <span class="close-icon">
+        <span class="close-icon" (click)="onClose()">
             <i class="material-icons">close</i>
         </span>
     </div>
+
     <form novalidate (ngSubmit)="onFormSubmit()" #numberForm="ngForm">
         <div class="form-group">
             <label for="idNumber">Number</label>
@@ -16,14 +18,14 @@
         <div class="form-group">
             <label for="idBalance">Balance</label>
             <input type="text"
-                   [(ngModel)]="numberModel.balance"
+                   [(ngModel)]="numberModel.numberBalance"
                    name="balance" class="form-control" id="idBalance"
                    placeholder="Balance">
         </div>
         <div class="form-group">
             <label for="idReservedAmount">Reserved Amount</label>
             <input type="text"
-                   [(ngModel)]="numberModel.reserved_amount"
+                   [(ngModel)]="numberModel.reservedAmount"
                    name="reserved_amount" class="form-control"
                    id="idReservedAmount" placeholder="Reserved Amount">
         </div>
@@ -37,4 +39,5 @@
 
         <button type="submit" class="btn btn-primary">Add</button>
     </form>
+
 </div>

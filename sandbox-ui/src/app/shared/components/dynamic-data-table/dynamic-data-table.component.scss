@@ -26,7 +26,6 @@
   &.is-editor-open{
     .tbl-container{
       left: -$ddt_editor_panel_width/2;
-      opacity:0.5;
     }
 
     .tbl-edit-container{

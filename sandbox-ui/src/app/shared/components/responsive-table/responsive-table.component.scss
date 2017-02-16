@@ -1,53 +1,98 @@
 @import "../../../../styles/colors";
 @import "../../../../styles/varibles";
+@import "../../../../styles/mixing";
 
-:host{
+:host {
   display: block;
 }
-.table-wrapper{
+
+.table-wrapper {
   width: 100%;
 
-  .tbl-header{
+  .tbl-header {
     font-weight: 600;
     font-size: 1.3em;
   }
 
-  .table{
+  .table {
     display: table;
     width: 100%;
 
-    @media only screen and (max-width : 768px) {
+    @media only screen and (max-width: 768px) {
       display: block;
     }
 
-    .tbl-row{
+    .tbl-row {
       display: table-row;
       background-color: #f6f6f6;
       height: $responsive_row_height;
+      cursor: pointer;
+      @include transition(background-color 0.3s ease-in);
 
-      &:nth-of-type(odd){
+      &:nth-of-type(odd) {
         background-color: white;
       }
 
-      &.header{
+      &.header {
         background-color: $gray_3;
-        font-weight:600;
+        font-weight: 600;
       }
 
-      @media only screen and (max-width : 768px) {
+      @media only screen and (max-width: 768px) {
         display: block;
         height: initial;
       }
 
-      .tbl-cell{
+      .tbl-cell {
         display: table-cell;
         padding: 0px 10px;
         line-height: $responsive_row_height;
-        @media only screen and (max-width : 768px) {
+        @media only screen and (max-width: 768px) {
           display: block;
           line-height: initial;
         }
       }
+
+      &.selected-row {
+        background-color: $tbl-row-selected-color;
+      }
+
+      .action-container {
+        opacity: 0;
+        text-align: right;
+        padding: 0px;
+        width: 1px;
+        position: relative;
+
+        .icon-container {
+          position: absolute;
+          right: 0px;
+          top: 0px;
+          height: 50px;
+          min-width: 200px;
+
+          .action {
+            display: inline-block;
+            width: 50px;
+            color: $gray_1;
+            margin: 0px 2px;
+            text-align: center;
+            line-height: $responsive_row_height;
+            height: $responsive_row_height;
+            vertical-align: middle;
+            cursor: pointer;
+          }
+        }
+
+        @include transition(all 0.2s ease-in);
+      }
+
+      &:hover {
+        .action-container {
+          opacity: 1;
+        }
+      }
+
     }
   }
 }

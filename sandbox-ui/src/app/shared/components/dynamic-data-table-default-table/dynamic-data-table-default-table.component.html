@@ -1,5 +1,8 @@
 <div class="row ddt-table">
-  <responsive-table
-          [dataSource]="tableDataSource"
-          [fieldSet]="fieldNames"></responsive-table>
+    <responsive-table
+            [dataSource]="tableDataSource"
+            [fieldSet]="fieldNames"
+            [rowActions]="rowDataActions"
+            (onRowAction)="onTableRowAction.emit($event)"
+    ></responsive-table>
 </div>

@@ -16,6 +16,7 @@ import { DynamicDataTableComponent } from './components/dynamic-data-table/dynam
 import { DynamicDataTableDefaultHeaderComponent } from './components/dynamic-data-table-default-header/dynamic-data-table-default-header.component';
 import { DynamicDataTableDefaultEditorComponent } from './components/dynamic-data-table-default-editor/dynamic-data-table-default-editor.component';
 import { DynamicDataTableDefaultTableComponent } from './components/dynamic-data-table-default-table/dynamic-data-table-default-table.component';
+import {ResponsiveTableHelperService} from "./services/responsive-table-helper.service";
 
 @NgModule({
     imports: [
@@ -39,7 +40,8 @@ import { DynamicDataTableDefaultTableComponent } from './components/dynamic-data
         DynamicDataTableDefaultTableComponent
     ],
     providers : [
-        MessageService
+        MessageService,
+        ResponsiveTableHelperService
     ],
     exports: [
         FormsModule,

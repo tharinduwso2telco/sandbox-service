@@ -50,6 +50,11 @@ export class DynamicDataTableComponent implements OnInit {
     @Input() set tableData(data: DynamicComponentData) {
         if (!!data) {
             let component = this.getComponent(data, this.dynamicTableContainer);
+
+            data.eventBinding.map((binding) => {
+                (component.instance as any)[binding.eventName].subscribe(binding.subscriber.bind(binding.context));
+            });
+
             this.dynamicTableContainer.insert(component.hostView);
 
             if (!!this.tmpDynamicTable) {

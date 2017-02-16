@@ -1,14 +1,19 @@
 import {IManageNumberState} from "../models/common-models";
 import {Action} from "@ngrx/store";
 import {DynamicDataTableDefaultTableComponent} from "../../shared/components/dynamic-data-table-default-table/dynamic-data-table-default-table.component";
+import {UserNumber} from "../models/manage-numbers-model";
 
-export const OPEN_ADD_NUMBER: string = 'OPEN_ADD_NUMBER';
+
+export const ADD_NUMBER: string = 'ADD_NUMBER';
+export const EDIT_NUMBER: string = 'EDIT_NUMBER';
+export const OPEN_EDITOR_PANEL: string = 'OPEN_EDITOR_PANEL';
+export const CLOSE_EDITOR_PANEL: string = 'CLOSE_EDITOR_PANEL';
 export const UPDATE_USER_NUMBERS: string = 'UPDATE_USER_NUMBERS';
-export const ADD_USER_NUMBER: string = 'ADD_USER_NUMBER';
+
 
 const initialState: IManageNumberState = {
     isEditorPanelOpen: false,
-    selectedNumber: null,
+    selectedNumber: new UserNumber(),
     numbersTableData: {
         component: DynamicDataTableDefaultTableComponent,
         inputData: {
@@ -25,12 +30,12 @@ const initialState: IManageNumberState = {
 
                 },
                 {
-                    dataFieldName: 'balance',
+                    dataFieldName: 'numberBalance',
                     tblColumnHead: 'Balance'
 
                 },
                 {
-                    dataFieldName: 'reserved_amount',
+                    dataFieldName: 'reservedAmount',
                     tblColumnHead: 'Reserved Amount'
 
                 },
@@ -47,11 +52,34 @@ const initialState: IManageNumberState = {
 export function ManageNumberReducer(manageNumberState: IManageNumberState = initialState, action: Action): IManageNumberState {
     switch (action.type) {
 
-        case OPEN_ADD_NUMBER : {
+        case ADD_NUMBER : {
             return Object.assign({}, manageNumberState,
                 {
-                    isEditorPanelOpen: !manageNumberState.isEditorPanelOpen,
-                    selectedNumber: null
+                    selectedNumber: new UserNumber()
+                }
+            );
+        }
+
+        case EDIT_NUMBER : {
+            return Object.assign({}, manageNumberState,
+                {
+                    selectedNumber: action.payload
+                }
+            );
+        }
+
+        case OPEN_EDITOR_PANEL : {
+            return Object.assign({}, manageNumberState,
+                {
+                    isEditorPanelOpen: true
+                }
+            );
+        }
+
+        case CLOSE_EDITOR_PANEL : {
+            return Object.assign({}, manageNumberState,
+                {
+                    isEditorPanelOpen: false
                 }
             );
         }

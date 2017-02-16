@@ -1,16 +1,31 @@
 <div class="table-wrapper">
-  <div class="tbl-header">
-    {{tableHeader}}
-  </div>
-  <div class="table">
-
-    <div class="tbl-row header">
-      <div class="tbl-cell" *ngFor="let field of fieldSet">{{field.tblColumnHead || field.dataFieldName }}</div>
+    <div class="tbl-header">
+        {{tableHeader}}
     </div>
+    <div class="table">
 
-    <div class="tbl-row" *ngFor="let item of dataSource">
-      <div class="tbl-cell" *ngFor="let field of fieldSet">{{item[field.dataFieldName]}}</div>
+        <div class="tbl-row header">
+            <div class="tbl-cell" *ngFor="let field of fieldSet">{{field.tblColumnHead || field.dataFieldName }}</div>
+            <div class="tbl-cell" style="width: 1px"></div>
+        </div>
+
+        <div class="tbl-row"
+             [ngClass]="{'selected-row':item == helper.selectedRow}"
+             *ngFor="let item of dataSource" (click)="onRowClick(item)">
+            <div class="tbl-cell" *ngFor="let field of fieldSet">{{item[field.dataFieldName]}}</div>
+
+            <div class=" tbl-cell action-container">
+                <div class="icon-container">
+                    <span class="action material-icons animated"
+                          (click)="onIconClick(act,item,$event)"
+                          [ngClass]="act.class"
+                          *ngFor="let act of rowActions">
+                        {{act.icon}}
+                    </span>
+                </div>
+            </div>
+
+        </div>
+
     </div>
-
-  </div>
 </div>

@@ -2,6 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {IAppState, IManageNumberState} from "../../data-store/models/common-models";
 import {Store} from "@ngrx/store";
 import {UserNumber} from "../../data-store/models/manage-numbers-model";
+import {ManageRemoteService} from "../../data-store/services/manage-remote.service";
 import {ManageActionCreatorService} from "../../data-store/actions/manage-action-creator.service";
 
 @Component({
@@ -11,25 +12,26 @@ import {ManageActionCreatorService} from "../../data-store/actions/manage-action
 })
 export class DDTEditCreateNumberComponent implements OnInit {
 
-    private numberModel: UserNumber;
+    private numberModel: UserNumber = new UserNumber();
 
     constructor(private store: Store<IAppState>,
-                private manageActionCreator: ManageActionCreatorService) {
+                private manageActionCreator:ManageActionCreatorService,
+                private manageRemoteService: ManageRemoteService) {
     }
 
     ngOnInit() {
         this.store.select('ManageNumber')
             .subscribe((manNumberState: IManageNumberState) => {
                 this.numberModel = manNumberState.selectedNumber;
-
-                if (!this.numberModel) {
-                    this.numberModel = new UserNumber();
-                }
             })
     }
 
     onFormSubmit() {
-        this.manageActionCreator.addUserNumber(this.numberModel);
+        this.manageRemoteService.addUserNumber(this.numberModel);
+    }
+
+    onClose(){
+        this.manageActionCreator.closeEditorPanel();
     }
 
 }

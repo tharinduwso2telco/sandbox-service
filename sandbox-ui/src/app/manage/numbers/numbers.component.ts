@@ -10,6 +10,10 @@ import {ManageActionCreatorService} from "../../data-store/actions/manage-action
 import {Store} from "@ngrx/store";
 import {ManageRemoteService} from "../../data-store/services/manage-remote.service";
 import {DDTEditCreateNumberComponent} from "../ddt-edit-create-number/ddt-edit-create-number.component";
+import {
+    RowActionEvent, ROW_SELECTED, ROW_EDIT_ACTION,
+    ROW_DELETE_ACTION
+} from "../../data-store/models/responsive-table-models";
 
 @Component({
     selector: 'numbers',
@@ -27,7 +31,18 @@ export class NumbersComponent implements OnInit {
         this.store.select('ManageNumber')
             .subscribe((manNumState: IManageNumberState) => {
                 this.isEditorOpen = manNumState.isEditorPanelOpen;
-                this.tableData  = manNumState.numbersTableData;
+
+                let tmpTableData = Object.assign({}, manNumState.numbersTableData, {
+                    eventBinding: [
+                        {
+                            eventName: 'onTableRowAction',
+                            subscriber: this.onTableRowActionListener,
+                            context: this
+                        }
+                    ]
+                });
+
+                this.tableData = tmpTableData;
             });
 
         this.store.select('AppData')
@@ -41,6 +56,7 @@ export class NumbersComponent implements OnInit {
         this.manageRemoteService.getUserNumbers();
     }
 
+    private tableData: any;
     private isEditorOpen: boolean;
 
     private headerData: DynamicComponentData = {
@@ -63,7 +79,6 @@ export class NumbersComponent implements OnInit {
         ]
     };
 
-    private tableData:any;
 
     private editorData = {
         component: DDTEditCreateNumberComponent,
@@ -75,8 +90,30 @@ export class NumbersComponent implements OnInit {
 
         if (!!button) {
             if (button.id == 1) {
-                this.manageActionCreator.openAddNumber();
+                this.manageActionCreator.addNumber();
             }
+        }
+    }
+
+    onTableRowActionListener(item: RowActionEvent) {
+        if(!!item){
+            switch (item.action.id){
+                case ROW_SELECTED : {
+                    this.manageActionCreator.editNumber(item.rowData);
+                    break;
+                }
+
+                case ROW_EDIT_ACTION :{
+                    this.manageActionCreator.editNumber(item.rowData);
+                    break;
+                }
+
+                case ROW_DELETE_ACTION :{
+                    this.manageRemoteService.deleteNumber(item.rowData);
+                    break;
+                }
+            }
+
         }
     }
 

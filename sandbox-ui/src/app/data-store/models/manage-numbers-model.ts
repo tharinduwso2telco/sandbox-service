@@ -1,15 +1,17 @@
-export class NumberButtons{
-    id:number;
-    name :string;
-    icon:string;
+export class NumberButtons {
+    id: number;
+    name: string;
+    icon: string;
 }
 
 export class UserNumber {
-    number: string;
-    mnc: number;
-    balance: number;
-    reserved_amount: number;
-    imsi: number;
-    description: string;
-    status: number;
+    id:number=0;
+    number: string = '';
+    numberBalance: number = 0;
+    reservedAmount: number = 0
+    description: string = '';
+    status: number = 0;
+    mcc: number = 0;
+    mnc: number = 0;
+    imsi: string = '';
 }

@@ -1,5 +1,9 @@
-import {Component, OnInit, Input, Injector} from '@angular/core';
+import {Component, OnInit, Input, Injector, Output, EventEmitter} from '@angular/core';
 import {UserNumber} from "../../../data-store/models/manage-numbers-model";
+import {
+    RowAction, RowActionEvent, ROW_EDIT_ACTION,
+    ROW_DELETE_ACTION
+} from "../../../data-store/models/responsive-table-models";
 
 
 @Component({
@@ -10,16 +14,35 @@ import {UserNumber} from "../../../data-store/models/manage-numbers-model";
 export class DynamicDataTableDefaultTableComponent implements OnInit {
 
     @Input()
-    private tableDataSource:UserNumber[];
+    private tableDataSource: UserNumber[];
 
     @Input()
-    private fieldNames:string[];
+    private fieldNames: string[];
 
-    constructor(private injector:Injector) {
+    @Output()
+    private onTableRowAction:EventEmitter<RowActionEvent> = new EventEmitter();
+
+    private rowDataActions:RowAction[] = [
+        {
+            id: ROW_EDIT_ACTION,
+            name: 'Edit',
+            icon: 'border_color',
+            class: 'row-edit'
+        },
+        {
+            id: ROW_DELETE_ACTION,
+            name: 'Delete',
+            icon: 'delete',
+            class: 'row-del'
+        }
+        ];
+
+    constructor(private injector: Injector) {
     }
 
     ngOnInit() {
         this.tableDataSource = this.injector.get('tableDataSource');
         this.fieldNames = this.injector.get('fieldNames');
     }
+
 }
