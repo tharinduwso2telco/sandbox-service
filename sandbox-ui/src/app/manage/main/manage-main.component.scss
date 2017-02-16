@@ -6,10 +6,24 @@
   display: block;
 }
 
+.icon-container{
+  padding-bottom:20px;
+}
+
 .icon-grp {
   min-height: 100px;
+  min-width: 100px;
   cursor: pointer;
   padding: 20px;
+  border: solid 1px $gray_3;
+
+  &.numbers{
+    background-color: #f1f3f5;
+  }
+
+  &.addresses{
+    background-color: #f1f3f5;
+  }
 
   i, span {
     display: inline-block;
@@ -20,13 +34,12 @@
 
   i {
     font-size: 5em;
-    color: $gray_6;
+    color: $primary-color_main;
   }
 
   span{
-    color: $gray_8;
+    color: $gray_7;
     font-size: 1.2em;
-    color: $gray_6;
     font-weight: 600;
   }
 
@@ -35,8 +48,12 @@
   &:hover{
     box-shadow: 0px 2px 10px 0px $gray_3;
 
-    i,span{
-      color: $gray_8;
+    i{
+      color: $primary-color_dark;
+    }
+
+    span{
+      color: $gray_9;
     }
   }
 }

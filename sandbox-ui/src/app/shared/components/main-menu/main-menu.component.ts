@@ -25,8 +25,9 @@ export class MainMenuComponent implements OnInit {
     private menuSource: MenuItem[] = [
         {id: 1, route: '/home', name: 'Home', iconName: 'home'},
         {id: 2, route: '/manage', name: 'Manage', iconName: 'verified_user'},
-        {id: 3, route: '/resources', name: 'Resources', iconName: 'local_atm'},
-        {id: 4, route: '/log', name: 'Logs', iconName: 'history'}
+        {id: 3, route: '/api', name: 'Api', iconName: 'extension'},
+        {id: 4, route: '/resources', name: 'Resources', iconName: 'local_atm'},
+        {id: 5, route: '/log', name: 'Logs', iconName: 'history'}
     ];
 
     constructor(private store: Store<IAppState>,

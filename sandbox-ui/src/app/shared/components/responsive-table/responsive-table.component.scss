@@ -51,6 +51,10 @@
           display: block;
           line-height: initial;
         }
+
+        &:first-child{
+          padding-left: 50px;
+        }
       }
 
       &.selected-row {
@@ -75,7 +79,7 @@
             display: inline-block;
             width: 50px;
             color: $gray_1;
-            margin: 0px 2px;
+            margin: 0px 1px;
             text-align: center;
             line-height: $responsive_row_height;
             height: $responsive_row_height;
@@ -84,10 +88,11 @@
           }
         }
 
-        @include transition(all 0.2s ease-in);
+        @include transition(all 0.4s 0.2s ease-in);
       }
 
-      &:hover {
+      &:not(.header):hover {
+        background-color: $tbl-row-hover-color;
         .action-container {
           opacity: 1;
         }
