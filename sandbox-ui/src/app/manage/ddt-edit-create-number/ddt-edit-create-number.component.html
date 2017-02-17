@@ -7,7 +7,7 @@
         </span>
     </div>
 
-    <form novalidate (ngSubmit)="onFormSubmit()" #numberForm="ngForm">
+   <!-- <form novalidate (ngSubmit)="onFormSubmit()" #numberForm="ngForm">
         <div class="form-group">
             <label for="idNumber">Number</label>
             <input type="text"
@@ -38,6 +38,11 @@
         </div>
 
         <button type="submit" class="btn btn-primary">Add</button>
-    </form>
+    </form>-->
+
+
+
+    <dynamic-form
+    [formItems]="formDataModel"></dynamic-form>
 
 </div>

@@ -3,21 +3,21 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { DebugElement } from '@angular/core';
 
-import { DDTEditCreateNumberComponent } from './ddt-edit-create-number.component';
+import { DynamicFormElementComponent } from './dynamic-form-element.component';
 
-describe('DdtEditCreateNumberComponent', () => {
-  let component: DDTEditCreateNumberComponent;
-  let fixture: ComponentFixture<DDTEditCreateNumberComponent>;
+describe('DynamicFormElementComponent', () => {
+  let component: DynamicFormElementComponent;
+  let fixture: ComponentFixture<DynamicFormElementComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ DDTEditCreateNumberComponent ]
+      declarations: [ DynamicFormElementComponent ]
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(DDTEditCreateNumberComponent);
+    fixture = TestBed.createComponent(DynamicFormElementComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

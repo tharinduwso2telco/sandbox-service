@@ -8,7 +8,7 @@ import {MainMenuComponent} from "./components/main-menu/main-menu.component";
 import {BreadcrumbsComponent} from "./components/breadcrumbs/breadcrumbs.component";
 import {ToastyModule} from "ng2-toasty";
 import {SlimLoadingBarModule} from "ng2-slim-loading-bar";
-import {FormsModule} from "@angular/forms";
+import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {HttpModule} from "@angular/http";
 import {MessageService} from "./services/message.service";
 import {ResponsiveTableComponent} from "./components/responsive-table/responsive-table.component";
@@ -17,11 +17,15 @@ import { DynamicDataTableDefaultHeaderComponent } from './components/dynamic-dat
 import { DynamicDataTableDefaultEditorComponent } from './components/dynamic-data-table-default-editor/dynamic-data-table-default-editor.component';
 import { DynamicDataTableDefaultTableComponent } from './components/dynamic-data-table-default-table/dynamic-data-table-default-table.component';
 import {ResponsiveTableHelperService} from "./services/responsive-table-helper.service";
+import {FormGeneratorService} from "./services/form-generator.service";
+import { DynamicFormComponent } from './components/dynamic-form/dynamic-form.component';
+import { DynamicFormElementComponent } from './components/dynamic-form-element/dynamic-form-element.component';
 
 @NgModule({
     imports: [
         CommonModule,
         FormsModule,
+        ReactiveFormsModule,
         HttpModule,
         DropdownModule.forRoot(),
         ToastyModule.forRoot(),
@@ -37,11 +41,14 @@ import {ResponsiveTableHelperService} from "./services/responsive-table-helper.s
         DynamicDataTableComponent,
         DynamicDataTableDefaultHeaderComponent,
         DynamicDataTableDefaultEditorComponent,
-        DynamicDataTableDefaultTableComponent
+        DynamicDataTableDefaultTableComponent,
+        DynamicFormComponent,
+        DynamicFormElementComponent
     ],
     providers : [
         MessageService,
-        ResponsiveTableHelperService
+        ResponsiveTableHelperService,
+        FormGeneratorService
     ],
     exports: [
         FormsModule,
@@ -58,7 +65,9 @@ import {ResponsiveTableHelperService} from "./services/responsive-table-helper.s
         DynamicDataTableComponent,
         DynamicDataTableDefaultHeaderComponent,
         DynamicDataTableDefaultEditorComponent,
-        DynamicDataTableDefaultTableComponent
+        DynamicDataTableDefaultTableComponent,
+        DynamicFormComponent,
+        DynamicFormElementComponent
     ]
 })
 export class SharedModule {
