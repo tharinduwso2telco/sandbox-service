@@ -1,0 +1,11 @@
+<div class="row animated fadeInUp">
+
+    <div class="col-sm-3 text-center icon-container" *ngFor="let service of serviceTypes">
+
+        <div class="icon-grp numbers" (click)="onServiceClick(service)" >
+            <i class="material-icons"></i>
+            <span>{{service}}</span>
+        </div>
+
+    </div>
+</div>

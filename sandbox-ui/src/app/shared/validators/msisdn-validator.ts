@@ -2,7 +2,7 @@ import {ValidatorFn, AbstractControl} from "@angular/forms";
 
 
 export function MsisdnValidator():ValidatorFn{
-    let msisdnRegex:RegExp = new RegExp(/^(\d)[0-9]{9}$/);
+    let msisdnRegex:RegExp = new RegExp(/^(\d)[0-9]{10}$/);
 
     return (control: AbstractControl): {[key: string]: any} => {
         const fieldVal = control.value;

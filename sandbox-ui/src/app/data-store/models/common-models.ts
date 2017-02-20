@@ -25,10 +25,17 @@ export interface IManageNumberState {
     }
 }
 
+export interface IApiState{
+    apiTypes : string[],
+    selectedApiType : string,
+    serviceTypes : string[]
+}
+
 export interface IAppState {
     userInfo: IUserInfo,
     appSettings: IApplicationData,
-    manageNumbers: IManageNumberState
+    manageNumbers: IManageNumberState,
+    apiState:IApiState
 }
 
 export interface DynamicComponentData {

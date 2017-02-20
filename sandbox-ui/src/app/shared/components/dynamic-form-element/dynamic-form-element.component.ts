@@ -1,4 +1,4 @@
-import {Component, OnInit, Input} from '@angular/core';
+import {Component, OnInit, Input, OnChanges, SimpleChanges} from '@angular/core';
 import {FormGroup} from "@angular/forms";
 
 @Component({
@@ -6,18 +6,16 @@ import {FormGroup} from "@angular/forms";
     templateUrl: './dynamic-form-element.component.html',
     styleUrls: ['./dynamic-form-element.component.scss']
 })
-export class DynamicFormElementComponent implements OnInit {
+export class DynamicFormElementComponent {
 
     @Input()
-    private elementData:any;
+    private elementData: any;
 
     @Input()
-    private form:FormGroup;
+    private form: FormGroup;
 
     constructor() {
     }
 
-    ngOnInit() {
-    }
 
 }

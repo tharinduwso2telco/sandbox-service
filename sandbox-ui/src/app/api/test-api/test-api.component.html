@@ -1,0 +1,18 @@
+<div class="animated fadeInUp">
+
+    <div class="form-container">
+        <dynamic-form
+                formLayoutGridStyle="col-sm-4"
+                [formItems]="formDataModel"
+                (onFormSubmit)="onFormSubmit($event)"></dynamic-form>
+    </div>
+
+    <div class="table-container">
+        <responsive-table
+                [dataSource]="tableDataSource"
+                [fieldSet]="fieldNames"
+                [rowActions]="rowDataActions"
+                (onRowAction)="onTableRowAction.emit($event)"></responsive-table>
+    </div>
+
+</div>

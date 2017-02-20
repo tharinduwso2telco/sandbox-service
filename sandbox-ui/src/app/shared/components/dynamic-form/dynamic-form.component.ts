@@ -13,6 +13,9 @@ export class DynamicFormComponent implements OnInit,OnChanges {
     @Input()
     private formItems: FormItemBase<any>[];
 
+    @Input()
+    private formLayoutGridStyle:string = ''
+
     @Output()
     private onFormSubmit:EventEmitter<any> = new EventEmitter();
 

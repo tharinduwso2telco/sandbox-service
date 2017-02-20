@@ -1,3 +1,11 @@
-<p>
-  main works!
-</p>
+<div class="row animated fadeInUp">
+
+    <div class="col-sm-3 text-center icon-container" *ngFor="let api of apiTypes">
+
+        <div class="icon-grp numbers" (click)="onIconClick(api)" >
+            <i class="material-icons">{{apiIconMap[api|lowercase] || 'settings'}}</i>
+            <span>{{api}}</span>
+        </div>
+
+    </div>
+</div>

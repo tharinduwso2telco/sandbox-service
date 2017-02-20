@@ -52,6 +52,7 @@ export class DDTEditCreateNumberComponent implements OnInit {
                 label: 'Number',
                 order: 1,
                 value: selectedNumber ? (selectedNumber.number || '') : '',
+                required : true,
                 validators: [
                     Validators.required,
                     MsisdnValidator()

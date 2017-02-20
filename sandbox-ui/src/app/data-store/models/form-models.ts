@@ -11,6 +11,7 @@ export class FormItemBase<T> {
     key: string;
     value: T;
     label: string;
+    required : boolean
     validators: any[];
     order: number;
     type: string;
@@ -22,6 +23,7 @@ export class FormItemBase<T> {
         key?: string,
         value?: T,
         label?: string,
+        required?:boolean,
         validators?: any[],
         order?: number
     }) {
@@ -30,6 +32,7 @@ export class FormItemBase<T> {
         this.key = options.key;
         this.value = options.value;
         this.label = options.label;
+        this.required = options.required;
         this.validators = options.validators;
         this.order = options.order;
         this.type = options.type;

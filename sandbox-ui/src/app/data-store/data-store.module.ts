@@ -10,14 +10,18 @@ import {ApplicationActionCreatorService} from "./actions/application-action-crea
 import {ManageActionCreatorService} from "./actions/manage-action-creator.service";
 import {ManageNumberReducer} from "./reducers/manage-numbers-reducer";
 import {ManageRemoteService} from "./services/manage-remote.service";
+import {ApiReducer} from "./reducers/api-reducer";
+import {ApiRemoteService} from "./services/api-remote-service";
+import {ApiActionCreatorService} from "./actions/api-action-creator.service";
 
 @NgModule({
     imports: [
         CommonModule,
         StoreModule.provideStore({
             AuthData: AuthenticationReducer,
-            AppData : AppReducer,
-            ManageNumber:ManageNumberReducer
+            AppData: AppReducer,
+            ApiData: ApiReducer,
+            ManageNumber: ManageNumberReducer
         }),
         StoreDevtoolsModule.instrumentOnlyWithExtension({
             maxAge: 5
@@ -28,6 +32,8 @@ import {ManageRemoteService} from "./services/manage-remote.service";
         ApplicationActionCreatorService,
         ManageActionCreatorService,
         AuthenticationRemoteService,
+        ApiRemoteService,
+        ApiActionCreatorService,
         ManageRemoteService
     ],
     declarations: [],
