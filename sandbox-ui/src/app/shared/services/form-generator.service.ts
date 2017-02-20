@@ -11,10 +11,9 @@ export class FormGeneratorService {
     getForm(formItems: FormItemBase<any>[]) {
         let group = {};
         formItems.forEach((item: FormItemBase<any>) => {
-            group[item.key] = item.required ? new FormControl(item.value || '', Validators.required) : new FormControl(item.value || '');
+            group[item.key] = item.validators ? new FormControl(item.value || '', item.validators) : new FormControl(item.value || '');
         });
 
         return new FormGroup(group);
     }
-
 }

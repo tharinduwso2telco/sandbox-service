@@ -11,7 +11,7 @@ export class FormItemBase<T> {
     key: string;
     value: T;
     label: string;
-    required: boolean;
+    validators: any[];
     order: number;
     type: string;
 
@@ -22,7 +22,7 @@ export class FormItemBase<T> {
         key?: string,
         value?: T,
         label?: string,
-        required?: boolean,
+        validators?: any[],
         order?: number
     }) {
 
@@ -30,7 +30,7 @@ export class FormItemBase<T> {
         this.key = options.key;
         this.value = options.value;
         this.label = options.label;
-        this.required = options.required;
+        this.validators = options.validators;
         this.order = options.order;
         this.type = options.type;
 
@@ -48,5 +48,16 @@ export class TextInputFormItem extends FormItemBase<string> {
         this.type = options['type'] || 'text';
     }
 }
+
+export class TextAreaFormItem extends FormItemBase<string> {
+
+    formControlType = FORM_CONTROL_TYPES.TEXT_AREA;
+
+    constructor(options: {} = {}) {
+        super(options);
+    }
+}
+
+
 
 

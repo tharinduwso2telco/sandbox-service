@@ -9,10 +9,22 @@
                [id]="elementData?.key"
                [type]="elementData?.type"
                [placeholder]="elementData?.label">
+
+        <textarea class="form-control"
+                  *ngSwitchCase="'TEXT_AREA'"
+                  [formControlName]="elementData?.key"
+                  [id]="elementData?.key"
+                  [placeholder]="elementData?.label"></textarea>
     </div>
 
     <div class="errorMessage text-right"
          *ngIf="(form.controls[elementData?.key].touched || form.controls[elementData?.key].dirty)  &&
-    form.controls[elementData?.key].hasError('required')">{{elementData.label}} is required
+         form.controls[elementData?.key].hasError('required')">{{elementData.label}} is required
     </div>
+
+    <div class="errorMessage text-right"
+         *ngIf="(!form.controls[elementData?.key].hasError('required') && (form.controls[elementData?.key].touched || form.controls[elementData?.key].dirty)  &&
+    form.controls[elementData?.key].hasError('invalid_Format'))">Invalid number format
+    </div>
+
 </div>

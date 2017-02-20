@@ -1,4 +1,4 @@
-import {Component, OnInit, Input} from '@angular/core';
+import {Component, OnInit, Input, Output, EventEmitter, OnChanges, SimpleChanges} from '@angular/core';
 import {FormItemBase} from "../../../data-store/models/form-models";
 import {FormGroup} from "@angular/forms";
 import {FormGeneratorService} from "../../services/form-generator.service";
@@ -8,10 +8,13 @@ import {FormGeneratorService} from "../../services/form-generator.service";
     templateUrl: './dynamic-form.component.html',
     styleUrls: ['./dynamic-form.component.scss']
 })
-export class DynamicFormComponent implements OnInit {
+export class DynamicFormComponent implements OnInit,OnChanges {
 
     @Input()
     private formItems: FormItemBase<any>[];
+
+    @Output()
+    private onFormSubmit:EventEmitter<any> = new EventEmitter();
 
     private dynamicForm: FormGroup;
 
@@ -19,11 +22,12 @@ export class DynamicFormComponent implements OnInit {
     }
 
     ngOnInit() {
+       // this.dynamicForm = this.formService.getForm(this.formItems);
+    }
+
+    ngOnChanges(changes: SimpleChanges): void {
         this.dynamicForm = this.formService.getForm(this.formItems);
     }
 
-    onFormSubmit() {
-        alert(JSON.stringify(this.dynamicForm.value));
-    }
 
 }

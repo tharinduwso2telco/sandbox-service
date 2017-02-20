@@ -4,7 +4,13 @@ import {Store} from "@ngrx/store";
 import {UserNumber} from "../../data-store/models/manage-numbers-model";
 import {ManageRemoteService} from "../../data-store/services/manage-remote.service";
 import {ManageActionCreatorService} from "../../data-store/actions/manage-action-creator.service";
-import {FormItemBase, TextInputFormItem,FORM_CONTROL_TYPES} from "../../data-store/models/form-models";
+import {
+    FormItemBase, TextInputFormItem, FORM_CONTROL_TYPES,
+    TextAreaFormItem
+} from "../../data-store/models/form-models";
+import {FormGroup, Validators} from "@angular/forms";
+import {MsisdnValidator} from "../../shared/validators/msisdn-validator";
+import {RegexValidator} from "../../shared/validators/regex-validator";
 
 @Component({
     selector: 'ddt-edit-create-number',
@@ -13,56 +19,74 @@ import {FormItemBase, TextInputFormItem,FORM_CONTROL_TYPES} from "../../data-sto
 })
 export class DDTEditCreateNumberComponent implements OnInit {
 
-    private numberModel: UserNumber = new UserNumber();
+    private userNumber: UserNumber;
 
     constructor(private store: Store<IAppState>,
                 private manageActionCreator: ManageActionCreatorService,
                 private manageRemoteService: ManageRemoteService) {
     }
 
-    private formDataModel: FormItemBase<any>[] = [
-        new TextInputFormItem({
-            key: 'number',
-            label: 'Number',
-            order: 1,
-            required: true
-        }),
-        new TextInputFormItem({
-            key: 'balance',
-            label: 'Balance',
-            order: 2
-        }),
-        new TextInputFormItem(
-            {
-                key: 'reserveAmount',
-                label: 'Reserved Amount',
-                order: 3
-            }
-        ),
-        new TextInputFormItem(
-            {
-                formControlType: FORM_CONTROL_TYPES.TEXT_AREA,
-                key: 'description',
-                type: 'text',
-                label: 'Description',
-                order: 4
-            }
-        )
-    ];
+    private formDataModel: FormItemBase<any>[];
 
     ngOnInit() {
         this.store.select('ManageNumber')
             .subscribe((manNumberState: IManageNumberState) => {
-                this.numberModel = manNumberState.selectedNumber;
+                this.userNumber = manNumberState.selectedNumber;
+                this.formDataModel = this.getFormDataModel(this.userNumber);
             })
     }
 
-    onFormSubmit() {
-        this.manageRemoteService.addUserNumber(this.numberModel);
+    onFormSubmit(formVal: any) {
+        let tmpNumber = Object.assign({},this.userNumber,formVal);
+        this.manageRemoteService.addUserNumber(tmpNumber);
     }
 
     onClose() {
         this.manageActionCreator.closeEditorPanel();
+    }
+
+    private getFormDataModel(selectedNumber: UserNumber) {
+        return [
+            new TextInputFormItem({
+                key: 'number',
+                label: 'Number',
+                order: 1,
+                value: selectedNumber ? (selectedNumber.number || '') : '',
+                validators: [
+                    Validators.required,
+                    MsisdnValidator()
+                ]
+            }),
+            new TextInputFormItem({
+                key: 'numberBalance',
+                label: 'Balance',
+                value: selectedNumber ? (selectedNumber.numberBalance || '') : '',
+                validators : [
+                    RegexValidator(/^$|[0-9]/)
+                ],
+                order: 2
+            }),
+            new TextInputFormItem(
+                {
+                    key: 'reservedAmount',
+                    label: 'Reserved Amount',
+                    value: selectedNumber ? (selectedNumber.reservedAmount || '') : '',
+                    order: 3,
+                    validators : [
+                        RegexValidator(/^$|[0-9]/)
+                    ],
+                }
+            ),
+            new TextAreaFormItem(
+                {
+                    key: 'description',
+                    type: 'text',
+                    value: selectedNumber ? (selectedNumber.description || '') : '',
+                    label: 'Description',
+                    order: 4
+                }
+            )
+        ];
     }
 
 }

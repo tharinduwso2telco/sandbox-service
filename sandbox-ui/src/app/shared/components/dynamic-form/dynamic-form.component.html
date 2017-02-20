@@ -1,11 +1,11 @@
 <div>
-    <form   (ngSubmit)="onFormSubmit()"
-            [formGroup]="dynamicForm">
+    <form (ngSubmit)="onFormSubmit.emit(dynamicForm.value)"
+          [formGroup]="dynamicForm">
 
         <dynamic-form-element *ngFor="let item of formItems"
-                [elementData]="item"
-                [form]="dynamicForm"></dynamic-form-element>
+                              [elementData]="item"
+                              [form]="dynamicForm"></dynamic-form-element>
 
-        <button type="submit" class="btn btn-primary"  [disabled]="!dynamicForm.valid">Add</button>
+        <button type="submit" class="btn btn-primary" [disabled]="!dynamicForm.valid">Add</button>
     </form>
 </div>
