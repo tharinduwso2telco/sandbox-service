@@ -32,6 +32,14 @@ import {DynamicDataTableDefaultEditorComponent} from "./shared/components/dynami
             useValue : '/sandbox'
         },
         {
+            provide : 'SWAGGER_BASE_URL',
+            useValue : '/api-docs'
+        },
+        {
+            provide : 'SWAGGER_PROXY_PATTERN',
+            useValue : '/swagger'
+        },
+        {
             provide : 'APP_CONSTANT',
             useValue : {
                 appName : 'Sandbox'

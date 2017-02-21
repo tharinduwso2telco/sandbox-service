@@ -17,14 +17,15 @@
                   [placeholder]="elementData?.label"></textarea>
     </div>
 
-    <div class="errorMessage text-right"
-         *ngIf="(form.controls[elementData?.key].touched || form.controls[elementData?.key].dirty)  &&
-         form.controls[elementData?.key].hasError('required')">{{elementData.label}} is required
-    </div>
+    <div class="errorMessage">
 
-    <div class="errorMessage text-right"
-         *ngIf="(!form.controls[elementData?.key].hasError('required') && (form.controls[elementData?.key].touched || form.controls[elementData?.key].dirty)  &&
-    form.controls[elementData?.key].hasError('invalid_Format'))">Invalid number format
+        <span *ngIf="(form.controls[elementData?.key].touched || form.controls[elementData?.key].dirty)  &&
+         form.controls[elementData?.key].hasError('required')">{{elementData.label}} is required</span>
+
+        <span *ngIf="(!form.controls[elementData?.key].hasError('required') &&
+        (form.controls[elementData?.key].touched || form.controls[elementData?.key].dirty)  &&
+        form.controls[elementData?.key].hasError('invalid_Format'))">Invalid number format</span>
+
     </div>
 
 </div>

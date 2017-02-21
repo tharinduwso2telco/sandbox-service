@@ -1,6 +1,13 @@
 @import "../../../../styles/colors";
 
+.form-group{
+  position: relative;
+  margin-bottom: 20px;
+}
+
 .errorMessage{
+  position: absolute;
+  right: 0;
   color: $gray_6;
   font-size: 0.9em;
   padding: 4px 0px;

@@ -1,18 +1,13 @@
 import {Injectable} from '@angular/core';
-import {IAppState} from "../data-store/models/common-models";
+import {IAppState, IApiState, ApiCategory} from "../data-store/models/common-models";
 import {Store} from "@ngrx/store";
+import {ApiRemoteService} from "../data-store/services/api-remote-service";
 
 @Injectable()
 export class ApiHelperService {
 
-    private apiValidChildRoutes = ['wallet'];
+    constructor(private store: Store<IAppState>,
+                ) {
 
-    constructor() {
-
-    }
-
-    isValidChildRoute(route) {
-        //TODO Find a better mechanism to find valid child routes
-        return this.apiValidChildRoutes.indexOf(route) >= 0;
     }
 }

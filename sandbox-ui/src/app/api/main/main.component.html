@@ -3,8 +3,8 @@
     <div class="col-sm-3 text-center icon-container" *ngFor="let api of apiTypes">
 
         <div class="icon-grp numbers" (click)="onIconClick(api)" >
-            <i class="material-icons">{{apiIconMap[api|lowercase] || 'settings'}}</i>
-            <span>{{api}}</span>
+            <i class="material-icons">{{api.iconClass || 'settings'}}</i>
+            <span>{{api.displayName || api.name}}</span>
         </div>
 
     </div>

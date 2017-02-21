@@ -25,10 +25,28 @@ export interface IManageNumberState {
     }
 }
 
+export interface ApiInfo{
+    description : string;
+    path : string;
+}
+
+export interface ApiCategory{
+    name:string;
+    displayName?:string,
+    iconClass?:string;
+    apis : ApiInfo[];
+}
+
+export interface ServiceTypeCategory{
+    name : string,
+    endPoints : any[]
+}
+
 export interface IApiState{
-    apiTypes : string[],
-    selectedApiType : string,
-    serviceTypes : string[]
+    apiTypes : ApiCategory[],
+    selectedApiType : ApiCategory,
+    serviceTypes : ServiceTypeCategory[],
+    apiRequestModels : any
 }
 
 export interface IAppState {

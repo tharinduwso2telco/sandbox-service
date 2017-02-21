@@ -1,7 +1,8 @@
 import {Component, OnInit} from '@angular/core';
 import {Router, ActivatedRoute} from "@angular/router";
-import {IAppState, IApiState} from "../../data-store/models/common-models";
+import {IAppState, IApiState, ServiceTypeCategory} from "../../data-store/models/common-models";
 import {Store} from "@ngrx/store";
+import {ApiRemoteService} from "../../data-store/services/api-remote-service";
 
 @Component({
     selector: 'api-type',
@@ -10,12 +11,13 @@ import {Store} from "@ngrx/store";
 })
 export class ApiTypeComponent implements OnInit {
 
-    private serviceTypes: string[];
+    private serviceTypes: ServiceTypeCategory[];
 
-    private apiType:string;
+    private apiType: string;
 
     constructor(private store: Store<IAppState>,
                 private router: Router,
+                private apiRemoteService: ApiRemoteService,
                 private activatedRoute: ActivatedRoute) {
     }
 
@@ -24,14 +26,9 @@ export class ApiTypeComponent implements OnInit {
             .subscribe((apiState: IApiState) => {
                 this.serviceTypes = apiState.serviceTypes;
             });
-
-        this.activatedRoute.params.subscribe((param:any)=>{
-            this.apiType = param.apiType;
-        });
-
     }
 
     onServiceClick(service) {
-        this.router.navigate([service], {relativeTo: this.activatedRoute});
+         this.router.navigate([service.name], {relativeTo: this.activatedRoute});
     }
 }

@@ -6,6 +6,9 @@
                               [elementData]="item"
                               [form]="dynamicForm"></dynamic-form-element>
 
-        <button type="submit" class="btn btn-primary" [disabled]="!dynamicForm.valid">Add</button>
+        <div class="form-group col-sm-12">
+            <button type="submit" class="btn btn-primary" [disabled]="!dynamicForm.valid">Add</button>
+        </div>
+
     </form>
 </div>

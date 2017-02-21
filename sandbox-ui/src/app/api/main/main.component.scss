@@ -33,6 +33,7 @@
     color: $gray_7;
     font-size: 1.2em;
     font-weight: 600;
+    text-transform: capitalize;
   }
 
   @include transition(all 0.3s ease-in);

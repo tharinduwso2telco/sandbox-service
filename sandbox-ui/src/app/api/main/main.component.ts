@@ -1,6 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {ApiRemoteService} from "../../data-store/services/api-remote-service";
-import {IAppState, IApiState} from "../../data-store/models/common-models";
+import {IAppState, IApiState, ApiCategory} from "../../data-store/models/common-models";
 import {Store} from "@ngrx/store";
 import {Router, ActivatedRoute} from "@angular/router";
 import {ApiActionCreatorService} from "../../data-store/actions/api-action-creator.service";
@@ -12,7 +12,7 @@ import {ApiActionCreatorService} from "../../data-store/actions/api-action-creat
 })
 export class ApiMainComponent implements OnInit {
 
-    private apiTypes: string[];
+    private apiTypes: ApiCategory[];
 
     private apiIconMap = {
         location: 'location_on',
@@ -39,14 +39,14 @@ export class ApiMainComponent implements OnInit {
                 this.apiTypes = apiData.apiTypes;
             });
 
-        this.apiService.getApiTypes();
+        this.apiService.getApiTypesSwagger();
     }
 
-    onIconClick(type) {
+    onIconClick(type:ApiCategory) {
         if (!!type) {
             this.actionCreator.setSelectedApiType(type);
-            this.apiService.getApiServiceTypes(type);
-            this.router.navigate([type.toLocaleLowerCase()], {relativeTo: this.activatedRoute});
+            this.apiService.getApiServiceTypesSwagger(type);
+            this.router.navigate([type.name], {relativeTo: this.activatedRoute});
         }
     }
 }

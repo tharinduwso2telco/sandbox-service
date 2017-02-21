@@ -1,0 +1,33 @@
+{
+  "customerinfo": {
+    "displayName": "Customer Information",
+    "iconClass": "info_outline"
+  },
+  "provisioning": {
+    "iconClass": "cloud_upload"
+  },
+  "location": {
+    "iconClass": "location_on"
+  },
+  "sms": {
+    "iconClass": "textsms"
+  },
+  "payment": {
+    "iconClass": "attach_money"
+  },
+  "ussd": {
+    "iconClass": "code"
+  },
+  "credit": {
+    "iconClass": "credit_card"
+  },
+  "wallet": {
+    "iconClass": "account_balance_wallet"
+  },
+  "customer": {
+    "iconClass": "local_library"
+  },
+  "user": {
+    "iconClass": "rowing"
+  }
+}
