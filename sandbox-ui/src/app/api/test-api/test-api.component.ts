@@ -4,6 +4,7 @@ import {Validators} from "@angular/forms";
 import {MsisdnValidator} from "../../shared/validators/msisdn-validator";
 import {Store} from "@ngrx/store";
 import {IAppState, IApiState, Api} from "../../data-store/models/common-models";
+import {ApiHelperService} from "../api-helper.service";
 
 
 @Component({
@@ -14,24 +15,26 @@ import {IAppState, IApiState, Api} from "../../data-store/models/common-models";
 export class TestApiComponent implements OnInit {
 
     private formDataModel: FormItemBase<any>[];
-    private selectedApi:Api;
+    private selectedApi: Api;
 
-    constructor(private stote: Store<IAppState>) {
-        this.stote.select('ApiData')
-            .subscribe((apiData: IApiState) => {
-                this.selectedApi = apiData.selectedApi;
-            });
+    constructor(private store: Store<IAppState>,
+                private apiHelper: ApiHelperService) {
     }
 
     ngOnInit() {
-        this.formDataModel = this.getFormDataModel()
+        this.store.select('ApiData')
+            .subscribe((apiData: IApiState) => {
+                this.selectedApi = apiData.selectedApi;
+                this.formDataModel = this.apiHelper.getFormModelForApi(this.selectedApi);
+            });
     }
 
     onFormSubmit(formVal) {
         alert(formVal)
     }
 
-    private getFormDataModel() {
+    private
+    getFormDataModel() {
         return [
             new TextInputFormItem({
                 key: 'endUserId',
