@@ -42,11 +42,29 @@ export interface ServiceTypeCategory{
     endPoints : any[]
 }
 
+export interface Operation{
+    method:string;
+    summary : string;
+    notes :string;
+    type :string;
+    nickname:string;
+    parameters : any[]
+
+}
+
+export interface Api{
+    name : string,
+    displayName:string,
+    path : string;
+    operations : Operation[];
+}
+
 export interface IApiState{
     apiTypes : ApiCategory[],
     selectedApiType : ApiCategory,
     serviceTypes : ServiceTypeCategory[],
-    apiRequestModels : any
+    apiRequestModels : any,
+    selectedApi:Api;
 }
 
 export interface IAppState {

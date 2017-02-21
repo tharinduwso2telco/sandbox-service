@@ -1,7 +1,10 @@
 import {Injectable} from '@angular/core';
-import {IAppState, ApiCategory, ServiceTypeCategory} from "../models/common-models";
+import {IAppState, ApiCategory, ServiceTypeCategory, Api} from "../models/common-models";
 import {Store} from "@ngrx/store";
-import {SET_API_TYPES, SET_SELECTED_API_TYPE, SET_SERVICE_TYPES, UPDATE_API_REQ_MODELS} from "../reducers/api-reducer";
+import {
+    SET_API_TYPES, SET_SELECTED_API_TYPE, SET_SERVICE_TYPES, UPDATE_API_REQ_MODELS,
+    SET_SELECTED_API
+} from "../reducers/api-reducer";
 
 @Injectable()
 export class ApiActionCreatorService {
@@ -34,6 +37,13 @@ export class ApiActionCreatorService {
         this.store.dispatch({
             type : UPDATE_API_REQ_MODELS,
             payload : models
+        });
+    }
+
+    setSelectedApi(api:Api){
+        this.store.dispatch({
+            type : SET_SELECTED_API,
+            payload : api
         });
     }
 

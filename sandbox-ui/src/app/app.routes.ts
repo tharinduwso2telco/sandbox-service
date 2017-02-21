@@ -23,8 +23,8 @@ const routes = [
         canActivate : [AppGuard]
     },
     {
-        path: 'log',
-        loadChildren: 'app/log/log.module#LogModule',
+        path: 'logs',
+        loadChildren: 'app/logs/log.module#LogModule',
         canActivate : [AppGuard]
     },
     {

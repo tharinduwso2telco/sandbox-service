@@ -3,6 +3,7 @@ import {Router, ActivatedRoute} from "@angular/router";
 import {IAppState, IApiState, ServiceTypeCategory} from "../../data-store/models/common-models";
 import {Store} from "@ngrx/store";
 import {ApiRemoteService} from "../../data-store/services/api-remote-service";
+import {ApiActionCreatorService} from "../../data-store/actions/api-action-creator.service";
 
 @Component({
     selector: 'api-type',
@@ -13,11 +14,9 @@ export class ApiTypeComponent implements OnInit {
 
     private serviceTypes: ServiceTypeCategory[];
 
-    private apiType: string;
-
     constructor(private store: Store<IAppState>,
                 private router: Router,
-                private apiRemoteService: ApiRemoteService,
+                private actionCreator:ApiActionCreatorService,
                 private activatedRoute: ActivatedRoute) {
     }
 
@@ -28,7 +27,8 @@ export class ApiTypeComponent implements OnInit {
             });
     }
 
-    onServiceClick(service) {
-         this.router.navigate([service.name], {relativeTo: this.activatedRoute});
+    onServiceClick(apiEndpoint) {
+        this.actionCreator.setSelectedApi(apiEndpoint);
+        this.router.navigate([apiEndpoint.name], {relativeTo: this.activatedRoute});
     }
 }

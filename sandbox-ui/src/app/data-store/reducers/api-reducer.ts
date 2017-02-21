@@ -5,6 +5,7 @@ const initialApiState: IApiState = {
     apiTypes: [],
     selectedApiType : null,
     serviceTypes : [],
+    selectedApi : null,
     apiRequestModels : {}
 };
 
@@ -12,6 +13,7 @@ export const SET_API_TYPES: string = 'SET_API_TYPES';
 export const SET_SELECTED_API_TYPE: string = 'SET_SELECTED_API_TYPE';
 export const SET_SERVICE_TYPES: string = 'SET_SERVICE_TYPES';
 export const UPDATE_API_REQ_MODELS: string = 'UPDATE_API_REQ_MODELS';
+export const SET_SELECTED_API: string = 'SET_SELECTED_API';
 
 export function ApiReducer(apiState: IApiState = initialApiState, action: Action): IApiState {
     switch (action.type) {
@@ -30,6 +32,10 @@ export function ApiReducer(apiState: IApiState = initialApiState, action: Action
 
         case UPDATE_API_REQ_MODELS : {
             return Object.assign({},apiState, Object.assign(apiState.apiRequestModels,action.payload));
+        }
+
+        case SET_SELECTED_API : {
+            return Object.assign({},apiState,{selectedApi:action.payload});
         }
 
         default : {

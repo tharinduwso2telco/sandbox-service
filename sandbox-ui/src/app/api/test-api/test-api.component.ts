@@ -2,6 +2,8 @@ import {Component, OnInit} from '@angular/core';
 import {FormItemBase, TextInputFormItem} from "../../data-store/models/form-models";
 import {Validators} from "@angular/forms";
 import {MsisdnValidator} from "../../shared/validators/msisdn-validator";
+import {Store} from "@ngrx/store";
+import {IAppState, IApiState, Api} from "../../data-store/models/common-models";
 
 
 @Component({
@@ -12,8 +14,13 @@ import {MsisdnValidator} from "../../shared/validators/msisdn-validator";
 export class TestApiComponent implements OnInit {
 
     private formDataModel: FormItemBase<any>[];
+    private selectedApi:Api;
 
-    constructor() {
+    constructor(private stote: Store<IAppState>) {
+        this.stote.select('ApiData')
+            .subscribe((apiData: IApiState) => {
+                this.selectedApi = apiData.selectedApi;
+            });
     }
 
     ngOnInit() {
@@ -31,7 +38,7 @@ export class TestApiComponent implements OnInit {
                 label: 'End User Id',
                 order: 1,
                 value: '',
-                required : true,
+                required: true,
                 validators: [
                     Validators.required,
                     MsisdnValidator()
@@ -41,7 +48,7 @@ export class TestApiComponent implements OnInit {
                 key: 'amount',
                 label: 'Amount',
                 value: '',
-                required : true,
+                required: true,
                 validators: [
                     Validators.required,
                 ],
@@ -51,7 +58,7 @@ export class TestApiComponent implements OnInit {
                 key: 'currency',
                 label: 'Currency',
                 value: '',
-                required : true,
+                required: true,
                 validators: [
                     Validators.required,
                 ],
@@ -61,7 +68,7 @@ export class TestApiComponent implements OnInit {
                 key: 'description',
                 label: 'Description',
                 value: '',
-                required : true,
+                required: true,
                 validators: [
                     Validators.required,
                 ],
@@ -71,7 +78,7 @@ export class TestApiComponent implements OnInit {
                 key: 'referenceCode',
                 label: 'Reference Code',
                 value: '',
-                required : true,
+                required: true,
                 validators: [
                     Validators.required,
                 ],
