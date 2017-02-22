@@ -1,9 +1,9 @@
 import {Injectable} from '@angular/core';
-import {IAppState, ApiCategory, ServiceTypeCategory, Api} from "../models/common-models";
+import {IAppState, ApiCategory, ServiceTypeCategory, Api, DynamicApiCallResult} from "../models/common-models";
 import {Store} from "@ngrx/store";
 import {
     SET_API_TYPES, SET_SELECTED_API_TYPE, SET_SERVICE_TYPES, UPDATE_API_REQ_MODELS,
-    SET_SELECTED_API
+    SET_SELECTED_API, UPDATE_DYNAMIC_API_RESULT
 } from "../reducers/api-reducer";
 
 @Injectable()
@@ -33,17 +33,24 @@ export class ApiActionCreatorService {
         });
     }
 
-    updateApiRequestModels(models:any){
+    updateApiRequestModels(models: any) {
         this.store.dispatch({
-            type : UPDATE_API_REQ_MODELS,
-            payload : models
+            type: UPDATE_API_REQ_MODELS,
+            payload: models
         });
     }
 
-    setSelectedApi(api:Api){
+    setSelectedApi(api: Api) {
         this.store.dispatch({
-            type : SET_SELECTED_API,
-            payload : api
+            type: SET_SELECTED_API,
+            payload: api
+        });
+    }
+
+    setDynamicApiCallResult(apiResult: DynamicApiCallResult) {
+        this.store.dispatch({
+            type: UPDATE_DYNAMIC_API_RESULT,
+            payload: apiResult
         });
     }
 

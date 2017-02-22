@@ -1,10 +1,14 @@
 import {Injectable, Inject} from '@angular/core';
-import {IAppState, IApiState, ApiCategory, Api, Operation, Parameter} from "../data-store/models/common-models";
+import {
+    IAppState, IApiState, ApiCategory, Api, Operation, Parameter,
+    DynamicApiCallResult
+} from "../data-store/models/common-models";
 import {Store} from "@ngrx/store";
 import {ApiRemoteService} from "../data-store/services/api-remote-service";
 import {FormItemBase, TextInputFormItem} from "../data-store/models/form-models";
 import {Validators} from "@angular/forms";
 import {Headers, RequestOptions, Http, Response} from "@angular/http";
+import {ApiActionCreatorService} from "../data-store/actions/api-action-creator.service";
 
 @Injectable()
 export class ApiHelperService {
@@ -14,6 +18,7 @@ export class ApiHelperService {
     constructor(private apiRemoteService: ApiRemoteService,
                 private store: Store<IAppState>,
                 private http: Http,
+                private actionCreator: ApiActionCreatorService,
                 @Inject('SANDBOX_SERVER_PROXY_PATTERN') private sandboxPattern: string) {
 
         this.store.select('ApiData')
@@ -59,10 +64,10 @@ export class ApiHelperService {
             let options: RequestOptions = new RequestOptions({headers: this.getHeaders(formVal, operation)});
 
             if (operation.method == 'GET') {
-                this.http.get(this.sandboxPattern+endPoint, options)
+                this.http.get(this.sandboxPattern + endPoint, options)
                     .map((response: Response) => response.json())
                     .subscribe((result) => {
-                        console.log(result);
+                        this.actionCreator.setDynamicApiCallResult(this.dynamicApiCallAdaptor(api, result, {}));
                     });
             } else if (operation.method == 'POST') {
                 let params = {};
@@ -70,14 +75,30 @@ export class ApiHelperService {
                     .forEach((paramName: string) => {
                         params[paramName] = formVal[paramName] || '';
                     });
-                this.http.post(this.sandboxPattern+endPoint, params, options)
-                    .map((response: Response) => response.json())
+                this.http.post(this.sandboxPattern + endPoint, params, options)
+                    .map((response: Response) => {
+                        try{
+                            return response.json();
+                        }catch(e){
+                            return response.text();
+                        }
+                    })
                     .subscribe((result) => {
-                        console.log(result);
+                        this.actionCreator.setDynamicApiCallResult(this.dynamicApiCallAdaptor(api, result, params));
                     });
 
             }
         }
+    }
+
+    private dynamicApiCallAdaptor(api: Api, result: any, request: any): DynamicApiCallResult {
+        let adapted: DynamicApiCallResult = {
+            api: api,
+            headers: '',
+            response: result,
+            request: request
+        };
+        return adapted;
     }
 
     private getHeaders(formVal: any, operation: Operation) {
@@ -103,13 +124,14 @@ export class ApiHelperService {
                         params.push(param.name);
                     } else {
                         this.getPropertiesFromComplexObject(param.type)
-                            .forEach((obj:any)=>{
+                            .forEach((obj: any) => {
                                 params.push(obj.name);
                             })
                     }
                 });
 
-        };
+        }
+        ;
         return params;
     }
 

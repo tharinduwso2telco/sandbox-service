@@ -67,12 +67,20 @@ export interface Api {
     operations: Operation[];
 }
 
+export interface DynamicApiCallResult{
+    api :Api;
+    response : any;
+    request : any;
+    headers : any;
+}
+
 export interface IApiState {
     apiTypes: ApiCategory[],
     selectedApiType: ApiCategory,
     serviceTypes: ServiceTypeCategory[],
     apiRequestModels: any,
     selectedApi: Api;
+    resultDynamicApiCall: Map<string,DynamicApiCallResult>;
 }
 
 export interface IAppState {
