@@ -1,6 +1,6 @@
 <div>
     <form (ngSubmit)="onFormSubmit.emit(dynamicForm.value)"
-          [formGroup]="dynamicForm">
+          [formGroup]="dynamicForm" *ngIf="formItems?.length > 0">
 
         <dynamic-form-element [ngClass]="formLayoutGridStyle" *ngFor="let item of formItems"
                               [elementData]="item"

@@ -93,6 +93,18 @@ export class ApiRemoteService {
             })
     }
 
+    getNameFromCamelCase(camelCaseStr:string){
+        let name = '';
+        if(!!camelCaseStr){
+            name = camelCaseStr.split(/(?=[A-Z])/).reduce((acc, curr) => {
+                acc += (' ' + curr.charAt(0).toLocaleUpperCase() + curr.substr(1));
+                return acc;
+            }, '');
+
+        }
+        return name;
+    }
+
     getApiServiceTypesSwagger(apiCategory: ApiCategory) {
         if (!!apiCategory) {
             let serviceTypes = [];
@@ -107,13 +119,8 @@ export class ApiRemoteService {
                                 endPoints: (!!result.apis) ? result.apis.map((api: Api) => {
                                         let t: Api = api;
                                         let name = (api.operations && api.operations[0] && api.operations[0].summary && api.operations[0].summary) || '';
-                                        let formatted = name.split(/(?=[A-Z])/).reduce((acc, curr) => {
-                                            acc += (' ' + curr.charAt(0).toLocaleUpperCase() + curr.substr(1));
-                                            return acc;
-                                        }, '');
-
                                         t.name = name;
-                                        t.displayName = formatted;
+                                        t.displayName = this.getNameFromCamelCase(name);
                                         return t;
                                     }) : []
                             };

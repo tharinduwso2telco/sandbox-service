@@ -14,7 +14,7 @@ import {ApiHelperService} from "../api-helper.service";
 })
 export class TestApiComponent implements OnInit {
 
-    private formDataModel: FormItemBase<any>[];
+    private formDataModel: FormItemBase<any>[] = [];
     private selectedApi: Api;
 
     constructor(private store: Store<IAppState>,
@@ -25,104 +25,13 @@ export class TestApiComponent implements OnInit {
         this.store.select('ApiData')
             .subscribe((apiData: IApiState) => {
                 this.selectedApi = apiData.selectedApi;
-                this.formDataModel = this.apiHelper.getFormModelForApi(this.selectedApi);
+                if(!!this.selectedApi){
+                    this.formDataModel = this.apiHelper.getFormModelForApi(this.selectedApi);
+                }
             });
     }
 
     onFormSubmit(formVal) {
-        alert(formVal)
-    }
-
-    private
-    getFormDataModel() {
-        return [
-            new TextInputFormItem({
-                key: 'endUserId',
-                label: 'End User Id',
-                order: 1,
-                value: '',
-                required: true,
-                validators: [
-                    Validators.required,
-                    MsisdnValidator()
-                ]
-            }),
-            new TextInputFormItem({
-                key: 'amount',
-                label: 'Amount',
-                value: '',
-                required: true,
-                validators: [
-                    Validators.required,
-                ],
-                order: 2
-            }),
-            new TextInputFormItem({
-                key: 'currency',
-                label: 'Currency',
-                value: '',
-                required: true,
-                validators: [
-                    Validators.required,
-                ],
-                order: 3
-            }),
-            new TextInputFormItem({
-                key: 'description',
-                label: 'Description',
-                value: '',
-                required: true,
-                validators: [
-                    Validators.required,
-                ],
-                order: 4
-            }),
-            new TextInputFormItem({
-                key: 'referenceCode',
-                label: 'Reference Code',
-                value: '',
-                required: true,
-                validators: [
-                    Validators.required,
-                ],
-                order: 5
-            }),
-            new TextInputFormItem({
-                key: 'notifyURL',
-                label: 'Notify URL',
-                order: 6,
-                value: '',
-                validators: []
-            }),
-            new TextInputFormItem(
-                {
-                    key: 'onBehalfOf',
-                    label: 'On Behalf Of',
-                    value: '',
-                    order: 7,
-                    validators: [],
-                }
-            ),
-            new TextInputFormItem(
-                {
-                    key: 'purchaseCategoryCode',
-                    label: 'Purchase Category Code',
-                    value: '',
-                    order: 7,
-                    validators: [],
-                }
-            ),
-            new TextInputFormItem(
-                {
-                    key: 'channel',
-                    label: 'Channel',
-                    value: '',
-                    order: 7,
-                    validators: [],
-                }
-            )
-
-        ];
-
+        this.apiHelper.dynamicFormSubmit(formVal,this.selectedApi);
     }
 }
