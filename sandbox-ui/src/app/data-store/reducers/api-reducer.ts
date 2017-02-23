@@ -1,12 +1,14 @@
-import {IApiState, DynamicApiCallResult} from "../models/common-models";
+import {IApiState, DynamicApiCallResult, ApiServiceDefinition} from "../models/common-models";
 import {Action} from "@ngrx/store";
+import {strictEqual} from "assert";
 
 const initialApiState: IApiState = {
     apiTypes: [],
     selectedApiType : null,
-    serviceTypes : [],
-    selectedApi : null,
+    serviceTypes : null,
+    selectedApiConfig : null,
     apiRequestModels : {},
+    apiServiceDefinitions : {},
     resultDynamicApiCall : new Map<string,DynamicApiCallResult>()
 };
 
@@ -14,8 +16,9 @@ export const SET_API_TYPES: string = 'SET_API_TYPES';
 export const SET_SELECTED_API_TYPE: string = 'SET_SELECTED_API_TYPE';
 export const SET_SERVICE_TYPES: string = 'SET_SERVICE_TYPES';
 export const UPDATE_API_REQ_MODELS: string = 'UPDATE_API_REQ_MODELS';
-export const SET_SELECTED_API: string = 'SET_SELECTED_API';
+export const SET_SELECTED_SERVICE_CONFIG: string = 'SET_SELECTED_SERVICE_CONFIG';
 export const UPDATE_DYNAMIC_API_RESULT: string = 'UPDATE_DYNAMIC_API_RESULT';
+export const UPDATE_API_SERVICE_DEFINITIONS: string = 'UPDATE_API_SERVICE_DEFINITIONS';
 
 export function ApiReducer(apiState: IApiState = initialApiState, action: Action): IApiState {
     switch (action.type) {
@@ -36,8 +39,22 @@ export function ApiReducer(apiState: IApiState = initialApiState, action: Action
             return Object.assign({},apiState, Object.assign(apiState.apiRequestModels,action.payload));
         }
 
-        case SET_SELECTED_API : {
-            return Object.assign({},apiState,{selectedApi:action.payload});
+        case SET_SELECTED_SERVICE_CONFIG : {
+            return Object.assign({},apiState,{selectedApiConfig:action.payload});
+        }
+
+        case UPDATE_API_SERVICE_DEFINITIONS : {
+            let def = Object.assign({},apiState.apiServiceDefinitions);
+
+            if(!!def[action.payload.apiType]){
+
+                def[action.payload.apiType].apiDefinitions =   def[action.payload.apiType].apiDefinitions.concat(...action.payload.apiDefinitions);
+            }else{
+                def[action.payload.apiType] = action.payload;
+            }
+
+
+            return Object.assign({},apiState,Object.assign(apiState.apiServiceDefinitions,def));
         }
 
         case UPDATE_DYNAMIC_API_RESULT : {

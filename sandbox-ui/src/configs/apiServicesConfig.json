@@ -1,0 +1,21 @@
+{
+  "wallet": {
+    "config": [
+      {
+        "name": "Add Account",
+        "apiType": "wallet",
+        "api": "addAccountInfo"
+      }
+    ],
+    "services": [
+      {
+        "name": "Payment",
+        "apiType": "wallet"
+      },
+      {
+        "name": "Refund",
+        "apiType": "wallet"
+      }
+    ]
+  }
+}

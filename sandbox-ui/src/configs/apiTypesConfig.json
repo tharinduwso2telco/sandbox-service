@@ -1,33 +1,41 @@
 {
   "customerinfo": {
     "displayName": "Customer Information",
-    "iconClass": "info_outline"
+    "iconClass": "local_library",
+    "swaggerDefinitions": [
+      "/customer/{v1}",
+      "/customerinfo/{v1}/config"
+    ]
   },
   "provisioning": {
-    "iconClass": "cloud_upload"
+    "iconClass": "cloud_upload",
+    "swaggerDefinitions": [
+      "/provisioning/{v1}",
+      "/provisioning/{v1}/config"
+    ]
   },
   "location": {
-    "iconClass": "location_on"
+    "iconClass": "location_on",
+    "swaggerDefinitions": []
   },
   "sms": {
-    "iconClass": "textsms"
+    "iconClass": "textsms",
+    "swaggerDefinitions": []
   },
   "payment": {
-    "iconClass": "attach_money"
+    "iconClass": "attach_money",
+    "swaggerDefinitions": []
   },
   "ussd": {
-    "iconClass": "code"
+    "iconClass": "code",
+    "swaggerDefinitions": []
   },
   "credit": {
-    "iconClass": "credit_card"
+    "iconClass": "credit_card",
+    "swaggerDefinitions": ["/{v1}/credit"]
   },
   "wallet": {
-    "iconClass": "account_balance_wallet"
-  },
-  "customer": {
-    "iconClass": "local_library"
-  },
-  "user": {
-    "iconClass": "rowing"
+    "iconClass": "account_balance_wallet",
+    "swaggerDefinitions": ["/wallet/{v1}","/wallet/{v1}/config"]
   }
 }

@@ -34,12 +34,18 @@ export interface ApiCategory {
     name: string;
     displayName?: string,
     iconClass?: string;
-    apis: ApiInfo[];
+    swaggerDefinitions? : string[]
+}
+
+export interface ApiServiceDefinition{
+    apiType : string;
+    apiDefinitions : Api[];
 }
 
 export interface ServiceTypeCategory {
-    name: string,
-    endPoints: any[]
+    apiType: string,
+    config: any[],
+    services:any[]
 }
 
 export interface Parameter {
@@ -49,6 +55,7 @@ export interface Parameter {
     type: string;
     paramType: string;
     allowMultiple: boolean;
+    allowSelection?:boolean;
 }
 
 export interface Operation {
@@ -67,6 +74,12 @@ export interface Api {
     operations: Operation[];
 }
 
+export interface ServiceConfig{
+    name : string,
+    apiType:string
+    api : string
+}
+
 export interface DynamicApiCallResult{
     api :Api;
     response : any;
@@ -77,9 +90,12 @@ export interface DynamicApiCallResult{
 export interface IApiState {
     apiTypes: ApiCategory[],
     selectedApiType: ApiCategory,
-    serviceTypes: ServiceTypeCategory[],
+    serviceTypes: ServiceTypeCategory,
     apiRequestModels: any,
-    selectedApi: Api;
+    apiServiceDefinitions : {
+        [name: string]: ApiServiceDefinition;
+    },
+    selectedApiConfig: ServiceConfig;
     resultDynamicApiCall: Map<string,DynamicApiCallResult>;
 }
 

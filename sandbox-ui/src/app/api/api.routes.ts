@@ -4,7 +4,6 @@ import {ApiTypeComponent} from "./api-type/api-type.component";
 import {TestApiComponent} from "./test-api/test-api.component";
 
 
-
 const routes = [
     {
         path: '',
@@ -12,11 +11,10 @@ const routes = [
     },
     {
         path: ':apiType',
-        component: ApiTypeComponent
-    },
-    {
-        path: ':apiType/:serviceType',
-        component: TestApiComponent
+        component: ApiTypeComponent,
+        children: [
+            {path: ':serviceType', component: TestApiComponent}
+        ]
     }
 ];
 

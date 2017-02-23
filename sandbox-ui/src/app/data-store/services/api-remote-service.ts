@@ -4,7 +4,8 @@ import {MessageService} from "../../shared/services/message.service";
 import {ApiActionCreatorService} from "../actions/api-action-creator.service";
 import 'rxjs/add/operator/reduce';
 import 'rxjs/add/operator/mergeMap';
-import {ApiCategory, ServiceTypeCategory, Api} from "../models/common-models";
+import {ApiCategory, ServiceTypeCategory, Api, ApiServiceDefinition} from "../models/common-models";
+import {Observable} from "rxjs";
 
 
 @Injectable()
@@ -32,70 +33,79 @@ export class ApiRemoteService {
         this.http.get(this.sandboxPattern + '/user/apiType', this.options)
             .map((response: Response) => response.json())
             .subscribe((response) => {
-                this.apiActionCreator.updateApiTypes(response.apiTypes);
+                this.adaptApiTypes(response.apiTypes);
             })
     }
 
     getApiServiceTypes(apiType: ApiCategory) {
-        /*   if (!!apiType) {
-         this.http.get(this.sandboxPattern + `/user/${apiType.toLowerCase()}/serviceType`)
-         .map((response: Response) => response.json())
-         .subscribe((response) => {
-         this.apiActionCreator.setApiServiceTypes(response.apiServiceCallTypes);
-         },
-         () => {
-         this.apiActionCreator.setApiServiceTypes(null);
-         })
-         }*/
+        if (!!apiType) {
+            this.http.get('configs/apiServicesConfig.json')
+                .map((response: Response) => {
+                    let obj = response.json();
+                    return obj[apiType.name] || {};
+                })
+                .subscribe((response) => {
+                        this.apiActionCreator.setApiServiceTypes(response);
+                    },
+                    () => {
+                        this.apiActionCreator.setApiServiceTypes(null);
+                    })
+
+        }
 
     }
 
-    getApiTypesSwagger() {
-        this.http.get(`${this.swaggerProxy + this.swaggerBase}`)
-            .map((response: Response) => response.json())
-            .flatMap((jsonResponse) => jsonResponse.apis)
-            .reduce((acc: ApiCategory[], apiObj: any) => {
-                let apiName = apiObj.path && (apiObj.path.split('/')[0] || apiObj.path.split('/')[1]);
+    /*getApiTypesSwagger() {
+     this.http.get(`${this.swaggerProxy + this.swaggerBase}`)
+     .map((response: Response) => response.json())
+     .flatMap((jsonResponse) => jsonResponse.apis)
+     .reduce((acc: ApiCategory[], apiObj: any) => {
+     let apiName = apiObj.path && (apiObj.path.split('/')[0] || apiObj.path.split('/')[1]);
 
-                let foundIndex = acc.findIndex((cat: ApiCategory) => cat.name == apiName)
-                if (foundIndex >= 0) {
-                    (<ApiCategory>acc[foundIndex]).apis.push(apiObj);
-                } else {
-                    acc.push({
-                        name: apiName,
-                        apis: [apiObj]
-                    });
-                }
-                return acc;
-            }, [])
-            .subscribe((response) => {
-                this.adaptApiTypes(response);
-            })
-    }
+     let foundIndex = acc.findIndex((cat: ApiCategory) => cat.name == apiName)
+     if (foundIndex >= 0) {
+     (<ApiCategory>acc[foundIndex]).apis.push(apiObj);
+     } else {
+     acc.push({
+     name: apiName,
+     apis: [apiObj]
+     });
+     }
+     return acc;
+     }, [])
+     .subscribe((response) => {
+     this.adaptApiTypes(response);
+     })
+     }*/
 
     /**
      * Overide ApiCategory to suit to the UI
      * @param unMerge
      */
-    private adaptApiTypes(unMerge: ApiCategory[]) {
+    private adaptApiTypes(unMerge: string[]) {
         this.http.get('configs/apiTypesConfig.json')
             .map((response: Response) => response.json())
             .subscribe((result) => {
-                let adapted = unMerge.map((cat: ApiCategory) => {
-                    if (!!result[cat.name]) {
-                        return Object.assign(cat, result[cat.name])
-                    } else {
-                        return cat;
+                let adapted = unMerge.map((apiType: string) => {
+                    let apiTypeName = apiType.toLocaleLowerCase();
+
+                    let apiCat: ApiCategory = {
+                        name: apiTypeName,
+                    };
+
+                    if (!!result[apiTypeName]) {
+                        apiCat = Object.assign(apiCat, result[apiTypeName])
                     }
+                    return apiCat
                 });
 
                 this.apiActionCreator.updateApiTypes(adapted);
             })
     }
 
-    getNameFromCamelCase(camelCaseStr:string){
+    getNameFromCamelCase(camelCaseStr: string) {
         let name = '';
-        if(!!camelCaseStr){
+        if (!!camelCaseStr) {
             name = camelCaseStr.split(/(?=[A-Z])/).reduce((acc, curr) => {
                 acc += (' ' + curr.charAt(0).toLocaleUpperCase() + curr.substr(1));
                 return acc;
@@ -107,30 +117,37 @@ export class ApiRemoteService {
 
     getApiServiceTypesSwagger(apiCategory: ApiCategory) {
         if (!!apiCategory) {
-            let serviceTypes = [];
+            let resultCol: any[] = [];
 
-            apiCategory.apis.forEach((api) => {
-                this.http.get(`${this.swaggerProxy + this.swaggerBase}/${api.path}`)
-                    .map((response: Response) => response.json())
-                    .subscribe((result) => {
-                        if (!!result.models) {
-                            let serviceTypeCategory: ServiceTypeCategory = {
-                                name: api.description,
-                                endPoints: (!!result.apis) ? result.apis.map((api: Api) => {
-                                        let t: Api = api;
-                                        let name = (api.operations && api.operations[0] && api.operations[0].summary && api.operations[0].summary) || '';
-                                        t.name = name;
-                                        t.displayName = this.getNameFromCamelCase(name);
-                                        return t;
-                                    }) : []
-                            };
-                            serviceTypes.push(serviceTypeCategory);
-                            this.apiActionCreator.updateApiRequestModels(result.models);
-                        }
-                    });
+            apiCategory.swaggerDefinitions.forEach((api: string) => {
+                resultCol.push(this.http.get(`${this.swaggerProxy + this.swaggerBase}/${api}`)
+                    .map((response: Response) => response.json()));
             });
 
-            this.apiActionCreator.setApiServiceTypes(serviceTypes);
+            Observable.forkJoin(resultCol)
+                .subscribe((result) => {
+                    let apiServiceDef: ApiServiceDefinition = {
+                        apiType: apiCategory.name,
+                        apiDefinitions: []
+                    };
+
+                    result.forEach((singularResult: any) => {
+                        if (!!singularResult.apis) {
+                            apiServiceDef.apiDefinitions = apiServiceDef.apiDefinitions.concat(...singularResult.apis.map((api: Api) => {
+                                let t: Api = api;
+                                let name = (api.operations && api.operations[0] && api.operations[0].summary && api.operations[0].summary) || '';
+                                t.name = name;
+                                t.displayName = this.getNameFromCamelCase(name);
+                                return t;
+                            }));
+                        }
+
+                        if (!!singularResult.models) {
+                            this.apiActionCreator.updateApiRequestModels(singularResult.models);
+                        }
+                    });
+                    this.apiActionCreator.setApiServiceDefinitions(apiServiceDef);
+                });
         }
     }
 

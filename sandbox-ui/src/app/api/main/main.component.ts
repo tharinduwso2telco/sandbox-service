@@ -14,17 +14,6 @@ export class ApiMainComponent implements OnInit {
 
     private apiTypes: ApiCategory[];
 
-    private apiIconMap = {
-        location: 'location_on',
-        sms: 'textsms',
-        payment: 'attach_money',
-        ussd: 'code',
-        credit: 'credit_card',
-        customerinfo: 'info_outline',
-        wallet: 'account_balance_wallet',
-        provisioning: 'cloud_upload'
-    };
-
     constructor(private actionCreator: ApiActionCreatorService,
                 private apiService: ApiRemoteService,
                 private router: Router,
@@ -39,12 +28,15 @@ export class ApiMainComponent implements OnInit {
                 this.apiTypes = apiData.apiTypes;
             });
 
-        this.apiService.getApiTypesSwagger();
+        if(this.apiTypes.length == 0){
+            this.apiService.getApiTypes();
+        }
     }
 
     onIconClick(type:ApiCategory) {
         if (!!type) {
             this.actionCreator.setSelectedApiType(type);
+            this.apiService.getApiServiceTypes(type);
             this.apiService.getApiServiceTypesSwagger(type);
             this.router.navigate([type.name], {relativeTo: this.activatedRoute});
         }

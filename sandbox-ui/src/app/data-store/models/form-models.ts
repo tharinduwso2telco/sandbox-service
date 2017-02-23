@@ -1,3 +1,4 @@
+import {Observable} from "rxjs";
 export const FORM_CONTROL_TYPES:any = {
     TEXT_INPUT :'TEXT_INPUT',
     TEXT_AREA : 'TEXT_AREA',
@@ -58,6 +59,17 @@ export class TextAreaFormItem extends FormItemBase<string> {
 
     constructor(options: {} = {}) {
         super(options);
+    }
+}
+
+export class DropDownControl extends  FormItemBase<string>{
+    formControlType = FORM_CONTROL_TYPES.DROPDOWN;
+    dropDownOptions: Observable<any>;
+
+    constructor(options:{}={}){
+        super(options);
+
+        this.dropDownOptions = options['dropDownOptions'] || [];
     }
 }
 

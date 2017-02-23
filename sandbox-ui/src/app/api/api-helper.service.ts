@@ -1,14 +1,15 @@
 import {Injectable, Inject} from '@angular/core';
 import {
     IAppState, IApiState, ApiCategory, Api, Operation, Parameter,
-    DynamicApiCallResult
+    DynamicApiCallResult, ServiceConfig
 } from "../data-store/models/common-models";
 import {Store} from "@ngrx/store";
 import {ApiRemoteService} from "../data-store/services/api-remote-service";
-import {FormItemBase, TextInputFormItem} from "../data-store/models/form-models";
+import {FormItemBase, TextInputFormItem, DropDownControl} from "../data-store/models/form-models";
 import {Validators} from "@angular/forms";
 import {Headers, RequestOptions, Http, Response} from "@angular/http";
 import {ApiActionCreatorService} from "../data-store/actions/api-action-creator.service";
+import {Observable, BehaviorSubject} from "rxjs";
 
 @Injectable()
 export class ApiHelperService {
@@ -52,6 +53,21 @@ export class ApiHelperService {
                 }
             });
         }
+
+        //TEST
+        let tmp:Parameter = {
+            name: 'moduleClass',
+            description: 'moduleClass',
+            required: true,
+            type: 'string',
+            paramType: 's',
+            allowMultiple: false,
+            allowSelection :true
+        };
+
+        formModel.push(this.getDropdown(tmp,5));
+
+
         return formModel;
     }
 
@@ -89,6 +105,15 @@ export class ApiHelperService {
 
             }
         }
+    }
+
+    getApiFromConfig(config:ServiceConfig){
+        if(!!this.apiState.apiServiceDefinitions[config.apiType]){
+            let filtered =  this.apiState.apiServiceDefinitions[config.apiType].apiDefinitions
+                .filter((api:Api)=>api.name == config.api);
+            return (filtered.length > 0)? filtered[0] : null;
+        }
+        return null;
     }
 
     private dynamicApiCallAdaptor(api: Api, result: any, request: any): DynamicApiCallResult {
@@ -131,7 +156,6 @@ export class ApiHelperService {
                 });
 
         }
-        ;
         return params;
     }
 
@@ -167,6 +191,27 @@ export class ApiHelperService {
         return tmp;
     }
 
+    private getDropdown(param:Parameter,index:number){
+        let x = new BehaviorSubject<any[]>([]);
+
+        let tmp:FormItemBase<any> = new DropDownControl({
+            key: param.name,
+            label: (param.description && param.description != param.name) ? param.description : this.apiRemoteService.getNameFromCamelCase(param.name),
+            required: param.required || false,
+            order: index,
+            validators: [],
+            dropDownOptions : x
+        });
+        x.next([
+            {key:'one', value:'one'},
+            {key:'two', value:'two'},
+            {key:'three', value:'three'},
+            {key:'four', value:'four'}
+        ]);
+        return tmp;
+    }
+
+
     private getPropertiesFromComplexObject(name: string) {
         let flatProperties = [];
         let obj = this.getObjectFromModel(name);
@@ -187,6 +232,8 @@ export class ApiHelperService {
     private getObjectFromModel(name: string) {
         return this.apiState.apiRequestModels[name]
     }
+
+
 
 
 }
