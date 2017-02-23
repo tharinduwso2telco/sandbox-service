@@ -665,16 +665,19 @@ CREATE TABLE IF NOT EXISTS `ussd_transactions` (
 -- Table structure for table `sbtmessagelog`
 --
 
+
 CREATE TABLE IF NOT EXISTS `sbtmessagelog` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `request` text,
-  `servicenameid` int(11) NOT NULL,
-  `userid` int(11) NOT NULL,
-  `reference` varchar(100) DEFAULT NULL,
-  `value` varchar(100) DEFAULT NULL,
-  `messagetimestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (`id`),
-  CONSTRAINT `fk01sbtmessagelog` FOREIGN KEY (`servicenameid`) REFERENCES `sbxapiservicecalls` (`sbxapiservicecallsdid`),
-  CONSTRAINT `fk02sbtmessagelog` FOREIGN KEY (`userid`) REFERENCES `user` (`id`)
+`id` int(11) NOT NULL AUTO_INCREMENT,
+`request` text,
+`status` varchar(100) DEFAULT '0',
+`type` varchar(100) DEFAULT 'undefined',
+`servicenameid` int(11) NOT NULL,
+`userid` int(11) NOT NULL,
+`reference` varchar(100) DEFAULT NULL,
+`value` varchar(100) DEFAULT NULL,
+`messagetimestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+PRIMARY KEY (`id`),
+CONSTRAINT `fk01sbtmessagelog` FOREIGN KEY (`servicenameid`) REFERENCES `sbxapiservicecalls` (`sbxapiservicecallsdid`),
+CONSTRAINT `fk02sbtmessagelog` FOREIGN KEY (`userid`) REFERENCES `user` (`id`)
 );
 

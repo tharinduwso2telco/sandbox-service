@@ -1,37 +1,41 @@
 package com.wso2telco.services.dep.sandbox.servicefactory;
 
-import java.util.ArrayList;
-import java.util.Base64;
-import java.util.Base64.Decoder;
-import java.util.List;
-
-import javax.ws.rs.core.Response.Status;
-
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.logging.Log;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import com.wso2telco.core.dbutils.exception.ThrowableError;
 import com.wso2telco.dep.oneapivalidation.exceptions.PolicyException;
 import com.wso2telco.dep.oneapivalidation.exceptions.ServiceException;
 import com.wso2telco.services.dep.sandbox.dao.DaoFactory;
 import com.wso2telco.services.dep.sandbox.dao.GenaricDAO;
+import com.wso2telco.services.dep.sandbox.dao.LoggingDAO;
 import com.wso2telco.services.dep.sandbox.dao.UserDAO;
 import com.wso2telco.services.dep.sandbox.dao.model.custom.RequestDTO;
-import com.wso2telco.services.dep.sandbox.dao.model.domain.ManageNumber;
-import com.wso2telco.services.dep.sandbox.dao.model.domain.User;
+import com.wso2telco.services.dep.sandbox.dao.model.domain.*;
 import com.wso2telco.services.dep.sandbox.util.RequestError;
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.logging.Log;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import javax.ws.rs.core.Response.Status;
+import java.util.ArrayList;
+import java.util.Base64;
+import java.util.Base64.Decoder;
+import java.util.Date;
+import java.util.List;
 
 public abstract class AbstractRequestHandler<E2 extends RequestDTO> implements RequestHandleable<RequestDTO> {
 	protected Log LOG;
 	protected GenaricDAO dao;
 	protected UserDAO userDAO;
+    protected User user;
+    protected LoggingDAO loggingDAO;
+    private int referenceNumber;
 
 	{
 		dao =DaoFactory.getGenaricDAO();
 		userDAO = DaoFactory.getUserDAO();
-	}
+        loggingDAO = DaoFactory.getLoggingDAO();
+
+    }
 	/**
 	 * internally used to indicate the type of exception being stored is a
 	 * ServiceException
@@ -42,6 +46,7 @@ public abstract class AbstractRequestHandler<E2 extends RequestDTO> implements R
 	 * PolicyException
 	 */
 	protected static final int POLICYEXCEPTION = 2;
+
 
 	public final Returnable execute(final RequestDTO requestDTO) throws Exception {
 		E2 wrapperDTO = (E2) requestDTO;
@@ -61,7 +66,7 @@ public abstract class AbstractRequestHandler<E2 extends RequestDTO> implements R
 		/**
 		 * load user domain object from db
 		 */
-		final User user = userDAO.getUser(sandboxusr);
+        user = userDAO.getUser(sandboxusr);
 		requestDTO.setUser(user);
 		validate(wrapperDTO);
 		/**
@@ -74,14 +79,24 @@ public abstract class AbstractRequestHandler<E2 extends RequestDTO> implements R
 				
 				LOG.debug("Location parameters are empty");
 				responseDTO.setRequestError(
-						constructRequestError(SERVICEEXCEPTION, "SVC0001", "A service error occurred. Error code is %1",
-								StringUtils.join(userNotWhiteListed.toArray()) + " Not Whitelisted"));
+						constructRequestError(SERVICEEXCEPTION, "SVC0002", "A service error occurred. Error code is %1",
+								StringUtils.join(userNotWhiteListed.toArray())));
 				responseDTO.setHttpStatus(Status.BAD_REQUEST);
 				return responseDTO;
 			}
 		}
-		return process(wrapperDTO);
 
+        /**
+         * log the request in the DB.
+         */
+		if(this instanceof RequestResponseRequestHandleable){
+
+            RequestResponseRequestHandleable requestResponseRequestHandleable = (RequestResponseRequestHandleable)this;
+            String requestType = requestDTO.getRequestType().toString();
+            saveMessageLog(requestType,requestResponseRequestHandleable.getApiServiceCalls(),
+                    requestResponseRequestHandleable.getJosonString(requestDTO),requestResponseRequestHandleable.getnumber(requestDTO));
+		}
+		return process(wrapperDTO);
 	}
 
 	private List<String> getNotWhitelistedNumbers(User user) throws Exception {
@@ -169,4 +184,40 @@ public abstract class AbstractRequestHandler<E2 extends RequestDTO> implements R
 		}
 		return error;
 	}
+
+    public int getReferenceNumber() {
+        return referenceNumber;
+    }
+
+    public void setReferenceNumber(int referenceNumber) {
+        this.referenceNumber = referenceNumber;
+    }
+
+    /**
+     * This method is used for store request on the DB.
+     * @param requestType type of the request
+     * @param apiService api name
+     * @param jsonString request
+     * @param number msisdn
+     * @throws Exception
+     */
+    private int saveMessageLog(String requestType,String apiService, String jsonString, String number) throws Exception {
+
+        APITypes apiTypes = dao.getAPIType(requestType);
+        APIServiceCalls apiServiceCalls = dao.getServiceCall(apiTypes.getId(), apiService);
+
+        MessageLog messageLog = new MessageLog();
+        messageLog.setServicenameid(apiServiceCalls.getApiServiceCallId());
+        messageLog.setUserid(user.getId());
+        messageLog.setReference("msisdn");
+        messageLog.setStatus("0");
+        messageLog.setType(MessageType.Request.getValue());
+        messageLog.setValue(number);
+        messageLog.setRequest(jsonString);
+        messageLog.setMessageTimestamp(new Date());
+        int ref_number = loggingDAO.saveMessageLog(messageLog);
+        setReferenceNumber(ref_number);
+        return ref_number;
+
+    }
 }

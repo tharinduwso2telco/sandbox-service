@@ -15,15 +15,22 @@
  ******************************************************************************/
 package com.wso2telco.services.dep.sandbox.servicefactory.location;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import com.wso2telco.dep.oneapivalidation.service.impl.location.ValidateLocation;
 import com.wso2telco.services.dep.sandbox.dao.DaoFactory;
 import com.wso2telco.services.dep.sandbox.dao.LocationDAO;
 import com.wso2telco.services.dep.sandbox.dao.model.custom.LocationRequestWrapperDTO;
-import com.wso2telco.services.dep.sandbox.dao.model.domain.Locationparam;
-import com.wso2telco.services.dep.sandbox.dao.model.domain.User;
+import com.wso2telco.services.dep.sandbox.dao.model.domain.*;
 import com.wso2telco.services.dep.sandbox.servicefactory.AbstractRequestHandler;
+import com.wso2telco.services.dep.sandbox.servicefactory.MessageType;
+import com.wso2telco.services.dep.sandbox.servicefactory.RequestResponseRequestHandleable;
 import com.wso2telco.services.dep.sandbox.servicefactory.Returnable;
+import com.wso2telco.services.dep.sandbox.util.ServiceName;
 import org.apache.commons.logging.LogFactory;
+import org.json.JSONObject;
 
 import javax.ws.rs.core.Response.Status;
 import java.text.SimpleDateFormat;
@@ -32,7 +39,7 @@ import java.util.Date;
 import java.util.List;
 
 
-class LocationRequestHandler  extends AbstractRequestHandler<LocationRequestWrapperDTO>{
+public class LocationRequestHandler  extends AbstractRequestHandler<LocationRequestWrapperDTO> implements RequestResponseRequestHandleable<LocationRequestWrapperDTO>  {
 	
 	final static String RETRIEVED = "Retrieved";
 	final static String NOT_RETRIEVED="NotRetrieved";
@@ -50,7 +57,8 @@ class LocationRequestHandler  extends AbstractRequestHandler<LocationRequestWrap
 	protected Returnable process(LocationRequestWrapperDTO extendedRequestDTO) throws Exception {
 		
         User user=extendedRequestDTO.getUser();
-       
+        APITypes apiTypes = dao.getAPIType(extendedRequestDTO.getRequestType().toString().toLowerCase());
+        APIServiceCalls apiServiceCalls = dao.getServiceCall(apiTypes.getId(), ServiceName.Location.toString());
         //Temp status variable
         Locationparam locparam = locationDao.queryLocationParam(user.getId());
 
@@ -88,6 +96,8 @@ class LocationRequestHandler  extends AbstractRequestHandler<LocationRequestWrap
 
 					responseWrapperDTO.setTerminalLocationList(objTerminalLocationList);
 					responseWrapperDTO.setHttpStatus(Status.OK);
+
+                    saveResponse(objTerminalLocation,extendedRequestDTO.getAddress(),apiServiceCalls,"1");
 
 				} else if (locparam.getLocationRetrieveStatus().equals(NOT_RETRIEVED)) {
 
@@ -157,6 +167,58 @@ class LocationRequestHandler  extends AbstractRequestHandler<LocationRequestWrap
 	protected void init(LocationRequestWrapperDTO extendedRequestDTO) throws Exception {
 		responseWrapperDTO  = new LocationResponseWrapperDTO();
 		this.extendedRequestDTO =extendedRequestDTO;
+	}
+
+    @Override
+    public String getApiServiceCalls() {
+        try {
+            return ServiceName.Location.toString();
+        }catch (Exception ex){
+            return null;
+        }
+    }
+
+	@Override
+	public String getJosonString(LocationRequestWrapperDTO requestDTO) {
+		JSONObject obj = new JSONObject();
+		obj.put("msisdn",requestDTO.getAddress().toString());
+		return obj.toString();
+	}
+
+	@Override
+	public String getnumber(LocationRequestWrapperDTO requestDTO) {
+		return requestDTO.getAddress();
+	}
+
+	/**
+	 * This method is use to save response.
+	 * @param terminalLocation location object.
+	 * @param endUserId mobile number.
+	 * @param apiServiceCalls
+	 * @param status
+	 * @throws Exception
+	 */
+	private void saveResponse(TerminalLocation terminalLocation,String endUserId, APIServiceCalls apiServiceCalls, String status) throws Exception {
+
+		String jsonInString = null;
+		Gson resp = new Gson();
+		JsonElement je = new JsonParser().parse(resp.toJson(terminalLocation));
+		JsonObject asJsonObject = je.getAsJsonObject();
+		jsonInString = asJsonObject.toString();
+
+       //setting messagelog responses
+		MessageLog messageLog = new MessageLog();
+		messageLog = new MessageLog();
+		messageLog.setRequest(jsonInString);
+		messageLog.setStatus(status);
+		messageLog.setType(MessageType.Response.getValue());
+		messageLog.setServicenameid(apiServiceCalls.getApiServiceCallId());
+		messageLog.setUserid(extendedRequestDTO.getUser().getId());
+		messageLog.setReference("msisdn");
+		messageLog.setValue(endUserId);
+		messageLog.setMessageTimestamp(new Date());
+
+		loggingDAO.saveMessageLog(messageLog);
 	}
 
 }
