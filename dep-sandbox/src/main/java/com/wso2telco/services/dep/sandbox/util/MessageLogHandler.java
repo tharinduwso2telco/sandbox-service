@@ -18,7 +18,7 @@ import com.wso2telco.services.dep.sandbox.dao.model.domain.MessageLog;
 
 
 public class MessageLogHandler {
-	
+
 	private Log log = LogFactory.getLog(MessageLogHandler.class);
     private ExecutorService executorService;
     private static MessageLogHandler instance;
@@ -28,14 +28,14 @@ public class MessageLogHandler {
         executorService = Executors.newFixedThreadPool(10);
         dbservice = new HibernateLoggingDao();
     }
-    
+
     public synchronized static MessageLogHandler getInstance() {
         if (instance == null) {
             instance = new MessageLogHandler();
         }
         return instance;
     }
-    
+
     public void saveMessageLog(final int servicenameid, final int userid, final String reference, final String value, JSONObject obj) throws Exception {
     	MessageLog messageLog = new MessageLog();
         executorService.execute(new Runnable() {
@@ -45,7 +45,7 @@ public class MessageLogHandler {
                 	obj.writeJSONString(out);
                 	String jsonString = out.toString();
                 	log.debug("JSON Sting" + jsonString);
-                	
+
                 	messageLog.setServicenameid(servicenameid);
                 	messageLog.setUserid(userid);
                 	messageLog.setReference(reference);
@@ -54,17 +54,16 @@ public class MessageLogHandler {
                 	messageLog.setMessageTimestamp(new Date());
                 	log.debug("messagelog object has been created");
                 	dbservice.saveMessageLog(messageLog);
-                	
+
                 } catch (Exception e) {
                     log.debug("error while inserting data into database", e);
                 }
             }
         });
     }
-    
     public List<MessageLog> getMessageLogs(final int userid, final List<Integer> serviceNameIds, final String reference, final String value, final Date startTimeStamp,
 			final Date endTimeStamp) throws Exception {
-     
+
 		return dbservice.getMessageLogs(userid, serviceNameIds, reference, value, startTimeStamp, endTimeStamp);
     }
 

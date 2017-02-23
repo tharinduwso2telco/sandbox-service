@@ -19,6 +19,7 @@ package com.wso2telco.services.dep.sandbox.dao.hibernate;
 import com.wso2telco.services.dep.sandbox.dao.PaymentDAO;
 import com.wso2telco.services.dep.sandbox.dao.model.domain.AttributeValues;
 import com.wso2telco.services.dep.sandbox.dao.model.domain.ManageNumber;
+import com.wso2telco.services.dep.sandbox.dao.model.domain.MessageLog;
 import com.wso2telco.services.dep.sandbox.util.RequestType;
 import com.wso2telco.services.dep.sandbox.util.TableName;
 import org.apache.commons.logging.LogFactory;
