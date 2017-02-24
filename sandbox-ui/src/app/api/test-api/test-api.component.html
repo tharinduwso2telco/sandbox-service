@@ -3,6 +3,7 @@
         <dynamic-form
                 formLayoutGridStyle="col-sm-4"
                 [formItems]="formDataModel"
+                (onFormInitialize)="onFormInitialize($event)"
                 (onFormSubmit)="onFormSubmit($event)"></dynamic-form>
     </div>
 

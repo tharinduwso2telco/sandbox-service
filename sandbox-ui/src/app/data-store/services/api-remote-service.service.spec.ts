@@ -1,7 +1,5 @@
-/* tslint:disable:no-unused-variable */
-
 import { TestBed, async, inject } from '@angular/core/testing';
-import { ApiRemoteService } from './api-remote-service.service';
+import { ApiRemoteService } from './api-remote-service';
 
 describe('ApiRemoteService', () => {
   beforeEach(() => {

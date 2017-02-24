@@ -1,7 +1,7 @@
 import {Injectable, Inject} from '@angular/core';
 import {
-    IAppState, IApiState, ApiCategory, Api, Operation, Parameter,
-    DynamicApiCallResult, ServiceConfig
+    IAppState, IApiState, Api, Operation, Parameter,
+    DynamicApiCallResult, ServiceConfig, DataProviderConfig
 } from "../data-store/models/common-models";
 import {Store} from "@ngrx/store";
 import {ApiRemoteService} from "../data-store/services/api-remote-service";
@@ -9,7 +9,7 @@ import {FormItemBase, TextInputFormItem, DropDownControl} from "../data-store/mo
 import {Validators} from "@angular/forms";
 import {Headers, RequestOptions, Http, Response} from "@angular/http";
 import {ApiActionCreatorService} from "../data-store/actions/api-action-creator.service";
-import {Observable, BehaviorSubject} from "rxjs";
+
 
 @Injectable()
 export class ApiHelperService {
@@ -28,47 +28,60 @@ export class ApiHelperService {
             })
     }
 
-    getFormModelForApi(api: Api) {
+    getFormModelForApi(api: Api,config:ServiceConfig) {
         let formModel: FormItemBase<any>[] = [];
         let operation: Operation = api.operations[0]; // only extract first operation. extend if need be
         if (!!operation) {
             operation.parameters.forEach((param: Parameter, index: number) => {
 
-                switch (param.type) {
-                    case 'string': {
-                        if (!param.allowMultiple) {
-                            formModel.push(this.getTextInput(param, index));
-                        }
-                        break;
+                if (param.type == 'string') {
+                    let paramOverrides = this.getOverrideConfigs(config,param.name);
+                    if(!!paramOverrides){
+                        param = Object.assign(param,paramOverrides);
                     }
-
-                    default : {
-                        let properties = this.getPropertiesFromComplexObject(param.type);
-                        if (properties.length > 0) {
-                            properties.forEach((prp, i) => {
-                                formModel.push(this.getTextInput(prp, index + i));
-                            })
-                        }
+                    formModel.push(this.getControlType(param, index));
+                } else {
+                    let properties = this.getPropertiesFromComplexObject(param.type);
+                    if (properties.length > 0) {
+                        properties.forEach((prp, i) => {
+                            let paramOverrides = this.getOverrideConfigs(config,prp.name);
+                            if(!!paramOverrides){
+                                prp = Object.assign(prp,paramOverrides);
+                            }
+                            formModel.push(this.getControlType(prp, index + i));
+                        })
                     }
                 }
             });
         }
-
-        //TEST
-        let tmp:Parameter = {
-            name: 'moduleClass',
-            description: 'moduleClass',
-            required: true,
-            type: 'string',
-            paramType: 's',
-            allowMultiple: false,
-            allowSelection :true
-        };
-
-        formModel.push(this.getDropdown(tmp,5));
-
-
         return formModel;
+    }
+
+    private getOverrideConfigs(config: ServiceConfig,name:string):Parameter{
+        if(!!config.overrides){
+            return config.overrides.filter((p:Parameter)=>p.name == name)[0];
+        }
+        return null;
+    }
+
+    private getControlType(parameter: Parameter, index: number) {
+        switch (parameter.formControlType) {
+            case "CHECKBOX": {
+                break;
+            }
+            case "DROPDOWN": {
+                return this.getDropdown(parameter, index);
+            }
+            case "RADIO": {
+                break;
+            }
+            case "TEXT_AREA": {
+                break;
+            }
+            default : {
+                return this.getTextInput(parameter, index);
+            }
+        }
     }
 
     dynamicFormSubmit(formVal: any, api: Api) {
@@ -93,9 +106,9 @@ export class ApiHelperService {
                     });
                 this.http.post(this.sandboxPattern + endPoint, params, options)
                     .map((response: Response) => {
-                        try{
+                        try {
                             return response.json();
-                        }catch(e){
+                        } catch (e) {
                             return response.text();
                         }
                     })
@@ -110,8 +123,8 @@ export class ApiHelperService {
     getApiFromConfig(config:ServiceConfig){
         if(!!this.apiState.apiServiceDefinitions[config.apiType]){
             let filtered =  this.apiState.apiServiceDefinitions[config.apiType].apiDefinitions
-                .filter((api:Api)=>api.name == config.api);
-            return (filtered.length > 0)? filtered[0] : null;
+                .filter((api:Api)=>api.name == config.api)[0];
+            return filtered;
         }
         return null;
     }
@@ -175,7 +188,7 @@ export class ApiHelperService {
     }
 
 
-    private getTextInput(param: Parameter, index: number) {
+    private getTextInput(param: Parameter, index: number, config?: DataProviderConfig) {
         let tmp: FormItemBase<any> = new TextInputFormItem({
             key: param.name,
             label: (param.description && param.description != param.name) ? param.description : this.apiRemoteService.getNameFromCamelCase(param.name),
@@ -191,23 +204,16 @@ export class ApiHelperService {
         return tmp;
     }
 
-    private getDropdown(param:Parameter,index:number){
-        let x = new BehaviorSubject<any[]>([]);
-
-        let tmp:FormItemBase<any> = new DropDownControl({
+    private getDropdown(param: Parameter, index: number) {
+        let tmp: FormItemBase<any> = new DropDownControl({
             key: param.name,
             label: (param.description && param.description != param.name) ? param.description : this.apiRemoteService.getNameFromCamelCase(param.name),
             required: param.required || false,
             order: index,
             validators: [],
-            dropDownOptions : x
+            dropDownOptions: param.misc && param.misc.dropDownOptions || []
         });
-        x.next([
-            {key:'one', value:'one'},
-            {key:'two', value:'two'},
-            {key:'three', value:'three'},
-            {key:'four', value:'four'}
-        ]);
+
         return tmp;
     }
 
@@ -232,8 +238,6 @@ export class ApiHelperService {
     private getObjectFromModel(name: string) {
         return this.apiState.apiRequestModels[name]
     }
-
-
 
 
 }

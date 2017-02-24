@@ -1,10 +1,10 @@
 import {Observable} from "rxjs";
-export const FORM_CONTROL_TYPES:any = {
-    TEXT_INPUT :'TEXT_INPUT',
-    TEXT_AREA : 'TEXT_AREA',
-    CHECKBOX_INPUT : 'CHECKBOX_INPUT',
-    RADIO_INPUT : 'RADIO_INPUT',
-    DROPDOWN : 'DROPDOWN'
+export const FORM_CONTROL_TYPES: any = {
+    TEXT_INPUT: 'TEXT_INPUT',
+    TEXT_AREA: 'TEXT_AREA',
+    CHECKBOX_INPUT: 'CHECKBOX_INPUT',
+    RADIO_INPUT: 'RADIO_INPUT',
+    DROPDOWN: 'DROPDOWN'
 };
 
 export class FormItemBase<T> {
@@ -12,7 +12,7 @@ export class FormItemBase<T> {
     key: string;
     value: T;
     label: string;
-    required : boolean
+    required: boolean
     validators: any[];
     order: number;
     type: string;
@@ -24,7 +24,7 @@ export class FormItemBase<T> {
         key?: string,
         value?: T,
         label?: string,
-        required?:boolean,
+        required?: boolean,
         validators?: any[],
         order?: number
     }) {
@@ -62,11 +62,11 @@ export class TextAreaFormItem extends FormItemBase<string> {
     }
 }
 
-export class DropDownControl extends  FormItemBase<string>{
+export class DropDownControl extends FormItemBase<string> {
     formControlType = FORM_CONTROL_TYPES.DROPDOWN;
-    dropDownOptions: Observable<any>;
+    dropDownOptions: {key: string, value: ''}[];
 
-    constructor(options:{}={}){
+    constructor(options: {} = {}) {
         super(options);
 
         this.dropDownOptions = options['dropDownOptions'] || [];

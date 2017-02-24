@@ -4,7 +4,17 @@
       {
         "name": "Add Account",
         "apiType": "wallet",
-        "api": "addAccountInfo"
+        "api": "addAccountInfo",
+        "overrides" : [
+          {
+            "name" : "endUserId",
+            "formControlType":"DROPDOWN"
+          },
+          {
+            "name" : "status",
+            "formControlType":"DROPDOWN"
+          }
+        ]
       }
     ],
     "services": [

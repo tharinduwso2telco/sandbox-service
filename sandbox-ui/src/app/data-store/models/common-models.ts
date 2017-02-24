@@ -1,5 +1,6 @@
 import {IUserInfo} from "./interfaces/userInfo";
 import {UserNumber} from "./manage-numbers-model";
+import {Observable, BehaviorSubject} from "rxjs";
 
 
 export interface IApplicationData {
@@ -34,28 +35,29 @@ export interface ApiCategory {
     name: string;
     displayName?: string,
     iconClass?: string;
-    swaggerDefinitions? : string[]
+    swaggerDefinitions?: string[]
 }
 
-export interface ApiServiceDefinition{
-    apiType : string;
-    apiDefinitions : Api[];
+export interface ApiServiceDefinition {
+    apiType: string;
+    apiDefinitions: Api[];
 }
 
 export interface ServiceTypeCategory {
     apiType: string,
     config: any[],
-    services:any[]
+    services: any[]
 }
 
 export interface Parameter {
     name: string;
-    description: string;
-    required: boolean;
-    type: string;
-    paramType: string;
-    allowMultiple: boolean;
-    allowSelection?:boolean;
+    description?: string;
+    required?: boolean;
+    type?: string;
+    paramType?: string;
+    allowMultiple?: boolean;
+    formControlType?: 'TEXTBOX'|'TEXT_AREA'|'RADIO'|'CHECKBOX'|'DROPDOWN';
+    misc?:any;
 }
 
 export interface Operation {
@@ -74,17 +76,30 @@ export interface Api {
     operations: Operation[];
 }
 
-export interface ServiceConfig{
-    name : string,
-    apiType:string
-    api : string
+export interface DataProviderConfig {
+    fieldName: string;
+    formControlType: 'TEXTBOX'|'TEXT_AREA'|'RADIO'|'CHECKBOX'|'DROPDOWN';
+    reducer: string;
+    storeDataItem: string;
+    dataItemLabelField: string;
+    dataItemValueField: string;
+    dataLoadServiceCall: string;
 }
 
-export interface DynamicApiCallResult{
-    api :Api;
-    response : any;
-    request : any;
-    headers : any;
+
+
+export interface ServiceConfig {
+    name: string,
+    apiType: string
+    api: string;
+    overrides : Parameter[];
+}
+
+export interface DynamicApiCallResult {
+    api: Api;
+    response: any;
+    request: any;
+    headers: any;
 }
 
 export interface IApiState {
@@ -92,7 +107,7 @@ export interface IApiState {
     selectedApiType: ApiCategory,
     serviceTypes: ServiceTypeCategory,
     apiRequestModels: any,
-    apiServiceDefinitions : {
+    apiServiceDefinitions: {
         [name: string]: ApiServiceDefinition;
     },
     selectedApiConfig: ServiceConfig;
@@ -114,4 +129,10 @@ export interface DynamicComponentData {
         subscriber: any,
         context: any
     }[]
+}
+
+
+export interface FormElementObservableMapper {
+    observable: BehaviorSubject<any>;
+    config: DataProviderConfig;
 }

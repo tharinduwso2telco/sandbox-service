@@ -1,4 +1,6 @@
-import {Component, OnInit, Input, Output, EventEmitter, OnChanges, SimpleChanges} from '@angular/core';
+import {
+    Component, OnInit, Input, Output, EventEmitter, OnChanges, SimpleChanges
+} from '@angular/core';
 import {FormItemBase} from "../../../data-store/models/form-models";
 import {FormGroup} from "@angular/forms";
 import {FormGeneratorService} from "../../services/form-generator.service";
@@ -14,18 +16,21 @@ export class DynamicFormComponent implements OnInit,OnChanges {
     private formItems: FormItemBase<any>[];
 
     @Input()
-    private formLayoutGridStyle:string = ''
+    private formLayoutGridStyle: string = '';
 
     @Output()
-    private onFormSubmit:EventEmitter<any> = new EventEmitter();
+    private onFormSubmit: EventEmitter<any> = new EventEmitter();
+
+    @Output()
+    private onFormInitialize: EventEmitter<FormGroup> = new EventEmitter();
 
     private dynamicForm: FormGroup;
 
-    constructor(private formService:FormGeneratorService) {
+    constructor(private formService: FormGeneratorService) {
     }
 
     ngOnInit() {
-       // this.dynamicForm = this.formService.getForm(this.formItems);
+        this.onFormInitialize.emit(this.dynamicForm);
     }
 
     ngOnChanges(changes: SimpleChanges): void {

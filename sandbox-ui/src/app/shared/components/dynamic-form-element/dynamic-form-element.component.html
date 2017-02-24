@@ -16,12 +16,11 @@
                   [id]="elementData?.key"
                   [placeholder]="elementData?.label"></textarea>
 
-        <select *ngSwitchCase="'DROPDOWN'"
+        <select *ngSwitchCase="'DROPDOWN'" class="form-control"
                 [id]="elementData?.key"
                 [formControlName]="elementData?.key">
-            <option *ngFor="let opt of dropdownSource" [value]="opt.key">{{opt.value}}</option>
+            <option *ngFor="let opt of elementData.dropDownOptions" [value]="opt.key">{{opt.value}}</option>
         </select>
-
     </div>
 
     <div class="errorMessage">
