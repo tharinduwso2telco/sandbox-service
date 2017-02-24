@@ -55,6 +55,7 @@ public class LocationRequestHandler  extends AbstractRequestHandler<LocationRequ
 	
 	@Override
 	protected Returnable process(LocationRequestWrapperDTO extendedRequestDTO) throws Exception {
+
 		
         User user=extendedRequestDTO.getUser();
         APITypes apiTypes = dao.getAPIType(extendedRequestDTO.getRequestType().toString().toLowerCase());

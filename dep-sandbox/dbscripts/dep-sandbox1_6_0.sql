@@ -1,5 +1,5 @@
-CREATE DATABASE IF NOT EXISTS sandbox1;
-USE sandbox1;
+CREATE DATABASE IF NOT EXISTS sandbox;
+USE sandbox;
 
 
 --
