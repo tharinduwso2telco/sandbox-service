@@ -187,7 +187,6 @@ public class PaymentRefundRequestHandler extends AbstractRequestHandler<PaymentR
             // Attribute Name Used in wallet
             String accountCurrencyAttribute = AttributeName.Currency.toString().toLowerCase();
             String serviceCallBalanceLookUp = ServiceName.BalanceLookup.toString();
-//            String userName = extendedRequestDTO.getUser().getUserName();
             Integer userId = extendedRequestDTO.getUser().getId();
 
             PaymentRefundTransactionResponseBean responseBean = new PaymentRefundTransactionResponseBean();
@@ -226,7 +225,7 @@ public class PaymentRefundRequestHandler extends AbstractRequestHandler<PaymentR
             }
 
             //check referenceCode
-            String result = checkReferenceCode(userId, serviceNameId, endUserId, "1", "response", referenceCode);
+            String result = checkReferenceCode(userId, serviceNameId, endUserId, "1", "1", referenceCode);
 
             if((result!=null)){
                 LOG.error("###PAYMENT### Already charged for this reference code");
