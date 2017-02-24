@@ -32,6 +32,7 @@ import com.wso2telco.services.dep.sandbox.dao.PaymentDAO;
 import com.wso2telco.services.dep.sandbox.dao.model.custom.*;
 import com.wso2telco.services.dep.sandbox.dao.model.domain.*;
 import com.wso2telco.services.dep.sandbox.servicefactory.AbstractRequestHandler;
+import com.wso2telco.services.dep.sandbox.servicefactory.RequestResponseRequestHandleable;
 import com.wso2telco.services.dep.sandbox.servicefactory.Returnable;
 import com.wso2telco.services.dep.sandbox.servicefactory.wallet.AttributeName;
 import com.wso2telco.services.dep.sandbox.servicefactory.wallet.Channel;
@@ -48,7 +49,7 @@ import java.util.Currency;
 import java.util.Date;
 import java.util.List;
 
-public class PaymentRefundRequestHandler extends AbstractRequestHandler<PaymentRefundRequestWrapperDTO> {
+public class PaymentRefundRequestHandler extends AbstractRequestHandler<PaymentRefundRequestWrapperDTO> implements RequestResponseRequestHandleable<PaymentRefundRequestWrapperDTO> {
 
 
     private PaymentDAO paymentDAO;
@@ -69,7 +70,6 @@ public class PaymentRefundRequestHandler extends AbstractRequestHandler<PaymentR
         dao = DaoFactory.getGenaricDAO();
         logHandler = MessageLogHandler.getInstance();
     }
-
 
     @Override
     protected Returnable getResponseDTO() {
@@ -206,18 +206,11 @@ public class PaymentRefundRequestHandler extends AbstractRequestHandler<PaymentR
 
         try {
 
-            // save MessageLog for request
-            MessageLog messageLog = saveRequest(extendedRequestDTO, endUserIdPath, apiServiceCalls, jsonString, "1");
-
-            int ref_number = loggingDAO.saveMessageLog(messageLog);
-            String serverReferenceCodeFormat = String.format("%06d", ref_number);
-            String serverReferenceCode = "PAYMENT_REF" + serverReferenceCodeFormat;
-
             int serviceNameId = apiServiceCalls.getApiServiceCallId();
 
             if (clientCorrelator != null) {
 
-                String response = checkDuplicateClientCorrelator(clientCorrelator, userId, serviceNameId, endUserId,"1", "response", referenceCode);
+                String response = checkDuplicateClientCorrelator(clientCorrelator, userId, serviceNameId, endUserId,"1", "1", referenceCode);
 
                 if (response != null) {
 
@@ -326,7 +319,6 @@ public class PaymentRefundRequestHandler extends AbstractRequestHandler<PaymentR
             }
 
             responseBean.setReferenceCode(referenceCode);
-            responseBean.setServerReferenceCode(serverReferenceCode);
             responseBean.setResourceURL(CommonUtil.getResourceUrl(extendedRequestDTO));
 
             // Get the Charged Tax Amount
@@ -369,6 +361,7 @@ public class PaymentRefundRequestHandler extends AbstractRequestHandler<PaymentR
             saveResponse(userId, endUserIdPath, responseBean, apiServiceCalls,"1");
 
         } catch (Exception ex) {
+            // TODO: save failed messages in message log table
             saveRequest(extendedRequestDTO, endUserIdPath, apiServiceCalls, jsonString, "0");
             saveResponse(userId, endUserIdPath, responseBean, apiServiceCalls,"0");
             LOG.error("###REFUND### Error Occured in PAYMENT Service. ", ex);
@@ -382,9 +375,9 @@ public class PaymentRefundRequestHandler extends AbstractRequestHandler<PaymentR
 
     private String checkDuplicateClientCorrelator(String clientCorrelator, int userId, int serviceNameId, String tel, String status, String type, String referenceCode) throws Exception {
 
-        List<Integer> li = new ArrayList<>();
-        li.add(serviceNameId);
-        List<MessageLog> response = loggingDAO.getMessageLogs(userId, li, "msisdn", "tel:+" + tel, null, null);
+        List<Integer> list = new ArrayList<>();
+        list.add(serviceNameId);
+        List<MessageLog> response = loggingDAO.getMessageLogs(userId, list, "msisdn", "tel:+" + tel, null, null);
 
         String jsonString = null;
 
@@ -482,7 +475,6 @@ public class PaymentRefundRequestHandler extends AbstractRequestHandler<PaymentR
         return messageLog;
     }
 
-
     // New method to save Response in messageLog table
     private void saveResponse(Integer userId, String endUserIdPath, PaymentRefundTransactionResponseBean responseBean, APIServiceCalls apiServiceCalls, String status) throws Exception {
 
@@ -499,7 +491,7 @@ public class PaymentRefundRequestHandler extends AbstractRequestHandler<PaymentR
         messageLog1 = new MessageLog();
         messageLog1.setRequest(jsonInString);
         messageLog1.setStatus(status);
-        messageLog1.setType("response");
+        messageLog1.setType("1");
         messageLog1.setServicenameid(apiServiceCalls.getApiServiceCallId());
         messageLog1.setUserid(userId);
         messageLog1.setReference("msisdn");
@@ -529,4 +521,19 @@ public class PaymentRefundRequestHandler extends AbstractRequestHandler<PaymentR
         return false;
     }
 
+    @Override
+    public String getApiServiceCalls() {
+        return ServiceName.RefundUser.toString();
+    }
+
+    @Override
+    public String getJosonString(PaymentRefundRequestWrapperDTO requestDTO) {
+        Gson gson = new Gson();
+        String jsonString = gson.toJson(requestDTO.getRefundRequestBean());
+        return jsonString;    }
+
+    @Override
+    public String getnumber(PaymentRefundRequestWrapperDTO requestDTO) {
+        return requestDTO.getEndUserId();
+    }
 }

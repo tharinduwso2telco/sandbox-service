@@ -35,6 +35,7 @@ import com.wso2telco.services.dep.sandbox.dao.model.custom.*;
 import com.wso2telco.services.dep.sandbox.dao.model.domain.*;
 import com.wso2telco.services.dep.sandbox.servicefactory.AbstractRequestHandler;
 
+import com.wso2telco.services.dep.sandbox.servicefactory.RequestResponseRequestHandleable;
 import com.wso2telco.services.dep.sandbox.servicefactory.Returnable;
 import com.wso2telco.services.dep.sandbox.servicefactory.wallet.AttributeName;
 import com.wso2telco.services.dep.sandbox.servicefactory.wallet.Channel;
@@ -52,7 +53,7 @@ import java.util.Currency;
 import java.util.Date;
 import java.util.List;
 
-public class PaymentRequestHandler extends AbstractRequestHandler<ChargePaymentRequestWrapperDTO> {
+public class PaymentRequestHandler extends AbstractRequestHandler<ChargePaymentRequestWrapperDTO> implements RequestResponseRequestHandleable<ChargePaymentRequestWrapperDTO> {
 
     private PaymentDAO paymentDAO;
     private LoggingDAO loggingDAO;
@@ -201,13 +202,6 @@ public class PaymentRequestHandler extends AbstractRequestHandler<ChargePaymentR
 
         try {
 
-            // Refactor is needed
-            MessageLog messageLog = saveRequest(extendedRequestDTO, endUserIdPath, apiServiceCalls, jsonString, "1");
-
-            int ref_number = loggingDAO.saveMessageLog(messageLog);
-            String serverReferenceCodeFormat = String.format("%06d", ref_number);
-            String serverReferenceCode = "PAYMENT_REF" + serverReferenceCodeFormat;
-
             int serviceNameId = apiServiceCalls.getApiServiceCallId();
 
             if (clientCorrelator != null) {
@@ -328,7 +322,13 @@ public class PaymentRequestHandler extends AbstractRequestHandler<ChargePaymentR
             }
 
             responseBean.setReferenceCode(referenceCode);
+            responseBean.setResourceURL(CommonUtil.getResourceUrl(extendedRequestDTO));
+
+            // Setting the serverReference Code
+            String serverReferenceCodeFormat = String.format("%06d", getReferenceNumber());
+            String serverReferenceCode = "PAYMENT_REF" + serverReferenceCodeFormat;
             responseBean.setServerReferenceCode(serverReferenceCode);
+
             responseBean.setTransactionOperationStatus(transactionOperationStatus);
 
             ManageNumber manageNumber = numberDAO.getNumber(endUserId,
@@ -346,7 +346,6 @@ public class PaymentRequestHandler extends AbstractRequestHandler<ChargePaymentR
                                 "Denied : Account balance insufficient to charge request"));
                 return responseWrapper;
             }
-
             // set transaction operation status as refused
             else if (transactionStatusValue != null) {
                 String transactionStatus = transactionStatusValue.getValue();
@@ -375,6 +374,7 @@ public class PaymentRequestHandler extends AbstractRequestHandler<ChargePaymentR
             saveResponse(extendedRequestDTO, endUserIdPath, responseBean, apiServiceCalls, "1");
 
         } catch (Exception ex) {
+            // TODO: save failed messages in message log table
             saveRequest(extendedRequestDTO, endUserIdPath, apiServiceCalls, jsonString, "0");
             saveResponse(extendedRequestDTO, endUserIdPath, responseBean, apiServiceCalls, "0");
             LOG.error("###PAYMENT### Error Occured in PAYMENT Service. ", ex);
@@ -435,9 +435,9 @@ public class PaymentRequestHandler extends AbstractRequestHandler<ChargePaymentR
     //check reference code
     private String checkReferenceCode(int userId, int serviceNameId, String tel, String status, String type, String referenceCode) throws Exception {
 
-        List<Integer> li = new ArrayList<>();
-        li.add(serviceNameId);
-        List<MessageLog> response = loggingDAO.getMessageLogs(userId, li, "msisdn", "tel:+" + tel, null, null);
+        List<Integer> list = new ArrayList<>();
+        list.add(serviceNameId);
+        List<MessageLog> response = loggingDAO.getMessageLogs(userId, list, "msisdn", "tel:+" + tel, null, null);
 
         String jsonString = null;
 
@@ -531,5 +531,23 @@ public class PaymentRequestHandler extends AbstractRequestHandler<ChargePaymentR
             }
         }
         return false;
+    }
+
+    @Override
+    public String getApiServiceCalls() {
+        return ServiceName.ChargeUser.toString();
+
+    }
+
+    @Override
+    public String getJosonString(ChargePaymentRequestWrapperDTO requestDTO) {
+        Gson gson = new Gson();
+        String jsonString = gson.toJson(requestDTO.getPaymentRefundTransactionRequestBean());
+        return jsonString;
+    }
+
+    @Override
+    public String getnumber(ChargePaymentRequestWrapperDTO requestDTO) {
+        return requestDTO.getEndUserId();
     }
 }
