@@ -139,7 +139,7 @@ public class PaymentRefundRequestHandler extends AbstractRequestHandler<PaymentR
             }
             validationRulesList.add(new ValidationRule(ValidationRule.VALIDATION_TYPE_MANDATORY,
                     "referenceCode", referenceCode));
-            validationRulesList.add(new ValidationRule(ValidationRule.VALIDATION_TYPE_OPTIONAL,
+            validationRulesList.add(new ValidationRule(ValidationRule.VALIDATION_TYPE_MANDATORY,
                     "transactionOperationStatus", transactionOperationStatus));
 
             ValidationRule[] validationRules = new ValidationRule[validationRulesList.size()];
