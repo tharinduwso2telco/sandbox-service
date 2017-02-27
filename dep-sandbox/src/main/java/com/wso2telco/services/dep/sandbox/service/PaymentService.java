@@ -80,7 +80,7 @@ public class PaymentService {
                 return response;
             }
 
-        } else {
+        } else if (makePaymentRequestBean.getAmountTransaction().getTransactionOperationStatus().equals("Refunded")){
 
             PaymentRefundRequestWrapperDTO requestDTO = new PaymentRefundRequestWrapperDTO();
             requestDTO.setHttpRequest(request);
@@ -102,6 +102,12 @@ public class PaymentService {
                         .build();
                 return response;
             }
+        }else {
+
+            Response response = Response.status(Response.Status.BAD_REQUEST).entity(
+                    SandboxException.SandboxErrorType.SERVICE_ERROR.getCode() + " transactionOperationStatus should be Charged/Refunded")
+                    .build();
+            return response;
         }
     }
 
