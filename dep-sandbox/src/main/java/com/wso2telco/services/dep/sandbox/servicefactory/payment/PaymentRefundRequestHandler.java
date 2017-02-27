@@ -61,6 +61,7 @@ public class PaymentRefundRequestHandler extends AbstractRequestHandler<PaymentR
     private String serviceCallRefund;
     private boolean isContainsMetaData;
     private String responseReferenceCode;
+    private boolean isOriginalServerReferenceCode;
 
     {
         LOG = LogFactory.getLog(PaymentRefundRequestHandler.class);
@@ -235,6 +236,9 @@ public class PaymentRefundRequestHandler extends AbstractRequestHandler<PaymentR
                 return responseWrapper;
             }
 
+            // check serverReferenceCode against OriginalServerReferenceCode
+            Double validTransaction = checkOriginalServerReferenceWithServerReference(userId, 10, endUserId, "1", "1", originalServerReferenceCode);
+
             // check path param endUserId and request body endUserId
             if (!(endUserIdPath.equals(endUserIdRequest))) {
                 LOG.error("###REFUND### two different endUserId provided");
@@ -327,26 +331,52 @@ public class PaymentRefundRequestHandler extends AbstractRequestHandler<PaymentR
             // Setting the total Amount Refund
             payAmount.setTotalAmountRefunded(totalAmountRefunded.toString());
 
-            // set transaction operation status as charged
-            ManageNumber manageNumber = numberDAO.getNumber(endUserId, extendedRequestDTO.getUser().getUserName());
-            Double updateBalance = manageNumber.getBalance() + (chargeAmount + chargedTaxAmount);
-            AttributeValues accountStatusValue = paymentDAO.getAttributeValue(endUserId, serviceCallRefund,
-                    AttributeName.transactionStatus.toString(), userId);
-            // set transaction operation status as refused
-            manageNumber.setBalance(updateBalance);
 
-            if (accountStatusValue != null) {
-                String accountStatus = accountStatusValue.getValue();
-                // set transaction operation status as Refused   // Here wallet Status are Used
-                if (accountStatus.equals(TransactionStatus.Refused.toString())) {
-                    responseBean.setTransactionOperationStatus(TransactionStatus.Refused.toString());
+            if (!isOriginalServerReferenceCode) {
+                LOG.error("###REFUND### no payment matching for this Refund");
+                responseWrapper.setRequestError(constructRequestError(SERVICEEXCEPTION,
+                        ServiceError.INVALID_INPUT_VALUE, "no payment matching for this Refund"));
+                responseWrapper.setHttpStatus(Response.Status.BAD_REQUEST);
+                return responseWrapper;
+            }
 
-                }
+            // Check for exceeded Amount
+            if (validTransaction == 0.0) {
+                LOG.error("###REFUND### exceeds refund Amount");
+                responseWrapper.setRequestError(constructRequestError(SERVICEEXCEPTION,
+                        ServiceError.INVALID_INPUT_VALUE, "exceeds refund Amount"));
+                responseWrapper.setHttpStatus(Response.Status.BAD_REQUEST);
+                return responseWrapper;
             }
-            // set transaction operation status as Refunded
-            else if (paymentDAO.saveManageNumbers(manageNumber)) {
-                responseBean.setTransactionOperationStatus(TransactionStatus.Refunded.toString());
-            }
+
+             if (totalAmountRefunded <= validTransaction) {
+                 // set transaction operation status as charged
+                 ManageNumber manageNumber = numberDAO.getNumber(endUserId, extendedRequestDTO.getUser().getUserName());
+                 Double updateBalance = manageNumber.getBalance() + (chargeAmount + chargedTaxAmount);
+                 AttributeValues accountStatusValue = paymentDAO.getAttributeValue(endUserId, serviceCallRefund,
+                         AttributeName.transactionStatus.toString(), userId);
+                 // set transaction operation status as refused
+                 manageNumber.setBalance(updateBalance);
+
+                 if (accountStatusValue != null) {
+                     String accountStatus = accountStatusValue.getValue();
+                     // set transaction operation status as Refused   // Here wallet Status are Used
+                     if (accountStatus.equals(TransactionStatus.Refused.toString())) {
+                         responseBean.setTransactionOperationStatus(TransactionStatus.Refused.toString());
+
+                     }
+                 }
+                 // set transaction operation status as Refunded
+                 else if (paymentDAO.saveManageNumbers(manageNumber)) {
+                     responseBean.setTransactionOperationStatus(TransactionStatus.Refunded.toString());
+                 }
+            } else {
+                 LOG.error("###REFUND### Cannot Proceed Refund");
+                 responseWrapper.setRequestError(constructRequestError(SERVICEEXCEPTION,
+                         ServiceError.INVALID_INPUT_VALUE, "Cannot Proceed Refund"));
+                 responseWrapper.setHttpStatus(Response.Status.BAD_REQUEST);
+                 return responseWrapper;
+             }
 
             responseWrapper.setHttpStatus(Response.Status.OK);
             RefundPaymentDTO refundPaymentDTO = new RefundPaymentDTO();
@@ -456,6 +486,82 @@ public class PaymentRefundRequestHandler extends AbstractRequestHandler<PaymentR
         return jsonString;
     }
 
+    private double checkOriginalServerReferenceWithServerReference(int userId, int serviceNameId, String tel, String status, String type, String originalServerReferenceCode) throws Exception {
+
+        List<Integer> list = new ArrayList<>();
+        list.add(serviceNameId);
+        List<MessageLog> servercodeList = loggingDAO.getMessageLogs(userId, list, "msisdn", "tel:+" + tel, null, null);
+
+        // remove
+        APITypes apiTypes = dao.getAPIType(RequestType.PAYMENT.toString());
+        APIServiceCalls apiServiceCalls = dao.getServiceCall(apiTypes.getId(), serviceCallRefund);
+
+        int refundId = apiServiceCalls.getApiServiceCallId();
+        List<Integer> list1 = new ArrayList<>();
+        list1.add(refundId);
+
+        List<MessageLog> originalServerReferenceCodeList = loggingDAO.getMessageLogs(userId, list1, "msisdn", "tel:+" + tel, null, null);
+
+        Double paymentAmount = 0.0;
+        Double totalAmountRefunded = 0.0;
+
+        for (int i = 0; i < servercodeList.size(); i++) {
+
+            if (servercodeList != null) {
+
+                String responseStatus = servercodeList.get(i).getStatus();
+                String responseType = servercodeList.get(i).getType();
+
+                if (responseType.equals(type) && responseStatus.equals(status)) {
+                    String request = servercodeList.get(i).getRequest();
+                    JSONObject json = new JSONObject(request);
+                   String serverReferenceCode = json.get("serverReferenceCode").toString();
+
+                    int responseUserId = servercodeList.get(i).getUserid();
+                    String responseTel = servercodeList.get(i).getValue();
+
+                    if (responseUserId == userId && responseTel.equals("tel:+" + tel) && serverReferenceCode.equals(originalServerReferenceCode)) {
+                        isOriginalServerReferenceCode = true;
+                        paymentAmount = Double.valueOf(json.getJSONObject("paymentAmount").get("totalAmountCharged").toString());
+                    }
+                }
+
+            }
+
+        }
+
+        if (isOriginalServerReferenceCode == true) {
+
+            for (int i = 0; i< originalServerReferenceCodeList.size(); i++) {
+
+                if (originalServerReferenceCodeList != null) {
+
+                    String responseStatus = originalServerReferenceCodeList.get(i).getStatus();
+                    String responseType = originalServerReferenceCodeList.get(i).getType();
+
+                    if (responseType.equals(type) && responseStatus.equals(status)) {
+                        String request = originalServerReferenceCodeList.get(i).getRequest();
+                        JSONObject json = new JSONObject(request);
+                        String responseOriginalServerReferenceCode = json.get("originalServerReferenceCode").toString();
+
+                        int responseUserId = originalServerReferenceCodeList.get(i).getUserid();
+                        String responseTel = originalServerReferenceCodeList.get(i).getValue();
+
+                        // Check reference CodeDuplication
+                        if (responseUserId == userId && responseTel.equals("tel:+" + tel) && responseOriginalServerReferenceCode.equals(originalServerReferenceCode)) {
+                            totalAmountRefunded += Double.valueOf(json.getJSONObject("paymentAmount").get("totalAmountRefunded").toString());
+                        }
+                    }
+
+                }
+
+            }
+
+        }
+        return (paymentAmount-totalAmountRefunded);
+    }
+
+
     // saving request in message log table
     private MessageLog saveRequest(PaymentRefundRequestWrapperDTO extendedRequestDTO,
                                      String endUserIdPath, APIServiceCalls apiServiceCalls, String jsonString, String status) throws Exception {
@@ -466,7 +572,7 @@ public class PaymentRefundRequestHandler extends AbstractRequestHandler<PaymentR
         messageLog.setValue(endUserIdPath);
         messageLog.setRequest(jsonString);
         messageLog.setStatus(status);
-        messageLog.setType("request");
+        messageLog.setType("0");
         messageLog.setMessageTimestamp(new Date());
 
         loggingDAO.saveMessageLog(messageLog);
