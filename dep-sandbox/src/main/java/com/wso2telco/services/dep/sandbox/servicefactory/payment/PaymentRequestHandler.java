@@ -136,7 +136,7 @@ public class PaymentRequestHandler extends AbstractRequestHandler<ChargePaymentR
                         "categoryCode", categoryCode));
                 validationRulesList.add(new ValidationRule(ValidationRule.VALIDATION_TYPE_OPTIONAL,
                         "channel", channel));
-                validationRulesList.add(new ValidationRule(ValidationRule.VALIDATION_TYPE_OPTIONAL,
+                validationRulesList.add(new ValidationRule(ValidationRule.VALIDATION_TYPE_OPTIONAL_DOUBLE_GE_ZERO,
                         "taxAmount", taxAmount));
             }
             validationRulesList.add(new ValidationRule(ValidationRule.VALIDATION_TYPE_MANDATORY,
@@ -308,6 +308,7 @@ public class PaymentRequestHandler extends AbstractRequestHandler<ChargePaymentR
             chargeInformation.setDescription(description);
 
             // Get the tax Amount
+
             Double chargeTaxAmount = Double.parseDouble(taxAmount);
 
             // Setting the Total Amount Charged

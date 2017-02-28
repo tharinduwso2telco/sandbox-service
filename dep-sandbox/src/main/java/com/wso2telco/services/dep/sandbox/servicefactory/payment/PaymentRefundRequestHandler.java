@@ -136,7 +136,7 @@ public class PaymentRefundRequestHandler extends AbstractRequestHandler<PaymentR
                         "categoryCode", categoryCode));
                 validationRulesList.add(new ValidationRule(ValidationRule.VALIDATION_TYPE_OPTIONAL,
                         "channel", channel));
-                validationRulesList.add(new ValidationRule(ValidationRule.VALIDATION_TYPE_OPTIONAL,
+                validationRulesList.add(new ValidationRule(ValidationRule.VALIDATION_TYPE_OPTIONAL_DOUBLE_GE_ZERO,
                         "taxAmount", taxAmount));
             }
             validationRulesList.add(new ValidationRule(ValidationRule.VALIDATION_TYPE_MANDATORY,
@@ -335,7 +335,14 @@ public class PaymentRefundRequestHandler extends AbstractRequestHandler<PaymentR
 
             // Get the Charged Tax Amount
             Double chargedTaxAmount = Double.parseDouble(taxAmount);
-            //Total Amount Refunded
+            if (chargedTaxAmount < 0 ) {
+                LOG.error("###REFUND### tax amount should a positive number ");
+                responseWrapper
+                        .setRequestError(constructRequestError(SERVICEEXCEPTION, ServiceError.INVALID_INPUT_VALUE,
+                                "tax amount should a positive number"));
+                responseWrapper.setHttpStatus(Response.Status.BAD_REQUEST);
+                return responseWrapper;
+            }
 
             // For inspection
             Double totalAmountRefundeds = chargeAmount - chargedTaxAmount;
@@ -573,12 +580,14 @@ public class PaymentRefundRequestHandler extends AbstractRequestHandler<PaymentR
 
         }
 
-
-        APIServiceCalls apiServiceCalls1 = dao.getServiceCall(apiTypes.getId(), ServiceName.PartialRefund.toString());
+        APITypes apiTypes1 = dao.getAPIType(RequestType.CREDIT.toString());
+        APIServiceCalls apiServiceCalls1 = dao.getServiceCall(apiTypes1.getId(), ServiceName.PartialRefund.toString());
         List<Integer> refundIdList = new ArrayList<>();
         refundIdList.add(apiServiceCalls1.getApiServiceCallId());
 
         List<MessageLog> messageLogForPartialRefund = loggingDAO.getMessageLogs(userId, refundIdList, "msisdn", "tel:+" + tel, null, null);
+
+        if (messageLogForPartialRefund != null) {
 
         for (int i = 0; i< messageLogForPartialRefund.size(); i++) {
 
@@ -599,8 +608,7 @@ public class PaymentRefundRequestHandler extends AbstractRequestHandler<PaymentR
                         totalAmountRefunded += Double.valueOf(json.getJSONObject("refundResponse").get("refundAmount").toString());
                     }
                 }
-
-
+            }
 
         }
 
