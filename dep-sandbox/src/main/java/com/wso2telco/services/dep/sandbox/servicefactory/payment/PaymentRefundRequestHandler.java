@@ -62,6 +62,7 @@ public class PaymentRefundRequestHandler extends AbstractRequestHandler<PaymentR
     private boolean isContainsMetaData;
     private String responseReferenceCode;
     private boolean isOriginalServerReferenceCode;
+    private double totalAmountRefunded;
 
     {
         LOG = LogFactory.getLog(PaymentRefundRequestHandler.class);
@@ -236,8 +237,14 @@ public class PaymentRefundRequestHandler extends AbstractRequestHandler<PaymentR
                 return responseWrapper;
             }
 
+            //Todo: remove the hardcoded Value
             // check serverReferenceCode against OriginalServerReferenceCode
-            Double validTransaction = checkOriginalServerReferenceWithServerReference(userId, 10, endUserId, "1", "1", originalServerReferenceCode);
+
+            APIServiceCalls apiServiceCallForMakePayment = dao.getServiceCall(apiTypes.getId(), ServiceName.ChargeUser.toString());
+
+            int serviceIdForMakePayment = apiServiceCallForMakePayment.getApiServiceCallId();
+
+            Double validTransaction = checkOriginalServerReferenceWithServerReference(userId, serviceIdForMakePayment, endUserId, "1", "1", originalServerReferenceCode);
 
             // check path param endUserId and request body endUserId
             if (!(endUserIdPath.equals(endUserIdRequest))) {
@@ -324,12 +331,19 @@ public class PaymentRefundRequestHandler extends AbstractRequestHandler<PaymentR
             responseBean.setReferenceCode(referenceCode);
             responseBean.setResourceURL(CommonUtil.getResourceUrl(extendedRequestDTO));
 
+
+
             // Get the Charged Tax Amount
             Double chargedTaxAmount = Double.parseDouble(taxAmount);
             //Total Amount Refunded
-            Double totalAmountRefunded = chargeAmount + chargedTaxAmount;
+
+            // For inspection
+            Double totalAmountRefundeds = chargeAmount - chargedTaxAmount;
+            totalAmountRefundeds+=totalAmountRefunded;
+
+//            Double refundAmount = totalAmountRefunded - chargedTaxAmount;
             // Setting the total Amount Refund
-            payAmount.setTotalAmountRefunded(totalAmountRefunded.toString());
+            payAmount.setTotalAmountRefunded(totalAmountRefundeds.toString());
 
 
             if (!isOriginalServerReferenceCode) {
@@ -341,7 +355,7 @@ public class PaymentRefundRequestHandler extends AbstractRequestHandler<PaymentR
             }
 
             // Check for exceeded Amount
-            if (validTransaction == 0.0) {
+            if (validTransaction == 0.0 || validTransaction < 0) {
                 LOG.error("###REFUND### exceeds refund Amount");
                 responseWrapper.setRequestError(constructRequestError(SERVICEEXCEPTION,
                         ServiceError.INVALID_INPUT_VALUE, "exceeds refund Amount"));
@@ -349,7 +363,7 @@ public class PaymentRefundRequestHandler extends AbstractRequestHandler<PaymentR
                 return responseWrapper;
             }
 
-             if (totalAmountRefunded <= validTransaction) {
+             if (totalAmountRefundeds <= validTransaction) {
                  // set transaction operation status as charged
                  ManageNumber manageNumber = numberDAO.getNumber(endUserId, extendedRequestDTO.getUser().getUserName());
                  Double updateBalance = manageNumber.getBalance() + (chargeAmount + chargedTaxAmount);
@@ -503,7 +517,7 @@ public class PaymentRefundRequestHandler extends AbstractRequestHandler<PaymentR
         List<MessageLog> originalServerReferenceCodeList = loggingDAO.getMessageLogs(userId, list1, "msisdn", "tel:+" + tel, null, null);
 
         Double paymentAmount = 0.0;
-        Double totalAmountRefunded = 0.0;
+
 
         for (int i = 0; i < servercodeList.size(); i++) {
 
@@ -522,7 +536,7 @@ public class PaymentRefundRequestHandler extends AbstractRequestHandler<PaymentR
 
                     if (responseUserId == userId && responseTel.equals("tel:+" + tel) && serverReferenceCode.equals(originalServerReferenceCode)) {
                         isOriginalServerReferenceCode = true;
-                        paymentAmount = Double.valueOf(json.getJSONObject("paymentAmount").get("totalAmountCharged").toString());
+                        paymentAmount = Double.valueOf(json.getJSONObject("paymentAmount").getJSONObject("chargingInformation").get("amount").toString());
                     }
                 }
 
@@ -530,7 +544,7 @@ public class PaymentRefundRequestHandler extends AbstractRequestHandler<PaymentR
 
         }
 
-        if (isOriginalServerReferenceCode == true) {
+        if (isOriginalServerReferenceCode) {
 
             for (int i = 0; i< originalServerReferenceCodeList.size(); i++) {
 
@@ -558,6 +572,38 @@ public class PaymentRefundRequestHandler extends AbstractRequestHandler<PaymentR
             }
 
         }
+
+
+        APIServiceCalls apiServiceCalls1 = dao.getServiceCall(apiTypes.getId(), ServiceName.PartialRefund.toString());
+        List<Integer> refundIdList = new ArrayList<>();
+        refundIdList.add(apiServiceCalls1.getApiServiceCallId());
+
+        List<MessageLog> messageLogForPartialRefund = loggingDAO.getMessageLogs(userId, refundIdList, "msisdn", "tel:+" + tel, null, null);
+
+        for (int i = 0; i< messageLogForPartialRefund.size(); i++) {
+
+                String responseStatus = messageLogForPartialRefund.get(i).getStatus();
+                String responseType = messageLogForPartialRefund.get(i).getType();
+
+                if (responseType.equals(type) && responseStatus.equals(status)) {
+
+                    String request = messageLogForPartialRefund.get(i).getRequest();
+                    JSONObject json = new JSONObject(request);
+                    String responseOriginalServerReferenceCode = json.get("originalServerReferenceCode").toString();
+
+                    int responseUserId = originalServerReferenceCodeList.get(i).getUserid();
+                    String responseTel = originalServerReferenceCodeList.get(i).getValue();
+
+                    // Check reference CodeDuplication
+                    if (responseUserId == userId && responseTel.equals("tel:+" + tel) && responseOriginalServerReferenceCode.equals(originalServerReferenceCode)) {
+                        totalAmountRefunded += Double.valueOf(json.getJSONObject("refundResponse").get("refundAmount").toString());
+                    }
+                }
+
+
+
+        }
+
         return (paymentAmount-totalAmountRefunded);
     }
 
