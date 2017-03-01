@@ -16,8 +16,6 @@
 
 package com.wso2telco.services.dep.sandbox.service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import com.wordnik.swagger.annotations.*;
 import com.wso2telco.core.dbutils.exception.ServiceError;
@@ -28,15 +26,10 @@ import com.wso2telco.services.dep.sandbox.servicefactory.RequestBuilderFactory;
 import com.wso2telco.services.dep.sandbox.servicefactory.RequestHandleable;
 import com.wso2telco.services.dep.sandbox.servicefactory.Returnable;
 import com.wso2telco.services.dep.sandbox.servicefactory.payment.PaymentListTransactionRequestWrapper;
-import com.wso2telco.services.dep.sandbox.servicefactory.payment.PaymentRefundRequestHandler;
-import com.wso2telco.services.dep.sandbox.servicefactory.payment.PaymentRequestHandler;
 import com.wso2telco.services.dep.sandbox.util.RequestError;
 import com.wso2telco.services.dep.sandbox.util.RequestType;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.json.JSONArray;
-import org.json.JSONObject;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
@@ -60,10 +53,12 @@ public class PaymentService {
     public Response makePayment(
             @ApiParam(value = "endUserId", required = true) @PathParam("endUserId") String endUserId,
             PaymentRefundTransactionRequestBean makePaymentRequestBean, @Context HttpServletRequest request) {
-        LOG.debug("###PAYMENT### /{endUserId} invoked : endUserId - " + endUserId);
-        if (makePaymentRequestBean != null) {
-            LOG.debug(makePaymentRequestBean);
-        }
+             if (LOG.isDebugEnabled()) {
+                 LOG.debug("###PAYMENT### /{endUserId} invoked : endUserId - " + endUserId);
+             }
+             if (LOG.isDebugEnabled() && makePaymentRequestBean != null) {
+                 LOG.debug(makePaymentRequestBean);
+             }
         //Separate Charged and Refunded request calls
         if (makePaymentRequestBean.getAmountTransaction().getTransactionOperationStatus().equals("Charged")) {
 
@@ -142,7 +137,9 @@ public class PaymentService {
         try {
             returnable = handler.execute(requestDTO);
             Response response = Response.status(returnable.getHttpStatus()).entity(returnable.getResponse()).build();
-            LOG.debug("List Transaction SERVICE RESPONSE : " + response);
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("List Transaction SERVICE RESPONSE : " + response);
+            }
             return response;
         } catch (Exception ex) {
             LOG.error("List Transaction SERVICE ERROR : ", ex);

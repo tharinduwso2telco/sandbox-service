@@ -137,10 +137,10 @@ public class PatialRefundRequestHandler extends AbstractRequestHandler<PatialRef
             String onBehalfOf = CommonUtil.getNullOrTrimmedValue(metadata.getOnBehalfOf());
             String categoryCode = CommonUtil.getNullOrTrimmedValue(metadata.getPurchaseCategoryCode());
             String channel = CommonUtil.getNullOrTrimmedValue(metadata.getChannel());
-            double taxAmount = Double.parseDouble(CommonUtil.getNullOrTrimmedValue(metadata.getTax()));
+            String taxAmount = CommonUtil.getNullOrTrimmedValue(metadata.getTax());
             String referenceCode = CommonUtil.getNullOrTrimmedValue(request.getReferenceCode());
             String currency = CommonUtil.getNullOrTrimmedValue(chargingInformation.getCurrency());
-            amount = Double.parseDouble(CommonUtil.getNullOrTrimmedValue(chargingInformation.getAmount()));
+            String amount = CommonUtil.getNullOrTrimmedValue(chargingInformation.getAmount());
             String callbackData = CommonUtil.getNullOrTrimmedValue(request.getCallbackData());
             String notifyURL =  CommonUtil.getNullOrTrimmedValue(request.getNotifyURL());
             String merchantIdentification = CommonUtil.getNullOrTrimmedValue(request.getMerchantIdentification());
@@ -165,9 +165,7 @@ public class PatialRefundRequestHandler extends AbstractRequestHandler<PatialRef
                         new ValidationRule(ValidationRule.VALIDATION_TYPE_OPTIONAL, NOTIFY_URL, notifyURL),
                         new ValidationRule(ValidationRule.VALIDATION_TYPE_OPTIONAL, MERCHANT_IDENTIFICATION, merchantIdentification),
                         new ValidationRule(ValidationRule.VALIDATION_TYPE_OPTIONAL, DESCRIPTION, description),
-                        new ValidationRule(ValidationRule.VALIDATION_TYPE_OPTIONAL, PURCHASE_CATEGORY_CODE, purchaseCategoryCode),
-                        new ValidationRule(ValidationRule.VALIDATION_TYPE_OPTIONAL_DOUBLE_GE_ZERO, TAX_AMOUNT, taxAmount)
-
+                        new ValidationRule(ValidationRule.VALIDATION_TYPE_OPTIONAL, PURCHASE_CATEGORY_CODE, purchaseCategoryCode)
 
                 };
 
@@ -175,7 +173,7 @@ public class PatialRefundRequestHandler extends AbstractRequestHandler<PatialRef
             } catch (CustomException ex) {
                 LOG.error("###CREDIT### Error in Validation : " + ex);
                 responseWrapperDTO.setRequestError(constructRequestError(SERVICEEXCEPTION, ex.getErrcode(),
-                        ex.getErrmsg(), wrapperDTO.getMsisdn()));
+                        ex.getErrmsg(), ex.getErrvar()[0]));
                 responseWrapperDTO.setHttpStatus(javax.ws.rs.core.Response.Status.BAD_REQUEST);
             }
             return true;

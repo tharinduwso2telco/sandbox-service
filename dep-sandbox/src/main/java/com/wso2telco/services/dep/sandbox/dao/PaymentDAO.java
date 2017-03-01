@@ -23,13 +23,5 @@ import java.util.List;
 
 public interface PaymentDAO {
 
-    public List<AttributeValues> getTransactionValue(String endUserId, List<String> attribute, String tableName,
-                                                     Integer userId) throws Exception;
-    public AttributeValues getAttributeValue(String endUserId, String serviceCall, String attribute, Integer userId)
-            throws Exception;
-    public AttributeValues checkDuplicateValue(String serviceCall, String value, String attributeName, String tableName)
-            throws Exception;
-    public Integer saveAttributeValue(AttributeValues valueObj) throws Exception;
-    public AttributeValues getResponse(Integer id) throws Exception;
     public boolean saveManageNumbers(ManageNumber manageNumber) throws Exception;
 }

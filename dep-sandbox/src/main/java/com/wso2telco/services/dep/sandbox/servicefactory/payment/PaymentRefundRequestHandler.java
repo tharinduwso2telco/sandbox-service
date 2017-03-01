@@ -313,20 +313,6 @@ public class PaymentRefundRequestHandler extends AbstractRequestHandler<PaymentR
                 }
             }
 
-            AttributeValues accountCurrencyValue = paymentDAO.getAttributeValue(endUserId, serviceCallBalanceLookUp,
-                    accountCurrencyAttribute, userId);
-            if (accountCurrencyValue != null) {
-                String accountCurrency = accountCurrencyValue.getValue();
-                if (!(currency.equals(accountCurrency))) {
-                    LOG.error("###REFUND### Valid currency doesn't exists for the given inputs");
-                    responseWrapper
-                            .setRequestError(constructRequestError(SERVICEEXCEPTION, ServiceError.INVALID_INPUT_VALUE,
-                                    "Valid currency does not exist for the given input parameters"));
-                    responseWrapper.setHttpStatus(Response.Status.BAD_REQUEST);
-                    return responseWrapper;
-                }
-            }
-
             // check channel
             if (channel != null && !containsChannel(channel)) {
                 LOG.error("###REFUND### Valid channel doesn't exists for the given inputs");
@@ -374,8 +360,8 @@ public class PaymentRefundRequestHandler extends AbstractRequestHandler<PaymentR
             }
 
             // For inspection
-            Double totalAmountToRefund = chargeAmount - chargedTaxAmount;
-            Double refundAmount = chargeAmount - chargedTaxAmount;
+            Double totalAmountToRefund = chargeAmount;
+            Double refundAmount = chargeAmount;
             totalAmountToRefund+=totalAmountRefunded;
 
             // Setting the total Amount Refund
@@ -399,9 +385,8 @@ public class PaymentRefundRequestHandler extends AbstractRequestHandler<PaymentR
             }
 
              if (refundAmount <= validTransaction) {
-                 // set transaction operation status as charged
                  ManageNumber manageNumber = numberDAO.getNumber(endUserId, extendedRequestDTO.getUser().getUserName());
-                 Double updateBalance = manageNumber.getBalance() + (chargeAmount + chargedTaxAmount);
+                 Double updateBalance = manageNumber.getBalance() + chargeAmount;
                  manageNumber.setBalance(updateBalance);
 
                  // set transaction operation status as Refunded
@@ -428,9 +413,6 @@ public class PaymentRefundRequestHandler extends AbstractRequestHandler<PaymentR
             saveResponse(userId, endUserIdPath, responseBean, apiServiceCalls,"1");
 
         } catch (Exception ex) {
-            // TODO: save failed messages in message log table
-            saveRequest(extendedRequestDTO, endUserIdPath, apiServiceCalls, jsonString, "0");
-            saveResponse(userId, endUserIdPath, responseBean, apiServiceCalls,"0");
             LOG.error("###REFUND### Error Occured in PAYMENT Service. ", ex);
             responseWrapper.setHttpStatus(Response.Status.BAD_REQUEST);
             responseWrapper
@@ -587,7 +569,7 @@ public class PaymentRefundRequestHandler extends AbstractRequestHandler<PaymentR
 
                         // Check reference CodeDuplication
                         if (responseUserId == userId && responseTel.equals("tel:+" + tel) && responseOriginalServerReferenceCode.equals(originalServerReferenceCode)) {
-                            totalAmountRefunded += Double.valueOf(json.getJSONObject("paymentAmount").get("totalAmountRefunded").toString());
+                            totalAmountRefunded += Double.valueOf(json.getJSONObject("paymentAmount").getJSONObject("chargingInformation").get("amount").toString());
                         }
                     }
 

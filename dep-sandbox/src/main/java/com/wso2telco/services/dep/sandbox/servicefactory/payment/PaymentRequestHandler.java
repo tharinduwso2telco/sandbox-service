@@ -31,13 +31,10 @@ import com.wso2telco.services.dep.sandbox.dao.LoggingDAO;
 import com.wso2telco.services.dep.sandbox.dao.NumberDAO;
 import com.wso2telco.services.dep.sandbox.dao.PaymentDAO;
 import com.wso2telco.services.dep.sandbox.dao.model.custom.*;
-
 import com.wso2telco.services.dep.sandbox.dao.model.domain.*;
 import com.wso2telco.services.dep.sandbox.servicefactory.AbstractRequestHandler;
-
 import com.wso2telco.services.dep.sandbox.servicefactory.RequestResponseRequestHandleable;
 import com.wso2telco.services.dep.sandbox.servicefactory.Returnable;
-import com.wso2telco.services.dep.sandbox.servicefactory.wallet.AttributeName;
 import com.wso2telco.services.dep.sandbox.servicefactory.wallet.Channel;
 import com.wso2telco.services.dep.sandbox.servicefactory.wallet.TransactionStatus;
 import com.wso2telco.services.dep.sandbox.util.*;
@@ -318,8 +315,6 @@ public class PaymentRequestHandler extends AbstractRequestHandler<ChargePaymentR
             ManageNumber manageNumber = numberDAO.getNumber(endUserId,
                     extendedRequestDTO.getUser().getUserName().toString());
             Double balance = manageNumber.getBalance();
-            AttributeValues transactionStatusValue = paymentDAO.getAttributeValue(endUserId, serviceCallPayment,
-                    AttributeName.transactionStatus.toString(), userId);
 
             // transaction operation status as denied
             if ((balance < chargeAmount)) {
@@ -329,15 +324,6 @@ public class PaymentRequestHandler extends AbstractRequestHandler<ChargePaymentR
                         .setRequestError(constructRequestError(POLICYEXCEPTION, PolicyError.NO_VALID_SERVICES_AVAILABLE,
                                 "Denied : Account balance insufficient to charge request"));
                 return responseWrapper;
-            }
-
-            // set transaction operation status as refused
-            else if (transactionStatusValue != null) {
-                String transactionStatus = transactionStatusValue.getValue();
-                if (transactionStatus.equals(TransactionStatus.Refused.toString())) {
-                    responseBean.setTransactionOperationStatus(TransactionStatus.Refused.toString());
-                }
-                // set transaction status as charged
             } else if (balance >= chargeAmount) {
                 balance = balance - chargeAmount;
                 manageNumber.setBalance(balance);
@@ -359,9 +345,6 @@ public class PaymentRequestHandler extends AbstractRequestHandler<ChargePaymentR
             saveResponse(extendedRequestDTO, endUserIdPath, responseBean, apiServiceCalls, "1");
 
         } catch (Exception ex) {
-            // TODO: save failed messages in message log table
-            saveRequest(extendedRequestDTO, endUserIdPath, apiServiceCalls, jsonString, "0");
-            saveResponse(extendedRequestDTO, endUserIdPath, responseBean, apiServiceCalls, "0");
             LOG.error("###PAYMENT### Error Occured in PAYMENT Service. ", ex);
             responseWrapper.setHttpStatus(Response.Status.BAD_REQUEST);
             responseWrapper

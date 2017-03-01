@@ -30,11 +30,9 @@ import com.wso2telco.services.dep.sandbox.dao.model.custom.PaymentListTransactio
 import com.wso2telco.services.dep.sandbox.dao.model.custom.PaymentListTransactionResponseBean;
 import com.wso2telco.services.dep.sandbox.dao.model.domain.APIServiceCalls;
 import com.wso2telco.services.dep.sandbox.dao.model.domain.APITypes;
-import com.wso2telco.services.dep.sandbox.dao.model.domain.AttributeValues;
 import com.wso2telco.services.dep.sandbox.dao.model.domain.MessageLog;
 import com.wso2telco.services.dep.sandbox.servicefactory.AbstractRequestHandler;
 import com.wso2telco.services.dep.sandbox.servicefactory.Returnable;
-import com.wso2telco.services.dep.sandbox.servicefactory.wallet.AttributeName;
 import com.wso2telco.services.dep.sandbox.util.*;
 import org.apache.commons.logging.LogFactory;
 import org.json.simple.JSONObject;
@@ -115,8 +113,6 @@ public class PaymentListTransactionRequestHandler extends AbstractRequestHandler
             JSONObject object = new JSONObject();
             object.put("endUserId", msisdn);
 
-//            Todo: save messageLog
-//            logHandler.saveMessageLog(apiServiceCalls.getApiServiceCallId(), extendedRequestDTO.getUser().getId(), "msisdn", msisdn, object);
 
             PaymentListTransactionResponseBean paymentTransaction = new PaymentListTransactionResponseBean();
             List<JsonNode> listNodes = new ArrayList<JsonNode>();
@@ -130,7 +126,6 @@ public class PaymentListTransactionRequestHandler extends AbstractRequestHandler
                     String responseStatus = responses.get(i).getStatus();
                     String responseType = responses.get(i).getType();
 
-
                     if (responseType.equals("1") && responseStatus.equals("1")) {
                         String request = responses.get(i).getRequest();
                         org.json.JSONObject json = new org.json.JSONObject(request);
@@ -138,7 +133,6 @@ public class PaymentListTransactionRequestHandler extends AbstractRequestHandler
                         int responseUserId = responses.get(i).getUserid();
                         String responseTel = responses.get(i).getValue();
 
-                        // Check client correlator
                         if (responseUserId == userId && responseTel.equals("tel:+" + endUserId)) {
                             jsonString = json.toString();
                             JsonParser parser = new JsonParser();
