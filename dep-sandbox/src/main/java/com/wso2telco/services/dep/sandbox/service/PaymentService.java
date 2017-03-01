@@ -16,7 +16,12 @@
 
 package com.wso2telco.services.dep.sandbox.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.Gson;
 import com.wordnik.swagger.annotations.*;
+import com.wso2telco.core.dbutils.exception.ServiceError;
+import com.wso2telco.dep.oneapivalidation.exceptions.PolicyException;
 import com.wso2telco.services.dep.sandbox.dao.model.custom.*;
 import com.wso2telco.services.dep.sandbox.exception.SandboxException;
 import com.wso2telco.services.dep.sandbox.servicefactory.RequestBuilderFactory;
@@ -25,6 +30,7 @@ import com.wso2telco.services.dep.sandbox.servicefactory.Returnable;
 import com.wso2telco.services.dep.sandbox.servicefactory.payment.PaymentListTransactionRequestWrapper;
 import com.wso2telco.services.dep.sandbox.servicefactory.payment.PaymentRefundRequestHandler;
 import com.wso2telco.services.dep.sandbox.servicefactory.payment.PaymentRequestHandler;
+import com.wso2telco.services.dep.sandbox.util.RequestError;
 import com.wso2telco.services.dep.sandbox.util.RequestType;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -41,6 +47,8 @@ import javax.ws.rs.core.Response;
 @Produces({MediaType.APPLICATION_JSON})
 @Api(value = "payment/{v1}", description = "Rest Service for Payment API")
 public class PaymentService {
+
+    protected static final String POLICYEXCEPTION = "POL0001";
 
     Log LOG = LogFactory.getLog(PaymentService.class);
 
@@ -102,13 +110,16 @@ public class PaymentService {
                         .build();
                 return response;
             }
-        }else {
-
-            Response response = Response.status(Response.Status.BAD_REQUEST).entity(
-                    SandboxException.SandboxErrorType.SERVICE_ERROR.getCode() + " transactionOperationStatus should be Charged/Refunded")
-                    .build();
-            return response;
         }
+
+        PolicyException policyException = new PolicyException(POLICYEXCEPTION, (ServiceError.INVALID_INPUT_VALUE).getMessage(), "transactionOperationStatus should be Charged/Refunded");
+        RequestError requestError = new RequestError();
+        requestError.setPolicyException(policyException);
+        Gson gson = new Gson();
+        String errorMessage = gson.toJson(requestError);
+        Response response = Response.status(Response.Status.BAD_REQUEST).entity(errorMessage).build();
+        return response;
+
     }
 
     @GET

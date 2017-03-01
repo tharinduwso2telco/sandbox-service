@@ -45,7 +45,6 @@ import com.wso2telco.services.dep.sandbox.util.MessageLogHandler;
 import com.wso2telco.services.dep.sandbox.util.RequestType;
 import com.wso2telco.services.dep.sandbox.util.ServiceName;
 import org.apache.commons.logging.LogFactory;
-import org.json.simple.JSONObject;
 
 import javax.annotation.Nonnull;
 import javax.ws.rs.core.Response;
@@ -63,10 +62,6 @@ public class PatialRefundRequestHandler extends AbstractRequestHandler<PatialRef
     final String REASON = "reasonForRefund";
     final String REFERENCE = "originalServerReferenceCode";
     final String REFERENCE_CODE = "referenceCode";
-    final String PAYMENT_AMOUNT = "paymentAmount";
-    final String CHANGING_INFO = "chargingInformation";
-    final String CHARGING_META_DATA = "chargingMetaData";
-    final String REFUND_REQUEST = "refundRequest";
     final String ON_BEHALF_OF = "onBehalfOf";
     final String CATEGORY_CODE = "categoryCode";
     final String CHANNEL = "channel";
@@ -74,6 +69,11 @@ public class PatialRefundRequestHandler extends AbstractRequestHandler<PatialRef
     final String CURRENCY = "currency";
     final String AMOUNT = "amount";
     final String TAX = "tax";
+    final String CALL_BACK_DATA = "callbackData";
+    final String NOTIFY_URL = "notifyURL";
+    final String MERCHANT_IDENTIFICATION = "merchantIdentification";
+    final String DESCRIPTION = "description";
+    final String PURCHASE_CATEGORY_CODE = "purchaseCategoryCode";
 
     private NumberDAO numberDao;
     private CreditDAO creditDAO;
@@ -141,7 +141,11 @@ public class PatialRefundRequestHandler extends AbstractRequestHandler<PatialRef
             String referenceCode = CommonUtil.getNullOrTrimmedValue(request.getReferenceCode());
             String currency = CommonUtil.getNullOrTrimmedValue(chargingInformation.getCurrency());
             amount = Double.parseDouble(CommonUtil.getNullOrTrimmedValue(chargingInformation.getAmount()));
-
+            String callbackData = CommonUtil.getNullOrTrimmedValue(request.getCallbackData());
+            String notifyURL =  CommonUtil.getNullOrTrimmedValue(request.getNotifyURL());
+            String merchantIdentification = CommonUtil.getNullOrTrimmedValue(request.getMerchantIdentification());
+            String description = CommonUtil.getNullOrTrimmedValue(chargingInformation.getDescription());
+            String purchaseCategoryCode = CommonUtil.getNullOrTrimmedValue(metadata.getPurchaseCategoryCode());
 
             try {
                 ValidationRule[] validationRules = {
@@ -155,8 +159,15 @@ public class PatialRefundRequestHandler extends AbstractRequestHandler<PatialRef
                         new ValidationRule(ValidationRule.VALIDATION_TYPE_OPTIONAL, CHANNEL, channel),
                         new ValidationRule(ValidationRule.VALIDATION_TYPE_OPTIONAL_DOUBLE_GE_ZERO, TAX_AMOUNT, taxAmount),
                         new ValidationRule(ValidationRule.VALIDATION_TYPE_MANDATORY, REFERENCE_CODE, referenceCode),
-                        new ValidationRule(ValidationRule.VALIDATION_TYPE_MANDATORY, CURRENCY, currency),
-                        new ValidationRule(ValidationRule.VALIDATION_TYPE_MANDATORY_DOUBLE_GE_ZERO, AMOUNT, amount)
+                        new ValidationRule(ValidationRule.VALIDATION_TYPE_OPTIONAL, CURRENCY, currency),
+                        new ValidationRule(ValidationRule.VALIDATION_TYPE_MANDATORY_DOUBLE_GE_ZERO, AMOUNT, amount),
+                        new ValidationRule(ValidationRule.VALIDATION_TYPE_OPTIONAL, CALL_BACK_DATA, callbackData),
+                        new ValidationRule(ValidationRule.VALIDATION_TYPE_OPTIONAL, NOTIFY_URL, notifyURL),
+                        new ValidationRule(ValidationRule.VALIDATION_TYPE_OPTIONAL, MERCHANT_IDENTIFICATION, merchantIdentification),
+                        new ValidationRule(ValidationRule.VALIDATION_TYPE_OPTIONAL, DESCRIPTION, description),
+                        new ValidationRule(ValidationRule.VALIDATION_TYPE_OPTIONAL, PURCHASE_CATEGORY_CODE, purchaseCategoryCode),
+                        new ValidationRule(ValidationRule.VALIDATION_TYPE_OPTIONAL_DOUBLE_GE_ZERO, TAX_AMOUNT, taxAmount)
+
 
                 };
 
@@ -190,10 +201,6 @@ public class PatialRefundRequestHandler extends AbstractRequestHandler<PatialRef
         PaymentAmountWithTax paymentAmountWithTax = request.getPaymentAmount();
         ChargingInformation chargingInformation = paymentAmountWithTax.getChargingInformation();
         ChargingMetaDataWithTax metadata = paymentAmountWithTax.getChargingMetaData();
-        APITypes apiType = dao.getAPIType(RequestType.CREDIT.toString().toLowerCase());
-        APIServiceCalls serviceType = dao.getServiceCall(apiType.getId(), ServiceName.PartialRefund.toString());
-        JSONObject obj = buildJSONObject(request);
-
 
         double RefundAmount = request.getRefundAmount();
         String msisdn = CommonUtil.getNullOrTrimmedValue(request.getMsisdn());
@@ -264,15 +271,17 @@ public class PatialRefundRequestHandler extends AbstractRequestHandler<PatialRef
                 return responseWrapperDTO;
             }
 
-            // check valid account currency for endUserId
-            boolean isValidCurrency = currencySymbol(currency);
-            if (!isValidCurrency) {
-                LOG.error("###REFUND### currency code not as per ISO 4217");
-                responseWrapperDTO.setRequestError(constructRequestError(SERVICEEXCEPTION,
-                        ServiceError.INVALID_INPUT_VALUE, "currency code not as per ISO 4217"));
-                responseWrapperDTO.setHttpStatus(Response.Status.BAD_REQUEST);
-                return responseWrapperDTO;
+            if(currency!=null) {
+                // check valid account currency for endUserId
+                boolean isValidCurrency = currencySymbol(currency);
+                if (!isValidCurrency) {
+                    LOG.error("###REFUND### currency code not as per ISO 4217");
+                    responseWrapperDTO.setRequestError(constructRequestError(SERVICEEXCEPTION,
+                            ServiceError.INVALID_INPUT_VALUE, "currency code not as per ISO 4217"));
+                    responseWrapperDTO.setHttpStatus(Response.Status.BAD_REQUEST);
+                    return responseWrapperDTO;
 
+                }
             }
             //Check channel.
             if (channel != null && !containsChannel(channel)) {
@@ -389,29 +398,6 @@ public class PatialRefundRequestHandler extends AbstractRequestHandler<PatialRef
         return refundResponseBean;
 
     }
-
-    @SuppressWarnings("unchecked")
-    private JSONObject buildJSONObject(RefundRequest request) {
-
-        JSONObject obj = new JSONObject();
-        JSONObject refundRequest = new JSONObject();
-        JSONObject payment = new JSONObject();
-
-        payment.put(CHANGING_INFO, request.getPaymentAmount().getChargingInformation());
-        payment.put(CHARGING_META_DATA, request.getPaymentAmount().getChargingMetaData());
-
-        refundRequest.put(CLIENTCORRELATOR, request.getClientCorrelator());
-        refundRequest.put(MSISDN, request.getMsisdn());
-        refundRequest.put(REFERENCE, request.getOriginalServerReferenceCode());
-        refundRequest.put(REASON, request.getReasonForRefund());
-        refundRequest.put(REFUND_AMOUNT, request.getRefundAmount());
-        refundRequest.put(PAYMENT_AMOUNT, payment);
-        refundRequest.put(REFERENCE_CODE, request.getReferenceCode());
-
-        obj.put(REFUND_REQUEST, refundRequest);
-        return obj;
-    }
-
 
     public boolean containsChannel(String channelValue) {
 
@@ -602,12 +588,10 @@ public class PatialRefundRequestHandler extends AbstractRequestHandler<PatialRef
     private void saveResponse(PatialRefundRequestWrapper extendedRequestDTO,
                               String endUserIdPath, RefundResponseBean responseBean, APIServiceCalls apiServiceCalls, String status) throws Exception {
 
-        String jsonInString = null;
         Gson resp = new Gson();
-
         JsonElement je = new JsonParser().parse(resp.toJson(responseBean));
         JsonObject asJsonObject = je.getAsJsonObject();
-        jsonInString = asJsonObject.toString();
+        String jsonInString = asJsonObject.toString();
         //setting messagelog responses
         MessageLog messageLog = new MessageLog();
         messageLog = new MessageLog();
