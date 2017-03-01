@@ -25,6 +25,18 @@ public class PaymentRefundTransactionResponseBean {
 	
 	private String transactionOperationStatus;
 
+	private String callbackData;
+
+	private String mandateId;
+
+	private String notificationFormat;
+
+	private String notifyURL;
+
+	private String productID;
+
+	private String serviceID;
+
 	public String getClientCorrelator() {
 		return clientCorrelator;
 	}
@@ -95,5 +107,53 @@ public class PaymentRefundTransactionResponseBean {
 
 	public void setPaymentAmount(ChargeRefundAmountResponse paymentAmount) {
 		this.paymentAmount = paymentAmount;
+	}
+
+	public String getCallbackData() {
+		return callbackData;
+	}
+
+	public void setCallbackData(String callbackData) {
+		this.callbackData = callbackData;
+	}
+
+	public String getMandateId() {
+		return mandateId;
+	}
+
+	public void setMandateId(String mandateId) {
+		this.mandateId = mandateId;
+	}
+
+	public String getNotificationFormat() {
+		return notificationFormat;
+	}
+
+	public void setNotificationFormat(String notificationFormat) {
+		this.notificationFormat = notificationFormat;
+	}
+
+	public String getNotifyURL() {
+		return notifyURL;
+	}
+
+	public void setNotifyURL(String notifyURL) {
+		this.notifyURL = notifyURL;
+	}
+
+	public String getProductID() {
+		return productID;
+	}
+
+	public void setProductID(String productID) {
+		this.productID = productID;
+	}
+
+	public String getServiceID() {
+		return serviceID;
+	}
+
+	public void setServiceID(String serviceID) {
+		this.serviceID = serviceID;
 	}
 }

@@ -223,9 +223,9 @@ public class PaymentRequestHandler extends AbstractRequestHandler<ChargePaymentR
             }
 
             //check referenceCode
-            String result = checkReferenceCode(userId, serviceNameId, endUserId, "1", "1", referenceCode);
+            String duplicateReferenceCode = checkReferenceCode(userId, serviceNameId, endUserId, "1", "1", referenceCode);
 
-            if((result!=null)){
+            if((duplicateReferenceCode!=null)){
                 LOG.error("###PAYMENT### Already charged for this reference code");
                 responseWrapper.setRequestError(constructRequestError(SERVICEEXCEPTION,
                         ServiceError.INVALID_INPUT_VALUE, "Already used reference code"));
@@ -275,22 +275,6 @@ public class PaymentRequestHandler extends AbstractRequestHandler<ChargePaymentR
                 return responseWrapper;
             }
 
-            String serviceCallBalanceLookUp = ServiceName.BalanceLookup.toString();
-            String accountCurrencyAttribute = AttributeName.Currency.toString().toLowerCase();
-            AttributeValues accountCurrencyValue = paymentDAO.getAttributeValue(endUserId, serviceCallBalanceLookUp,
-                    accountCurrencyAttribute, userId);
-            if (accountCurrencyValue != null) {
-                String accountCurrency = accountCurrencyValue.getValue();
-                if (!(currency.equals(accountCurrency))) {
-                    LOG.error("###PAYMENT### Valid currency doesn't exists for the given inputs");
-                    responseWrapper
-                            .setRequestError(constructRequestError(SERVICEEXCEPTION, ServiceError.INVALID_INPUT_VALUE,
-                                    "Valid currency does not exist for the given input parameters"));
-                    responseWrapper.setHttpStatus(Response.Status.BAD_REQUEST);
-                    return responseWrapper;
-                }
-            }
-
             // check channel
             if (channel != null && !containsChannel(channel)) {
                 LOG.error("###PAYMENT### Valid channel doesn't exists for the given inputs");
@@ -308,7 +292,6 @@ public class PaymentRequestHandler extends AbstractRequestHandler<ChargePaymentR
             chargeInformation.setDescription(description);
 
             // Get the tax Amount
-
             Double chargeTaxAmount = Double.parseDouble(taxAmount);
 
             // Setting the Total Amount Charged
@@ -347,6 +330,7 @@ public class PaymentRequestHandler extends AbstractRequestHandler<ChargePaymentR
                                 "Denied : Account balance insufficient to charge request"));
                 return responseWrapper;
             }
+
             // set transaction operation status as refused
             else if (transactionStatusValue != null) {
                 String transactionStatus = transactionStatusValue.getValue();
@@ -355,7 +339,7 @@ public class PaymentRequestHandler extends AbstractRequestHandler<ChargePaymentR
                 }
                 // set transaction status as charged
             } else if (balance >= chargeAmount) {
-                balance = balance - (chargeAmount + chargeTaxAmount);
+                balance = balance - chargeAmount;
                 manageNumber.setBalance(balance);
                 numberDAO.saveManageNumbers(manageNumber);
                 responseBean.setTransactionOperationStatus(TransactionStatus.Charged.toString());

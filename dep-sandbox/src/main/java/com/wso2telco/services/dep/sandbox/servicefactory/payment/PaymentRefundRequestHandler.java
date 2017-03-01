@@ -112,6 +112,14 @@ public class PaymentRefundRequestHandler extends AbstractRequestHandler<PaymentR
         String taxAmount = CommonUtil.getNullOrTrimmedValue(metaData.getTaxAmount());
         String referenceCode = CommonUtil.getNullOrTrimmedValue(request.getReferenceCode());
         String transactionOperationStatus = CommonUtil.getNullOrTrimmedValue(request.getTransactionOperationStatus());
+        String callbackData = CommonUtil.getNullOrTrimmedValue(request.getCallbackData());
+        String mandateId = CommonUtil.getNullOrTrimmedValue(request.getMandateId());
+        String notificationFormat = CommonUtil.getNullOrTrimmedValue(request.getNotificationFormat());
+        String notifyURL = CommonUtil.getNullOrTrimmedValue(request.getNotifyURL());
+        String productID = CommonUtil.getNullOrTrimmedValue(request.getProductID());
+        String serviceID = CommonUtil.getNullOrTrimmedValue(request.getServiceID());
+        String originalServerReferenceCode = CommonUtil.getNullOrTrimmedValue(request.getOriginalServerReferenceCode());
+
 
         List<ValidationRule> validationRulesList = new ArrayList<>();
 
@@ -125,7 +133,7 @@ public class PaymentRefundRequestHandler extends AbstractRequestHandler<PaymentR
                     "endUserID", msisdn));
             validationRulesList.add(new ValidationRule(ValidationRule.VALIDATION_TYPE_MANDATORY,
                     "amount", amount));
-            validationRulesList.add(new ValidationRule(ValidationRule.VALIDATION_TYPE_MANDATORY,
+            validationRulesList.add(new ValidationRule(ValidationRule.VALIDATION_TYPE_OPTIONAL,
                     "currency", currency));
             validationRulesList.add(new ValidationRule(ValidationRule.VALIDATION_TYPE_MANDATORY,
                     "description", description));
@@ -143,6 +151,21 @@ public class PaymentRefundRequestHandler extends AbstractRequestHandler<PaymentR
                     "referenceCode", referenceCode));
             validationRulesList.add(new ValidationRule(ValidationRule.VALIDATION_TYPE_MANDATORY,
                     "transactionOperationStatus", transactionOperationStatus));
+            validationRulesList.add(new ValidationRule(ValidationRule.VALIDATION_TYPE_OPTIONAL,
+                    "callbackData", callbackData));
+            validationRulesList.add(new ValidationRule(ValidationRule.VALIDATION_TYPE_OPTIONAL,
+                    "mandateId", mandateId));
+            validationRulesList.add(new ValidationRule(ValidationRule.VALIDATION_TYPE_OPTIONAL,
+                    "notificationFormat", notificationFormat));
+            validationRulesList.add(new ValidationRule(ValidationRule.VALIDATION_TYPE_OPTIONAL,
+                    "notifyURL", notifyURL));
+            validationRulesList.add(new ValidationRule(ValidationRule.VALIDATION_TYPE_OPTIONAL,
+                    "productID", productID));
+            validationRulesList.add(new ValidationRule(ValidationRule.VALIDATION_TYPE_OPTIONAL,
+                    "serviceID", serviceID));
+            validationRulesList.add(new ValidationRule(ValidationRule.VALIDATION_TYPE_MANDATORY,
+                    "originalServerReferenceCode", originalServerReferenceCode));
+
 
             ValidationRule[] validationRules = new ValidationRule[validationRulesList.size()];
             validationRules = validationRulesList.toArray(validationRules);
@@ -190,16 +213,19 @@ public class PaymentRefundRequestHandler extends AbstractRequestHandler<PaymentR
             String accountCurrencyAttribute = AttributeName.Currency.toString().toLowerCase();
             String serviceCallBalanceLookUp = ServiceName.BalanceLookup.toString();
             Integer userId = extendedRequestDTO.getUser().getId();
+            String callbackData = CommonUtil.getNullOrTrimmedValue(request.getCallbackData());
+            String mandateId = CommonUtil.getNullOrTrimmedValue(request.getMandateId());
+            String notificationFormat = CommonUtil.getNullOrTrimmedValue(request.getNotificationFormat());
+            String notifyURL = CommonUtil.getNullOrTrimmedValue(request.getNotifyURL());
+            String productID = CommonUtil.getNullOrTrimmedValue(request.getProductID());
+            String serviceID = CommonUtil.getNullOrTrimmedValue(request.getServiceID());
 
             PaymentRefundTransactionResponseBean responseBean = new PaymentRefundTransactionResponseBean();
             ChargeRefundAmountResponse payAmount = new ChargeRefundAmountResponse();
             PaymentChargingInformation chargeInformation = new PaymentChargingInformation();
             PaymentChargingMetaData chargeMetaData = new PaymentChargingMetaData();
 
-
-            // Save Request Log
             APITypes apiTypes = dao.getAPIType(RequestType.PAYMENT.toString());
-            //This has Hardcoded value
             APIServiceCalls apiServiceCalls = dao.getServiceCall(apiTypes.getId(), serviceCallRefund);
 
             Gson gson = new Gson();
@@ -236,9 +262,6 @@ public class PaymentRefundRequestHandler extends AbstractRequestHandler<PaymentR
                 responseWrapper.setHttpStatus(Response.Status.BAD_REQUEST);
                 return responseWrapper;
             }
-
-            //Todo: remove the hardcoded Value
-            // check serverReferenceCode against OriginalServerReferenceCode
 
             APIServiceCalls apiServiceCallForMakePayment = dao.getServiceCall(apiTypes.getId(), ServiceName.ChargeUser.toString());
 
@@ -278,14 +301,16 @@ public class PaymentRefundRequestHandler extends AbstractRequestHandler<PaymentR
             }
 
             // check valid account currency for endUserId
-            boolean isValidCurrency = currencySymbol(currency);
-            if (!isValidCurrency) {
-                LOG.error("###REFUND### currency code not as per ISO 4217");
-                responseWrapper.setRequestError(constructRequestError(SERVICEEXCEPTION,
-                        ServiceError.INVALID_INPUT_VALUE, "currency code not as per ISO 4217"));
-                responseWrapper.setHttpStatus(Response.Status.BAD_REQUEST);
-                return responseWrapper;
+            if (currency != null) {
+                boolean isValidCurrency = currencySymbol(currency);
+                if (!isValidCurrency) {
+                    LOG.error("###REFUND### currency code not as per ISO 4217");
+                    responseWrapper.setRequestError(constructRequestError(SERVICEEXCEPTION,
+                            ServiceError.INVALID_INPUT_VALUE, "currency code not as per ISO 4217"));
+                    responseWrapper.setHttpStatus(Response.Status.BAD_REQUEST);
+                    return responseWrapper;
 
+                }
             }
 
             AttributeValues accountCurrencyValue = paymentDAO.getAttributeValue(endUserId, serviceCallBalanceLookUp,
@@ -314,7 +339,12 @@ public class PaymentRefundRequestHandler extends AbstractRequestHandler<PaymentR
             responseBean.setClientCorrelator(clientCorrelator);
             responseBean.setEndUserId(endUserIdPath);
             responseBean.setOriginalServerReferenceCode(originalServerReferenceCode);
-
+            responseBean.setCallbackData(callbackData);
+            responseBean.setMandateId(mandateId);
+            responseBean.setNotificationFormat(notificationFormat);
+            responseBean.setNotifyURL(notifyURL);
+            responseBean.setProductID(productID);
+            responseBean.setServiceID(serviceID);
 
             chargeInformation.setAmount(amount);
             chargeInformation.setCurrency(currency);
@@ -332,7 +362,6 @@ public class PaymentRefundRequestHandler extends AbstractRequestHandler<PaymentR
             responseBean.setResourceURL(CommonUtil.getResourceUrl(extendedRequestDTO));
 
 
-
             // Get the Charged Tax Amount
             Double chargedTaxAmount = Double.parseDouble(taxAmount);
             if (chargedTaxAmount < 0 ) {
@@ -345,13 +374,12 @@ public class PaymentRefundRequestHandler extends AbstractRequestHandler<PaymentR
             }
 
             // For inspection
-            Double totalAmountRefundeds = chargeAmount - chargedTaxAmount;
-            totalAmountRefundeds+=totalAmountRefunded;
+            Double totalAmountToRefund = chargeAmount - chargedTaxAmount;
+            Double refundAmount = chargeAmount - chargedTaxAmount;
+            totalAmountToRefund+=totalAmountRefunded;
 
-//            Double refundAmount = totalAmountRefunded - chargedTaxAmount;
             // Setting the total Amount Refund
-            payAmount.setTotalAmountRefunded(totalAmountRefundeds.toString());
-
+            payAmount.setTotalAmountRefunded(totalAmountToRefund.toString());
 
             if (!isOriginalServerReferenceCode) {
                 LOG.error("###REFUND### no payment matching for this Refund");
@@ -370,25 +398,14 @@ public class PaymentRefundRequestHandler extends AbstractRequestHandler<PaymentR
                 return responseWrapper;
             }
 
-             if (totalAmountRefundeds <= validTransaction) {
+             if (refundAmount <= validTransaction) {
                  // set transaction operation status as charged
                  ManageNumber manageNumber = numberDAO.getNumber(endUserId, extendedRequestDTO.getUser().getUserName());
                  Double updateBalance = manageNumber.getBalance() + (chargeAmount + chargedTaxAmount);
-                 AttributeValues accountStatusValue = paymentDAO.getAttributeValue(endUserId, serviceCallRefund,
-                         AttributeName.transactionStatus.toString(), userId);
-                 // set transaction operation status as refused
                  manageNumber.setBalance(updateBalance);
 
-                 if (accountStatusValue != null) {
-                     String accountStatus = accountStatusValue.getValue();
-                     // set transaction operation status as Refused   // Here wallet Status are Used
-                     if (accountStatus.equals(TransactionStatus.Refused.toString())) {
-                         responseBean.setTransactionOperationStatus(TransactionStatus.Refused.toString());
-
-                     }
-                 }
                  // set transaction operation status as Refunded
-                 else if (paymentDAO.saveManageNumbers(manageNumber)) {
+                  if (paymentDAO.saveManageNumbers(manageNumber)) {
                      responseBean.setTransactionOperationStatus(TransactionStatus.Refunded.toString());
                  }
             } else {
@@ -513,7 +530,7 @@ public class PaymentRefundRequestHandler extends AbstractRequestHandler<PaymentR
         list.add(serviceNameId);
         List<MessageLog> servercodeList = loggingDAO.getMessageLogs(userId, list, "msisdn", "tel:+" + tel, null, null);
 
-        // remove
+
         APITypes apiTypes = dao.getAPIType(RequestType.PAYMENT.toString());
         APIServiceCalls apiServiceCalls = dao.getServiceCall(apiTypes.getId(), serviceCallRefund);
 
@@ -580,10 +597,10 @@ public class PaymentRefundRequestHandler extends AbstractRequestHandler<PaymentR
 
         }
 
-        APITypes apiTypes1 = dao.getAPIType(RequestType.CREDIT.toString());
-        APIServiceCalls apiServiceCalls1 = dao.getServiceCall(apiTypes1.getId(), ServiceName.PartialRefund.toString());
+        APITypes apiTypeCredit = dao.getAPIType(RequestType.CREDIT.toString());
+        APIServiceCalls apiServiceCallCredit = dao.getServiceCall(apiTypeCredit.getId(), ServiceName.PartialRefund.toString());
         List<Integer> refundIdList = new ArrayList<>();
-        refundIdList.add(apiServiceCalls1.getApiServiceCallId());
+        refundIdList.add(apiServiceCallCredit.getApiServiceCallId());
 
         List<MessageLog> messageLogForPartialRefund = loggingDAO.getMessageLogs(userId, refundIdList, "msisdn", "tel:+" + tel, null, null);
 
@@ -598,10 +615,10 @@ public class PaymentRefundRequestHandler extends AbstractRequestHandler<PaymentR
 
                     String request = messageLogForPartialRefund.get(i).getRequest();
                     JSONObject json = new JSONObject(request);
-                    String responseOriginalServerReferenceCode = json.get("originalServerReferenceCode").toString();
+                    String responseOriginalServerReferenceCode = json.getJSONObject("refundResponse").get("originalServerReferenceCode").toString();
 
-                    int responseUserId = originalServerReferenceCodeList.get(i).getUserid();
-                    String responseTel = originalServerReferenceCodeList.get(i).getValue();
+                    int responseUserId = messageLogForPartialRefund.get(i).getUserid();
+                    String responseTel = messageLogForPartialRefund.get(i).getValue();
 
                     // Check reference CodeDuplication
                     if (responseUserId == userId && responseTel.equals("tel:+" + tel) && responseOriginalServerReferenceCode.equals(originalServerReferenceCode)) {
@@ -643,7 +660,6 @@ public class PaymentRefundRequestHandler extends AbstractRequestHandler<PaymentR
         JsonElement je = new JsonParser().parse(resp.toJson(responseBean));
         JsonObject asJsonObject = je.getAsJsonObject();
         jsonInString = asJsonObject.toString();
-
 
         //setting messagelog responses
         MessageLog messageLog1 = new MessageLog();
