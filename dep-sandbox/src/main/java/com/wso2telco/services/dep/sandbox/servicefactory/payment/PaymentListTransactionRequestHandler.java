@@ -103,12 +103,17 @@ public class PaymentListTransactionRequestHandler extends AbstractRequestHandler
             Integer userId = extendedRequestDTO.getUser().getId();
 
             String serviceCallPayment = ServiceName.ChargeUser.toString();
+            String serviceCallRefund = ServiceName.RefundUser.toString();
             APITypes paymentApi = dao.getAPIType(RequestType.PAYMENT.toString());
-            APIServiceCalls apiServiceCalls = dao.getServiceCall(paymentApi.getId(), serviceCallPayment);
+            APIServiceCalls apiServiceCallPayment = dao.getServiceCall(paymentApi.getId(), serviceCallPayment);
+            APIServiceCalls apiServiceCallRefund = dao.getServiceCall(paymentApi.getId(), serviceCallRefund);
 
-            int paymetId = apiServiceCalls.getApiServiceCallId();
+
+            int paymentId = apiServiceCallPayment.getApiServiceCallId();
+            int refundId = apiServiceCallRefund.getApiServiceCallId();
             List<Integer> list = new ArrayList<>();
-            list.add(paymetId);
+            list.add(paymentId);
+            list.add(refundId);
 
             JSONObject object = new JSONObject();
             object.put("endUserId", msisdn);
