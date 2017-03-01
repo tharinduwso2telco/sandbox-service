@@ -31,12 +31,14 @@ import com.wso2telco.services.dep.sandbox.dao.model.custom.PaymentListTransactio
 import com.wso2telco.services.dep.sandbox.dao.model.domain.APIServiceCalls;
 import com.wso2telco.services.dep.sandbox.dao.model.domain.APITypes;
 import com.wso2telco.services.dep.sandbox.dao.model.domain.AttributeValues;
+import com.wso2telco.services.dep.sandbox.dao.model.domain.MessageLog;
 import com.wso2telco.services.dep.sandbox.servicefactory.AbstractRequestHandler;
 import com.wso2telco.services.dep.sandbox.servicefactory.Returnable;
 import com.wso2telco.services.dep.sandbox.servicefactory.wallet.AttributeName;
 import com.wso2telco.services.dep.sandbox.util.*;
 import org.apache.commons.logging.LogFactory;
 import org.json.simple.JSONObject;
+
 import javax.ws.rs.core.Response;
 import java.util.ArrayList;
 import java.util.List;
@@ -97,49 +99,70 @@ public class PaymentListTransactionRequestHandler extends AbstractRequestHandler
         }
 
         try {
+
             String msisdn = extendedRequestDTO.getEndUserId();
             String endUserId = getLastMobileNumber(msisdn);
-            List<AttributeValues> amountTransaction = null;
-            List<String> attributeName = new ArrayList<String>();
-            attributeName.add(AttributeName.makePayment.toString().toLowerCase());
-            attributeName.add(AttributeName.refundUser.toString().toLowerCase());
             Integer userId = extendedRequestDTO.getUser().getId();
 
-            // Save Request Log
-            APITypes apiTypes = dao.getAPIType(extendedRequestDTO.getRequestType().toString().toLowerCase());
-            APIServiceCalls apiServiceCalls = dao.getServiceCall(apiTypes.getId(), ServiceName.ListPayment.toString());
+            String serviceCallPayment = ServiceName.ChargeUser.toString();
+            APITypes paymentApi = dao.getAPIType(RequestType.PAYMENT.toString());
+            APIServiceCalls apiServiceCalls = dao.getServiceCall(paymentApi.getId(), serviceCallPayment);
+
+            int paymetId = apiServiceCalls.getApiServiceCallId();
+            List<Integer> list = new ArrayList<>();
+            list.add(paymetId);
+
             JSONObject object = new JSONObject();
             object.put("endUserId", msisdn);
-            logHandler.saveMessageLog(apiServiceCalls.getApiServiceCallId(), extendedRequestDTO.getUser().getId(),
-                    "msisdn", msisdn, object);
 
-            String tableName = TableName.NUMBERS.toString().toLowerCase();
+//            Todo: save messageLog
+//            logHandler.saveMessageLog(apiServiceCalls.getApiServiceCallId(), extendedRequestDTO.getUser().getId(), "msisdn", msisdn, object);
+
             PaymentListTransactionResponseBean paymentTransaction = new PaymentListTransactionResponseBean();
-            amountTransaction = paymentDAO.getTransactionValue(endUserId, attributeName, tableName, userId);
-
             List<JsonNode> listNodes = new ArrayList<JsonNode>();
+            List<MessageLog> responses = loggingDAO.getMessageLogs(userId, list, "msisdn", "tel:+" + endUserId, null, null);
 
-            if (amountTransaction != null && !amountTransaction.isEmpty()) {
-                for (AttributeValues values : amountTransaction) {
-                    JsonParser parser = new JsonParser();
-                    JsonObject jsonObject = parser.parse(values.getValue()).getAsJsonObject();
-                    JsonElement get = jsonObject.get("paymentAmount");
-                    JsonObject asJsonObjectPayment = get.getAsJsonObject();
-                    asJsonObjectPayment.remove("totalAmountCharged");
-                    asJsonObjectPayment.remove("totalAmountRefunded");
-                    asJsonObjectPayment.remove("chargingMetaData");
-                    jsonObject.remove("clientCorrelator");
-                    jsonObject.remove("notifyURL");
-                    jsonObject.remove("originalReferenceCode");
-                    jsonObject.remove("originalServerReferenceCode");
-                    jsonObject.remove("resourceURL");
-                    String jsonInString = null;
-                    jsonInString = jsonObject.toString();
+            String jsonString = null;
 
-                    JsonNode node = null;
-                    ObjectMapper mapper = new ObjectMapper();
-                    node = mapper.readValue(jsonInString, JsonNode.class);
-                    listNodes.add(node);
+            if (responses != null && !responses.isEmpty()) {
+                for (int i = 0; i < responses.size(); i++) {
+
+                    String responseStatus = responses.get(i).getStatus();
+                    String responseType = responses.get(i).getType();
+
+
+                    if (responseType.equals("1") && responseStatus.equals("1")) {
+                        String request = responses.get(i).getRequest();
+                        org.json.JSONObject json = new org.json.JSONObject(request);
+
+                        int responseUserId = responses.get(i).getUserid();
+                        String responseTel = responses.get(i).getValue();
+
+                        // Check client correlator
+                        if (responseUserId == userId && responseTel.equals("tel:+" + endUserId)) {
+                            jsonString = json.toString();
+                            JsonParser parser = new JsonParser();
+                            JsonObject jsonObject = (JsonObject) parser.parse(jsonString);
+                            JsonElement get = jsonObject.get("paymentAmount");
+                            JsonObject asJsonObjectPayment = get.getAsJsonObject();
+                            asJsonObjectPayment.remove("totalAmountCharged");
+                            asJsonObjectPayment.remove("totalAmountRefunded");
+                            asJsonObjectPayment.remove("chargingMetaData");
+                            jsonObject.remove("clientCorrelator");
+                            jsonObject.remove("notifyURL");
+                            jsonObject.remove("originalReferenceCode");
+                            jsonObject.remove("originalServerReferenceCode");
+                            String jsonInString = null;
+                            jsonInString = jsonObject.toString();
+
+                            JsonNode node = null;
+                            ObjectMapper mapper = new ObjectMapper();
+                            node = mapper.readValue(jsonInString, JsonNode.class);
+                            listNodes.add(node);
+                        }
+
+                    }
+
                 }
                 paymentTransaction.setAmountTransaction(listNodes);
             } else {
@@ -148,6 +171,7 @@ public class PaymentListTransactionRequestHandler extends AbstractRequestHandler
                 responseWrapper.setHttpStatus(Response.Status.OK);
                 return responseWrapper;
             }
+
             paymentTransaction.setResourceURL(CommonUtil.getResourceUrl(extendedRequestDTO));
 
             PaymentListTransactionDTO listTransactionDTO = new PaymentListTransactionDTO();
