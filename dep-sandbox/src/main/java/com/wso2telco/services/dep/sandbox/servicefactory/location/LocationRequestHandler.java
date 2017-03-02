@@ -24,10 +24,7 @@ import com.wso2telco.services.dep.sandbox.dao.DaoFactory;
 import com.wso2telco.services.dep.sandbox.dao.LocationDAO;
 import com.wso2telco.services.dep.sandbox.dao.model.custom.LocationRequestWrapperDTO;
 import com.wso2telco.services.dep.sandbox.dao.model.domain.*;
-import com.wso2telco.services.dep.sandbox.servicefactory.AbstractRequestHandler;
-import com.wso2telco.services.dep.sandbox.servicefactory.MessageType;
-import com.wso2telco.services.dep.sandbox.servicefactory.RequestResponseRequestHandleable;
-import com.wso2telco.services.dep.sandbox.servicefactory.Returnable;
+import com.wso2telco.services.dep.sandbox.servicefactory.*;
 import com.wso2telco.services.dep.sandbox.util.ServiceName;
 import org.apache.commons.logging.LogFactory;
 import org.json.JSONObject;
@@ -98,7 +95,7 @@ public class LocationRequestHandler  extends AbstractRequestHandler<LocationRequ
 					responseWrapperDTO.setTerminalLocationList(objTerminalLocationList);
 					responseWrapperDTO.setHttpStatus(Status.OK);
 
-                    saveResponse(objTerminalLocation,extendedRequestDTO.getAddress(),apiServiceCalls,"1");
+                    saveResponse(objTerminalLocation,extendedRequestDTO.getAddress(),apiServiceCalls, MessageProcessStatus.Success);
 
 				} else if (locparam.getLocationRetrieveStatus().equals(NOT_RETRIEVED)) {
 
@@ -199,7 +196,7 @@ public class LocationRequestHandler  extends AbstractRequestHandler<LocationRequ
 	 * @param status
 	 * @throws Exception
 	 */
-	private void saveResponse(TerminalLocation terminalLocation,String endUserId, APIServiceCalls apiServiceCalls, String status) throws Exception {
+	private void saveResponse(TerminalLocation terminalLocation,String endUserId, APIServiceCalls apiServiceCalls, MessageProcessStatus status) throws Exception {
 
 		String jsonInString = null;
 		Gson resp = new Gson();
@@ -211,7 +208,7 @@ public class LocationRequestHandler  extends AbstractRequestHandler<LocationRequ
 		MessageLog messageLog = new MessageLog();
 		messageLog = new MessageLog();
 		messageLog.setRequest(jsonInString);
-		messageLog.setStatus(status);
+		messageLog.setStatus(status.getValue());
 		messageLog.setType(MessageType.Response.getValue());
 		messageLog.setServicenameid(apiServiceCalls.getApiServiceCallId());
 		messageLog.setUserid(extendedRequestDTO.getUser().getId());

@@ -32,7 +32,7 @@ import com.wso2telco.services.dep.sandbox.dao.PaymentDAO;
 import com.wso2telco.services.dep.sandbox.dao.model.custom.*;
 import com.wso2telco.services.dep.sandbox.dao.model.domain.*;
 import com.wso2telco.services.dep.sandbox.servicefactory.*;
-import com.wso2telco.services.dep.sandbox.servicefactory.Status;
+import com.wso2telco.services.dep.sandbox.servicefactory.MessageProcessStatus;
 import com.wso2telco.services.dep.sandbox.servicefactory.wallet.AttributeName;
 import com.wso2telco.services.dep.sandbox.servicefactory.wallet.Channel;
 import com.wso2telco.services.dep.sandbox.servicefactory.wallet.TransactionStatus;
@@ -208,9 +208,6 @@ public class PaymentRefundRequestHandler extends AbstractRequestHandler<PaymentR
             String referenceCode = CommonUtil.getNullOrTrimmedValue(request.getReferenceCode());
             String transactionOperationStatus = CommonUtil.getNullOrTrimmedValue(request.getTransactionOperationStatus());
             serviceCallRefund = ServiceName.RefundUser.toString();
-            // Attribute Name Used in wallet
-            String accountCurrencyAttribute = AttributeName.Currency.toString().toLowerCase();
-            String serviceCallBalanceLookUp = ServiceName.BalanceLookup.toString();
             Integer userId = extendedRequestDTO.getUser().getId();
             String callbackData = CommonUtil.getNullOrTrimmedValue(request.getCallbackData());
             String mandateId = CommonUtil.getNullOrTrimmedValue(request.getMandateId());
@@ -228,7 +225,7 @@ public class PaymentRefundRequestHandler extends AbstractRequestHandler<PaymentR
             APIServiceCalls apiServiceCalls = dao.getServiceCall(apiTypes.getId(), serviceCallRefund);
 
             Gson gson = new Gson();
-            String jsonString = gson.toJson(requestBean);
+//            String jsonString = gson.toJson(requestBean);
 
         try {
 
@@ -236,7 +233,7 @@ public class PaymentRefundRequestHandler extends AbstractRequestHandler<PaymentR
 
             if (clientCorrelator != null) {
 
-                String response = checkDuplicateClientCorrelator(clientCorrelator, userId, serviceNameId, endUserId, Status.Success.getValue(), MessageType.Response.getValue(), referenceCode);
+                String response = checkDuplicateClientCorrelator(clientCorrelator, userId, serviceNameId, endUserId, MessageProcessStatus.Success, MessageType.Response, referenceCode);
 
                 if (response != null) {
 
@@ -252,7 +249,7 @@ public class PaymentRefundRequestHandler extends AbstractRequestHandler<PaymentR
             }
 
             //check referenceCode
-            String result = checkReferenceCode(userId, serviceNameId, endUserId, Status.Success.getValue(), MessageType.Response.getValue(), referenceCode);
+            String result = checkReferenceCode(userId, serviceNameId, endUserId, MessageProcessStatus.Success, MessageType.Response, referenceCode);
 
             if((result!=null)){
                 LOG.error("###PAYMENT### Already charged for this reference code");
@@ -266,7 +263,7 @@ public class PaymentRefundRequestHandler extends AbstractRequestHandler<PaymentR
 
             int serviceIdForMakePayment = apiServiceCallForMakePayment.getApiServiceCallId();
 
-            Double validTransaction = checkOriginalServerReferenceWithServerReference(userId, serviceIdForMakePayment, endUserId, Status.Success.getValue(), MessageType.Response.getValue(), originalServerReferenceCode);
+            Double validTransaction = checkOriginalServerReferenceWithServerReference(userId, serviceIdForMakePayment, endUserId, MessageProcessStatus.Success, MessageType.Response, originalServerReferenceCode);
 
             // check path param endUserId and request body endUserId
             if (!(endUserIdPath.equals(endUserIdRequest))) {
@@ -409,7 +406,7 @@ public class PaymentRefundRequestHandler extends AbstractRequestHandler<PaymentR
             responseWrapper.setRefundPaymentDTO(refundPaymentDTO);
 
             // Save Response in message log table
-            saveResponse(userId, endUserIdPath, responseBean, apiServiceCalls, Status.Success.getValue());
+            saveResponse(userId, endUserIdPath, responseBean, apiServiceCalls, MessageProcessStatus.Success);
 
         } catch (Exception ex) {
             LOG.error("###REFUND### Error Occured in PAYMENT Service. ", ex);
@@ -421,7 +418,7 @@ public class PaymentRefundRequestHandler extends AbstractRequestHandler<PaymentR
         return responseWrapper;
     }
 
-    private String checkDuplicateClientCorrelator(String clientCorrelator, int userId, int serviceNameId, String tel, String status, String type, String referenceCode) throws Exception {
+    private String checkDuplicateClientCorrelator(String clientCorrelator, int userId, int serviceNameId, String tel, MessageProcessStatus status, MessageType type, String referenceCode) throws Exception {
 
         List<Integer> list = new ArrayList<>();
         list.add(serviceNameId);
@@ -433,11 +430,11 @@ public class PaymentRefundRequestHandler extends AbstractRequestHandler<PaymentR
 
             if (response != null) {
 
-                String responseStatus = response.get(i).getStatus();
-                String responseType = response.get(i).getType();
+                int responseStatus = response.get(i).getStatus();
+                int responseType = response.get(i).getType();
                 String responseClientCorrelator;
 
-                if (responseType.equals(type) && responseStatus.equals(status)) {
+                if (responseType == type.getValue() && responseStatus == status.getValue()) {
                     String request = response.get(i).getRequest();
                     JSONObject json = new JSONObject(request);
 
@@ -468,7 +465,7 @@ public class PaymentRefundRequestHandler extends AbstractRequestHandler<PaymentR
     }
 
     //check reference code
-    private String checkReferenceCode(int userId, int serviceNameId, String tel, String status, String type, String referenceCode) throws Exception {
+    private String checkReferenceCode(int userId, int serviceNameId, String tel, MessageProcessStatus status, MessageType type, String referenceCode) throws Exception {
 
         List<Integer> list = new ArrayList<>();
         list.add(serviceNameId);
@@ -480,10 +477,10 @@ public class PaymentRefundRequestHandler extends AbstractRequestHandler<PaymentR
 
             if (response != null) {
 
-                String responseStatus = response.get(i).getStatus();
-                String responseType = response.get(i).getType();
+                int responseStatus = response.get(i).getStatus();
+                int responseType = response.get(i).getType();
 
-                if (responseType.equals(type) && responseStatus.equals(status)) {
+                if (responseType == type.getValue() && responseStatus == status.getValue()) {
                     String request = response.get(i).getRequest();
                     JSONObject json = new JSONObject(request);
                     responseReferenceCode = json.get("referenceCode").toString();
@@ -505,7 +502,7 @@ public class PaymentRefundRequestHandler extends AbstractRequestHandler<PaymentR
         return jsonString;
     }
 
-    private double checkOriginalServerReferenceWithServerReference(int userId, int serviceNameId, String tel, String status, String type, String originalServerReferenceCode) throws Exception {
+    private double checkOriginalServerReferenceWithServerReference(int userId, int serviceNameId, String tel, MessageProcessStatus status, MessageType type, String originalServerReferenceCode) throws Exception {
 
         List<Integer> list = new ArrayList<>();
         list.add(serviceNameId);
@@ -528,10 +525,10 @@ public class PaymentRefundRequestHandler extends AbstractRequestHandler<PaymentR
 
             if (servercodeList != null) {
 
-                String responseStatus = servercodeList.get(i).getStatus();
-                String responseType = servercodeList.get(i).getType();
+                int responseStatus = servercodeList.get(i).getStatus();
+                int responseType = servercodeList.get(i).getType();
 
-                if (responseType.equals(type) && responseStatus.equals(status)) {
+                if (responseType == type.getValue() && responseStatus == status.getValue()) {
                     String request = servercodeList.get(i).getRequest();
                     JSONObject json = new JSONObject(request);
                    String serverReferenceCode = json.get("serverReferenceCode").toString();
@@ -555,10 +552,10 @@ public class PaymentRefundRequestHandler extends AbstractRequestHandler<PaymentR
 
                 if (originalServerReferenceCodeList != null) {
 
-                    String responseStatus = originalServerReferenceCodeList.get(i).getStatus();
-                    String responseType = originalServerReferenceCodeList.get(i).getType();
+                    int responseStatus = originalServerReferenceCodeList.get(i).getStatus();
+                    int responseType = originalServerReferenceCodeList.get(i).getType();
 
-                    if (responseType.equals(type) && responseStatus.equals(status)) {
+                    if (responseType == type.getValue() && responseStatus == status.getValue()) {
                         String request = originalServerReferenceCodeList.get(i).getRequest();
                         JSONObject json = new JSONObject(request);
                         String responseOriginalServerReferenceCode = json.get("originalServerReferenceCode").toString();
@@ -589,10 +586,10 @@ public class PaymentRefundRequestHandler extends AbstractRequestHandler<PaymentR
 
         for (int i = 0; i< messageLogForPartialRefund.size(); i++) {
 
-                String responseStatus = messageLogForPartialRefund.get(i).getStatus();
-                String responseType = messageLogForPartialRefund.get(i).getType();
+                int responseStatus = messageLogForPartialRefund.get(i).getStatus();
+                int responseType = messageLogForPartialRefund.get(i).getType();
 
-                if (responseType.equals(type) && responseStatus.equals(status)) {
+                if (responseType == type.getValue() && responseStatus == status.getValue()) {
 
                     String request = messageLogForPartialRefund.get(i).getRequest();
                     JSONObject json = new JSONObject(request);
@@ -614,7 +611,7 @@ public class PaymentRefundRequestHandler extends AbstractRequestHandler<PaymentR
     }
 
     // save Response in messageLog table
-    private void saveResponse(Integer userId, String endUserIdPath, PaymentRefundTransactionResponseBean responseBean, APIServiceCalls apiServiceCalls, String status) throws Exception {
+    private void saveResponse(Integer userId, String endUserIdPath, PaymentRefundTransactionResponseBean responseBean, APIServiceCalls apiServiceCalls, MessageProcessStatus status) throws Exception {
 
         String jsonInString = null;
         Gson resp = new Gson();
@@ -627,7 +624,7 @@ public class PaymentRefundRequestHandler extends AbstractRequestHandler<PaymentR
         MessageLog messageLog1 = new MessageLog();
         messageLog1 = new MessageLog();
         messageLog1.setRequest(jsonInString);
-        messageLog1.setStatus(status);
+        messageLog1.setStatus(status.getValue());
         messageLog1.setType(MessageType.Response.getValue());
         messageLog1.setServicenameid(apiServiceCalls.getApiServiceCallId());
         messageLog1.setUserid(userId);

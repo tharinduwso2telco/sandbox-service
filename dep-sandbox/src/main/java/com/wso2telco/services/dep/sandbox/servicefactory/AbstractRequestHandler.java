@@ -210,7 +210,7 @@ public abstract class AbstractRequestHandler<E2 extends RequestDTO> implements R
         messageLog.setServicenameid(apiServiceCalls.getApiServiceCallId());
         messageLog.setUserid(user.getId());
         messageLog.setReference("msisdn");
-        messageLog.setStatus("0");
+        messageLog.setStatus(0);
         messageLog.setType(MessageType.Request.getValue());
         messageLog.setValue(number);
         messageLog.setRequest(jsonString);

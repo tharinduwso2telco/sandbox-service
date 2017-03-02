@@ -18,15 +18,15 @@ package com.wso2telco.services.dep.sandbox.servicefactory;
 
 public enum MessageType {
 
-    Request("0"),Response("1");
+    Request(0),Response(1);
 
-    private String value;
+    private int value;
 
-    private MessageType(String value) {
+    private MessageType(int value) {
         this.value= value;
     }
 
-    public String getValue() {
+    public int getValue() {
         return value;
     }
 

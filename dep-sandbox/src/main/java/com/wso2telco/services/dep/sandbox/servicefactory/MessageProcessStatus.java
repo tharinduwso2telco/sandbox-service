@@ -16,15 +16,15 @@
 
 package com.wso2telco.services.dep.sandbox.servicefactory;
 
-public enum Status {
+public enum MessageProcessStatus {
 
-    Failed("0"),Success("1");
+    Failed(0),Success(1);
 
-    private String value;
+    private int value;
 
-    private Status(String value) { this.value=value; }
+    private MessageProcessStatus(int value) { this.value=value; }
 
-    public String getValue() {
+    public int getValue() {
         return value;
     }
 }

@@ -49,7 +49,7 @@ CREATE TABLE IF NOT EXISTS `sbxapiservicecalls` (
 -- Dumping data for table `sbxapiservicecalls`
 --
 
-INSERT INTO `sbxapiservicecalls` VALUES (1,8,'GetAttribute'),(2,8,'GetProfile'),(3,7,'GetApplicable'),(4,6,'MakePayment'),(5,6,'ListPayment'),(6,6,'RefundPayment'),(7,6,'BalanceLookup'),(8,5,'ApplyCredit'),(9,5,'PartialRefund'),(10,4,'ChargeUser'),(11,4,'RefundUser'),(12,4,'ListPayment');
+INSERT INTO `sbxapiservicecalls` VALUES (1,8,'GetAttribute'),(2,8,'GetProfile'),(3,7,'GetApplicable'),(4,6,'MakePayment'),(5,6,'ListPayment'),(6,6,'RefundPayment'),(7,6,'BalanceLookup'),(8,5,'ApplyCredit'),(9,5,'PartialRefund'),(10,4,'ChargeUser'),(11,4,'RefundUser'),(12,4,'ListPayment'),(13,1,'Location');
 
 
 
@@ -668,8 +668,8 @@ CREATE TABLE IF NOT EXISTS `ussd_transactions` (
 CREATE TABLE IF NOT EXISTS `sbtmessagelog` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `request` text,
-  `status` varchar(100) DEFAULT '0',
-  `type` varchar(100) DEFAULT '0',
+  `status` int(11) DEFAULT 0,
+  `type` int(11) DEFAULT 0,
   `servicenameid` int(11) NOT NULL,
   `userid` int(11) NOT NULL,
   `reference` varchar(100) DEFAULT NULL,

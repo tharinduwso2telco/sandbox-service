@@ -25,10 +25,10 @@ public class MessageLog {
     private String request;
 
     @Column(name = "status")
-    private String status;
+    private int status;
 
     @Column(name = "type")
-    private String type;
+    private int type;
 
     @Column(name = "servicenameid")
     private int servicenameid;
@@ -102,19 +102,19 @@ public class MessageLog {
         this.messageTimestamp = messageTimestamp;
     }
 
-    public String getStatus() {
+    public int getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(int status) {
         this.status = status;
     }
 
-    public String getType() {
+    public int getType() {
         return type;
     }
 
-    public void setType(String type) {
+    public void setType(int type) {
         this.type = type;
     }
 }

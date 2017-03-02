@@ -36,9 +36,7 @@ import com.wso2telco.services.dep.sandbox.dao.model.domain.APIServiceCalls;
 import com.wso2telco.services.dep.sandbox.dao.model.domain.APITypes;
 import com.wso2telco.services.dep.sandbox.dao.model.domain.ManageNumber;
 import com.wso2telco.services.dep.sandbox.dao.model.domain.MessageLog;
-import com.wso2telco.services.dep.sandbox.servicefactory.AbstractRequestHandler;
-import com.wso2telco.services.dep.sandbox.servicefactory.RequestResponseRequestHandleable;
-import com.wso2telco.services.dep.sandbox.servicefactory.Returnable;
+import com.wso2telco.services.dep.sandbox.servicefactory.*;
 import com.wso2telco.services.dep.sandbox.servicefactory.wallet.Channel;
 import com.wso2telco.services.dep.sandbox.util.CommonUtil;
 import com.wso2telco.services.dep.sandbox.util.MessageLogHandler;
@@ -228,7 +226,7 @@ public class PatialRefundRequestHandler extends AbstractRequestHandler<PatialRef
 
             if (clientCorrelator != null) {
 
-                String response = checkDuplicateClientCorrelator(clientCorrelator, userId, serviceNameId, endUserID, "1", "1", referenceCode);
+                String response = checkDuplicateClientCorrelator(clientCorrelator, userId, serviceNameId, endUserID, MessageProcessStatus.Success, MessageType.Response, referenceCode);
 
                 if (response != null) {
                     RefundResponseBean bean = new RefundResponseBean();
@@ -244,7 +242,7 @@ public class PatialRefundRequestHandler extends AbstractRequestHandler<PatialRef
 
             }
 
-            String result = checkReferenceCode(userId, serviceNameId, endUserID, "1", "1", referenceCode);
+            String result = checkReferenceCode(userId, serviceNameId, endUserID, MessageProcessStatus.Success, MessageType.Response, referenceCode);
 
             if ((result != null)) {
                 LOG.error("###REFUND### Already charged for this reference code");
@@ -255,7 +253,7 @@ public class PatialRefundRequestHandler extends AbstractRequestHandler<PatialRef
             }
 
             // check serverReferenceCode against OriginalServerReferenceCode
-            Double validTransaction = checkOriginalServerReferenceWithServerReference(userId, endUserID, "1", "1", serverTransactionReference);
+            Double validTransaction = checkOriginalServerReferenceWithServerReference(userId, endUserID, MessageProcessStatus.Success, MessageType.Response, serverTransactionReference);
 
             // check account amount decimal format
             BigDecimal bigDecimal = new BigDecimal(RefundAmount);
@@ -326,7 +324,7 @@ public class PatialRefundRequestHandler extends AbstractRequestHandler<PatialRef
                             serverTransactionReference, OperationStatus.Refunded.toString(), referenceCode, serverReferenceCode, chargingInformation, metadata);
 
 
-                    saveResponse(extendedRequestDTO, extendedRequestDTO.getMsisdn(), responseBean, apiServiceCalls, "1");
+                    saveResponse(extendedRequestDTO, extendedRequestDTO.getMsisdn(), responseBean, apiServiceCalls, MessageProcessStatus.Success);
                     responseWrapperDTO.setHttpStatus(Response.Status.OK);
                     return responseWrapperDTO;
                 } else {
@@ -349,7 +347,7 @@ public class PatialRefundRequestHandler extends AbstractRequestHandler<PatialRef
         } catch (Exception ex) {
             RefundResponseBean responseBean = buildJsonResponseBody(RefundAmount, clientCorrelator, merchantIdentification, reasonForRefund,
                     serverTransactionReference, OperationStatus.Refunded.toString(), referenceCode, serverReferenceCode, chargingInformation, metadata);
-            saveResponse(extendedRequestDTO, extendedRequestDTO.getMsisdn(), responseBean, apiServiceCalls, "0");
+            saveResponse(extendedRequestDTO, extendedRequestDTO.getMsisdn(), responseBean, apiServiceCalls, MessageProcessStatus.Failed);
             LOG.error("###REFUND### Error in processing credit service request. ", ex);
             responseWrapperDTO
                     .setRequestError(constructRequestError(SERVICEEXCEPTION, ServiceError.SERVICE_ERROR_OCCURED, null));
@@ -409,7 +407,7 @@ public class PatialRefundRequestHandler extends AbstractRequestHandler<PatialRef
     }
 
     // Check already existing clientcorrelator return response body
-    private String checkDuplicateClientCorrelator(String clientCorrelator, int userId, int serviceNameId, String tel, String status, String type, String referenceCode) throws Exception {
+    private String checkDuplicateClientCorrelator(String clientCorrelator, int userId, int serviceNameId, String tel, MessageProcessStatus status, MessageType type, String referenceCode) throws Exception {
 
         List<Integer> list = new ArrayList<>();
         list.add(serviceNameId);
@@ -421,11 +419,11 @@ public class PatialRefundRequestHandler extends AbstractRequestHandler<PatialRef
 
             if (response != null) {
 
-                String responseStatus = response.get(i).getStatus();
-                String responseType = response.get(i).getType();
+                int responseStatus = response.get(i).getStatus();
+                int responseType = response.get(i).getType();
                 String responseClientCorrelator;
 
-                if (responseType.equals(type) && responseStatus.equals(status)) {
+                if (responseType == type.getValue() && responseStatus == status.getValue()) {
                     String request = response.get(i).getRequest();
                     org.json.JSONObject json = new org.json.JSONObject(request);
                     responseClientCorrelator = null;
@@ -453,7 +451,7 @@ public class PatialRefundRequestHandler extends AbstractRequestHandler<PatialRef
     }
 
     //check reference code
-    private String checkReferenceCode(int userId, int serviceNameId, String tel, String status, String type, String referenceCode) throws Exception {
+    private String checkReferenceCode(int userId, int serviceNameId, String tel, MessageProcessStatus status, MessageType type, String referenceCode) throws Exception {
 
         List<Integer> list = new ArrayList<>();
         list.add(serviceNameId);
@@ -464,10 +462,10 @@ public class PatialRefundRequestHandler extends AbstractRequestHandler<PatialRef
 
             if (response != null) {
 
-                String responseStatus = response.get(i).getStatus();
-                String responseType = response.get(i).getType();
+                int responseStatus = response.get(i).getStatus();
+                int responseType = response.get(i).getType();
 
-                if (responseType.equals(type) && responseStatus.equals(status)) {
+                if (responseType == type.getValue() && responseStatus == status.getValue()) {
                     String request = response.get(i).getRequest();
                     org.json.JSONObject json = new org.json.JSONObject(request);
                     responseReferenceCode = json.getJSONObject("refundResponse").get("referenceCode").toString();
@@ -490,7 +488,7 @@ public class PatialRefundRequestHandler extends AbstractRequestHandler<PatialRef
     }
 
 
-    private double checkOriginalServerReferenceWithServerReference(int userId, String tel, String status, String type, String originalServerReferenceCode) throws Exception {
+    private double checkOriginalServerReferenceWithServerReference(int userId, String tel, MessageProcessStatus status, MessageType type, String originalServerReferenceCode) throws Exception {
 
         double totalAmountRefunded = 0.0;
 
@@ -504,10 +502,10 @@ public class PatialRefundRequestHandler extends AbstractRequestHandler<PatialRef
 
             if (servercodeList != null) {
 
-                String responseStatus = servercodeList.get(i).getStatus();
-                String responseType = servercodeList.get(i).getType();
+                int responseStatus = servercodeList.get(i).getStatus();
+                int responseType = servercodeList.get(i).getType();
 
-                if (responseType.equals(type) && responseStatus.equals(status)) {
+                if (responseType == type.getValue() && responseStatus == status.getValue()) {
                     String request = servercodeList.get(i).getRequest();
                     org.json.JSONObject json = new org.json.JSONObject(request);
                     String serverReferenceCode = json.get("serverReferenceCode").toString();
@@ -535,10 +533,10 @@ public class PatialRefundRequestHandler extends AbstractRequestHandler<PatialRef
 
             for (int i = 0; i < originalServerReferenceCodeList.size(); i++) {
 
-                String responseStatus = originalServerReferenceCodeList.get(i).getStatus();
-                String responseType = originalServerReferenceCodeList.get(i).getType();
+                int responseStatus = originalServerReferenceCodeList.get(i).getStatus();
+                int responseType = originalServerReferenceCodeList.get(i).getType();
 
-                if (responseType.equals(type) && responseStatus.equals(status)) {
+                if (responseType == type.getValue() && responseStatus == status.getValue()) {
                     String request = originalServerReferenceCodeList.get(i).getRequest();
                     org.json.JSONObject json = new org.json.JSONObject(request);
                     String responseOriginalServerReferenceCode = json.getJSONObject("refundResponse").get("originalServerReferenceCode").toString();
@@ -560,10 +558,10 @@ public class PatialRefundRequestHandler extends AbstractRequestHandler<PatialRef
             List<MessageLog> messageLogsForRefundList = loggingDAO.getMessageLogs(userId, refundIdList, "msisdn", "tel:+" + tel, null, null);
 
             for (int i = 0; i < messageLogsForRefundList.size(); i++) {
-                String responseStatus = messageLogsForRefundList.get(i).getStatus();
-                String responseType = messageLogsForRefundList.get(i).getType();
+                int responseStatus = messageLogsForRefundList.get(i).getStatus();
+                int responseType = messageLogsForRefundList.get(i).getType();
 
-                if (responseType.equals(type) && responseStatus.equals(status)) {
+                if (responseType == type.getValue() && responseStatus == status.getValue()) {
 
                     String request = messageLogsForRefundList.get(i).getRequest();
                     org.json.JSONObject json = new org.json.JSONObject(request);
@@ -584,7 +582,7 @@ public class PatialRefundRequestHandler extends AbstractRequestHandler<PatialRef
 
     // Save Response in messageLog table
     private void saveResponse(PatialRefundRequestWrapper extendedRequestDTO,
-                              String endUserIdPath, RefundResponseBean responseBean, APIServiceCalls apiServiceCalls, String status) throws Exception {
+                              String endUserIdPath, RefundResponseBean responseBean, APIServiceCalls apiServiceCalls, MessageProcessStatus status) throws Exception {
 
         Gson resp = new Gson();
         JsonElement je = new JsonParser().parse(resp.toJson(responseBean));
@@ -594,8 +592,8 @@ public class PatialRefundRequestHandler extends AbstractRequestHandler<PatialRef
         MessageLog messageLog = new MessageLog();
         messageLog = new MessageLog();
         messageLog.setRequest(jsonInString);
-        messageLog.setStatus(status);
-        messageLog.setType("1");
+        messageLog.setStatus(status.getValue());
+        messageLog.setType(1);
         messageLog.setServicenameid(apiServiceCalls.getApiServiceCallId());
         messageLog.setUserid(extendedRequestDTO.getUser().getId());
         messageLog.setReference("msisdn");

@@ -34,7 +34,7 @@ import com.wso2telco.services.dep.sandbox.dao.model.domain.MessageLog;
 import com.wso2telco.services.dep.sandbox.servicefactory.AbstractRequestHandler;
 import com.wso2telco.services.dep.sandbox.servicefactory.MessageType;
 import com.wso2telco.services.dep.sandbox.servicefactory.Returnable;
-import com.wso2telco.services.dep.sandbox.servicefactory.Status;
+import com.wso2telco.services.dep.sandbox.servicefactory.MessageProcessStatus;
 import com.wso2telco.services.dep.sandbox.util.*;
 import org.apache.commons.logging.LogFactory;
 import org.json.simple.JSONObject;
@@ -130,10 +130,10 @@ public class PaymentListTransactionRequestHandler extends AbstractRequestHandler
             if (responses != null && !responses.isEmpty()) {
                 for (int i = 0; i < responses.size(); i++) {
 
-                    String responseStatus = responses.get(i).getStatus();
-                    String responseType = responses.get(i).getType();
+                    int responseStatus = responses.get(i).getStatus();
+                    int responseType = responses.get(i).getType();
 
-                    if (responseType.equals(MessageType.Response.getValue()) && responseStatus.equals(Status.Success.getValue())) {
+                    if (responseType == MessageType.Response.getValue() && responseStatus == MessageProcessStatus.Success.getValue()) {
                         String request = responses.get(i).getRequest();
                         org.json.JSONObject json = new org.json.JSONObject(request);
 
