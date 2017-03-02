@@ -16,5 +16,5 @@
 package com.wso2telco.services.dep.sandbox.servicefactory.wallet;
 
 public enum AttributeName {
-	 Payment, Refund, accountStatus, Currency, clientCorrelatorWallet, transactionStatus, referenceCodeWallet, makePayment, clientCorrelatorPayment, referenceCodePayment,refundUser
+	 Payment, Refund, accountStatus, Currency, clientCorrelatorWallet, transactionStatus, referenceCodeWallet, makePayment, clientCorrelatorPayment, referenceCodePayment,refundUser,
 }

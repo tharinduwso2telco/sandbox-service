@@ -30,14 +30,17 @@ public class PaymentRequestFactory {
 
         final String MAKE_PAYMENT = "ChargePaymentRequestWrapper";
         final String REFUND_PAYMENT = "PaymentRefundRequestWrapper";
+        final String LIST_PAYMENT = "transactions";
 
        if(requestDTO.toString().contains(REFUND_PAYMENT)){
            LOG.debug("LOADING REFUND PAYMENT SERVICE");
            return new PaymentRefundRequestHandler();
-
         } else if(requestDTO.toString().contains(MAKE_PAYMENT)){
            LOG.debug("LOADING MAKE PAYMENT SERVICE");
            return new PaymentRequestHandler();
+       } else if (requestDTO.getRequestPath().contains(LIST_PAYMENT)){
+            LOG.debug("LOADING LIST PAYMENT SERVICE");
+            return new PaymentListTransactionRequestHandler();
        }
         return null;
     }

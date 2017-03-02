@@ -13,15 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
+package com.wso2telco.services.dep.sandbox.servicefactory.payment;
 
-package com.wso2telco.services.dep.sandbox.dao;
+import com.wso2telco.services.dep.sandbox.dao.model.custom.RequestDTO;
 
-import com.wso2telco.services.dep.sandbox.dao.model.domain.AttributeValues;
-import com.wso2telco.services.dep.sandbox.dao.model.domain.ManageNumber;
+public class PaymentListTransactionRequestWrapper extends RequestDTO {
 
-import java.util.List;
+	private String endUserId;
 
-public interface PaymentDAO {
+	public String getEndUserId() {
+		return endUserId;
+	}
 
-    public boolean saveManageNumbers(ManageNumber manageNumber) throws Exception;
+	public void setEndUserId(String endUserId) {
+		this.endUserId = endUserId;
+	}
+
 }

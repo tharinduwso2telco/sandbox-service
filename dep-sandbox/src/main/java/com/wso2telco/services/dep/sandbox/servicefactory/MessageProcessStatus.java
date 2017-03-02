@@ -14,14 +14,17 @@
  * limitations under the License.
  ******************************************************************************/
 
-package com.wso2telco.services.dep.sandbox.dao;
+package com.wso2telco.services.dep.sandbox.servicefactory;
 
-import com.wso2telco.services.dep.sandbox.dao.model.domain.AttributeValues;
-import com.wso2telco.services.dep.sandbox.dao.model.domain.ManageNumber;
+public enum MessageProcessStatus {
 
-import java.util.List;
+    Failed(0),Success(1);
 
-public interface PaymentDAO {
+    private int value;
 
-    public boolean saveManageNumbers(ManageNumber manageNumber) throws Exception;
+    private MessageProcessStatus(int value) { this.value=value; }
+
+    public int getValue() {
+        return value;
+    }
 }

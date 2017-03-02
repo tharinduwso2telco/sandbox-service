@@ -15,449 +15,609 @@
  ******************************************************************************/
 package com.wso2telco.services.dep.sandbox.servicefactory.credit;
 
-import java.io.StringWriter;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.Status;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import com.wso2telco.services.dep.sandbox.dao.CreditDAO;
-import com.wso2telco.services.dep.sandbox.dao.LoggingDAO;
-import com.wso2telco.services.dep.sandbox.dao.model.custom.*;
-import com.wso2telco.services.dep.sandbox.dao.model.domain.*;
-import com.wso2telco.services.dep.sandbox.servicefactory.wallet.*;
-import com.wso2telco.services.dep.sandbox.util.*;
-import org.apache.commons.logging.LogFactory;
-import org.json.simple.JSONObject;
-
+import com.ibm.icu.math.BigDecimal;
 import com.wso2telco.core.dbutils.exception.ServiceError;
 import com.wso2telco.dep.oneapivalidation.exceptions.CustomException;
 import com.wso2telco.dep.oneapivalidation.util.Validation;
 import com.wso2telco.dep.oneapivalidation.util.ValidationRule;
+import com.wso2telco.services.dep.sandbox.dao.CreditDAO;
 import com.wso2telco.services.dep.sandbox.dao.DaoFactory;
+import com.wso2telco.services.dep.sandbox.dao.LoggingDAO;
 import com.wso2telco.services.dep.sandbox.dao.NumberDAO;
+import com.wso2telco.services.dep.sandbox.dao.model.custom.*;
 import com.wso2telco.services.dep.sandbox.dao.model.custom.RefundRequestBean.RefundRequest;
 import com.wso2telco.services.dep.sandbox.dao.model.custom.RefundResponseBean.RefundResponse;
-import com.wso2telco.services.dep.sandbox.servicefactory.AbstractRequestHandler;
-import com.wso2telco.services.dep.sandbox.servicefactory.Returnable;
+import com.wso2telco.services.dep.sandbox.dao.model.domain.APIServiceCalls;
+import com.wso2telco.services.dep.sandbox.dao.model.domain.APITypes;
+import com.wso2telco.services.dep.sandbox.dao.model.domain.ManageNumber;
+import com.wso2telco.services.dep.sandbox.dao.model.domain.MessageLog;
+import com.wso2telco.services.dep.sandbox.servicefactory.*;
+import com.wso2telco.services.dep.sandbox.servicefactory.wallet.Channel;
+import com.wso2telco.services.dep.sandbox.util.CommonUtil;
+import com.wso2telco.services.dep.sandbox.util.MessageLogHandler;
+import com.wso2telco.services.dep.sandbox.util.RequestType;
+import com.wso2telco.services.dep.sandbox.util.ServiceName;
+import org.apache.commons.logging.LogFactory;
 
-public class PatialRefundRequestHandler extends AbstractRequestHandler<PatialRefundRequestWrapper> {
+import javax.annotation.Nonnull;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
+import java.util.ArrayList;
+import java.util.Currency;
+import java.util.Date;
+import java.util.List;
 
-	private NumberDAO numberDao;
-	private CreditDAO creditDAO;
-	private MessageLogHandler logHandler;
-	private PatialRefundRequestWrapper requestWrapperDTO;
-	private PatialRefundResponseWrapper responseWrapperDTO;
-	private Integer correlatorid;
+public class PatialRefundRequestHandler extends AbstractRequestHandler<PatialRefundRequestWrapper> implements RequestResponseRequestHandleable<PatialRefundRequestWrapper> {
+
+    final String REFUND_AMOUNT = "refundAmount";
+    final String MSISDN = "msisdn";
+    final String CLIENTCORRELATOR = "clientCorrelator";
+    final String REASON = "reasonForRefund";
+    final String REFERENCE = "originalServerReferenceCode";
+    final String REFERENCE_CODE = "referenceCode";
+    final String ON_BEHALF_OF = "onBehalfOf";
+    final String CATEGORY_CODE = "categoryCode";
+    final String CHANNEL = "channel";
+    final String TAX_AMOUNT = "taxAmount";
+    final String CURRENCY = "currency";
+    final String AMOUNT = "amount";
+    final String TAX = "tax";
+    final String CALL_BACK_DATA = "callbackData";
+    final String NOTIFY_URL = "notifyURL";
+    final String MERCHANT_IDENTIFICATION = "merchantIdentification";
+    final String DESCRIPTION = "description";
+    final String PURCHASE_CATEGORY_CODE = "purchaseCategoryCode";
+
+    private NumberDAO numberDao;
+    private CreditDAO creditDAO;
+    private MessageLogHandler logHandler;
+    private PatialRefundRequestWrapper requestWrapperDTO;
+    private PatialRefundResponseWrapper responseWrapperDTO;
+    private Integer correlatorid;
     private LoggingDAO loggingDao;
-	final String REFUND_AMOUNT = "refundAmount";
-	final String MSISDN = "msisdn";
-	final String CLIENTCORRELATOR = "clientCorrelator";
-	final String REASON = "reasonForRefund";
-	final String REFERENCE = "originalServerReferenceCode";
-	final String REFERENCE_CODE = "referenceCode";
-	final String PAYMENT_AMOUNT = "paymentAmount";
-	final String CHANGING_INFO = "chargingInformation";
-	final String CHARGING_META_DATA = "chargingMetaData";
-	final String REFUND_REQUEST = "refundRequest";
+    private String responseReferenceCode;
+    private boolean isOriginalServerReferenceCode;
+    private double amount;
+    private double paymentAmount = 0.0;
 
-	{
-		LOG = LogFactory.getLog(PatialRefundRequestHandler.class);
+
+    {
+        LOG = LogFactory.getLog(PatialRefundRequestHandler.class);
         loggingDao = DaoFactory.getLoggingDAO();
-		numberDao = DaoFactory.getNumberDAO();
-		creditDAO = DaoFactory.getCreditDAO();
-		dao = DaoFactory.getGenaricDAO();
-		logHandler = MessageLogHandler.getInstance();
-	}
+        numberDao = DaoFactory.getNumberDAO();
+        creditDAO = DaoFactory.getCreditDAO();
+        dao = DaoFactory.getGenaricDAO();
+        logHandler = MessageLogHandler.getInstance();
+    }
 
-	@Override
-	protected Returnable getResponseDTO() {
-		return responseWrapperDTO;
-	}
+    private static boolean currencySymbol(@Nonnull final String currencyCode) {
+        try {
+            final Currency currency = Currency.getInstance(currencyCode);
+            return true;
+        } catch (final IllegalArgumentException x) {
+            return false;
+        }
+    }
 
-	@Override
-	protected List<String> getAddress() {
-		List<String> address = new ArrayList<String>();
-		address.add(requestWrapperDTO.getMsisdn());
-		return address;
-	}
+    @Override
+    protected Returnable getResponseDTO() {
+        return responseWrapperDTO;
+    }
 
-	@Override
-	protected boolean validate(PatialRefundRequestWrapper wrapperDTO) throws Exception {
+    @Override
+    protected List<String> getAddress() {
+        List<String> address = new ArrayList<String>();
+        address.add(requestWrapperDTO.getMsisdn());
+        return address;
+    }
 
-		RefundRequestBean requestBean = wrapperDTO.getRefundRequestBean();
-		RefundRequest request = requestBean.getRefundRequest();
-		PaymentAmountWithTax paymentAmountWithTax = request.getPaymentAmount();
-		ChargingInformation chargingInformation = paymentAmountWithTax.getChargingInformation();
-		ChargingMetaDataWithTax metadata = paymentAmountWithTax.getChargingMetaData();
+    @Override
+    protected boolean validate(PatialRefundRequestWrapper wrapperDTO) throws Exception {
 
-		if (requestBean != null && request != null) {
+        RefundRequestBean requestBean = wrapperDTO.getRefundRequestBean();
+        RefundRequest request = requestBean.getRefundRequest();
+        PaymentAmountWithTax paymentAmountWithTax = request.getPaymentAmount();
+        ChargingInformation chargingInformation = paymentAmountWithTax.getChargingInformation();
+        ChargingMetaDataWithTax metadata = paymentAmountWithTax.getChargingMetaData();
 
-				double amount = request.getRefundAmount();
-				String msisdn = CommonUtil.getNullOrTrimmedValue(wrapperDTO.getMsisdn());
-				String clientCorrelator = CommonUtil.getNullOrTrimmedValue(request.getClientCorrelator());
-				String reasonForRefund = CommonUtil.getNullOrTrimmedValue(request.getReasonForRefund());
-				String originalServerReferenceCode =  CommonUtil.getNullOrTrimmedValue(request.getOriginalServerReferenceCode());
+        if (requestBean != null && request != null) {
 
-				String serverTransactionReference = CommonUtil
-						.getNullOrTrimmedValue(request.getOriginalServerReferenceCode());
-				String onBehalfOf = CommonUtil.getNullOrTrimmedValue(metadata.getOnBehalfOf());
-				String categoryCode = CommonUtil.getNullOrTrimmedValue(metadata.getPurchaseCategoryCode());
-				String channel = CommonUtil.getNullOrTrimmedValue(metadata.getChannel());
-				String taxAmount = CommonUtil.getNullOrTrimmedValue(metadata.getTax());
-				String referenceCode = CommonUtil.getNullOrTrimmedValue(request.getReferenceCode());
+            double RefundAmount = request.getRefundAmount();
+            String msisdn = CommonUtil.getNullOrTrimmedValue(request.getMsisdn());
+            String clientCorrelator = CommonUtil.getNullOrTrimmedValue(request.getClientCorrelator());
+            String reasonForRefund = CommonUtil.getNullOrTrimmedValue(request.getReasonForRefund());
+            String originalServerReferenceCode = CommonUtil.getNullOrTrimmedValue(request.getOriginalServerReferenceCode());
+            String onBehalfOf = CommonUtil.getNullOrTrimmedValue(metadata.getOnBehalfOf());
+            String categoryCode = CommonUtil.getNullOrTrimmedValue(metadata.getPurchaseCategoryCode());
+            String channel = CommonUtil.getNullOrTrimmedValue(metadata.getChannel());
+            String taxAmount = CommonUtil.getNullOrTrimmedValue(metadata.getTax());
+            String referenceCode = CommonUtil.getNullOrTrimmedValue(request.getReferenceCode());
+            String currency = CommonUtil.getNullOrTrimmedValue(chargingInformation.getCurrency());
+            String amount = CommonUtil.getNullOrTrimmedValue(chargingInformation.getAmount());
+            String callbackData = CommonUtil.getNullOrTrimmedValue(request.getCallbackData());
+            String notifyURL =  CommonUtil.getNullOrTrimmedValue(request.getNotifyURL());
+            String merchantIdentification = CommonUtil.getNullOrTrimmedValue(request.getMerchantIdentification());
+            String description = CommonUtil.getNullOrTrimmedValue(chargingInformation.getDescription());
+            String purchaseCategoryCode = CommonUtil.getNullOrTrimmedValue(metadata.getPurchaseCategoryCode());
+
+            try {
+                ValidationRule[] validationRules = {
+                        new ValidationRule(ValidationRule.VALIDATION_TYPE_MANDATORY_DOUBLE_GT_ZERO, REFUND_AMOUNT, RefundAmount),
+                        new ValidationRule(ValidationRule.VALIDATION_TYPE_MANDATORY_TEL_END_USER_ID, MSISDN, msisdn),
+                        new ValidationRule(ValidationRule.VALIDATION_TYPE_OPTIONAL, CLIENTCORRELATOR, clientCorrelator),
+                        new ValidationRule(ValidationRule.VALIDATION_TYPE_MANDATORY, REFERENCE, originalServerReferenceCode),
+                        new ValidationRule(ValidationRule.VALIDATION_TYPE_OPTIONAL, REASON, reasonForRefund),
+                        new ValidationRule(ValidationRule.VALIDATION_TYPE_OPTIONAL, ON_BEHALF_OF, onBehalfOf),
+                        new ValidationRule(ValidationRule.VALIDATION_TYPE_OPTIONAL, CATEGORY_CODE, categoryCode),
+                        new ValidationRule(ValidationRule.VALIDATION_TYPE_OPTIONAL, CHANNEL, channel),
+                        new ValidationRule(ValidationRule.VALIDATION_TYPE_OPTIONAL_DOUBLE_GE_ZERO, TAX_AMOUNT, taxAmount),
+                        new ValidationRule(ValidationRule.VALIDATION_TYPE_MANDATORY, REFERENCE_CODE, referenceCode),
+                        new ValidationRule(ValidationRule.VALIDATION_TYPE_OPTIONAL, CURRENCY, currency),
+                        new ValidationRule(ValidationRule.VALIDATION_TYPE_MANDATORY_DOUBLE_GE_ZERO, AMOUNT, amount),
+                        new ValidationRule(ValidationRule.VALIDATION_TYPE_OPTIONAL, CALL_BACK_DATA, callbackData),
+                        new ValidationRule(ValidationRule.VALIDATION_TYPE_OPTIONAL, NOTIFY_URL, notifyURL),
+                        new ValidationRule(ValidationRule.VALIDATION_TYPE_OPTIONAL, MERCHANT_IDENTIFICATION, merchantIdentification),
+                        new ValidationRule(ValidationRule.VALIDATION_TYPE_OPTIONAL, DESCRIPTION, description),
+                        new ValidationRule(ValidationRule.VALIDATION_TYPE_OPTIONAL, PURCHASE_CATEGORY_CODE, purchaseCategoryCode)
+
+                };
+
+                Validation.checkRequestParams(validationRules);
+            } catch (CustomException ex) {
+                LOG.error("###CREDIT### Error in Validation : " + ex);
+                responseWrapperDTO.setRequestError(constructRequestError(SERVICEEXCEPTION, ex.getErrcode(),
+                        ex.getErrmsg(), ex.getErrvar()[0]));
+                responseWrapperDTO.setHttpStatus(javax.ws.rs.core.Response.Status.BAD_REQUEST);
+            }
+            return true;
+        } else {
+            responseWrapperDTO.setRequestError(
+                    constructRequestError(SERVICEEXCEPTION, ServiceError.INVALID_INPUT_VALUE.getCode(),
+                            ServiceError.INVALID_INPUT_VALUE.getMessage(), wrapperDTO.getMsisdn()));
+            responseWrapperDTO.setHttpStatus(javax.ws.rs.core.Response.Status.BAD_REQUEST);
+        }
+        return false;
+    }
+
+    @Override
+    protected Returnable process(PatialRefundRequestWrapper extendedRequestDTO) throws Exception {
+
+        if (responseWrapperDTO.getRequestError() != null) {
+            responseWrapperDTO.setHttpStatus(Status.BAD_REQUEST);
+            return responseWrapperDTO;
+        }
+
+        RefundRequestBean requestBean = extendedRequestDTO.getRefundRequestBean();
+        RefundRequest request = requestBean.getRefundRequest();
+        PaymentAmountWithTax paymentAmountWithTax = request.getPaymentAmount();
+        ChargingInformation chargingInformation = paymentAmountWithTax.getChargingInformation();
+        ChargingMetaDataWithTax metadata = paymentAmountWithTax.getChargingMetaData();
+
+        double RefundAmount = request.getRefundAmount();
+        String msisdn = CommonUtil.getNullOrTrimmedValue(request.getMsisdn());
+        String clientCorrelator = CommonUtil.getNullOrTrimmedValue(request.getClientCorrelator());
+        String reasonForRefund = CommonUtil.getNullOrTrimmedValue(request.getReasonForRefund());
+        String merchantIdentification = CommonUtil.getNullOrTrimmedValue(request.getMsisdn());
+        String serverTransactionReference = CommonUtil.getNullOrTrimmedValue(request.getOriginalServerReferenceCode());
+        String userName = extendedRequestDTO.getUser().getUserName();
+        String serviceCreditApply = ServiceName.PartialRefund.toString();
+        String channel = CommonUtil.getNullOrTrimmedValue(metadata.getChannel());
+        String referenceCode = CommonUtil.getNullOrTrimmedValue(String.valueOf(request.getReferenceCode()));
+        String endUserID = getLastMobileNumber(extendedRequestDTO.getMsisdn());
+        String currency = CommonUtil.getNullOrTrimmedValue(chargingInformation.getCurrency());
+        amount = Double.parseDouble(CommonUtil.getNullOrTrimmedValue(chargingInformation.getAmount()));
 
 
-				try {
-					ValidationRule[] validationRules = {
-							new ValidationRule(ValidationRule.VALIDATION_TYPE_MANDATORY_DOUBLE_GT_ZERO, "refundAmount",
-									amount),
-							new ValidationRule(ValidationRule.VALIDATION_TYPE_MANDATORY_TEL_END_USER_ID, "msisdn",
-									msisdn),
-							new ValidationRule(ValidationRule.VALIDATION_TYPE_OPTIONAL, "clientCorrelator",
-									clientCorrelator),
-                            new ValidationRule(ValidationRule.VALIDATION_TYPE_OPTIONAL, "originalServerReferenceCode",
-                                    originalServerReferenceCode),
-							new ValidationRule(ValidationRule.VALIDATION_TYPE_OPTIONAL, "reasonForRefund",
-									reasonForRefund),
-							new ValidationRule(ValidationRule.VALIDATION_TYPE_MANDATORY, "serverTransactionReference",
-									serverTransactionReference),
-							new ValidationRule(ValidationRule.VALIDATION_TYPE_OPTIONAL, "onBehalfOf", onBehalfOf),
-							new ValidationRule(ValidationRule.VALIDATION_TYPE_OPTIONAL, "categoryCode", categoryCode),
-							new ValidationRule(ValidationRule.VALIDATION_TYPE_OPTIONAL, "channel", channel),
-							new ValidationRule(ValidationRule.VALIDATION_TYPE_OPTIONAL,"taxAmount",taxAmount),
-                            new ValidationRule(ValidationRule.VALIDATION_TYPE_OPTIONAL,"referenceCode",referenceCode)
+        String serverReferenceCodeFormat = String.format("%06d", getReferenceNumber());
+        String serverReferenceCode = "PAYMENT_REF" + serverReferenceCodeFormat;
+        // Save Request Log
+        APITypes apiTypes = dao.getAPIType(extendedRequestDTO.getRequestType().toString().toLowerCase());
+        APIServiceCalls apiServiceCalls = dao.getServiceCall(apiTypes.getId(), serviceCreditApply);
 
-					};
+        try {
 
-					Validation.checkRequestParams(validationRules);
-				} catch (CustomException ex) {
-					LOG.error("###CREDIT### Error in Validation : " + ex);
-					responseWrapperDTO.setRequestError(constructRequestError(SERVICEEXCEPTION, ex.getErrcode(),
-							ex.getErrmsg(), wrapperDTO.getMsisdn()));
-					responseWrapperDTO.setHttpStatus(javax.ws.rs.core.Response.Status.BAD_REQUEST);
-				}
-				return true;
-			} else {
-				responseWrapperDTO.setRequestError(
-						constructRequestError(SERVICEEXCEPTION, ServiceError.INVALID_INPUT_VALUE.getCode(),
-								ServiceError.INVALID_INPUT_VALUE.getMessage(), wrapperDTO.getMsisdn()));
-				responseWrapperDTO.setHttpStatus(javax.ws.rs.core.Response.Status.BAD_REQUEST);
-			}
-		return false;
-	}
+            Integer userId = extendedRequestDTO.getUser().getId();
+            int serviceNameId = apiServiceCalls.getApiServiceCallId();
 
-	@Override
-	protected Returnable process(PatialRefundRequestWrapper extendedRequestDTO) throws Exception {
+            if (clientCorrelator != null) {
 
-		if (responseWrapperDTO.getRequestError() != null) {
-			responseWrapperDTO.setHttpStatus(Status.BAD_REQUEST);
-			return responseWrapperDTO;
-		}
+                String response = checkDuplicateClientCorrelator(clientCorrelator, userId, serviceNameId, endUserID, MessageProcessStatus.Success, MessageType.Response, referenceCode);
 
-		RefundRequestBean requestBean = extendedRequestDTO.getRefundRequestBean();
-		RefundRequest request = requestBean.getRefundRequest();
-		PaymentAmountWithTax paymentAmountWithTax = request.getPaymentAmount();
-		ChargingInformation chargingInformation = paymentAmountWithTax.getChargingInformation();
-		ChargingMetaDataWithTax metadata = paymentAmountWithTax.getChargingMetaData();
-		APITypes apiType = dao.getAPIType(RequestType.CREDIT.toString().toLowerCase());
-		APIServiceCalls serviceType = dao.getServiceCall(apiType.getId(), ServiceName.PartialRefund.toString());
-		JSONObject obj = buildJSONObject(request);
-		logHandler.saveMessageLog(serviceType.getApiServiceCallId(), extendedRequestDTO.getUser().getId(), MSISDN, extendedRequestDTO.getMsisdn(), obj);
+                if (response != null) {
+                    RefundResponseBean bean = new RefundResponseBean();
+                    org.json.JSONObject json = new org.json.JSONObject(response);
+                    String jasonString = json.getJSONObject("refundResponse").toString();
+                    ObjectMapper mapper = new ObjectMapper();
+                    RefundResponse res = mapper.readValue(jasonString, RefundResponse.class);
+                    bean.setRefundResponse(res);
+                    responseWrapperDTO.setRefundResponseBean(bean);
+                    responseWrapperDTO.setHttpStatus(Response.Status.OK);
+                    return responseWrapperDTO;
+                }
 
-
-		double amount = request.getRefundAmount();
-		String msisdn = CommonUtil.getNullOrTrimmedValue(extendedRequestDTO.getMsisdn());
-		String clientCorrelator = CommonUtil.getNullOrTrimmedValue(request.getClientCorrelator());
-		String reasonForRefund = CommonUtil.getNullOrTrimmedValue(request.getReasonForRefund());
-		String merchantIdentification = CommonUtil.getNullOrTrimmedValue(request.getMsisdn());
-		String serverTransactionReference = CommonUtil.getNullOrTrimmedValue(request.getOriginalServerReferenceCode());
-		String userName = extendedRequestDTO.getUser().getUserName();
-		String  serviceCreditApply = ServiceName.PartialRefund.toString();
-		String channel = CommonUtil.getNullOrTrimmedValue(metadata.getChannel());
-		String referenceCode = CommonUtil.getNullOrTrimmedValue(String.valueOf(request.getReferenceCode()));
-		String endUserID = getLastMobileNumber(extendedRequestDTO.getMsisdn());
-
-        StringWriter out = new StringWriter();
-        obj.writeJSONString(out);
-        String jsonString = out.toString();
-
-        MessageLog messageLog = new MessageLog();
-        messageLog.setServicenameid(serviceType.getApiServiceCallId());
-        messageLog.setUserid(extendedRequestDTO.getUser().getId());
-        messageLog.setReference(MSISDN);
-        messageLog.setValue(extendedRequestDTO.getMsisdn());
-        messageLog.setRequest(jsonString);
-        messageLog.setMessageTimestamp(new Date());
-
-        //Genarate server reference number.
-        int ref_number = loggingDao.saveMessageLog(messageLog);
-        String serverReferenceCode = String.format("%06d",ref_number );
-
-		try {
-
-			String clientCorrelatorAttribute = AttributeName.clientCorrelator.toString();
-			Integer userId = extendedRequestDTO.getUser().getId();
-			//Null check for client correlator.
-			if(clientCorrelator != null){
-				AttributeValues duplicateClientCorrelator	= creditDAO.checkDuplication(userId, serviceCreditApply, clientCorrelator, clientCorrelatorAttribute);
-
-				if(duplicateClientCorrelator != null){
-					Integer ownerId = duplicateClientCorrelator.getOwnerdid();
-					ManageNumber manageNumber = numberDao.getNumber(endUserID, userName);
-					if(ownerId == manageNumber.getId()){
-						//send the already sent response
-						AttributeValues partialRefundResponse = creditDAO.getTransactionValue(endUserID,duplicateClientCorrelator.getAttributeValueId() ,AttributeName.patialRefund.toString(),ServiceName.PartialRefund.toString());
-						RefundResponseBean bean = new RefundResponseBean();
-
-						ObjectMapper mapper = new ObjectMapper();
-						String responseString = partialRefundResponse.getValue();
-						RefundResponse res =  mapper.readValue(responseString, RefundResponse.class);
-						bean.setRefundResponse(res);
-						responseWrapperDTO.setRefundResponseBean(bean);
-						responseWrapperDTO.setHttpStatus(Response.Status.OK);
-						return responseWrapperDTO;
-					}else{
-						buildJsonResponseBody(amount, clientCorrelator, merchantIdentification, reasonForRefund,
-								serverTransactionReference, OperationStatus.Refunded.toString(),referenceCode,serverReferenceCode,chargingInformation,metadata );
-						responseWrapperDTO.setRequestError(constructRequestError(SERVICEEXCEPTION,
-								ServiceError.INVALID_INPUT_VALUE, "Clientcorrelator is already used for different msisdn"));
-						responseWrapperDTO.setHttpStatus(Status.BAD_REQUEST);
-						return responseWrapperDTO;
-					}
-				}
-			}
-
-			//Check channel.
-			if (channel != null && !containsChannel(channel)) {
-				LOG.error("###WALLET### Valid channel doesn't exists for the given inputs");
-				responseWrapperDTO.setRequestError(constructRequestError(SERVICEEXCEPTION,
-						ServiceError.INVALID_INPUT_VALUE, "Valid channel doesn't exists for the given inputs"));
-				responseWrapperDTO.setHttpStatus(Status.BAD_REQUEST);
-				return responseWrapperDTO;
-			}
-
-			//Save reference code.
-            String referenceCodeAttribute =  AttributeName.referenceCodeCredit.toString();
-            AttributeValues value =	creditDAO.checkDuplication(userId, serviceCreditApply, referenceCode, referenceCodeAttribute);
-            if(value != null){
-                buildJsonResponseBody(amount, clientCorrelator, merchantIdentification, reasonForRefund,
-                        serverTransactionReference, OperationStatus.Refunded.toString(),referenceCode,serverReferenceCode,chargingInformation,metadata );
-                responseWrapperDTO.setRequestError(constructRequestError(SERVICEEXCEPTION,
-                        ServiceError.INVALID_INPUT_VALUE, "Already used reference code for the request"));
-                responseWrapperDTO.setHttpStatus(Status.BAD_REQUEST);
-                return responseWrapperDTO;
-            }else{
-                saveReferenceCode(endUserID, referenceCode, userName);
             }
 
-			ManageNumber manageNumber = numberDao.getNumber(endUserID, userName);
-			if (manageNumber != null) {
-				updateBalance(manageNumber, amount);
-				RefundResponseBean  responseBean = buildJsonResponseBody(amount, clientCorrelator, merchantIdentification, reasonForRefund,
-						serverTransactionReference, OperationStatus.Refunded.toString(),referenceCode,serverReferenceCode,chargingInformation,metadata );
-				if(clientCorrelator != null){
-					correlatorid = saveClientCorrelator(endUserID, clientCorrelator, userName);
-					saveTransaction(responseBean);
-				}
+            String result = checkReferenceCode(userId, serviceNameId, endUserID, MessageProcessStatus.Success, MessageType.Response, referenceCode);
 
-				responseWrapperDTO.setHttpStatus(Response.Status.OK);
-				return responseWrapperDTO;
-			} else {
-				responseWrapperDTO.setRequestError(constructRequestError(SERVICEEXCEPTION,
-						ServiceError.INVALID_INPUT_VALUE, "Number is not Registered for the Service"));
-				responseWrapperDTO.setHttpStatus(Status.BAD_REQUEST);
-				return responseWrapperDTO;
-			}
+            if ((result != null)) {
+                LOG.error("###REFUND### Already charged for this reference code");
+                responseWrapperDTO.setRequestError(constructRequestError(SERVICEEXCEPTION,
+                        ServiceError.INVALID_INPUT_VALUE, "Already used reference code"));
+                responseWrapperDTO.setHttpStatus(Response.Status.BAD_REQUEST);
+                return responseWrapperDTO;
+            }
 
-		} catch (Exception ex) {
-			LOG.error("###CREDIT### Error in processing credit service request. ", ex);
-			responseWrapperDTO
-					.setRequestError(constructRequestError(SERVICEEXCEPTION, ServiceError.SERVICE_ERROR_OCCURED, null));
-			responseWrapperDTO.setHttpStatus(Status.BAD_REQUEST);
-			return responseWrapperDTO;
-		}
+            // check serverReferenceCode against OriginalServerReferenceCode
+            Double validTransaction = checkOriginalServerReferenceWithServerReference(userId, endUserID, MessageProcessStatus.Success, MessageType.Response, serverTransactionReference);
 
-	}
-	@Override
-	protected void init(PatialRefundRequestWrapper extendedRequestDTO) throws Exception {
-		requestWrapperDTO = extendedRequestDTO;
-		responseWrapperDTO = new PatialRefundResponseWrapper();
-	}
+            // check account amount decimal format
+            BigDecimal bigDecimal = new BigDecimal(RefundAmount);
+            Integer decimalDigits = bigDecimal.scale();
+            if (!((decimalDigits <= 2) && (decimalDigits >= 0)) || RefundAmount < 0) {
+                LOG.error("###REFUND### amount should be a whole number or two digit decimal");
+                responseWrapperDTO
+                        .setRequestError(constructRequestError(SERVICEEXCEPTION, ServiceError.INVALID_INPUT_VALUE,
+                                "amount should be a whole or two digit decimal positive number"));
+                responseWrapperDTO.setHttpStatus(Response.Status.BAD_REQUEST);
+                return responseWrapperDTO;
+            }
 
-	private void updateBalance(ManageNumber manageNumber, double amount) throws Exception {
+            if(currency!=null) {
+                // check valid account currency for endUserId
+                boolean isValidCurrency = currencySymbol(currency);
+                if (!isValidCurrency) {
+                    LOG.error("###REFUND### currency code not as per ISO 4217");
+                    responseWrapperDTO.setRequestError(constructRequestError(SERVICEEXCEPTION,
+                            ServiceError.INVALID_INPUT_VALUE, "currency code not as per ISO 4217"));
+                    responseWrapperDTO.setHttpStatus(Response.Status.BAD_REQUEST);
+                    return responseWrapperDTO;
 
-		double newBalance = manageNumber.getBalance() + amount;
-		manageNumber.setBalance(newBalance);
-		numberDao.saveManageNumbers(manageNumber);
-	}
+                }
+            }
+            //Check channel.
+            if (channel != null && !containsChannel(channel)) {
+                LOG.error("###REFUND### Valid channel doesn't exists for the given inputs");
+                responseWrapperDTO.setRequestError(constructRequestError(SERVICEEXCEPTION,
+                        ServiceError.INVALID_INPUT_VALUE, "Valid channel doesn't exists for the given inputs"));
+                responseWrapperDTO.setHttpStatus(Status.BAD_REQUEST);
+                return responseWrapperDTO;
+            }
 
-	private RefundResponseBean buildJsonResponseBody(double amount, String clientCorrelator, String merchantIdentification,
-			String reason, String serverTransactionReference,String operationStatus, String referenceCode, String serverReferenceCode, ChargingInformation chargingInformation, ChargingMetaDataWithTax chargingMetaDataWithTax) {
+            if (!isOriginalServerReferenceCode) {
+                LOG.error("###REFUND### no payment matching for this Refund");
+                responseWrapperDTO.setRequestError(constructRequestError(SERVICEEXCEPTION,
+                        ServiceError.INVALID_INPUT_VALUE, "no payment matching for this Refund"));
+                responseWrapperDTO.setHttpStatus(Response.Status.BAD_REQUEST);
+                return responseWrapperDTO;
+            }
 
-		PaymentAmountWithTax paymentAmountWithTax = new PaymentAmountWithTax();
-		paymentAmountWithTax.setChargingInformation(chargingInformation);
-		paymentAmountWithTax.setChargingMetaData(chargingMetaDataWithTax);
+            if (paymentAmount != amount) {
+                LOG.error("###REFUND### Charging Information amount miss match");
+                responseWrapperDTO.setRequestError(constructRequestError(SERVICEEXCEPTION,
+                        ServiceError.INVALID_INPUT_VALUE, "Charging Information amount miss match"));
+                responseWrapperDTO.setHttpStatus(Response.Status.BAD_REQUEST);
+                return responseWrapperDTO;
+            }
 
-		RefundResponse refundResponse = new RefundResponse();
-		refundResponse.setRefundAmount(amount);
-		refundResponse.setOriginalServerReferenceCode(serverTransactionReference);
-		refundResponse.setClientCorrelator(clientCorrelator);
-		refundResponse.setEndUserID(merchantIdentification);
-		refundResponse.setReasonForRefund(reason);
-		refundResponse.setPaymentAmount(paymentAmountWithTax);
-		refundResponse.setReferenceCode(referenceCode);
-		refundResponse.setServerReferanceCode(serverReferenceCode);
-		refundResponse.setResourceURL(CommonUtil.getResourceUrl(requestWrapperDTO));
-		refundResponse.setTransactionOperationStatus(operationStatus);
-		RefundResponseBean refundResponseBean = new RefundResponseBean();
-		refundResponseBean.setRefundResponse(refundResponse);
-		responseWrapperDTO.setRefundResponseBean(refundResponseBean);
-		return refundResponseBean;
-
-	}
-	
-	@SuppressWarnings("unchecked")
-	private JSONObject buildJSONObject(RefundRequest request){
-		
-		JSONObject obj = new JSONObject();
-		JSONObject refundRequest = new JSONObject();
-		JSONObject payment = new JSONObject();
-
-		payment.put(CHANGING_INFO, request.getPaymentAmount().getChargingInformation());
-		payment.put(CHARGING_META_DATA, request.getPaymentAmount().getChargingMetaData());
-
-		refundRequest.put(CLIENTCORRELATOR, request.getClientCorrelator());
-		refundRequest.put(MSISDN, request.getMsisdn());
-		refundRequest.put(REFERENCE,request.getOriginalServerReferenceCode());
-		refundRequest.put(REASON, request.getReasonForRefund());
-		refundRequest.put(REFUND_AMOUNT, request.getRefundAmount());
-		refundRequest.put(PAYMENT_AMOUNT, payment);
-		refundRequest.put(REFERENCE_CODE,request.getReferenceCode());
-		
-		obj.put(REFUND_REQUEST, refundRequest);
-		return obj;
-	}
+            // Check for exceeded Amount
+            if (validTransaction == 0.0) {
+                LOG.error("###REFUND### exceeds refund Amount");
+                responseWrapperDTO.setRequestError(constructRequestError(SERVICEEXCEPTION,
+                        ServiceError.INVALID_INPUT_VALUE, "exceeds refund Amount"));
+                responseWrapperDTO.setHttpStatus(Response.Status.BAD_REQUEST);
+                return responseWrapperDTO;
+            }
 
 
-	public Integer saveClientCorrelator(String endUserId, String correlator, String userName) throws Exception {
-		try {
-			AttributeValues valueObj = new AttributeValues();
-			String tableName = TableName.NUMBERS.toString().toLowerCase();
-			String attributeName = AttributeName.clientCorrelator.toString();
-			String apiType = RequestType.CREDIT.toString();
-			String serviceCallApplyCredit = ServiceName.PartialRefund.toString();
-			APITypes api = dao.getAPIType(apiType);
-			APIServiceCalls serviceCall = dao.getServiceCall(api.getId(), serviceCallApplyCredit);
-			Attributes attribute = dao.getAttribute(attributeName);
-			AttributeDistribution distribution = dao.getAttributeDistribution(serviceCall.getApiServiceCallId(), attribute.getAttributeId());
-			ManageNumber manageNumber = numberDao.getNumber(endUserId, userName);
-			Integer ownerId = manageNumber.getId();
-
-			valueObj = new AttributeValues();
-			valueObj.setAttributedid(distribution);
-			valueObj.setOwnerdid(ownerId);
-			valueObj.setTobject(tableName);
-			valueObj.setValue(correlator);
-			correlatorid = creditDAO.saveAttributeValue(valueObj);
-
-		} catch (Exception ex) {
-			LOG.error("###PATIAL_REFUND_CREDIT### Error in processing save of clientCorrelator request. ", ex);
-			responseWrapperDTO.setHttpStatus(Response.Status.BAD_REQUEST);
-			throw ex;
-		}
-		return correlatorid;
-	}
+            if (RefundAmount <= validTransaction) {
 
 
-	public boolean containsChannel(String channelValue) {
-
-		for (Channel channel : Channel.values()) {
-			if (channel.name().toLowerCase().equals(channelValue.toLowerCase())) {
-				return true;
-			}
-		}
-
-		return false;
-	}
+                ManageNumber manageNumber = numberDao.getNumber(endUserID, userName);
+                if (manageNumber != null) {
+                    updateBalance(manageNumber, RefundAmount);
+                    RefundResponseBean responseBean = buildJsonResponseBody(RefundAmount, clientCorrelator, merchantIdentification, reasonForRefund,
+                            serverTransactionReference, OperationStatus.Refunded.toString(), referenceCode, serverReferenceCode, chargingInformation, metadata);
 
 
+                    saveResponse(extendedRequestDTO, extendedRequestDTO.getMsisdn(), responseBean, apiServiceCalls, MessageProcessStatus.Success);
+                    responseWrapperDTO.setHttpStatus(Response.Status.OK);
+                    return responseWrapperDTO;
+                } else {
+                    responseWrapperDTO.setRequestError(constructRequestError(SERVICEEXCEPTION,
+                            ServiceError.INVALID_INPUT_VALUE, "Number is not Registered for the Service"));
+                    responseWrapperDTO.setHttpStatus(Status.BAD_REQUEST);
+                    return responseWrapperDTO;
+                }
 
-	public void saveTransaction(RefundResponseBean responseBean)
-			throws Exception {
+            } else {
+                LOG.error("###REFUND### Cannot Proceed Refund");
+                responseWrapperDTO.setRequestError(constructRequestError(SERVICEEXCEPTION,
+                        ServiceError.INVALID_INPUT_VALUE, "Cannot Proceed Refund"));
+                responseWrapperDTO.setHttpStatus(Response.Status.BAD_REQUEST);
+                return responseWrapperDTO;
 
-		AttributeDistribution distributionId = null;
-		Integer ownerId = null;
-		try {
-			AttributeValues valueObj = new AttributeValues();
-			String tableName = TableName.SBXATTRIBUTEVALUE.toString().toLowerCase();
-			String attributeName = AttributeName.patialRefund.toString();
-			String apiType = RequestType.CREDIT.toString();
-			String serviceCallApplyCredit = ServiceName.PartialRefund.toString();
-			APITypes api = dao.getAPIType(apiType);
-			APIServiceCalls serviceCall = dao.getServiceCall(api.getId(), serviceCallApplyCredit);
-			Attributes attribute = dao.getAttribute(attributeName);
-			AttributeDistribution distribution = dao.getAttributeDistribution(serviceCall.getApiServiceCallId(), attribute.getAttributeId());
-			ownerId = correlatorid;
-
-			Gson gson = new Gson();
-			JsonElement je =new JsonParser().parse(gson.toJson(responseBean));
-			JsonObject asJsonObject = je.getAsJsonObject();
-			JsonElement get = asJsonObject.get("refundResponse");
-			JsonObject asJsonObjectPayment = get.getAsJsonObject();
-			String jsonString = null;
-			jsonString = gson.toJson(asJsonObjectPayment);
-
-			valueObj = new AttributeValues();
-			valueObj.setAttributedid(distribution);
-			valueObj.setOwnerdid(ownerId);
-			valueObj.setTobject(tableName);
-			valueObj.setValue(jsonString);
-			dao.saveAttributeValue(valueObj);
-
-		} catch (Exception ex) {
-			LOG.error("###PARTIAL_REFUND### Error in processing save transaction. ", ex);
-			responseWrapperDTO.setHttpStatus(Response.Status.BAD_REQUEST);
-			throw ex;
-		}
-	}
+            }
 
 
+        } catch (Exception ex) {
+            RefundResponseBean responseBean = buildJsonResponseBody(RefundAmount, clientCorrelator, merchantIdentification, reasonForRefund,
+                    serverTransactionReference, OperationStatus.Refunded.toString(), referenceCode, serverReferenceCode, chargingInformation, metadata);
+            saveResponse(extendedRequestDTO, extendedRequestDTO.getMsisdn(), responseBean, apiServiceCalls, MessageProcessStatus.Failed);
+            LOG.error("###REFUND### Error in processing credit service request. ", ex);
+            responseWrapperDTO
+                    .setRequestError(constructRequestError(SERVICEEXCEPTION, ServiceError.SERVICE_ERROR_OCCURED, null));
+            responseWrapperDTO.setHttpStatus(Status.BAD_REQUEST);
+            return responseWrapperDTO;
+        }
 
-	public void saveReferenceCode(String endUserId, String referenceCode, String userName) throws Exception {
-		try {
-			AttributeValues valueObj = new AttributeValues();
-			String tableName = TableName.NUMBERS.toString().toLowerCase();
-			String attributeName = AttributeName.referenceCodeCredit.toString();
-			String apiType = RequestType.CREDIT.toString();
-			String serviceCallApplyCredit = ServiceName.PartialRefund.toString();
-			APITypes api = dao.getAPIType(apiType);
-			APIServiceCalls serviceCall = dao.getServiceCall(api.getId(), serviceCallApplyCredit);
-			Attributes attribute = dao.getAttribute(attributeName);
-			AttributeDistribution distribution = dao.getAttributeDistribution(serviceCall.getApiServiceCallId(), attribute.getAttributeId());
-			ManageNumber manageNumber = numberDao.getNumber(endUserId, userName);
-			Integer ownerId = manageNumber.getId();
+    }
 
-			valueObj = new AttributeValues();
-			valueObj.setAttributedid(distribution);
-			valueObj.setOwnerdid(ownerId);
-			valueObj.setTobject(tableName);
-			valueObj.setValue(referenceCode);
-			dao.saveAttributeValue(valueObj);
+    @Override
+    protected void init(PatialRefundRequestWrapper extendedRequestDTO) throws Exception {
+        requestWrapperDTO = extendedRequestDTO;
+        responseWrapperDTO = new PatialRefundResponseWrapper();
+    }
 
-		} catch (Exception ex) {
-			LOG.error("###CREDIT### Error in processing save of referenceCode request. ", ex);
-			responseWrapperDTO.setHttpStatus(Response.Status.BAD_REQUEST);
-			throw ex;
-		}
-	}
+    private void updateBalance(ManageNumber manageNumber, double amount) throws Exception {
+
+        double newBalance = manageNumber.getBalance() + amount;
+        manageNumber.setBalance(newBalance);
+        numberDao.saveManageNumbers(manageNumber);
+    }
+
+    private RefundResponseBean buildJsonResponseBody(double amount, String clientCorrelator, String merchantIdentification,
+                                                     String reason, String serverTransactionReference, String operationStatus, String referenceCode, String serverReferenceCode, ChargingInformation chargingInformation, ChargingMetaDataWithTax chargingMetaDataWithTax) {
+
+        PaymentAmountWithTax paymentAmountWithTax = new PaymentAmountWithTax();
+        paymentAmountWithTax.setChargingInformation(chargingInformation);
+        paymentAmountWithTax.setChargingMetaData(chargingMetaDataWithTax);
+
+        RefundResponse refundResponse = new RefundResponse();
+        refundResponse.setRefundAmount(amount);
+        refundResponse.setOriginalServerReferenceCode(serverTransactionReference);
+        refundResponse.setClientCorrelator(clientCorrelator);
+        refundResponse.setEndUserID(merchantIdentification);
+        refundResponse.setReasonForRefund(reason);
+        refundResponse.setPaymentAmount(paymentAmountWithTax);
+        refundResponse.setReferenceCode(referenceCode);
+        refundResponse.setServerReferanceCode(serverReferenceCode);
+        refundResponse.setResourceURL(CommonUtil.getResourceUrl(requestWrapperDTO));
+        refundResponse.setTransactionOperationStatus(operationStatus);
+        RefundResponseBean refundResponseBean = new RefundResponseBean();
+        refundResponseBean.setRefundResponse(refundResponse);
+        responseWrapperDTO.setRefundResponseBean(refundResponseBean);
+        return refundResponseBean;
+
+    }
+
+    public boolean containsChannel(String channelValue) {
+
+        for (Channel channel : Channel.values()) {
+            if (channel.name().toLowerCase().equals(channelValue.toLowerCase())) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    // Check already existing clientcorrelator return response body
+    private String checkDuplicateClientCorrelator(String clientCorrelator, int userId, int serviceNameId, String tel, MessageProcessStatus status, MessageType type, String referenceCode) throws Exception {
+
+        List<Integer> list = new ArrayList<>();
+        list.add(serviceNameId);
+        List<MessageLog> response = loggingDAO.getMessageLogs(userId, list, "msisdn", "tel:+" + tel, null, null);
+
+        String jsonString = null;
+
+        for (int i = 0; i < response.size(); i++) {
+
+            if (response != null) {
+
+                int responseStatus = response.get(i).getStatus();
+                int responseType = response.get(i).getType();
+                String responseClientCorrelator;
+
+                if (responseType == type.getValue() && responseStatus == status.getValue()) {
+                    String request = response.get(i).getRequest();
+                    org.json.JSONObject json = new org.json.JSONObject(request);
+                    responseClientCorrelator = null;
+
+                    if (json.getJSONObject("refundResponse").has("clientCorrelator")) {
+                        responseClientCorrelator = json.getJSONObject("refundResponse").get("clientCorrelator").toString();
+                    }
+
+                    int responseUserId = response.get(i).getUserid();
+                    String responseTel = response.get(i).getValue();
+
+                    // Check client correlator
+                    if ((responseClientCorrelator != null && responseClientCorrelator.equals(clientCorrelator)) &&
+                            responseUserId == userId && responseTel.equals("tel:+" + tel)) {
+                        jsonString = json.toString();
+                        break;
+                    }
+                }
+
+            }
+
+        }
+
+        return jsonString;
+    }
+
+    //check reference code
+    private String checkReferenceCode(int userId, int serviceNameId, String tel, MessageProcessStatus status, MessageType type, String referenceCode) throws Exception {
+
+        List<Integer> list = new ArrayList<>();
+        list.add(serviceNameId);
+        List<MessageLog> response = loggingDAO.getMessageLogs(userId, list, "msisdn", "tel:+" + tel, null, null);
+        String jsonString = null;
+
+        for (int i = 0; i < response.size(); i++) {
+
+            if (response != null) {
+
+                int responseStatus = response.get(i).getStatus();
+                int responseType = response.get(i).getType();
+
+                if (responseType == type.getValue() && responseStatus == status.getValue()) {
+                    String request = response.get(i).getRequest();
+                    org.json.JSONObject json = new org.json.JSONObject(request);
+                    responseReferenceCode = json.getJSONObject("refundResponse").get("referenceCode").toString();
+
+                    int responseUserId = response.get(i).getUserid();
+                    String responseTel = response.get(i).getValue();
+
+                    // Check reference CodeDuplication
+                    if (responseUserId == userId && responseTel.equals("tel:+" + tel) && responseReferenceCode.equals(referenceCode)) {
+                        jsonString = responseReferenceCode;
+                        break;
+                    }
+                }
+
+            }
+
+        }
+
+        return jsonString;
+    }
 
 
+    private double checkOriginalServerReferenceWithServerReference(int userId, String tel, MessageProcessStatus status, MessageType type, String originalServerReferenceCode) throws Exception {
+
+        double totalAmountRefunded = 0.0;
+
+        APITypes apiTypes = dao.getAPIType(RequestType.PAYMENT.toString());
+        APIServiceCalls apiServiceCallsForMakePayment = dao.getServiceCall(apiTypes.getId(), ServiceName.ChargeUser.toString());
+        List<Integer> list = new ArrayList<>();
+        list.add(apiServiceCallsForMakePayment.getApiServiceCallId());
+        List<MessageLog> servercodeList = loggingDAO.getMessageLogs(userId, list, "msisdn", "tel:+" + tel, null, null);
+
+        for (int i = 0; i < servercodeList.size(); i++) {
+
+            if (servercodeList != null) {
+
+                int responseStatus = servercodeList.get(i).getStatus();
+                int responseType = servercodeList.get(i).getType();
+
+                if (responseType == type.getValue() && responseStatus == status.getValue()) {
+                    String request = servercodeList.get(i).getRequest();
+                    org.json.JSONObject json = new org.json.JSONObject(request);
+                    String serverReferenceCode = json.get("serverReferenceCode").toString();
+
+                    int responseUserId = servercodeList.get(i).getUserid();
+                    String responseTel = servercodeList.get(i).getValue();
+
+                    if (responseUserId == userId && responseTel.equals("tel:+" + tel) && serverReferenceCode.equals(originalServerReferenceCode)) {
+                        isOriginalServerReferenceCode = true;
+                        paymentAmount = Double.valueOf(json.getJSONObject("paymentAmount").getJSONObject("chargingInformation").get("amount").toString());
+                    }
+                }
+            }
+        }
+
+        if (isOriginalServerReferenceCode) {
+
+            APITypes adiTypesForCredit = dao.getAPIType(RequestType.CREDIT.toString());
+            APIServiceCalls apiServiceCalls = dao.getServiceCall(adiTypesForCredit.getId(), ServiceName.PartialRefund.toString());
+            int refundId = apiServiceCalls.getApiServiceCallId();
+            List<Integer> PartialRefundIdList = new ArrayList<>();
+            PartialRefundIdList.add(refundId);
+
+            List<MessageLog> originalServerReferenceCodeList = loggingDAO.getMessageLogs(userId, PartialRefundIdList, "msisdn", "tel:+" + tel, null, null);
+
+            for (int i = 0; i < originalServerReferenceCodeList.size(); i++) {
+
+                int responseStatus = originalServerReferenceCodeList.get(i).getStatus();
+                int responseType = originalServerReferenceCodeList.get(i).getType();
+
+                if (responseType == type.getValue() && responseStatus == status.getValue()) {
+                    String request = originalServerReferenceCodeList.get(i).getRequest();
+                    org.json.JSONObject json = new org.json.JSONObject(request);
+                    String responseOriginalServerReferenceCode = json.getJSONObject("refundResponse").get("originalServerReferenceCode").toString();
+
+                    int responseUserId = originalServerReferenceCodeList.get(i).getUserid();
+                    String responseTel = originalServerReferenceCodeList.get(i).getValue();
+
+                    // Check reference CodeDuplication
+                    if (responseUserId == userId && responseTel.equals("tel:+" + tel) && responseOriginalServerReferenceCode.equals(originalServerReferenceCode)) {
+                        totalAmountRefunded += Double.valueOf(json.getJSONObject("refundResponse").get("refundAmount").toString());
+                    }
+                }
+            }
+
+            APIServiceCalls apiServiceCall = dao.getServiceCall(apiTypes.getId(), ServiceName.RefundUser.toString());
+            List<Integer> refundIdList = new ArrayList<>();
+            refundIdList.add(apiServiceCall.getApiServiceCallId());
+
+            List<MessageLog> messageLogsForRefundList = loggingDAO.getMessageLogs(userId, refundIdList, "msisdn", "tel:+" + tel, null, null);
+
+            for (int i = 0; i < messageLogsForRefundList.size(); i++) {
+                int responseStatus = messageLogsForRefundList.get(i).getStatus();
+                int responseType = messageLogsForRefundList.get(i).getType();
+
+                if (responseType == type.getValue() && responseStatus == status.getValue()) {
+
+                    String request = messageLogsForRefundList.get(i).getRequest();
+                    org.json.JSONObject json = new org.json.JSONObject(request);
+                    String responseOriginalServerReferenceCode = json.get("originalServerReferenceCode").toString();
+                    int responseUserId = messageLogsForRefundList.get(i).getUserid();
+                    String responseTel = messageLogsForRefundList.get(i).getValue();
+
+                    // Check reference CodeDuplication
+                    if (responseUserId == userId && responseTel.equals("tel:+" + tel) && responseOriginalServerReferenceCode.equals(originalServerReferenceCode)) {
+                        totalAmountRefunded += Double.valueOf(json.getJSONObject("paymentAmount").getJSONObject("chargingInformation").get("amount").toString());
+                    }
+                }
+            }
+
+        }
+        return (paymentAmount - totalAmountRefunded);
+    }
+
+    // Save Response in messageLog table
+    private void saveResponse(PatialRefundRequestWrapper extendedRequestDTO,
+                              String endUserIdPath, RefundResponseBean responseBean, APIServiceCalls apiServiceCalls, MessageProcessStatus status) throws Exception {
+
+        Gson resp = new Gson();
+        JsonElement je = new JsonParser().parse(resp.toJson(responseBean));
+        JsonObject asJsonObject = je.getAsJsonObject();
+        String jsonInString = asJsonObject.toString();
+        //setting messagelog responses
+        MessageLog messageLog = new MessageLog();
+        messageLog = new MessageLog();
+        messageLog.setRequest(jsonInString);
+        messageLog.setStatus(status.getValue());
+        messageLog.setType(1);
+        messageLog.setServicenameid(apiServiceCalls.getApiServiceCallId());
+        messageLog.setUserid(extendedRequestDTO.getUser().getId());
+        messageLog.setReference("msisdn");
+        messageLog.setValue(endUserIdPath);
+        messageLog.setMessageTimestamp(new Date());
+
+        loggingDAO.saveMessageLog(messageLog);
+    }
+
+
+    @Override
+    public String getApiServiceCalls() {
+        return ServiceName.PartialRefund.toString();
+    }
+
+    @Override
+    public String getJosonString(PatialRefundRequestWrapper requestDTO) {
+        Gson gson = new Gson();
+        String jasonString = gson.toJson(requestDTO.getRefundRequestBean());
+        return jasonString;
+    }
+
+    @Override
+    public String getnumber(PatialRefundRequestWrapper requestDTO) {
+        return requestDTO.getMsisdn();
+    }
 }

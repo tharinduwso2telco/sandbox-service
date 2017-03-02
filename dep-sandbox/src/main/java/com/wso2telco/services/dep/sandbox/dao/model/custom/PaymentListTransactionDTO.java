@@ -13,15 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
+package com.wso2telco.services.dep.sandbox.dao.model.custom;
 
-package com.wso2telco.services.dep.sandbox.dao;
+public class PaymentListTransactionDTO {
 
-import com.wso2telco.services.dep.sandbox.dao.model.domain.AttributeValues;
-import com.wso2telco.services.dep.sandbox.dao.model.domain.ManageNumber;
+    private PaymentListTransactionResponseBean paymentTransactionList;
 
-import java.util.List;
+    public PaymentListTransactionResponseBean getPaymentTransactionList() {
+        return paymentTransactionList;
+    }
 
-public interface PaymentDAO {
-
-    public boolean saveManageNumbers(ManageNumber manageNumber) throws Exception;
+    public void setPaymentTransactionList(PaymentListTransactionResponseBean paymentTransactionList) {
+        this.paymentTransactionList = paymentTransactionList;
+    }
 }

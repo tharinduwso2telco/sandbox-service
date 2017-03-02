@@ -1209,6 +1209,7 @@ Payment service will provide the Service providers a list of payment services av
 
 - Charge a User - Charge a subscriber for a service provided by your Web application.
 - Refund a User - Refund a end user
+- List Transactions - Return all the transactions of the end user for the calling application 
 
 ####6.6.2 API features with postman testing
 
@@ -1229,7 +1230,7 @@ Request Body :
       "endUserId":"tel:+00123456789",
       "paymentAmount":{  
          "chargingInformation":{  
-            "amount":"2",
+            "amount":"10.00",
             "currency":"LKR",
             "description":"Alien Invaders Game"
          },
@@ -1252,15 +1253,15 @@ Response :
 ```
 {  
    "amountTransaction":{  
-      “clientCorrelator”:      ”123456:AIN12345”,
-      "endUserId":"tel:+00123456789",
+      "clientCorrelator":"123456:AIN12345",
+      "endUserId":"tel:+94773524308",
       "paymentAmount":{  
          "chargingInformation":{  
-            "amount":"10",
-            "currency":"LKR",
+            "amount":"10.00",
+            "currency":"USD",
             "description":"Alien Invaders Game"
          },
-         "totalAmountCharged":"12.99",
+         "totalAmountCharged":"10.00",
          "chargingMetaData":{  
             "onBehalfOf":"Example Games Inc",
             "purchaseCategoryCode":"Game",
@@ -1269,9 +1270,12 @@ Response :
          }
       },
       "referenceCode":"REF-12345",
+      "serverReferenceCode":"PAYMENT_REF000057",
+      "resourceURL":"http://localhost:8181/payment/{v1}/tel:+94773524308/transactions/amount/78999",
       "transactionOperationStatus":"Charged"
    }
 }
+
 
 ```
 
@@ -1290,57 +1294,57 @@ Request Body :
 ```
 
 {  
-   "amountTransaction":{  
-      “clientCorrelator”:      ”123456:AIN12345”,
-      "endUserId":"tel:+00123456789",
-      "originalServerReferenceCode":"ABC-123",
-      "paymentAmount":{  
-         "chargingInformation":{  
-            "amount":"10",
-            "currency":"USD",
-            "description":"Alien Invaders Game"
-         },
-         "chargingMetaData":{  
-            "onBehalfOf":"Example Games Inc",
-            "purchaseCategoryCode":"Game",
-            "channel":"WAP",
-            "taxAmount":"0"
-         }
-      },
-      "referenceCode":"REF-12345",
-      "originalServerReferenceCode":"ABC-123",
-      "transactionOperationStatus":"Refunded"
-   }
+  "amountTransaction":{  
+     "clientCorrelator":"123456:AIN12345",
+     "endUserId":"tel:+94773524308",
+     "paymentAmount":{  
+        "chargingInformation":{  
+           "amount":"10",
+           "currency":"USD",
+           "description":"Alien Invaders Game"
+        },
+        "chargingMetaData":{  
+           "onBehalfOf":"Example Games Inc",
+           "purchaseCategoryCode":"Game",
+           "channel":"WAP",
+           "taxAmount":"0"
+        }
+     },
+     "referenceCode":"REF-1234",
+     "originalServerReferenceCode":"PAYMENT_REF000057",
+     "transactionOperationStatus":"Refunded"
+  }
 }
 
 ```
 
 Response :
+
 ```
 
-{  
-   "amountTransaction":{  
-      “clientCorrelator”:      ”123456:AIN12345”,
-      "endUserId":"tel:+00123456789",
-      "paymentAmount":{  
-         "chargingInformation":{  
-            "amount":"10",
-            "currency":"USD",
-            "description":"Alien Invaders"
-         },
-         "chargingMetaData":{  
-            "onBehalfOf":"Example Games Inc",
-            "purchaseCategoryCode":"Game",
-            "channel":"WAP",
-            "taxAmount":"0"
-         },
-         "totalAmountRefunded":"10"
+{
+  "amountTransaction": {
+    "clientCorrelator": "123456:AIN12345",
+    "endUserId": "tel:+94773524308",
+    "originalServerReferenceCode": "PAYMENT_REF000057",
+    "paymentAmount": {
+      "chargingInformation": {
+        "amount": "10",
+        "currency": "USD",
+        "description": "Alien Invaders Game"
       },
-      "referenceCode":"REF-12345",
-      "originalServerReferenceCode":"ABC-123",
-      "resourceURL":"<Refund User URL> tel%3A%2B16309700001/amount/efg789",
-      "transactionOperationStatus":"Refunded"
-   }
+      "totalAmountRefunded": "10.0",
+      "chargingMetaData": {
+        "onBehalfOf": "Example Games Inc",
+        "purchaseCategoryCode": "Game",
+        "channel": "WAP",
+        "taxAmount": "0"
+      }
+    },
+    "referenceCode": "REF-1234",
+    "resourceURL": "http://localhost:8181/payment/{v1}/tel:+94773524308/transactions/amount/00060",
+    "transactionOperationStatus": "Refunded"
+  }
 }
 
 ```
@@ -1348,3 +1352,59 @@ Response :
 Response :
 200 OK will be returned if the service is successfully added for the msisdn.
 Unless 400 Bad Request will be returned
+
+- List Transactions - Return all the transactions of the end user for the calling application
+Maximum no of returned results is 20
+
+Request :
+
+Type - GET
+
+Request URI-
+```
+http://<host>:<port>/payment/{v1}/{endUserId}/transactions
+
+```
+
+Response :
+
+
+```
+
+{  
+   "paymentTransactionList":{  
+      "amountTransaction":[  
+         {  
+            "endUserId":" tel:+00123456789",
+            "paymentAmount":{  
+               "chargingInformation":{  
+                  "amount":"9",
+                  "currency":"USD",
+                  "description":"Alien Invaders"
+               }
+            },
+            "referenceCode":"REF-ASM600-239238",
+            "serverReferenceCode":"tx-a3c0e4e006da40a8a5b5-045972478cc3",
+            "resourceURL":<Resource URL>,
+            "transactionOperationStatus":"Charged"
+         },
+         {  
+            "endUserId":" tel:+00123456789",
+            "paymentAmount":{  
+               "chargingInformation":{  
+                  "amount":"6",
+                  "currency":"USD",
+                  "description":" Snakes Alive "
+               }
+            },
+            "referenceCode":"REF-ASM600-2392344",
+            "serverReferenceCode":"tx-a3c0e4e006da60a8a5b5-044972478cc3",
+            "resourceURL":“<Resource URL>”,
+            "transactionOperationStatus":"Charged"
+         }
+      ],
+      "resourceURL":”<Resource URL>”
+   }
+}
+
+```

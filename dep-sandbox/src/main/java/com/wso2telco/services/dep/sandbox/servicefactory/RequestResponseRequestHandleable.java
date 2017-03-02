@@ -13,15 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
+package com.wso2telco.services.dep.sandbox.servicefactory;
 
-package com.wso2telco.services.dep.sandbox.dao;
 
-import com.wso2telco.services.dep.sandbox.dao.model.domain.AttributeValues;
-import com.wso2telco.services.dep.sandbox.dao.model.domain.ManageNumber;
+import com.wso2telco.services.dep.sandbox.dao.model.custom.RequestDTO;
 
-import java.util.List;
+public interface RequestResponseRequestHandleable <E2 extends RequestDTO> {
 
-public interface PaymentDAO {
+     String getApiServiceCalls() ;
+     String getJosonString(final E2 requestDTO);
+     String getnumber(final E2 requestDTO);
 
-    public boolean saveManageNumbers(ManageNumber manageNumber) throws Exception;
+
 }

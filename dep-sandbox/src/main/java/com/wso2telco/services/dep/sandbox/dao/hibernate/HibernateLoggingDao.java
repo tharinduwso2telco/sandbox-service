@@ -1,11 +1,6 @@
 package com.wso2telco.services.dep.sandbox.dao.hibernate;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.Map.Entry;
 
 import org.apache.commons.logging.LogFactory;
@@ -51,85 +46,67 @@ public class HibernateLoggingDao extends HibernateAbstractDAO implements Logging
 		String value = CommonUtil.getNullOrTrimmedValue(val);
 		try {
 			StringBuilder hqlQueryBuilder = new StringBuilder();
-			if(userid != 0 || serviceNameIds != null || startTimeStamp != null || endTimeStamp != null || (reference != null && value != null)){
-				hqlQueryBuilder.append("from MessageLog ml ");
-				hqlQueryBuilder.append("where ");
-				if(userid != 0){
-					hqlQueryBuilder.append("ml.userid = :id");
-					parameterMap.put("id", userid);
-					if(serviceNameIds != null)
-						hqlQueryBuilder.append(" AND ml.servicenameid in (:servicenameidList)");
-					if(reference != null && value != null){
-						hqlQueryBuilder.append(" AND ml.reference = :reference AND ml.value = :value");
-						parameterMap.put("reference", reference);
-						parameterMap.put("value", value);
-					}	
-					if(startTimeStamp != null){
-						hqlQueryBuilder.append(" AND ml.messageTimestamp >= :startTimeStamp");
-						parameterMap.put("startTimeStamp", startTimeStamp);
-					}
-					if(endTimeStamp != null){
-						hqlQueryBuilder.append(" AND ml.messageTimestamp <= :endTimeStamp");
-						parameterMap.put("endTimeStamp", endTimeStamp);
-					}
-				}else if(serviceNameIds != null){
-					hqlQueryBuilder.append("ml.servicenameid in (:servicenameidList)");
-					if(reference != null && value != null){
-						hqlQueryBuilder.append(" AND ml.reference = :reference AND ml.value = :value");
-						parameterMap.put("reference", reference);
-						parameterMap.put("value", value);
-					}
-					if(startTimeStamp != null){
-						hqlQueryBuilder.append(" AND ml.messageTimestamp >= :startTimeStamp");
-						parameterMap.put("startTimeStamp", startTimeStamp);
-					}
-					if(endTimeStamp != null){
-						hqlQueryBuilder.append(" AND ml.messageTimestamp <= :endTimeStamp");
-						parameterMap.put("endTimeStamp", endTimeStamp);
-					}
-				}else if(reference != null && value != null){
-					hqlQueryBuilder.append("ml.reference = :reference AND ml.value = :value");
-					parameterMap.put("reference", reference);
-					parameterMap.put("value", value);
-					if(startTimeStamp != null){
-						hqlQueryBuilder.append(" AND ml.messageTimestamp >= :startTimeStamp");
-						parameterMap.put("startTimeStamp", startTimeStamp);
-					}
-					if(endTimeStamp != null){
-						hqlQueryBuilder.append(" AND ml.messageTimestamp <= :endTimeStamp");
-						parameterMap.put("endTimeStamp", endTimeStamp);
-					}
-				}else if(startTimeStamp != null){
-					hqlQueryBuilder.append("ml.messageTimestamp >= :startTimeStamp");
+			hqlQueryBuilder.append("from MessageLog ml ");
+			hqlQueryBuilder.append("where  1=1 ");
+
+			if(userid != 0){
+				hqlQueryBuilder.append(" AND ml.userid = :id");
+				parameterMap.put("id", userid);
+
+			}
+
+			if(serviceNameIds != null){
+				hqlQueryBuilder.append(" AND ml.servicenameid in (:servicenameidList)");
+				parameterMap.put("servicenameidList", serviceNameIds);
+			}
+
+			if(reference != null && value != null){
+				hqlQueryBuilder.append(" AND ml.reference = :reference AND ml.value = :value");
+				parameterMap.put("reference", reference);
+				parameterMap.put("value", value);
+			}
+
+			if(startTimeStamp != null && endTimeStamp != null){
+				hqlQueryBuilder.append(" AND ml.messageTimestamp between :startTimeStamp and :endTimeStamp");
+				parameterMap.put("startTimeStamp", startTimeStamp);
+				parameterMap.put("endTimeStamp", endTimeStamp);
+
+			}else if(startTimeStamp != null){
+					hqlQueryBuilder.append("  AND ml.messageTimestamp >= :startTimeStamp");
 					parameterMap.put("startTimeStamp", startTimeStamp);
 					if(endTimeStamp != null){
 						hqlQueryBuilder.append(" AND ml.messageTimestamp <= :endTimeStamp");
 						parameterMap.put("endTimeStamp", endTimeStamp);
 					}
-				}else if(endTimeStamp != null){
-					hqlQueryBuilder.append("ml.messageTimestamp <= :endTimeStamp");
+			}else if(endTimeStamp != null){
+					hqlQueryBuilder.append(" AND ml.messageTimestamp <= :endTimeStamp");
 					parameterMap.put("endTimeStamp", endTimeStamp);
 				}
 				
-				Query query = session.createQuery(hqlQueryBuilder.toString());
-				
-				Set<Entry<String, Object>> entrySet = parameterMap.entrySet();
+			Query query = session.createQuery(hqlQueryBuilder.toString());
 
-				for (Entry<String, Object> entry : entrySet) {
+			Set<Entry<String, Object>> entrySet = parameterMap.entrySet();
+
+			for (Entry<String, Object> entry : entrySet) {
+				if(entry.getValue() instanceof  List ){
+				query.setParameterList(entry.getKey(), (List)entry.getValue());
+				}else{
 					query.setParameter(entry.getKey(), entry.getValue());
 				}
-				if(serviceNameIds != null)
-					query.setParameterList("servicenameidList", serviceNameIds);
-				
-				messageLogs = (List<MessageLog>) query.getResultList();
+
 			}
+
+			messageLogs = (List<MessageLog>) query.getResultList();
+
 		} catch (Exception ex) {
-			LOG.error("Error in getMessageLogs " + ex);
+			LOG.error("Error in getMessageLogs " , ex);
 			throw ex;
 		}
+		if (messageLogs==null){
+			return Collections.emptyList();
+		}else{
 		return messageLogs;
+		}
 	}
-	
-	
 
 }

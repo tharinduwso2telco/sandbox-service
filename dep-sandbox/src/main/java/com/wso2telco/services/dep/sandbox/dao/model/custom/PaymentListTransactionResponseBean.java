@@ -13,15 +13,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
+package com.wso2telco.services.dep.sandbox.dao.model.custom;
 
-package com.wso2telco.services.dep.sandbox.dao;
+import com.fasterxml.jackson.databind.JsonNode;
 
-import com.wso2telco.services.dep.sandbox.dao.model.domain.AttributeValues;
-import com.wso2telco.services.dep.sandbox.dao.model.domain.ManageNumber;
-
+import java.util.ArrayList;
 import java.util.List;
 
-public interface PaymentDAO {
+public class PaymentListTransactionResponseBean {
 
-    public boolean saveManageNumbers(ManageNumber manageNumber) throws Exception;
+    private List<JsonNode> amountTransaction = new ArrayList<JsonNode>();
+
+    private String resourceURL;
+
+    public List<JsonNode> getAmountTransaction() {
+        return amountTransaction;
+    }
+
+    public void setAmountTransaction(List<JsonNode> amountTransaction) {
+        this.amountTransaction = amountTransaction;
+    }
+
+    public String getResourceURL() {
+        return resourceURL;
+    }
+
+    public void setResourceURL(String resourceURL) {
+        this.resourceURL = resourceURL;
+    }
 }
