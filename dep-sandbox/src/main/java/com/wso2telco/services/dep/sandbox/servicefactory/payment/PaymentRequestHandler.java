@@ -32,9 +32,8 @@ import com.wso2telco.services.dep.sandbox.dao.NumberDAO;
 import com.wso2telco.services.dep.sandbox.dao.PaymentDAO;
 import com.wso2telco.services.dep.sandbox.dao.model.custom.*;
 import com.wso2telco.services.dep.sandbox.dao.model.domain.*;
-import com.wso2telco.services.dep.sandbox.servicefactory.AbstractRequestHandler;
-import com.wso2telco.services.dep.sandbox.servicefactory.RequestResponseRequestHandleable;
-import com.wso2telco.services.dep.sandbox.servicefactory.Returnable;
+import com.wso2telco.services.dep.sandbox.servicefactory.*;
+import com.wso2telco.services.dep.sandbox.servicefactory.Status;
 import com.wso2telco.services.dep.sandbox.servicefactory.wallet.Channel;
 import com.wso2telco.services.dep.sandbox.servicefactory.wallet.TransactionStatus;
 import com.wso2telco.services.dep.sandbox.util.*;
@@ -203,7 +202,7 @@ public class PaymentRequestHandler extends AbstractRequestHandler<ChargePaymentR
 
             if (clientCorrelator != null) {
 
-                String response = checkDuplicateClientCorrelator(clientCorrelator, userId, serviceNameId, endUserId, "1", "1", referenceCode);
+                String response = checkDuplicateClientCorrelator(clientCorrelator, userId, serviceNameId, endUserId, Status.Success.getValue(), MessageType.Response.getValue(), referenceCode);
 
                 if (response != null) {
 
@@ -220,12 +219,12 @@ public class PaymentRequestHandler extends AbstractRequestHandler<ChargePaymentR
             }
 
             //check referenceCode
-            String duplicateReferenceCode = checkReferenceCode(userId, serviceNameId, endUserId, "1", "1", referenceCode);
+            String duplicateReferenceCode = checkReferenceCode(userId, serviceNameId, endUserId, Status.Success.getValue(), MessageType.Response.getValue(), referenceCode);
 
             if((duplicateReferenceCode!=null)){
                 LOG.error("###PAYMENT### Already charged for this reference code");
                 responseWrapper.setRequestError(constructRequestError(SERVICEEXCEPTION,
-                        ServiceError.INVALID_INPUT_VALUE, "Already used reference code"));
+                        ServiceError.INVALID_INPUT_VALUE, "Already charged for this reference code"));
                 responseWrapper.setHttpStatus(Response.Status.BAD_REQUEST);
                 return responseWrapper;
             }
@@ -342,7 +341,7 @@ public class PaymentRequestHandler extends AbstractRequestHandler<ChargePaymentR
             responseWrapper.setHttpStatus(Response.Status.OK);
 
             // Save Success Response
-            saveResponse(extendedRequestDTO, endUserIdPath, responseBean, apiServiceCalls, "1");
+            saveResponse(extendedRequestDTO, endUserIdPath, responseBean, apiServiceCalls, Status.Success.getValue());
 
         } catch (Exception ex) {
             LOG.error("###PAYMENT### Error Occured in PAYMENT Service. ", ex);
@@ -438,25 +437,6 @@ public class PaymentRequestHandler extends AbstractRequestHandler<ChargePaymentR
         return jsonString;
     }
 
-    // saving request in message log table
-    private MessageLog saveRequest(ChargePaymentRequestWrapperDTO extendedRequestDTO,
-                                   String endUserIdPath, APIServiceCalls apiServiceCalls, String jsonString, String status) throws Exception {
-
-        MessageLog messageLog = new MessageLog();
-        messageLog.setServicenameid(apiServiceCalls.getApiServiceCallId());
-        messageLog.setUserid(extendedRequestDTO.getUser().getId());
-        messageLog.setReference("msisdn");
-        messageLog.setValue(endUserIdPath);
-        messageLog.setRequest(jsonString);
-        messageLog.setStatus(status);
-        messageLog.setType("0");
-        messageLog.setMessageTimestamp(new Date());
-
-        loggingDAO.saveMessageLog(messageLog);
-
-        return messageLog;
-    }
-
     // Save Response in messageLog table
     private void saveResponse(ChargePaymentRequestWrapperDTO extendedRequestDTO,
                               String endUserIdPath, ChargePaymentResponseBean responseBean, APIServiceCalls apiServiceCalls, String status) throws Exception {
@@ -473,7 +453,7 @@ public class PaymentRequestHandler extends AbstractRequestHandler<ChargePaymentR
         messageLog1 = new MessageLog();
         messageLog1.setRequest(jsonInString);
         messageLog1.setStatus(status);
-        messageLog1.setType("1");
+        messageLog1.setType(MessageType.Response.getValue());
         messageLog1.setServicenameid(apiServiceCalls.getApiServiceCallId());
         messageLog1.setUserid(extendedRequestDTO.getUser().getId());
         messageLog1.setReference("msisdn");

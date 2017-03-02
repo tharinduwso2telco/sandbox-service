@@ -31,9 +31,8 @@ import com.wso2telco.services.dep.sandbox.dao.NumberDAO;
 import com.wso2telco.services.dep.sandbox.dao.PaymentDAO;
 import com.wso2telco.services.dep.sandbox.dao.model.custom.*;
 import com.wso2telco.services.dep.sandbox.dao.model.domain.*;
-import com.wso2telco.services.dep.sandbox.servicefactory.AbstractRequestHandler;
-import com.wso2telco.services.dep.sandbox.servicefactory.RequestResponseRequestHandleable;
-import com.wso2telco.services.dep.sandbox.servicefactory.Returnable;
+import com.wso2telco.services.dep.sandbox.servicefactory.*;
+import com.wso2telco.services.dep.sandbox.servicefactory.Status;
 import com.wso2telco.services.dep.sandbox.servicefactory.wallet.AttributeName;
 import com.wso2telco.services.dep.sandbox.servicefactory.wallet.Channel;
 import com.wso2telco.services.dep.sandbox.servicefactory.wallet.TransactionStatus;
@@ -237,7 +236,7 @@ public class PaymentRefundRequestHandler extends AbstractRequestHandler<PaymentR
 
             if (clientCorrelator != null) {
 
-                String response = checkDuplicateClientCorrelator(clientCorrelator, userId, serviceNameId, endUserId,"1", "1", referenceCode);
+                String response = checkDuplicateClientCorrelator(clientCorrelator, userId, serviceNameId, endUserId, Status.Success.getValue(), MessageType.Response.getValue(), referenceCode);
 
                 if (response != null) {
 
@@ -253,7 +252,7 @@ public class PaymentRefundRequestHandler extends AbstractRequestHandler<PaymentR
             }
 
             //check referenceCode
-            String result = checkReferenceCode(userId, serviceNameId, endUserId, "1", "1", referenceCode);
+            String result = checkReferenceCode(userId, serviceNameId, endUserId, Status.Success.getValue(), MessageType.Response.getValue(), referenceCode);
 
             if((result!=null)){
                 LOG.error("###PAYMENT### Already charged for this reference code");
@@ -267,7 +266,7 @@ public class PaymentRefundRequestHandler extends AbstractRequestHandler<PaymentR
 
             int serviceIdForMakePayment = apiServiceCallForMakePayment.getApiServiceCallId();
 
-            Double validTransaction = checkOriginalServerReferenceWithServerReference(userId, serviceIdForMakePayment, endUserId, "1", "1", originalServerReferenceCode);
+            Double validTransaction = checkOriginalServerReferenceWithServerReference(userId, serviceIdForMakePayment, endUserId, Status.Success.getValue(), MessageType.Response.getValue(), originalServerReferenceCode);
 
             // check path param endUserId and request body endUserId
             if (!(endUserIdPath.equals(endUserIdRequest))) {
@@ -410,7 +409,7 @@ public class PaymentRefundRequestHandler extends AbstractRequestHandler<PaymentR
             responseWrapper.setRefundPaymentDTO(refundPaymentDTO);
 
             // Save Response in message log table
-            saveResponse(userId, endUserIdPath, responseBean, apiServiceCalls,"1");
+            saveResponse(userId, endUserIdPath, responseBean, apiServiceCalls, Status.Success.getValue());
 
         } catch (Exception ex) {
             LOG.error("###REFUND### Error Occured in PAYMENT Service. ", ex);
@@ -614,26 +613,7 @@ public class PaymentRefundRequestHandler extends AbstractRequestHandler<PaymentR
         return (paymentAmount-totalAmountRefunded);
     }
 
-
-    // saving request in message log table
-    private MessageLog saveRequest(PaymentRefundRequestWrapperDTO extendedRequestDTO,
-                                     String endUserIdPath, APIServiceCalls apiServiceCalls, String jsonString, String status) throws Exception {
-        MessageLog messageLog = new MessageLog();
-        messageLog.setServicenameid(apiServiceCalls.getApiServiceCallId());
-        messageLog.setUserid(extendedRequestDTO.getUser().getId());
-        messageLog.setReference("msisdn");
-        messageLog.setValue(endUserIdPath);
-        messageLog.setRequest(jsonString);
-        messageLog.setStatus(status);
-        messageLog.setType("0");
-        messageLog.setMessageTimestamp(new Date());
-
-        loggingDAO.saveMessageLog(messageLog);
-
-        return messageLog;
-    }
-
-    // New method to save Response in messageLog table
+    // save Response in messageLog table
     private void saveResponse(Integer userId, String endUserIdPath, PaymentRefundTransactionResponseBean responseBean, APIServiceCalls apiServiceCalls, String status) throws Exception {
 
         String jsonInString = null;
@@ -648,7 +628,7 @@ public class PaymentRefundRequestHandler extends AbstractRequestHandler<PaymentR
         messageLog1 = new MessageLog();
         messageLog1.setRequest(jsonInString);
         messageLog1.setStatus(status);
-        messageLog1.setType("1");
+        messageLog1.setType(MessageType.Response.getValue());
         messageLog1.setServicenameid(apiServiceCalls.getApiServiceCallId());
         messageLog1.setUserid(userId);
         messageLog1.setReference("msisdn");
