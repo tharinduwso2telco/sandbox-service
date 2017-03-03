@@ -1,4 +1,3 @@
-
 /*******************************************************************************
  * Copyright (c) 2015-2017, WSO2.Telco Inc. (http://www.wso2telco.com)
  *
@@ -14,8 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package com.wso2telco.services.dep.sandbox.service;
 
+package com.wso2telco.services.dep.sandbox.service;
 
 import com.google.gson.Gson;
 import com.wordnik.swagger.annotations.*;
@@ -26,6 +25,7 @@ import com.wso2telco.services.dep.sandbox.exception.SandboxException;
 import com.wso2telco.services.dep.sandbox.servicefactory.RequestBuilderFactory;
 import com.wso2telco.services.dep.sandbox.servicefactory.RequestHandleable;
 import com.wso2telco.services.dep.sandbox.servicefactory.Returnable;
+import com.wso2telco.services.dep.sandbox.servicefactory.payment.PaymentListTransactionRequestWrapper;
 import com.wso2telco.services.dep.sandbox.util.RequestError;
 import com.wso2telco.services.dep.sandbox.util.RequestType;
 import org.apache.commons.logging.Log;
@@ -36,17 +36,14 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-
-@Path("payment/v0_8")
+@Path("payment/v1_3")
 @Produces({MediaType.APPLICATION_JSON})
-@Api(value = "payment/{v08}", description = "Rest Service for Payment API")
-
-
-public class PaymentService0_8 {
+@Api(value = "payment/v1_3", description = "Rest Service for Payment API")
+public class PaymentService_v1_3 {
 
     protected static final String POLICYEXCEPTION = "POL0001";
 
-    Log LOG = LogFactory.getLog(PaymentService0_8.class);
+    Log LOG = LogFactory.getLog(PaymentService_v1_3.class);
 
     @POST
     @Path("/{endUserId}/transactions/amount")
@@ -56,12 +53,12 @@ public class PaymentService0_8 {
     public Response makePayment(
             @ApiParam(value = "endUserId", required = true) @PathParam("endUserId") String endUserId,
             PaymentRefundTransactionRequestBean makePaymentRequestBean, @Context HttpServletRequest request) {
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("###PAYMENT### /{endUserId} invoked : endUserId - " + endUserId);
-        }
-        if (LOG.isDebugEnabled() && makePaymentRequestBean != null) {
-            LOG.debug(makePaymentRequestBean);
-        }
+             if (LOG.isDebugEnabled()) {
+                 LOG.debug("###PAYMENT### /{endUserId} invoked : endUserId - " + endUserId);
+             }
+             if (LOG.isDebugEnabled() && makePaymentRequestBean != null) {
+                 LOG.debug(makePaymentRequestBean);
+             }
         //Separate Charged and Refunded request calls
         if (makePaymentRequestBean.getAmountTransaction().getTransactionOperationStatus().equalsIgnoreCase("charged")) {
 
@@ -75,7 +72,7 @@ public class PaymentService0_8 {
             Returnable returnable = null;
 
             try {
-                returnable = handler.execute(requestDTO);
+                 returnable = handler.execute(requestDTO);
                 Response response = Response.status(returnable.getHttpStatus()).entity(returnable.getResponse()).build();
                 return response;
             } catch (Exception ex) {
@@ -85,6 +82,7 @@ public class PaymentService0_8 {
                         .build();
                 return response;
             }
+
         } else if (makePaymentRequestBean.getAmountTransaction().getTransactionOperationStatus().equalsIgnoreCase("refunded")){
 
             PaymentRefundRequestWrapperDTO requestDTO = new PaymentRefundRequestWrapperDTO();
@@ -118,5 +116,39 @@ public class PaymentService0_8 {
         return response;
 
     }
+
+    @GET
+    @Path("/{endUserId}/transactions")
+    @ApiOperation(value = "listTransactionService", notes = "listTransactionService", response = Response.class)
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "sandbox", value = "Authorization token", required = true, dataType = "string", paramType = "header")})
+    public Response getAttributeServices(
+            @ApiParam(value = "endUserId", required = false) @PathParam("endUserId") String endUserId,
+            @Context HttpServletRequest request) {
+        LOG.debug("/{endUserId}/transactions invorked :" + endUserId);
+        PaymentListTransactionRequestWrapper requestDTO = new PaymentListTransactionRequestWrapper();
+        requestDTO.setHttpRequest(request);
+        requestDTO.setEndUserId(endUserId);
+        requestDTO.setRequestType(RequestType.PAYMENT);
+
+        RequestHandleable handler = RequestBuilderFactory.getInstance(requestDTO);
+        Returnable returnable = null;
+
+        try {
+            returnable = handler.execute(requestDTO);
+            Response response = Response.status(returnable.getHttpStatus()).entity(returnable.getResponse()).build();
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("List Transaction SERVICE RESPONSE : " + response);
+            }
+            return response;
+        } catch (Exception ex) {
+            LOG.error("List Transaction SERVICE ERROR : ", ex);
+            return Response.status(Response.Status.BAD_REQUEST).entity(
+                    SandboxException.SandboxErrorType.SERVICE_ERROR.getCode() + " " + SandboxException.SandboxErrorType.SERVICE_ERROR.getMessage())
+                    .build();
+        }
+
+    }
+
 
 }

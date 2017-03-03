@@ -1221,7 +1221,7 @@ Type - POST
 
 Request URI:
 ```
-http://<host>:<port>/payment/v1/transaction/{endUserId}/amount
+http://<host>:<port>/payment/v1_3/transaction/{endUserId}/amount
 ```
 
 Request Body :
@@ -1273,7 +1273,7 @@ Response :
       },
       "referenceCode":"REF-12345",
       "serverReferenceCode":"PAYMENT_REF000057",
-      "resourceURL":"http://localhost:8181/payment/v1/tel:+94773524308/transactions/amount/78999",
+      "resourceURL":"http://localhost:8181/payment/v1_3/tel:+94773524308/transactions/amount/78999",
       "transactionOperationStatus":"Charged"
    }
 }
@@ -1289,7 +1289,7 @@ Type - POST
 
 Request URI:
 ```
-http://<host>:<port>/payment/v1/transaction/{endUserId}/amount
+http://<host>:<port>/payment/v1_3/transaction/{endUserId}/amount
 
 ```
 Request Body :
@@ -1344,7 +1344,7 @@ Response :
       }
     },
     "referenceCode": "REF-1234",
-    "resourceURL": "http://localhost:8181/payment/v1/tel:+94773524308/transactions/amount/00060",
+    "resourceURL": "http://localhost:8181/payment/v1_3/tel:+94773524308/transactions/amount/00060",
     "transactionOperationStatus": "Refunded"
   }
 }
@@ -1364,7 +1364,7 @@ Type - GET
 
 Request URI-
 ```
-http://<host>:<port>/payment/{v1}/{endUserId}/transactions
+http://<host>:<port>/payment/v1_3/{endUserId}/transactions
 
 ```
 
@@ -1411,7 +1411,7 @@ Response :
 
 ```
 
-##7 First Genaration APIs 
+##7 Supported API Versions 
 
 ###7.1 Payment Service
 
