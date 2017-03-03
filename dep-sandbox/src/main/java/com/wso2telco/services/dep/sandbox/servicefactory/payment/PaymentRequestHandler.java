@@ -287,9 +287,12 @@ public class PaymentRequestHandler extends AbstractRequestHandler<ChargePaymentR
             chargeInformation.setCurrency(currency);
             chargeInformation.setDescription(description);
 
-            // Get the tax Amount
-            Double chargeTaxAmount = Double.parseDouble(taxAmount);
+            Double chargeTaxAmount = 0.0;
 
+            if(taxAmount!=null) {
+                // Get the tax Amount
+                chargeTaxAmount = Double.parseDouble(taxAmount);
+            }
             // Setting the Total Amount Charged
             Double total = chargeTaxAmount + chargeAmount;
             payAmount.setTotalAmountCharged(total.toString());

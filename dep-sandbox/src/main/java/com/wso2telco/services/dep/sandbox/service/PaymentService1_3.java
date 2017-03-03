@@ -36,14 +36,14 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-@Path("payment/{v1}")
+@Path("payment/v1")
 @Produces({MediaType.APPLICATION_JSON})
 @Api(value = "payment/{v1}", description = "Rest Service for Payment API")
-public class PaymentService {
+public class PaymentService1_3 {
 
     protected static final String POLICYEXCEPTION = "POL0001";
 
-    Log LOG = LogFactory.getLog(PaymentService.class);
+    Log LOG = LogFactory.getLog(PaymentService1_3.class);
 
     @POST
     @Path("/{endUserId}/transactions/amount")
@@ -60,7 +60,7 @@ public class PaymentService {
                  LOG.debug(makePaymentRequestBean);
              }
         //Separate Charged and Refunded request calls
-        if (makePaymentRequestBean.getAmountTransaction().getTransactionOperationStatus().equals("Charged")) {
+        if (makePaymentRequestBean.getAmountTransaction().getTransactionOperationStatus().equalsIgnoreCase("charged")) {
 
             ChargePaymentRequestWrapperDTO requestDTO = new ChargePaymentRequestWrapperDTO();
             requestDTO.setHttpRequest(request);
@@ -83,7 +83,7 @@ public class PaymentService {
                 return response;
             }
 
-        } else if (makePaymentRequestBean.getAmountTransaction().getTransactionOperationStatus().equals("Refunded")){
+        } else if (makePaymentRequestBean.getAmountTransaction().getTransactionOperationStatus().equalsIgnoreCase("refunded")){
 
             PaymentRefundRequestWrapperDTO requestDTO = new PaymentRefundRequestWrapperDTO();
             requestDTO.setHttpRequest(request);

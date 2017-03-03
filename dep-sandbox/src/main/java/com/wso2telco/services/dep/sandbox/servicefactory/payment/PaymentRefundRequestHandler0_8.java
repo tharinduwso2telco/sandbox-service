@@ -33,7 +33,6 @@ import com.wso2telco.services.dep.sandbox.dao.model.custom.*;
 import com.wso2telco.services.dep.sandbox.dao.model.domain.*;
 import com.wso2telco.services.dep.sandbox.servicefactory.*;
 import com.wso2telco.services.dep.sandbox.servicefactory.MessageProcessStatus;
-import com.wso2telco.services.dep.sandbox.servicefactory.wallet.AttributeName;
 import com.wso2telco.services.dep.sandbox.servicefactory.wallet.Channel;
 import com.wso2telco.services.dep.sandbox.servicefactory.wallet.TransactionStatus;
 import com.wso2telco.services.dep.sandbox.util.*;
@@ -48,7 +47,7 @@ import java.util.Currency;
 import java.util.Date;
 import java.util.List;
 
-public class PaymentRefundRequestHandler extends AbstractRequestHandler<PaymentRefundRequestWrapperDTO> implements RequestResponseRequestHandleable<PaymentRefundRequestWrapperDTO> {
+public class PaymentRefundRequestHandler0_8 extends AbstractRequestHandler<PaymentRefundRequestWrapperDTO> implements RequestResponseRequestHandleable<PaymentRefundRequestWrapperDTO> {
 
 
     private PaymentDAO paymentDAO;
@@ -64,7 +63,7 @@ public class PaymentRefundRequestHandler extends AbstractRequestHandler<PaymentR
     private double totalAmountRefunded;
 
     {
-        LOG = LogFactory.getLog(PaymentRefundRequestHandler.class);
+        LOG = LogFactory.getLog(PaymentRefundRequestHandler0_8.class);
         paymentDAO = DaoFactory.getPaymentDAO();
         loggingDAO = DaoFactory.getLoggingDAO();
         numberDAO = DaoFactory.getNumberDAO();
@@ -90,6 +89,11 @@ public class PaymentRefundRequestHandler extends AbstractRequestHandler<PaymentR
         requestWrapperDTO = extendedRequestDTO;
     }
 
+    protected  ValidationRule getOriginalServerReferenceCodeRule( String originalServerReferenceCode){
+        return new ValidationRule(ValidationRule.VALIDATION_TYPE_OPTIONAL,
+                "originalServerReferenceCode", originalServerReferenceCode);
+
+    }
     @Override
     protected boolean validate(PaymentRefundRequestWrapperDTO wrapperDTO) throws Exception {
 
@@ -162,8 +166,7 @@ public class PaymentRefundRequestHandler extends AbstractRequestHandler<PaymentR
                     "productID", productID));
             validationRulesList.add(new ValidationRule(ValidationRule.VALIDATION_TYPE_OPTIONAL,
                     "serviceID", serviceID));
-            validationRulesList.add(new ValidationRule(ValidationRule.VALIDATION_TYPE_MANDATORY,
-                    "originalServerReferenceCode", originalServerReferenceCode));
+            validationRulesList.add(getOriginalServerReferenceCodeRule (originalServerReferenceCode));
 
 
             ValidationRule[] validationRules = new ValidationRule[validationRulesList.size()];
@@ -343,17 +346,6 @@ public class PaymentRefundRequestHandler extends AbstractRequestHandler<PaymentR
             responseBean.setReferenceCode(referenceCode);
             responseBean.setResourceURL(CommonUtil.getResourceUrl(extendedRequestDTO));
 
-
-            // Get the Charged Tax Amount
-            Double chargedTaxAmount = Double.parseDouble(taxAmount);
-            if (chargedTaxAmount < 0 ) {
-                LOG.error("###REFUND### tax amount should a positive number ");
-                responseWrapper
-                        .setRequestError(constructRequestError(SERVICEEXCEPTION, ServiceError.INVALID_INPUT_VALUE,
-                                "tax amount should a positive number"));
-                responseWrapper.setHttpStatus(Response.Status.BAD_REQUEST);
-                return responseWrapper;
-            }
 
             // For inspection
             Double totalAmountToRefund = chargeAmount;
