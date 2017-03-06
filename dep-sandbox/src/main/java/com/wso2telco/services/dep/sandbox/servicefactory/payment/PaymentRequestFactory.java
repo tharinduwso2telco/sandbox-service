@@ -32,9 +32,11 @@ public class PaymentRequestFactory {
         final String REFUND_PAYMENT = "PaymentRefundRequestWrapper";
         final String LIST_PAYMENT = "transactions";
 
+        if(requestDTO.getHttpRequest().getPathInfo().contains("v1")){
+
        if(requestDTO.toString().contains(REFUND_PAYMENT)){
            LOG.debug("LOADING REFUND PAYMENT SERVICE");
-           return new PaymentRefundRequestHandler();
+           return new PaymentRefundRequestHandler1_3();
         } else if(requestDTO.toString().contains(MAKE_PAYMENT)){
            LOG.debug("LOADING MAKE PAYMENT SERVICE");
            return new PaymentRequestHandler();
@@ -43,5 +45,18 @@ public class PaymentRequestFactory {
             return new PaymentListTransactionRequestHandler();
        }
         return null;
+        } else if (requestDTO.getHttpRequest().getPathInfo().contains("v0_8")) {
+
+            if (requestDTO.toString().contains(REFUND_PAYMENT)) {
+                LOG.debug("LOADING REFUND PAYMENT SERVICE");
+                return new PaymentRefundRequestHandler0_8();
+            } else if (requestDTO.toString().contains(MAKE_PAYMENT)) {
+                LOG.debug("LOADING MAKE PAYMENT SERVICE");
+                return new PaymentRequestHandler();
+            }
+            return null;
+        }
+        return null;
     }
+
 }

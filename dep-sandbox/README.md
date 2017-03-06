@@ -1205,7 +1205,7 @@ Unless 400 Bad Request will be returned
 
 ####6.6.1 Introduction
 
-Payment service will provide the Service providers a list of payment services available for the given MSISDN and based on the services available service provider can make/refund payment. Basically Payment API supports 2 operations.
+Payment service will provide the Service providers a list of payment services available for the given MSISDN and based on the services available service provider can make/refund payment. Basically Payment API supports 3 operations.
 
 - Charge a User - Charge a subscriber for a service provided by your Web application.
 - Refund a User - Refund a end user
@@ -1213,13 +1213,15 @@ Payment service will provide the Service providers a list of payment services av
 
 ####6.6.2 API features with postman testing
 
+- Charge - Charge a subscriber for a service provided by your application
+
 Request : 
 
 Type - POST
 
 Request URI:
 ```
-http://<host>:<port>/payment/{v1}/transaction/{endUserId}/amount
+http://<host>:<port>/payment/v1_3/transaction/{endUserId}/amount
 ```
 
 Request Body :
@@ -1271,7 +1273,7 @@ Response :
       },
       "referenceCode":"REF-12345",
       "serverReferenceCode":"PAYMENT_REF000057",
-      "resourceURL":"http://localhost:8181/payment/{v1}/tel:+94773524308/transactions/amount/78999",
+      "resourceURL":"http://localhost:8181/payment/v1_3/tel:+94773524308/transactions/amount/78999",
       "transactionOperationStatus":"Charged"
    }
 }
@@ -1287,7 +1289,7 @@ Type - POST
 
 Request URI:
 ```
-http://<host>:<port>/payment/{v1}/transaction/{endUserId}/amount
+http://<host>:<port>/payment/v1_3/transaction/{endUserId}/amount
 
 ```
 Request Body :
@@ -1342,7 +1344,7 @@ Response :
       }
     },
     "referenceCode": "REF-1234",
-    "resourceURL": "http://localhost:8181/payment/{v1}/tel:+94773524308/transactions/amount/00060",
+    "resourceURL": "http://localhost:8181/payment/v1_3/tel:+94773524308/transactions/amount/00060",
     "transactionOperationStatus": "Refunded"
   }
 }
@@ -1362,7 +1364,7 @@ Type - GET
 
 Request URI-
 ```
-http://<host>:<port>/payment/{v1}/{endUserId}/transactions
+http://<host>:<port>/payment/v1_3/{endUserId}/transactions
 
 ```
 
@@ -1408,3 +1410,32 @@ Response :
 }
 
 ```
+
+##7 Supported API Versions 
+
+###7.1 Payment Service
+
+####7.1.1 Introduction
+
+Payment service will provide the Service providers a list of payment services available for the given MSISDN and based on the services available service provider can make/refund payment. Basically Payment API supports 2 operations. 
+
+- Charge a User - Charge a subscriber for a service provided by your Web application
+
+Request : 
+
+Type - POST
+
+Request URI:
+```
+http://<host>:<port>/payment/v0_8/transaction/{endUserId}/amount
+```
+
+- Refund a User - Refund a end user 
+
+Request : 
+
+Type - POST
+
+Request URI:
+```
+http://<host>:<port>/payment/v0_8/transaction/{endUserId}/amount
