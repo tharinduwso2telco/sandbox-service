@@ -20,17 +20,17 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 @JsonInclude(value = JsonInclude.Include.NON_NULL)
 public class USSDSessionInitiatorResponseBean {
 
-    private OutboundUSSDMessageRequest outboundUSSDMessageRequest;
+//    private OutboundUSSDMessageRequest outboundUSSDMessageRequest;
+//
+//    public OutboundUSSDMessageRequest getOutboundUSSDMessageRequest() {
+//        return outboundUSSDMessageRequest;
+//    }
+//
+//    public void setOutboundUSSDMessageRequest(OutboundUSSDMessageRequest outboundUSSDMessageRequest) {
+//        this.outboundUSSDMessageRequest = outboundUSSDMessageRequest;
+//    }
 
-    public OutboundUSSDMessageRequest getOutboundUSSDMessageRequest() {
-        return outboundUSSDMessageRequest;
-    }
-
-    public void setOutboundUSSDMessageRequest(OutboundUSSDMessageRequest outboundUSSDMessageRequest) {
-        this.outboundUSSDMessageRequest = outboundUSSDMessageRequest;
-    }
-
-    public static class OutboundUSSDMessageRequest {
+//    public static class OutboundUSSDMessageRequest {
 
         private String address;
 
@@ -113,4 +113,4 @@ public class USSDSessionInitiatorResponseBean {
         }
     }
 
-}
+//}

@@ -15,25 +15,35 @@
  ******************************************************************************/
 package com.wso2telco.services.dep.sandbox.servicefactory.ussd;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import com.wso2telco.dep.oneapivalidation.exceptions.CustomException;
 import com.wso2telco.dep.oneapivalidation.util.Validation;
 import com.wso2telco.dep.oneapivalidation.util.ValidationRule;
-import com.wso2telco.services.dep.sandbox.dao.model.custom.USSDSessionInitiatorRequestBean;
-import com.wso2telco.services.dep.sandbox.dao.model.custom.USSDSessionRequestWrapperDTO;
-import com.wso2telco.services.dep.sandbox.dao.model.custom.USSDSessionResponseRequest;
-import com.wso2telco.services.dep.sandbox.servicefactory.AbstractRequestHandler;
-import com.wso2telco.services.dep.sandbox.servicefactory.Returnable;
+import com.wso2telco.services.dep.sandbox.dao.model.custom.*;
+import com.wso2telco.services.dep.sandbox.dao.model.domain.APIServiceCalls;
+import com.wso2telco.services.dep.sandbox.dao.model.domain.APITypes;
+import com.wso2telco.services.dep.sandbox.dao.model.domain.MessageLog;
+import com.wso2telco.services.dep.sandbox.servicefactory.*;
 import com.wso2telco.services.dep.sandbox.util.CommonUtil;
+import com.wso2telco.services.dep.sandbox.util.RequestType;
+import com.wso2telco.services.dep.sandbox.util.ServiceName;
 import org.apache.commons.logging.LogFactory;
+import org.json.JSONObject;
 
+import javax.ws.rs.core.Response;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
-public class InitiateUSSDSessionRequestHandler extends AbstractRequestHandler<USSDSessionRequestWrapperDTO> {
+public class InitiateUSSDSessionRequestHandler extends AbstractRequestHandler<USSDSessionRequestWrapperDTO>
+        implements RequestResponseRequestHandleable<USSDSessionRequestWrapperDTO> {
 
     private USSDSessionRequestWrapperDTO requestWrapperDTO;
     private USSDSessionResponseWrapper responseWrapper;
-
+    private String serviceCallUSSD;
 
     {
         LOG = LogFactory.getLog(InitiateUSSDSessionRequestHandler.class);
@@ -115,6 +125,154 @@ public class InitiateUSSDSessionRequestHandler extends AbstractRequestHandler<US
 
     @Override
     protected Returnable process(USSDSessionRequestWrapperDTO extendedRequestDTO) throws Exception {
-        return null;
+        if (responseWrapper.getRequestError() != null) {
+            responseWrapper.setHttpStatus(Response.Status.BAD_REQUEST);
+            return responseWrapper;
+        }
+
+        USSDSessionInitiatorRequestBean requestBean = extendedRequestDTO.getUssdSessionRequestBean();
+        USSDSessionInitiatorRequestBean.OutboundUSSDMessageRequest request = requestBean
+                .getOutboundUSSDMessageRequest();
+        USSDSessionResponseRequest responseRequest = request.getResponseRequest();
+
+        String shortCode = CommonUtil.getNullOrTrimmedValue(request.getShortCode());
+        String keyword = CommonUtil.getNullOrTrimmedValue(request.getKeyword());
+        String clientCorrelator = CommonUtil.getNullOrTrimmedValue(request.getClientCorrelator());
+        String endUserIdPath = extendedRequestDTO.getEndUserId();
+        String endUserIdRequest = request.getAddress();
+        String address = getLastMobileNumber(endUserIdPath);
+        String outboundUSSDMessage = CommonUtil.getNullOrTrimmedValue(request.getOutboundUSSDMessage());
+        String notifyURL = CommonUtil.getNullOrTrimmedValue(responseRequest.getNotifyURL());
+        String callbackData = CommonUtil.getNullOrTrimmedValue(responseRequest.getCallbackData());
+        String ussdAction = CommonUtil.getNullOrTrimmedValue(request.getUssdAction());
+        Integer userId = extendedRequestDTO.getUser().getId();
+        serviceCallUSSD = ServiceName.InitUSSD.toString();
+
+        USSDSessionInitiatorResponseBean responseBean = new USSDSessionInitiatorResponseBean();
+        USSDSessionResponseRequest responseRequestBean = new USSDSessionResponseRequest();
+
+
+        APITypes apiTypes = dao.getAPIType(RequestType.USSD.toString());
+        APIServiceCalls apiServiceCalls = dao.getServiceCall(apiTypes.getId(), serviceCallUSSD);
+
+        // Todo: Exception Handling
+
+        int serviceNameId = apiServiceCalls.getApiServiceCallId();
+        Gson gson = new Gson();
+
+        String response = checkDuplicateClientCorrelator(clientCorrelator, userId, serviceNameId, endUserIdPath,
+                MessageProcessStatus.Success, MessageType.Response);
+
+        if (response != null) {
+            USSDSessionInitiatorResponseBean object;
+            object = gson.fromJson(response, USSDSessionInitiatorResponseBean.class);
+            USSDSessionDTO dto = new USSDSessionDTO();
+            dto.setOutboundUSSDMessageRequest(object);
+            responseWrapper.setUssdSessionDTO(dto);
+            responseWrapper.setHttpStatus(Response.Status.OK);
+            return responseWrapper;
+        }
+
+        responseBean.setAddress(address);
+        responseBean.setKeyword(keyword);
+        responseBean.setShortCode(shortCode);
+        responseBean.setOutboundUSSDMessage(outboundUSSDMessage);
+        responseBean.setClientCorrelator(clientCorrelator);
+        responseBean.setUssdAction(ussdAction);
+
+        responseRequestBean.setNotifyURL(notifyURL);
+        responseRequestBean.setCallbackData(callbackData);
+        responseBean.setResponseRequest(responseRequestBean);
+        responseWrapper.setHttpStatus(Response.Status.OK);
+        USSDSessionDTO ussdSessionDTO = new USSDSessionDTO();
+        responseBean.setDeliveryStatus("SENT");
+        ussdSessionDTO.setOutboundUSSDMessageRequest(responseBean);
+        responseWrapper.setUssdSessionDTO(ussdSessionDTO);
+
+        saveResponse(userId, endUserIdPath, responseBean, apiServiceCalls, MessageProcessStatus.Success);
+
+        return responseWrapper;
+    }
+
+    private void saveResponse(Integer userid, String endUserIdPath, USSDSessionInitiatorResponseBean responseBean,
+                              APIServiceCalls apiServiceCalls, MessageProcessStatus status) throws Exception {
+
+        String jsonInString = null;
+        Gson gson = new Gson();
+
+        JsonElement je = new JsonParser().parse(gson.toJson(responseBean));
+        JsonObject asJsonObject = je.getAsJsonObject();
+        jsonInString = asJsonObject.toString();
+
+        MessageLog messageLog = new MessageLog();
+        messageLog.setRequest(jsonInString);
+        messageLog.setStatus(status.getValue());
+        messageLog.setType(MessageType.Response.getValue());
+        messageLog.setServicenameid(apiServiceCalls.getApiServiceCallId());
+        messageLog.setUserid(userid);
+        messageLog.setReference("msisdn");
+        messageLog.setValue(endUserIdPath);
+        messageLog.setMessageTimestamp(new Date());
+
+        loggingDAO.saveMessageLog(messageLog);
+    }
+
+    private String checkDuplicateClientCorrelator(String clientCorrelator, int userId, int serviceNameId, String tel,
+                                                  MessageProcessStatus status, MessageType type) throws Exception {
+
+        List<Integer> list = new ArrayList<>();
+        list.add(serviceNameId);
+
+        List<MessageLog> response = loggingDAO.getMessageLogs(userId, list, "msisdn", tel, null, null);
+
+        String jsonString = null;
+
+        for (int i = 0; i < response.size(); i++) {
+            if (response != null) {
+
+                int responseStatus = response.get(i).getStatus();
+                int responseType = response.get(i).getType();
+                String responseClientCorrelator;
+
+                if (responseType == type.getValue() && responseStatus == status.getValue()) {
+                    String request = response.get(i).getRequest();
+                    JSONObject json = new JSONObject(request);
+
+                    responseClientCorrelator = json.get("clientCorrelator").toString();
+
+                    int responseUserId = response.get(i).getUserid();
+                    String responseTel = response.get(i).getValue();
+
+                    // check for duplicate clientCorrelators
+                    if ((responseClientCorrelator != null && responseClientCorrelator.equals(clientCorrelator)) &&
+                            responseUserId == userId && responseTel.equals(tel)) {
+                        jsonString = json.toString();
+                        break;
+                    }
+                }
+
+
+            }
+        }
+
+        return jsonString;
+
+    }
+
+    @Override
+    public String getApiServiceCalls() {
+        return ServiceName.InitUSSD.toString();
+    }
+
+    @Override
+    public String getJosonString(USSDSessionRequestWrapperDTO requestDTO) {
+        Gson gson = new Gson();
+        String jsonString = gson.toJson(requestDTO.getUssdSessionRequestBean());
+        return jsonString;
+    }
+
+    @Override
+    public String getnumber(USSDSessionRequestWrapperDTO requestDTO) {
+        return requestDTO.getEndUserId();
     }
 }

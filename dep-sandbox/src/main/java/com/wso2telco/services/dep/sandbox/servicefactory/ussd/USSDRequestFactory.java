@@ -10,9 +10,9 @@ public class USSDRequestFactory {
 
     public static RequestHandleable getInstance(final RequestDTO requestDTO) {
 
-        final String INITIATE_USSD_SESSION = "initUssd";
+        final String INITIATE_USSD_SESSION = "USSD";
 
-        if (requestDTO.getRequestPath().contains(INITIATE_USSD_SESSION)) {
+        if (requestDTO.getRequestPath().contains(INITIATE_USSD_SESSION.toLowerCase())) {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Loading Initiate USSD Session");
                 return new InitiateUSSDSessionRequestHandler();

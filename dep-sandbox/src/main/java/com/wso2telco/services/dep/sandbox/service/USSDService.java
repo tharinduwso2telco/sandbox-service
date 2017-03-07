@@ -17,6 +17,7 @@ package com.wso2telco.services.dep.sandbox.service;
 
 import com.wordnik.swagger.annotations.*;
 import com.wso2telco.services.dep.sandbox.dao.model.custom.RequestDTO;
+import com.wso2telco.services.dep.sandbox.dao.model.custom.USSDSessionInitiatorRequestBean;
 import com.wso2telco.services.dep.sandbox.dao.model.custom.USSDSessionRequestWrapperDTO;
 import com.wso2telco.services.dep.sandbox.exception.SandboxException;
 import com.wso2telco.services.dep.sandbox.servicefactory.RequestBuilderFactory;
@@ -49,7 +50,7 @@ public class USSDService {
             @ApiImplicitParam(name = "sandbox", value = "Authorization token", required = true, dataType = "string", paramType = "header")})
     public Response ussdSession(
             @ApiParam(value = "endUserId", required = true) @PathParam("endUserId") String endUserId,
-            USSDSessionRequestBean ussdSessionRequestBean, @Context HttpServletRequest request) {
+            USSDSessionInitiatorRequestBean ussdSessionRequestBean, @Context HttpServletRequest request) {
         if (LOG.isDebugEnabled()) {
             LOG.debug("###USSD### /{endUserId} invoked : endUserId - " + endUserId);
         }
