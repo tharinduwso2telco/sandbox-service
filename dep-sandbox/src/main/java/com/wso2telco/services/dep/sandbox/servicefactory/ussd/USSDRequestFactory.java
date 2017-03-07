@@ -2,11 +2,24 @@ package com.wso2telco.services.dep.sandbox.servicefactory.ussd;
 
 import com.wso2telco.services.dep.sandbox.dao.model.custom.RequestDTO;
 import com.wso2telco.services.dep.sandbox.servicefactory.RequestHandleable;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 public class USSDRequestFactory {
-	// TODO: based on the json body need to implement request handle
-	public static RequestHandleable getInstance(final RequestDTO requestDTO) {
+    private static Log LOG = LogFactory.getLog(USSDRequestFactory.class);
 
-		return null;
-	}
+    public static RequestHandleable getInstance(final RequestDTO requestDTO) {
+
+        final String INITIATE_USSD_SESSION = "initUssd";
+
+        if (requestDTO.getRequestPath().contains(INITIATE_USSD_SESSION)) {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Loading Initiate USSD Session");
+                return new InitiateUSSDSessionRequestHandler();
+            }
+        }
+        return null;
+    }
 }
+
+
