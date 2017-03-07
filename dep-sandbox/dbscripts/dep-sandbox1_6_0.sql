@@ -680,3 +680,15 @@ CREATE TABLE IF NOT EXISTS `sbtmessagelog` (
   CONSTRAINT `fk02sbtmessagelog` FOREIGN KEY (`userid`) REFERENCES `user` (`id`)
 );
 
+--
+-- Table structure for table `ussd_applications`
+--
+
+CREATE TABLE IF NOT EXISTS `ussd_applications` (
+    `id` int(11) NOT NULL AUTO_INCREMENT,
+    `userid` int(11) NOT NULL,
+    `shortCode` varchar(255) DEFAULT NULL,
+    `keyword` varchar(255) DEFAULT NULL,
+     PRIMARY KEY (`id`),
+     CONSTRAINT `fk01ussd_application` FOREIGN KEY (`userid`) REFERENCES `user` (`id`)
+);
