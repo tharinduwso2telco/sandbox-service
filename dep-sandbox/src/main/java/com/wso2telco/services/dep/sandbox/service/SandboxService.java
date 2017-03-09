@@ -17,25 +17,20 @@
 package com.wso2telco.services.dep.sandbox.service;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
+import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import com.wordnik.swagger.annotations.Api;
+import com.wordnik.swagger.annotations.ApiImplicitParam;
+import com.wordnik.swagger.annotations.ApiImplicitParams;
+import com.wso2telco.services.dep.sandbox.servicefactory.smsmessaging.hub.outboundSMSMessageRequestBeanHub;
+import com.wso2telco.services.dep.sandbox.servicefactory.smsmessaging.hub.sendMTSMSRequestWrapperDTOHub;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import com.wordnik.swagger.annotations.ApiOperation;
-import com.wso2telco.services.dep.sandbox.dao.model.custom.LocationRequestWrapperDTO;
-import com.wso2telco.services.dep.sandbox.dao.model.custom.OutboundSMSMessageRequestBean;
-import com.wso2telco.services.dep.sandbox.dao.model.custom.QuerySMSDeliveryStatusRequestWrapperDTO;
-import com.wso2telco.services.dep.sandbox.dao.model.custom.SendMTSMSRequestWrapperDTO;
 import com.wso2telco.services.dep.sandbox.servicefactory.RequestBuilderFactory;
 import com.wso2telco.services.dep.sandbox.servicefactory.RequestHandleable;
 import com.wso2telco.services.dep.sandbox.servicefactory.Returnable;
@@ -49,13 +44,14 @@ import com.wso2telco.services.dep.sandbox.util.RequestType;
  *
  * @since 1.8.0-SNAPSHOT
  */
-@Path("/")
+@Path("/smsmessaging")
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
+@Api(value = "/{v1}/sms", description = "sms")
 public class SandboxService {
 	Log LOG = LogFactory.getLog(SandboxService.class);
 
-	@GET
+/*	@GET
 	@Path("/location/{v1}/queries/location")
 	@ApiOperation(value = "get Location ", notes = "get Location ", response = Response.class)
 	public Response getLocation(@QueryParam("address") String address,
@@ -78,19 +74,24 @@ public class SandboxService {
 		} catch (Exception e) {
 			return Response.status(Response.Status.BAD_REQUEST).entity(returnable.getResponse()).build();
 		}
-	}
+	}*/
 
 	@POST
-	@Path("/smsmessaging/{apiVersion}/outbound/{shortCode}/requests")
+	@Path("/{apiVersion}/outbound/{shortCode}/requests")
+	@ApiOperation(value = "sms", notes = "sms ", response = Response.class)
+	@ApiImplicitParams({
+			@ApiImplicitParam(name = "sandbox", value = "Authorization token",
+					required = true, dataType = "string", paramType = "header")
+	})
 	public Response handleSendMTSMSRequest(@Context HttpServletRequest httpRequest, @PathParam("apiVersion") String apiVersion,
-			@PathParam("shortCode") String shortCode, OutboundSMSMessageRequestBean outboundSMSMessageRequestBean) {
+			@PathParam("shortCode") String shortCode, outboundSMSMessageRequestBeanHub outboundSMSMessageRequestBean_hub) {
 
-		SendMTSMSRequestWrapperDTO requestDTO = new SendMTSMSRequestWrapperDTO();
+		sendMTSMSRequestWrapperDTOHub requestDTO = new sendMTSMSRequestWrapperDTOHub();
 		requestDTO.setHttpRequest(httpRequest);
 		requestDTO.setRequestType(RequestType.SMSMESSAGING);
 		requestDTO.setApiVersion(apiVersion);
 		requestDTO.setShortCode(shortCode);
-		requestDTO.setOutboundSMSMessageRequestBean(outboundSMSMessageRequestBean);
+		requestDTO.setOutboundSMSMessageRequestBean(outboundSMSMessageRequestBean_hub);
 
 		RequestHandleable handler = RequestBuilderFactory.getInstance(requestDTO);
 
@@ -102,11 +103,11 @@ public class SandboxService {
 			return Response.status(returnable.getHttpStatus()).entity(returnable.getResponse()).build();
 		} catch (Exception e) {
 
+			e.printStackTrace();
 			return Response.status(Response.Status.BAD_REQUEST).entity(returnable.getResponse()).build();
 		}
 	}
-
-	@GET
+/*	@GET
 	@Path("/smsmessaging/{apiVersion}/outbound/{shortCode}/requests/{mtSMSTransactionId}/deliveryInfos")
 	public Response handleQuerySMSDeliveryStatusRequest(@Context HttpServletRequest httpRequest,
 			@PathParam("apiVersion") String apiVersion, @PathParam("shortCode") String shortCode,
@@ -130,5 +131,5 @@ public class SandboxService {
 		}
 
 		return null;
-	}
+	}*/
 }

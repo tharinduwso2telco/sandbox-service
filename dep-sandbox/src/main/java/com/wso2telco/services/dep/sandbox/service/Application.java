@@ -22,13 +22,14 @@ import io.dropwizard.setup.Environment;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.wso2telco.services.dep.sandbox.service.SandboxDTO.getBehaveType;
+
 public class Application extends AbstractApplication<SandboxDTO> {
 
 	@Override
 	protected List<Object> getRestFulComponents() {
 		List<Object>  listOfObject =new ArrayList<Object>();
 		listOfObject.add(new UserService());
-		listOfObject.add(new SandboxService());
 		listOfObject.add(new ProvisionService());
 		listOfObject.add(new ProvisionConfigurationService());
 		listOfObject.add(new CustomerInfoService());
@@ -39,9 +40,17 @@ public class Application extends AbstractApplication<SandboxDTO> {
 		listOfObject.add(new PaymentService_v0_8());
 		listOfObject.add(new PaymentService_v1_3());
 		listOfObject.add(new LocationService());
+
+		if(getBehaveType().equals("Hub")){
+
+			listOfObject.add(new smsServiceHub());
+
+		}else if(getBehaveType().equals("Gateway")) {
+
+			listOfObject.add(new SmsServiceGateway());
+		}
 		return listOfObject;
 	}
-
 
 	public static void main(String[] args) {
 		try {
