@@ -56,5 +56,6 @@
   <mapping class="com.wso2telco.services.dep.sandbox.dao.model.domain.Attributes"/>
   <mapping class="com.wso2telco.services.dep.sandbox.dao.model.domain.AttributeValues"/>
   <mapping class="com.wso2telco.services.dep.sandbox.dao.model.domain.MessageLog" />
+        <mapping class="com.wso2telco.services.dep.sandbox.dao.model.domain.UssdApplication" />
  </session-factory>
 </hibernate-configuration>

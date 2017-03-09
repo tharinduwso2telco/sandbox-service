@@ -687,7 +687,7 @@ CREATE TABLE IF NOT EXISTS `sbtmessagelog` (
 CREATE TABLE IF NOT EXISTS `ussd_applications` (
     `id` int(11) NOT NULL AUTO_INCREMENT,
     `userid` int(11) NOT NULL,
-    `shortCode` varchar(255) DEFAULT NULL,
+    `shortCode` varchar(255) NOT NULL,
     `keyword` varchar(255) DEFAULT NULL,
      PRIMARY KEY (`id`),
      CONSTRAINT `fk01ussd_application` FOREIGN KEY (`userid`) REFERENCES `user` (`id`)

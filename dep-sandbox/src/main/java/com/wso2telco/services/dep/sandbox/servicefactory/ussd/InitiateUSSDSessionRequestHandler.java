@@ -19,13 +19,17 @@ import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.wso2telco.core.dbutils.exception.ServiceError;
 import com.wso2telco.dep.oneapivalidation.exceptions.CustomException;
 import com.wso2telco.dep.oneapivalidation.util.Validation;
 import com.wso2telco.dep.oneapivalidation.util.ValidationRule;
+import com.wso2telco.services.dep.sandbox.dao.DaoFactory;
+import com.wso2telco.services.dep.sandbox.dao.USSDDAO;
 import com.wso2telco.services.dep.sandbox.dao.model.custom.*;
 import com.wso2telco.services.dep.sandbox.dao.model.domain.APIServiceCalls;
 import com.wso2telco.services.dep.sandbox.dao.model.domain.APITypes;
 import com.wso2telco.services.dep.sandbox.dao.model.domain.MessageLog;
+import com.wso2telco.services.dep.sandbox.dao.model.domain.UssdApplication;
 import com.wso2telco.services.dep.sandbox.servicefactory.*;
 import com.wso2telco.services.dep.sandbox.util.CommonUtil;
 import com.wso2telco.services.dep.sandbox.util.RequestType;
@@ -43,10 +47,13 @@ public class InitiateUSSDSessionRequestHandler extends AbstractRequestHandler<US
 
     private USSDSessionRequestWrapperDTO requestWrapperDTO;
     private USSDSessionResponseWrapper responseWrapper;
+    private USSDDAO ussdDAO;
     private String serviceCallUSSD;
+    private static final String DELIVERY_STATUS = "SENT";
 
     {
         LOG = LogFactory.getLog(InitiateUSSDSessionRequestHandler.class);
+        ussdDAO = DaoFactory.getUSSDDAO();
     }
 
     @Override
@@ -56,7 +63,7 @@ public class InitiateUSSDSessionRequestHandler extends AbstractRequestHandler<US
 
     @Override
     protected List<String> getAddress() {
-        List<String> address = new ArrayList<String>();
+        List<String> address = new ArrayList<>();
         address.add(requestWrapperDTO.getEndUserId());
         return address;
     }
@@ -139,7 +146,7 @@ public class InitiateUSSDSessionRequestHandler extends AbstractRequestHandler<US
         String keyword = CommonUtil.getNullOrTrimmedValue(request.getKeyword());
         String clientCorrelator = CommonUtil.getNullOrTrimmedValue(request.getClientCorrelator());
         String endUserIdPath = extendedRequestDTO.getEndUserId();
-        String endUserIdRequest = request.getAddress();
+//        String endUserIdRequest = request.getAddress();
         String address = getLastMobileNumber(endUserIdPath);
         String outboundUSSDMessage = CommonUtil.getNullOrTrimmedValue(request.getOutboundUSSDMessage());
         String notifyURL = CommonUtil.getNullOrTrimmedValue(responseRequest.getNotifyURL());
@@ -157,6 +164,8 @@ public class InitiateUSSDSessionRequestHandler extends AbstractRequestHandler<US
 
         // Todo: Exception Handling
 
+        // Todo: Handle ussdAction
+
         int serviceNameId = apiServiceCalls.getApiServiceCallId();
         Gson gson = new Gson();
 
@@ -164,6 +173,7 @@ public class InitiateUSSDSessionRequestHandler extends AbstractRequestHandler<US
                 MessageProcessStatus.Success, MessageType.Response);
 
         if (response != null) {
+            // Send already sent response
             USSDSessionInitiatorResponseBean object;
             object = gson.fromJson(response, USSDSessionInitiatorResponseBean.class);
             USSDSessionDTO dto = new USSDSessionDTO();
@@ -171,6 +181,17 @@ public class InitiateUSSDSessionRequestHandler extends AbstractRequestHandler<US
             responseWrapper.setUssdSessionDTO(dto);
             responseWrapper.setHttpStatus(Response.Status.OK);
             return responseWrapper;
+        }
+
+        boolean test = checkForRegisteredApplications(userId, shortCode, keyword);
+
+        if (!test) {
+            LOG.error("###USSD### No Applications Registered for Provided ShortCode");
+            responseWrapper.setRequestError(constructRequestError(SERVICEEXCEPTION,
+                    ServiceError.INVALID_INPUT_VALUE, "No Applications Registered for Provided ShortCode"));
+            responseWrapper.setHttpStatus(Response.Status.BAD_REQUEST);
+            return responseWrapper;
+
         }
 
         responseBean.setAddress(address);
@@ -185,7 +206,7 @@ public class InitiateUSSDSessionRequestHandler extends AbstractRequestHandler<US
         responseBean.setResponseRequest(responseRequestBean);
         responseWrapper.setHttpStatus(Response.Status.OK);
         USSDSessionDTO ussdSessionDTO = new USSDSessionDTO();
-        responseBean.setDeliveryStatus("SENT");
+        responseBean.setDeliveryStatus(DELIVERY_STATUS);
         ussdSessionDTO.setOutboundUSSDMessageRequest(responseBean);
         responseWrapper.setUssdSessionDTO(ussdSessionDTO);
 
@@ -197,7 +218,7 @@ public class InitiateUSSDSessionRequestHandler extends AbstractRequestHandler<US
     private void saveResponse(Integer userid, String endUserIdPath, USSDSessionInitiatorResponseBean responseBean,
                               APIServiceCalls apiServiceCalls, MessageProcessStatus status) throws Exception {
 
-        String jsonInString = null;
+        String jsonInString;
         Gson gson = new Gson();
 
         JsonElement je = new JsonParser().parse(gson.toJson(responseBean));
@@ -228,36 +249,73 @@ public class InitiateUSSDSessionRequestHandler extends AbstractRequestHandler<US
         String jsonString = null;
 
         for (int i = 0; i < response.size(); i++) {
-            if (response != null) {
 
-                int responseStatus = response.get(i).getStatus();
-                int responseType = response.get(i).getType();
-                String responseClientCorrelator;
+            int responseStatus = response.get(i).getStatus();
+            int responseType = response.get(i).getType();
+            String responseClientCorrelator;
 
-                if (responseType == type.getValue() && responseStatus == status.getValue()) {
-                    String request = response.get(i).getRequest();
-                    JSONObject json = new JSONObject(request);
+            if (responseType == type.getValue() && responseStatus == status.getValue()) {
+                String request = response.get(i).getRequest();
+                JSONObject json = new JSONObject(request);
 
-                    responseClientCorrelator = json.get("clientCorrelator").toString();
+                responseClientCorrelator = json.get("clientCorrelator").toString();
 
-                    int responseUserId = response.get(i).getUserid();
-                    String responseTel = response.get(i).getValue();
+                int responseUserId = response.get(i).getUserid();
+                String responseTel = response.get(i).getValue();
 
-                    // check for duplicate clientCorrelators
-                    if ((responseClientCorrelator != null && responseClientCorrelator.equals(clientCorrelator)) &&
-                            responseUserId == userId && responseTel.equals(tel)) {
-                        jsonString = json.toString();
-                        break;
-                    }
+                // check for duplicate clientCorrelators
+                if ((responseClientCorrelator != null && responseClientCorrelator.equals(clientCorrelator)) &&
+                        responseUserId == userId && responseTel.equals(tel)) {
+                    jsonString = json.toString();
+                    break;
                 }
-
-
             }
+
+
         }
 
         return jsonString;
 
     }
+
+    private boolean checkForRegisteredApplications(int userId, String shortCode, String keyword) {
+
+        List<UssdApplication> applicationList = ussdDAO.getUssdApplications(userId, shortCode, keyword);
+        boolean flag = false;
+
+        if (applicationList.size() == 0) {
+            flag = false;
+
+        } else {
+
+            if (applicationList.size() > 1 && keyword == null) {
+                flag = false;
+            }
+
+            for (int i = 0; i < applicationList.size(); i++) {
+
+                int responseUserId = applicationList.get(i).getUserid();
+                String responseKeyWord = applicationList.get(i).getKeyword();
+                String responseShortCode = applicationList.get(i).getShortCode();
+
+
+                if (keyword == null) {
+                    if (userId == responseUserId && shortCode.equals(responseShortCode)) {
+                        flag = true;
+                    }
+                } else {
+                    if (userId == responseUserId && shortCode.equals(responseShortCode) && keyword.equals
+                            (responseKeyWord)) {
+                        flag = true;
+                    }
+                }
+            }
+        }
+
+        return flag;
+
+    }
+
 
     @Override
     public String getApiServiceCalls() {
@@ -267,8 +325,7 @@ public class InitiateUSSDSessionRequestHandler extends AbstractRequestHandler<US
     @Override
     public String getJosonString(USSDSessionRequestWrapperDTO requestDTO) {
         Gson gson = new Gson();
-        String jsonString = gson.toJson(requestDTO.getUssdSessionRequestBean());
-        return jsonString;
+        return gson.toJson(requestDTO.getUssdSessionRequestBean());
     }
 
     @Override

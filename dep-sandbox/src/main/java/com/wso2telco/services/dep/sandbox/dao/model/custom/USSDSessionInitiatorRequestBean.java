@@ -39,7 +39,6 @@ public class USSDSessionInitiatorRequestBean {
 
         private String clientCorrelator;
 
-        // same or
         private USSDSessionResponseRequest responseRequest;
 
         private String ussdAction;

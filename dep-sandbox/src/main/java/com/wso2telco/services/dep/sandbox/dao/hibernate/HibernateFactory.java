@@ -45,4 +45,8 @@ public class HibernateFactory {
 	public HibernateCreditDAO getHibernateCreditDAO() {
 		return new HibernateCreditDAO();
 	}
+
+	public HibernateUSSDDAO getHibernateUSSDDAO() {
+		return new HibernateUSSDDAO();
+	}
 }

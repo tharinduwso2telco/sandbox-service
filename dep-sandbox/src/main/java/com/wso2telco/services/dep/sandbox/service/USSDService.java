@@ -65,7 +65,7 @@ public class USSDService {
         requestDTO.setRequestType(RequestType.USSD);
 
         RequestHandleable<RequestDTO> handler = RequestBuilderFactory.getInstance(requestDTO);
-        Returnable returnable = null;
+        Returnable returnable;
 
         try {
             returnable = handler.execute(requestDTO);
