@@ -341,7 +341,7 @@ public class PaymentRequestHandler extends AbstractRequestHandler<ChargePaymentR
             responseBean.setPaymentAmount(payAmount);
             makePaymentDTO.setAmountTransaction(responseBean);
             responseWrapper.setMakePaymentDTO(makePaymentDTO);
-            responseWrapper.setHttpStatus(Response.Status.OK);
+            responseWrapper.setHttpStatus(Response.Status.CREATED);
 
             // Save Success Response
             saveResponse(extendedRequestDTO, endUserIdPath, responseBean, apiServiceCalls, MessageProcessStatus.Success);

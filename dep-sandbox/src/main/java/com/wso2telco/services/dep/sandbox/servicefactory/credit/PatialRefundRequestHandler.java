@@ -325,7 +325,7 @@ public class PatialRefundRequestHandler extends AbstractRequestHandler<PatialRef
 
 
                     saveResponse(extendedRequestDTO, extendedRequestDTO.getMsisdn(), responseBean, apiServiceCalls, MessageProcessStatus.Success);
-                    responseWrapperDTO.setHttpStatus(Response.Status.OK);
+                    responseWrapperDTO.setHttpStatus(Response.Status.CREATED);
                     return responseWrapperDTO;
                 } else {
                     responseWrapperDTO.setRequestError(constructRequestError(SERVICEEXCEPTION,

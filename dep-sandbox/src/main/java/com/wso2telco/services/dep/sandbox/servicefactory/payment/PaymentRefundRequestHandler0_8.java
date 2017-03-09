@@ -389,7 +389,7 @@ public class PaymentRefundRequestHandler0_8 extends AbstractRequestHandler<Payme
                  return responseWrapper;
              }
 
-            responseWrapper.setHttpStatus(Response.Status.OK);
+            responseWrapper.setHttpStatus(Response.Status.CREATED);
             RefundPaymentDTO refundPaymentDTO = new RefundPaymentDTO();
             payAmount.setChargingInformation(chargingInformation);
             payAmount.setChargingMetaData(chargeMetaData);

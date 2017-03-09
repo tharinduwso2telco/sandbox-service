@@ -368,7 +368,7 @@ public class MakePaymentRequestHandler extends AbstractRequestHandler<MakePaymen
 			responseBean.setPaymentAmount(payAmount);
 			makePaymentDTO.setmakePayment(responseBean);
 			responseWrapper.setMakePaymentDTO(makePaymentDTO);
-			responseWrapper.setHttpStatus(Response.Status.OK);
+			responseWrapper.setHttpStatus(Response.Status.CREATED);
 
 			// save payment transaction
 			transactionId = saveTransaction(responseBean, endUserId, userName);

@@ -357,7 +357,7 @@ public class RefundTransactionRequestHandler extends AbstractRequestHandler<Refu
 				responseBean.setTransactionOperationStatus(TransactionStatus.Refunded.toString());
 			}
 
-			responseWrapper.setHttpStatus(Response.Status.OK);
+			responseWrapper.setHttpStatus(Response.Status.CREATED);
 			RefundTransactionDTO refundPaymentDTO = new RefundTransactionDTO();
 			payAmount.setChargingInformation(chargeInformation);
 			payAmount.setChargingMetaData(chargeMetaData);
