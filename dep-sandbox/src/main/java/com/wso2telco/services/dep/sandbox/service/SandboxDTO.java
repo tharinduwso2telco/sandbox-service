@@ -26,6 +26,9 @@ public class SandboxDTO extends ConfigDTO{
 	private static final long serialVersionUID = 4016247712134961725L;
 	@JsonProperty
 	private static int requestIdentifierSize;
+
+	@JsonProperty
+	private static String behaveType;
 	
 	public static int getRequestIdentifierSize() {
 		return requestIdentifierSize;
@@ -33,6 +36,12 @@ public class SandboxDTO extends ConfigDTO{
 	public void setRequestIdentifierSize(int requestIdentifierSize) {
 		SandboxDTO.requestIdentifierSize = requestIdentifierSize;
 	}
-	
-	
+
+    public static String getBehaveType() {
+        return behaveType;
+    }
+
+    public  void setBehaveType(String behaveType) {
+        SandboxDTO.behaveType = behaveType;
+    }
 }

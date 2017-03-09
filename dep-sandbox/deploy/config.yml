@@ -39,3 +39,5 @@ logging:
       timeZone: UTC
       
 requestIdentifierSize: 6
+
+behaveType:  # Gateway or Hub
