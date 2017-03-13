@@ -22,18 +22,18 @@ import com.wso2telco.services.dep.sandbox.dao.model.custom.OutboundSMSMessageReq
 class OutboundSMSMessageResponseBean {
 
 
-    private OutboundSMSMessageResponse_Gw outboundSMSMessageRequest;
+    private OutboundSMSMessageResponseGateway outboundSMSMessageRequest;
 
 
-    public OutboundSMSMessageResponse_Gw getOutboundSMSMessageRequest() {
+    public OutboundSMSMessageResponseGateway getOutboundSMSMessageRequest() {
         return outboundSMSMessageRequest;
     }
 
-    public void setOutboundSMSMessageRequest(OutboundSMSMessageResponse_Gw outboundSMSMessageRequest) {
+    public void setOutboundSMSMessageRequest(OutboundSMSMessageResponseGateway outboundSMSMessageRequest) {
         this.outboundSMSMessageRequest = outboundSMSMessageRequest;
     }
 
-    public static class OutboundSMSMessageResponse_Gw extends OutboundSMSMessageRequest {
+    public static class OutboundSMSMessageResponseGateway extends OutboundSMSMessageRequest {
 
 
         private DeliveryInfoList deliveryInfoList;
