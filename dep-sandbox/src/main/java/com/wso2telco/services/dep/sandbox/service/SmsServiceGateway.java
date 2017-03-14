@@ -16,12 +16,11 @@
 package com.wso2telco.services.dep.sandbox.service;
 
 
-import com.wordnik.swagger.annotations.Api;
-import com.wordnik.swagger.annotations.ApiImplicitParam;
-import com.wordnik.swagger.annotations.ApiImplicitParams;
-import com.wordnik.swagger.annotations.ApiOperation;
+import com.wordnik.swagger.annotations.*;
+import com.wso2telco.services.dep.sandbox.exception.SandboxException;
 import com.wso2telco.services.dep.sandbox.servicefactory.RequestBuilderFactoryGateway;
 import com.wso2telco.services.dep.sandbox.servicefactory.smsmessaging.gateway.OutboundSMSMessageRequestBeanGateway;
+import com.wso2telco.services.dep.sandbox.servicefactory.smsmessaging.gateway.ReceivingSMSRequestWrapperGateway;
 import com.wso2telco.services.dep.sandbox.servicefactory.smsmessaging.gateway.SendMTSMSRequestWrapperDTOGateway;
 import com.wso2telco.services.dep.sandbox.servicefactory.RequestHandleable;
 import com.wso2telco.services.dep.sandbox.servicefactory.Returnable;
@@ -74,6 +73,51 @@ import javax.ws.rs.core.Response;
                 return Response.status(Response.Status.BAD_REQUEST).entity(returnable.getResponse()).build();
             }
         }
+
+
+    @GET
+    @Path("/v1_2/inbound/registrations/{registrationId}/messages")
+    @ApiOperation(value = "SMS Service", notes = "SMS Service", response = Response.class)
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "sandbox", value = "Authorization token", required = true, dataType = "string", paramType = "header") })
+    public Response location(
+            @ApiParam(value = "registrationId", required = true) @PathParam("registrationId") String registrationID, @ApiParam(value = "maxBatchSize", required = true) @QueryParam("maxBatchSize") int maxBatchSize,
+            @Context HttpServletRequest request) {
+
+        LOG.debug("registrationId={registrationId}&maxBatchSize={maxBatchSize} invorked :" + registrationID +" " +maxBatchSize);
+
+        ReceivingSMSRequestWrapperGateway requestDTO = new ReceivingSMSRequestWrapperGateway();
+        requestDTO.setHttpRequest(request);
+        requestDTO.setRegistrationID(registrationID);
+        requestDTO.setMaxBatchSize(maxBatchSize);
+        requestDTO.setRequestType(RequestType.SMSMESSAGING);
+
+        RequestHandleable handler = RequestBuilderFactoryGateway.getInstance(requestDTO);
+        Returnable returnable = null;
+
+        try {
+            returnable = handler.execute(requestDTO);
+            Response response = Response.status(returnable.getHttpStatus()).entity(returnable.getResponse()).build();
+            LOG.debug("SMS RECEIVING  SERVICE RESPONSE : " + response);
+            return response;
+        } catch (Exception ex) {
+            LOG.error("SMS RECEIVING SERVICE ERROR : ", ex);
+            return Response.status(Response.Status.BAD_REQUEST).entity(
+                    SandboxException.SandboxErrorType.SERVICE_ERROR.getCode() + " " + SandboxException.SandboxErrorType.SERVICE_ERROR.getMessage())
+                    .build();
+        }
+
+    }
+
+
+
+
+
+
+
+
+
+
 
 
 

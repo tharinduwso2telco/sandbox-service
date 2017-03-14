@@ -1,9 +1,8 @@
 package com.wso2telco.services.dep.sandbox.dao;
 
-import com.wso2telco.services.dep.sandbox.dao.model.domain.SMSDeliveryStatus;
-import com.wso2telco.services.dep.sandbox.dao.model.domain.SMSMessagingParam;
-import com.wso2telco.services.dep.sandbox.dao.model.domain.SMSRequestLog;
-import com.wso2telco.services.dep.sandbox.dao.model.domain.User;
+import com.wso2telco.services.dep.sandbox.dao.model.domain.*;
+
+import java.util.List;
 
 public interface SMSMessagingDAO {
 	public SMSDeliveryStatus getPreviousSMSDeliveryDetailsByMtSMSTransactionId(String mtSMSTransactionId);
@@ -17,5 +16,5 @@ public interface SMSMessagingDAO {
 			String clientCorrelator, String senderName, String notifyURL, String callbackData, Integer batchsize,
 			String status, Integer txntype, String criteria, String notificationFormat, User user,
 			String deliveryStatus) ;
-
+	public List<SendSMSToApplication> getMessageInbound(String regid, Integer userid);
 }

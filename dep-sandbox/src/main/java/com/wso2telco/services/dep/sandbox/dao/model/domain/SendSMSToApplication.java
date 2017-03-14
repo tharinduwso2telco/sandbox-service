@@ -36,7 +36,8 @@ public class SendSMSToApplication {
     
     @Column(name="destination_address")
     private String destinationAddress;
-    
+
+    @Column(name="message")
     private String message;
     
     @Temporal(javax.persistence.TemporalType.DATE)

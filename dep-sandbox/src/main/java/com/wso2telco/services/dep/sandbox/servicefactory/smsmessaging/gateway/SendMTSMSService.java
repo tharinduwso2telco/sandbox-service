@@ -44,6 +44,7 @@ class SendMTSMSService extends AbstractRequestHandler<SendMTSMSRequestWrapperDTO
     private SendMTSMSRequestWrapperDTOGateway extendedRequestDTO;
     private SendMTSMSResponseWrapper responseWrapper;
     private SMSMessagingDAO smsMessagingDAO;
+    private String resourceURL;
 
 
     {
@@ -214,6 +215,7 @@ class SendMTSMSService extends AbstractRequestHandler<SendMTSMSRequestWrapperDTO
 
         responseWrapper = new SendMTSMSResponseWrapper();
         this.extendedRequestDTO = extendedRequestDTO;
+        resourceURL = CommonUtil.getResourceUrl(extendedRequestDTO);
 
     }
 
@@ -226,14 +228,7 @@ class SendMTSMSService extends AbstractRequestHandler<SendMTSMSRequestWrapperDTO
      */
     private String getinSideResourceURL(final String mtSMSTransactionId) {
 
-        return "http://wso2telco.sandbox.com" +
-                "/smsmessaging/" +
-                extendedRequestDTO.getApiVersion() +
-                "/outbound/" +
-                extendedRequestDTO.getShortCode() +
-                "/requests/" +
-                mtSMSTransactionId +
-                "/deliveryInfos";
+        return resourceURL + "/deliveryInfos";
     }
 
     /**
@@ -244,13 +239,7 @@ class SendMTSMSService extends AbstractRequestHandler<SendMTSMSRequestWrapperDTO
      */
     private String getoutSideResourceURL(final String mtSMSTransactionId) {
 
-        return "http://wso2telco.sandbox.com" +
-                "/smsmessaging/" +
-                extendedRequestDTO.getApiVersion() +
-                "/outbound/" +
-                extendedRequestDTO.getShortCode() +
-                "/requests/" +
-                mtSMSTransactionId;
+        return resourceURL;
     }
 
 

@@ -1,16 +1,14 @@
 package com.wso2telco.services.dep.sandbox.dao.hibernate;
 
 import java.util.Date;
+import java.util.List;
 
+import com.wso2telco.services.dep.sandbox.dao.model.domain.*;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 
 import com.wso2telco.services.dep.sandbox.dao.SMSMessagingDAO;
-import com.wso2telco.services.dep.sandbox.dao.model.domain.SMSDeliveryStatus;
-import com.wso2telco.services.dep.sandbox.dao.model.domain.SMSMessagingParam;
-import com.wso2telco.services.dep.sandbox.dao.model.domain.SMSRequestLog;
-import com.wso2telco.services.dep.sandbox.dao.model.domain.User;
 
 class HibernateSMSMessagingDAO extends HibernateCommonDAO  implements SMSMessagingDAO{
 
@@ -112,6 +110,18 @@ class HibernateSMSMessagingDAO extends HibernateCommonDAO  implements SMSMessagi
 		}
 
 		return mtSMSTransactionId;
+	}
+
+	@Override
+	public List<SendSMSToApplication> getMessageInbound(String registrationID, Integer userid) {
+
+		List<SendSMSToApplication> sendSMSToApplicationList;
+		Session session = getSession();
+
+		sendSMSToApplicationList = session.createQuery("from SendSMSToApplication where destinationAddress = ? and user.id = ?").setString(0, registrationID).setInteger(1, userid).list();
+
+		return sendSMSToApplicationList;
+
 	}
 
 	public boolean saveQueryDeliveryStatusTransaction(String senderAddress, String addresses, String message,
