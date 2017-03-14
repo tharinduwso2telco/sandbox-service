@@ -44,6 +44,7 @@ class SendMTSMSService extends AbstractRequestHandler<SendMTSMSRequestWrapperDTO
     private SendMTSMSRequestWrapperDTOGateway extendedRequestDTO;
     private SendMTSMSResponseWrapper responseWrapper;
     private SMSMessagingDAO smsMessagingDAO;
+    private String resourceURL;
 
 
     {
@@ -66,32 +67,35 @@ class SendMTSMSService extends AbstractRequestHandler<SendMTSMSRequestWrapperDTO
 
     @Override
     protected boolean validate(SendMTSMSRequestWrapperDTOGateway wrapperDTO) throws Exception {
-        OutboundSMSMessageRequestBeanGateway outboundSMSMessageRequestBean_Gateway = wrapperDTO
+        OutboundSMSMessageRequestBeanGateway outboundSMSMessageRequestBeanGateway = wrapperDTO
                 .getOutboundSMSMessageRequestBeanGw();
 
-        String address = CommonUtil.getNullOrTrimmedValue(outboundSMSMessageRequestBean_Gateway
+        String address = CommonUtil.getNullOrTrimmedValue(outboundSMSMessageRequestBeanGateway
                 .getOutboundSMSMessageRequest().getAddress().toString());
-        String callBackData = CommonUtil.getNullOrTrimmedValue(outboundSMSMessageRequestBean_Gateway
+        String callBackData = CommonUtil.getNullOrTrimmedValue(outboundSMSMessageRequestBeanGateway
                 .getOutboundSMSMessageRequest().getReceiptRequest().getCallbackData());
-        String clientCorrelator = CommonUtil.getNullOrTrimmedValue(outboundSMSMessageRequestBean_Gateway
+        String clientCorrelator = CommonUtil.getNullOrTrimmedValue(outboundSMSMessageRequestBeanGateway
                 .getOutboundSMSMessageRequest().getClientCorrelator());
-        String message = CommonUtil.getNullOrTrimmedValue(outboundSMSMessageRequestBean_Gateway
+        String message = CommonUtil.getNullOrTrimmedValue(outboundSMSMessageRequestBeanGateway
                 .getOutboundSMSMessageRequest().getOutboundSMSTextMessage().getMessage());
-        String notifyURL = CommonUtil.getNullOrTrimmedValue(outboundSMSMessageRequestBean_Gateway
+        String notifyURL = CommonUtil.getNullOrTrimmedValue(outboundSMSMessageRequestBeanGateway
                 .getOutboundSMSMessageRequest().getReceiptRequest().getNotifyURL());
+        String senderAddress = CommonUtil.getNullOrTrimmedValue(outboundSMSMessageRequestBeanGateway
+                .getOutboundSMSMessageRequest().getSenderAddress());
+        String senderName = CommonUtil.getNullOrTrimmedValue(outboundSMSMessageRequestBeanGateway
+                .getOutboundSMSMessageRequest().getSenderName());
 
 
         List<ValidationRule> validationRulesList = new ArrayList<>();
 
         try {
             validationRulesList.add(new ValidationRule(ValidationRule.VALIDATION_TYPE_MANDATORY, "address", address));
-            validationRulesList.add(new ValidationRule(ValidationRule.VALIDATION_TYPE_OPTIONAL, "callBackData",
-                    callBackData));
-            validationRulesList.add(new ValidationRule(ValidationRule.VALIDATION_TYPE_OPTIONAL, "clientCorrelator",
-                    clientCorrelator));
+            validationRulesList.add(new ValidationRule(ValidationRule.VALIDATION_TYPE_OPTIONAL, "callBackData", callBackData));
+            validationRulesList.add(new ValidationRule(ValidationRule.VALIDATION_TYPE_OPTIONAL, "clientCorrelator", clientCorrelator));
             validationRulesList.add(new ValidationRule(ValidationRule.VALIDATION_TYPE_MANDATORY, "message", message));
-            validationRulesList.add(new ValidationRule(ValidationRule.VALIDATION_TYPE_OPTIONAL, "notifyURL",
-                    notifyURL));
+            validationRulesList.add(new ValidationRule(ValidationRule.VALIDATION_TYPE_OPTIONAL, "notifyURL", notifyURL));
+            validationRulesList.add(new ValidationRule(ValidationRule.VALIDATION_TYPE_OPTIONAL, "senderName", senderName));
+            validationRulesList.add(new ValidationRule(ValidationRule.VALIDATION_TYPE_MANDATORY, "senderAddress", senderAddress));
 
             ValidationRule[] validationRules = new ValidationRule[validationRulesList.size()];
             validationRules = validationRulesList.toArray(validationRules);
@@ -102,6 +106,7 @@ class SendMTSMSService extends AbstractRequestHandler<SendMTSMSRequestWrapperDTO
             LOG.error("###SMS### Error in Validations. ", ex);
             responseWrapper.setRequestError(
                     constructRequestError(SERVICEEXCEPTION, ex.getErrcode(), ex.getErrmsg(), ex.getErrvar()[0]));
+            responseWrapper.setHttpStatus(Response.Status.BAD_REQUEST);
             return false;
         }
         return true;
@@ -124,12 +129,17 @@ class SendMTSMSService extends AbstractRequestHandler<SendMTSMSRequestWrapperDTO
             String endUserId = extendedRequestDTO.getOutboundSMSMessageRequestBeanGw().getOutboundSMSMessageRequest()
                     .getAddress().toString();
 
+            String senderAddress = extendedRequestDTO.getOutboundSMSMessageRequestBeanGw().getOutboundSMSMessageRequest().getSenderAddress();
+            String senderAddressOnly= senderAddress.replaceAll("[^0-9]", "");
+
+
+
             OutboundSMSMessageRequestBeanGateway requestBean = extendedRequestDTO.getOutboundSMSMessageRequestBeanGw();
 
             OutboundSMSMessageResponseBean responseBean = new OutboundSMSMessageResponseBean();
 
-            OutboundSMSMessageResponseBean.OutboundSMSMessageResponse_Gw smsMessageResponse = new
-                    OutboundSMSMessageResponseBean.OutboundSMSMessageResponse_Gw();
+            OutboundSMSMessageResponseBean.OutboundSMSMessageResponseGateway smsMessageResponse = new
+                    OutboundSMSMessageResponseBean.OutboundSMSMessageResponseGateway();
 
 
             if (clientCorrelator != null) {
@@ -145,6 +155,14 @@ class SendMTSMSService extends AbstractRequestHandler<SendMTSMSRequestWrapperDTO
                     return responseWrapper;
 
                 }
+            }
+
+            if(!dao.isWhiteListedSenderAddress(user.getId(), senderAddressOnly)){
+                LOG.error("###SMS### sender address is not WhiteListed ");
+                responseWrapper.setRequestError(constructRequestError(SERVICEEXCEPTION,
+                        ServiceError.INVALID_INPUT_VALUE, "Sender Address is not WhiteListed"));
+                responseWrapper.setHttpStatus(Response.Status.BAD_REQUEST);
+                return responseWrapper;
             }
 
             smsMessageResponse.setResourceURL(getoutSideResourceURL(Integer.toString(getReferenceNumber())));
@@ -197,6 +215,7 @@ class SendMTSMSService extends AbstractRequestHandler<SendMTSMSRequestWrapperDTO
 
         responseWrapper = new SendMTSMSResponseWrapper();
         this.extendedRequestDTO = extendedRequestDTO;
+        resourceURL = CommonUtil.getResourceUrl(extendedRequestDTO);
 
     }
 
@@ -209,14 +228,7 @@ class SendMTSMSService extends AbstractRequestHandler<SendMTSMSRequestWrapperDTO
      */
     private String getinSideResourceURL(final String mtSMSTransactionId) {
 
-        return "http://wso2telco.sandbox.com" +
-                "/smsmessaging/" +
-                extendedRequestDTO.getApiVersion() +
-                "/outbound/" +
-                extendedRequestDTO.getShortCode() +
-                "/requests/" +
-                mtSMSTransactionId +
-                "/deliveryInfos";
+        return resourceURL + "/deliveryInfos";
     }
 
     /**
@@ -227,13 +239,7 @@ class SendMTSMSService extends AbstractRequestHandler<SendMTSMSRequestWrapperDTO
      */
     private String getoutSideResourceURL(final String mtSMSTransactionId) {
 
-        return "http://wso2telco.sandbox.com" +
-                "/smsmessaging/" +
-                extendedRequestDTO.getApiVersion() +
-                "/outbound/" +
-                extendedRequestDTO.getShortCode() +
-                "/requests/" +
-                mtSMSTransactionId;
+        return resourceURL;
     }
 
 
@@ -295,11 +301,8 @@ class SendMTSMSService extends AbstractRequestHandler<SendMTSMSRequestWrapperDTO
                 }
             }
 
-
         }
-
         return jsonString;
-
     }
 
 

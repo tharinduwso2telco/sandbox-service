@@ -17,13 +17,12 @@ package com.wso2telco.services.dep.sandbox.servicefactory.smsmessaging.hub;
 
 import com.wso2telco.services.dep.sandbox.dao.model.custom.RequestDTO;
 import com.wso2telco.services.dep.sandbox.servicefactory.RequestHandleable;
-import com.wso2telco.services.dep.sandbox.servicefactory.smsmessaging.gateway.SMSRequestFactoryGateway;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
  public class SMSRequestFactoryHub {
 
-    private static Log LOG = LogFactory.getLog(SMSRequestFactoryGateway.class);
+    private static Log LOG = LogFactory.getLog(SMSRequestFactoryHub.class);
 
     public static RequestHandleable getInstance(final RequestDTO requestDTO) {
 

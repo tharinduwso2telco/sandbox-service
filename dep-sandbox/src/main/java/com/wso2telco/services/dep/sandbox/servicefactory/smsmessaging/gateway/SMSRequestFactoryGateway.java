@@ -43,6 +43,13 @@ public class SMSRequestFactoryGateway {
                 return new SendMTSMSService();
             }
 
+        else if (requestDTO.getRequestPath().toLowerCase().contains(RETRIVE_SMS)
+                && requestDTO.isGet()) {
+            LOG.debug("LOADING RETRIVE SMS SERVICE");
+
+            return new ReceivingSMSHandler();
+        }
+
        else {
              return null;
          }
