@@ -11,6 +11,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializer;
 import com.wso2telco.dep.oneapivalidation.exceptions.CustomException;
 import com.wso2telco.dep.oneapivalidation.util.ValidationRule;
+import com.wso2telco.services.dep.sandbox.dao.hibernate.HibernateLoggingDao;
 import com.wso2telco.services.dep.sandbox.dao.model.domain.MessageLog;
 import com.wso2telco.services.dep.sandbox.servicefactory.AddressIgnorerable;
 import com.wso2telco.services.dep.sandbox.util.CommonUtil;
@@ -206,9 +207,11 @@ class QuerySMSDeliveryStatusService extends AbstractRequestHandler<QuerySMSDeliv
 						extendedRequestDTO.getShortCode(), null, null, null, null, null, null, 0, "success", 5,
 						null, null, user, extendedRequestDTO.getMtSMSTransactionId());
 
-				boolean delivaryStatusResponseStatus = smsMessagingDAO.saveDeliveryStatusResponse(jsonRequestString,deliveryStatus,type,apiId,
-						userId,"shortcode",sendersAddress);
-				if(!delivaryStatusResponseStatus)
+				/*boolean messageLogId = smsMessagingDAO.saveDeliveryStatusResponse(jsonRequestString,deliveryStatus,type,apiId,
+						userId,"shortcode",sendersAddress);*/
+				HibernateLoggingDao x = new HibernateLoggingDao();
+				int messageLogId = x.saveMessageLog(previousSMSDeliveryDetails);
+				if(messageLogId == 0)
 				{
 					responseWrapperDTO.setRequestError(constructRequestError(SERVICEEXCEPTION, "SVC0002",
 							"A service error occurred. Error code is %1", "process failure of Response of the QuerySMSDeliveryStatus"));

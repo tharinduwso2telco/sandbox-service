@@ -14,8 +14,8 @@ public interface SMSMessagingDAO {
 			String clientCorrelator, String senderName, String notifyURL, String callbackData, Integer batchsize,
 			String status, Integer txntype, String criteria, String notificationFormat, User user, String requestId) ;
 	public SMSMessagingParam getSMSMessagingParam(int userId);
-	public boolean saveDeliveryStatusResponse(String requestUrl,int status, int type, int serviceId, int userId,
-											 String reference, String referenceValue);
+	/*public boolean saveDeliveryStatusResponse(String requestUrl,int status, int type, int serviceId, int userId,
+											 String reference, String referenceValue);*/
 
 	public String saveSendSMSTransaction(String senderAddress, String addresses, String message,
 			String clientCorrelator, String senderName, String notifyURL, String callbackData, Integer batchsize,

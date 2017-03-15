@@ -338,37 +338,6 @@ class HibernateSMSMessagingDAO extends HibernateCommonDAO  implements SMSMessagi
 		return true;
 	}
 
-	public boolean saveDeliveryStatusResponse(String requestUrl,int status, int type, int serviceId, int userId,
-											  String reference, String referenceValue)
-	{
-		Session session = null;
-		Transaction tx = null;
-		MessageLog messageLog = new MessageLog();
-		try {
-			session = getSession();
-			tx = session.beginTransaction();
-			messageLog.setRequest(requestUrl);
-			messageLog.setStatus(status);
-			messageLog.setType(type);
-			messageLog.setServicenameid(serviceId);
-			messageLog.setUserid(userId);
-			messageLog.setReference(reference);
-			messageLog.setValue(referenceValue);
-			session.save(messageLog);
-			tx.commit();
-		}
-		catch (Exception ex)
-		{
-			tx.rollback();
-			return false;
-		}finally {
-
-			session.close();
-		}
-
-
-		return true;
-	}
 
 
 }
