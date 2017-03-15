@@ -15,10 +15,12 @@
  ******************************************************************************/
 package com.wso2telco.services.dep.sandbox.dao.model.custom;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+
 import java.util.ArrayList;
 import java.util.List;
 
-
+@JsonInclude(value = JsonInclude.Include.NON_NULL)
 public class OutboundSMSMessageRequest {
 
 

@@ -281,15 +281,16 @@ class SendMTSMSService extends AbstractRequestHandler<SendMTSMSRequestWrapperDTO
 
             int responseStatus = aResponse.getStatus();
             int responseType = aResponse.getType();
-            String responseClientCorrelator;
+            String responseClientCorrelator = null;
 
             if (responseType == type.getValue() && responseStatus == status.getValue()) {
                 String request = aResponse.getRequest();
                 JSONObject json = new JSONObject(request);
 
-                responseClientCorrelator = json.getJSONObject("outboundSMSMessageRequest").get
-                        ("clientCorrelator").toString();
-
+                if(json.getJSONObject("outboundSMSMessageRequest").has("clientCorrelator")) {
+                    responseClientCorrelator = json.getJSONObject("outboundSMSMessageRequest").get
+                            ("clientCorrelator").toString();
+                }
                 int responseUserId = aResponse.getUserid();
                 String responseTel = aResponse.getValue();
 

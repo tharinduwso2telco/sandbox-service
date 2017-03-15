@@ -18,6 +18,15 @@ package com.wso2telco.services.dep.sandbox.dao.model.custom;
 
 public class DeliveryReceiptSubscription {
 
+    private CallbackReference callbackReference;
+
+    public CallbackReference getCallbackReference() {
+        return callbackReference;
+    }
+
+    public void setCallbackReference(CallbackReference callbackReference) {
+        this.callbackReference = callbackReference;
+    }
 
     public static  class CallbackReference{
 

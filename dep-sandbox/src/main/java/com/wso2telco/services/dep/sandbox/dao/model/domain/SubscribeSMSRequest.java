@@ -41,7 +41,8 @@ public class SubscribeSMSRequest implements Serializable {
     
     @Column(name="callback_data")
     private String callbackData;
-    
+
+    @Column(name="criteria")
     private String criteria;
     
     @Column(name="notification_format")

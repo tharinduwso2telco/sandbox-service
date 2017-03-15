@@ -34,6 +34,7 @@ public class SMSRequestFactoryGateway {
         final String RETRIVE_SMS = "registrations";
         final String OUTBOUND_REQUEST = "outbound";
         final String INBOUND_REQUEST = "inbound";
+        final String SUBSCRIPTIONS = "subscriptions";
 
 
          if (requestDTO.getRequestPath().toLowerCase().contains(SEND_MT_SMS)
@@ -50,6 +51,12 @@ public class SMSRequestFactoryGateway {
             return new ReceivingSMSHandler();
         }
 
+         else if (requestDTO.getRequestPath().toLowerCase().contains(SUBSCRIPTIONS)
+                 && requestDTO.isPost()) {
+             LOG.debug("LOADING SUBSCRIPTIONS SMS SERVICE");
+
+             return new SubscribeApplicationNotificationsHandler();
+         }
        else {
              return null;
          }
