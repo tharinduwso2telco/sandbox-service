@@ -16,6 +16,7 @@
 package com.wso2telco.services.dep.sandbox.servicefactory.smsmessaging;
 
 import com.wso2telco.dep.oneapivalidation.exceptions.RequestError;
+import com.wso2telco.services.dep.sandbox.dao.model.custom.ErrorResponseDTO;
 import com.wso2telco.services.dep.sandbox.servicefactory.AbstractReturnWrapperDTO;
 
 public class QuerySMSDeliveryStatusResponseWrapper extends AbstractReturnWrapperDTO {
@@ -33,8 +34,17 @@ public class QuerySMSDeliveryStatusResponseWrapper extends AbstractReturnWrapper
 
 	@Override
 	public Object getResponse() {
-		// TODO Auto-generated method stub
-		return null;
+
+
+		if(getRequestError() == null)
+		{
+			return 	getQuerySMSDeliveryStatusResponseBean();
+		}
+		else
+		{
+			ErrorResponseDTO response = new ErrorResponseDTO(getRequestError());
+			return response;
+		}
 	}
 
 	class QuerySMSDeliveryStatusResponse {
