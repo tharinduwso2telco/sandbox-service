@@ -272,7 +272,7 @@ import javax.ws.rs.core.Response;
             returnable = requestHandler.execute(requestWrapperDTO);
             return  Response.status(returnable.getHttpStatus()).entity(returnable.getResponse()).build();
         } catch (Exception e) {
-            e.printStackTrace();
+           LOG.error("SMS QUERY DELIVERY STATUS ERROR"+e);
             return Response.status(Response.Status.BAD_REQUEST).entity(returnable.getResponse()).build();
         }
 

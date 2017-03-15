@@ -33,6 +33,16 @@ import org.json.JSONObject;
 
 class QuerySMSDeliveryStatusService extends AbstractRequestHandler<QuerySMSDeliveryStatusRequestWrapperDTO> implements AddressIgnorerable {
 
+
+	public static final String OUTBOUND_SMS_MESSAGE_REQUEST= "outboundSMSMessageRequest";
+	public static  final String DELIVERY_INFO_LIST = "deliveryInfoList";
+	public static  final String DELIVERY_INFO =  "deliveryInfo";
+	public static  final String ADDRESS = "address";
+	public static  final String DELIVERY_STATUS = "deliveryStatus";
+	public static  final String RESOURCE_URL="resourceURL";
+	public static  final String SENDER_ADDRESS ="senderAddress";
+	public static  final String PARAM_SENDER_ADDRESS = "sender_address";
+	public static  final String PARAM_TRANSACTION_ID ="transaction_id";
 	Gson gson = new GsonBuilder().serializeNulls().create();
 	QuerySMSDeliveryStatusRequestWrapperDTO extendedRequestDTO = null;
 	QuerySMSDeliveryStatusResponseWrapper responseWrapperDTO = null;
@@ -52,8 +62,8 @@ class QuerySMSDeliveryStatusService extends AbstractRequestHandler<QuerySMSDeliv
 
 		try
 		{
-               validationRulesList.add(new ValidationRule(ValidationRule.VALIDATION_TYPE_MANDATORY,"sender_address",shortCode));
-               validationRulesList.add(new ValidationRule(ValidationRule.VALIDATION_TYPE_MANDATORY,"transaction_id",transactionId));
+               validationRulesList.add(new ValidationRule(ValidationRule.VALIDATION_TYPE_MANDATORY,PARAM_SENDER_ADDRESS,shortCode));
+               validationRulesList.add(new ValidationRule(ValidationRule.VALIDATION_TYPE_MANDATORY,PARAM_TRANSACTION_ID,transactionId));
 		}
 		catch (CustomException ex)
 		{
@@ -78,6 +88,7 @@ class QuerySMSDeliveryStatusService extends AbstractRequestHandler<QuerySMSDeliv
 			String id = Integer.toString(userId);
 			SMSRequestLog previousSMSRequestDetails = null;
 			MessageLog previousSMSDeliveryDetails = null;
+
 			ArrayList<HashMap<String,String>> deliveryStatusArraylist = new ArrayList();
 
 			String mtSMSTransactionIdParts[] = extendedRequestDTO.getMtSMSTransactionId().split("-");
@@ -135,21 +146,21 @@ class QuerySMSDeliveryStatusService extends AbstractRequestHandler<QuerySMSDeliv
                   //ToDo use enums for the hard coded values in JSON objects
 						jsonRequestString = previousSMSDeliveryDetails.getRequest();
 						JSONObject jsonObject = new JSONObject(jsonRequestString);
-						JSONObject jsonChildObj = (JSONObject) jsonObject.getJSONObject("outboundSMSMessageRequest");
-						JSONObject jsoninnerChild = (JSONObject) jsonChildObj.getJSONObject("deliveryInfoList");
+						JSONObject jsonChildObj = (JSONObject) jsonObject.getJSONObject(OUTBOUND_SMS_MESSAGE_REQUEST);
+						JSONObject jsoninnerChild = (JSONObject) jsonChildObj.getJSONObject(DELIVERY_INFO_LIST);
 
 						String address = null;
 						String status = null;
 
-						JSONArray deliveryListArray = jsoninnerChild.getJSONArray("deliveryInfo");
+						JSONArray deliveryListArray = jsoninnerChild.getJSONArray(DELIVERY_INFO);
 						String arrayList = deliveryListArray.toString();
 						for (int i = 0; i < deliveryListArray.length(); i++) {
 							HashMap<String, String> delivaryStatusHashmap = new HashMap<>();
 							JSONObject jsonArrayList = deliveryListArray.getJSONObject(i);
-							address = jsonArrayList.optString("address");
-							status = jsonArrayList.optString("deliveryStatus");
-							delivaryStatusHashmap.put("address", address);
-							delivaryStatusHashmap.put("deliveryStatus", status);
+							address = jsonArrayList.optString(ADDRESS);
+							status = jsonArrayList.optString(DELIVERY_STATUS);
+							delivaryStatusHashmap.put(ADDRESS, address);
+							delivaryStatusHashmap.put(DELIVERY_STATUS, status);
 							deliveryStatusArraylist.add(delivaryStatusHashmap);
 
 						}
@@ -157,9 +168,9 @@ class QuerySMSDeliveryStatusService extends AbstractRequestHandler<QuerySMSDeliv
 						deliveryStat = status;
 						recieverAddress = address;
 						//deliveryStatuss =  jsonObject.getString("deliveryStatus");
-						resourceUrl = jsonChildObj.getString("resourceURL");
+						resourceUrl = jsonChildObj.getString(RESOURCE_URL);
 
-						sendersAddress = jsonChildObj.getString("senderAddress");
+						sendersAddress = jsonChildObj.getString(SENDER_ADDRESS);
 						//sendersAddress = address.toString();
 
 
@@ -241,8 +252,8 @@ class QuerySMSDeliveryStatusService extends AbstractRequestHandler<QuerySMSDeliv
 					for(int i=0; i<deliveryStatusArraylist.size();i++)
 					{
 						QuerySMSDeliveryStatusResponseBean.DeliveryInfoList.DeliveryInfo responseDeliveryInfos = new QuerySMSDeliveryStatusResponseBean.DeliveryInfoList.DeliveryInfo();
-						responseDeliveryInfos.setAddress(deliveryStatusArraylist.get(i).get("address"));
-						responseDeliveryInfos.setDeliveryStatus(deliveryStatusArraylist.get(i).get("deliveryStatus"));
+						responseDeliveryInfos.setAddress(deliveryStatusArraylist.get(i).get(ADDRESS));
+						responseDeliveryInfos.setDeliveryStatus(deliveryStatusArraylist.get(i).get(DELIVERY_STATUS));
 						deliveryInforArrayList.add(responseDeliveryInfos);
 
 					}
