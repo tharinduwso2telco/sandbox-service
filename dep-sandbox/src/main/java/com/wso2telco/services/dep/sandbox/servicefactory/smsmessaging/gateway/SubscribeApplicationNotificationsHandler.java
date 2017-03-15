@@ -38,7 +38,8 @@ import java.util.Date;
 import java.util.List;
 
 class SubscribeApplicationNotificationsHandler extends
-        AbstractRequestHandler<SubscribeApplicationNotificationsRequestWrapperGateway> implements AddressIgnorerable {
+        AbstractRequestHandler<SubscribeApplicationNotificationsRequestWrapperGateway> implements AddressIgnorerable,
+        RequestResponseRequestHandleable<SubscribeApplicationNotificationsRequestWrapperGateway> {
 
     private SubscribeApplicationNotificationsResponseWrapper responseWrapper;
     private SubscribeApplicationNotificationsRequestWrapperGateway requestWrapper;
@@ -112,7 +113,8 @@ class SubscribeApplicationNotificationsHandler extends
     }
 
     @Override
-    protected Returnable process(SubscribeApplicationNotificationsRequestWrapperGateway extendedRequestDTO) throws Exception {
+    protected Returnable process(SubscribeApplicationNotificationsRequestWrapperGateway extendedRequestDTO) throws
+            Exception {
 
         try {
 
@@ -137,7 +139,8 @@ class SubscribeApplicationNotificationsHandler extends
             String callbackData = extendedRequestDTO.getSubscribeApplicationNotificationsRequestBean()
                     .getSubscription().getCallbackReference().getCallbackData();
 
-            String notificationFormat = extendedRequestDTO.getSubscribeApplicationNotificationsRequestBean().getSubscription().getNotificationFormat();
+            String notificationFormat = extendedRequestDTO.getSubscribeApplicationNotificationsRequestBean()
+                    .getSubscription().getNotificationFormat();
 
 
             if (clientCorrelator != null) {
@@ -174,8 +177,17 @@ class SubscribeApplicationNotificationsHandler extends
                 }
             }
 
-            Integer subsId = smsMessagingDAO.saveSubscribeSMSRequest(destinationAddress, notifyURL, callbackData,
-                    criteria, clientCorrelator, user);
+            SubscribeSMSRequest subscribeSMSRequest = new SubscribeSMSRequest();
+            subscribeSMSRequest.setCallbackData(callbackData);
+            subscribeSMSRequest.setClientCorrelator(clientCorrelator);
+            subscribeSMSRequest.setCriteria(criteria);
+            subscribeSMSRequest.setDestinationAddress(destinationAddress);
+            subscribeSMSRequest.setNotifyURL(notifyURL);
+            subscribeSMSRequest.setUser(user);
+            subscribeSMSRequest.setDate(new Date());
+            subscribeSMSRequest.setNotificationFormat("JSON");
+            Integer subsId = smsMessagingDAO.saveSubscribeSMSRequest(subscribeSMSRequest);
+
             String resourceURLMaker = CommonUtil.getResourceUrl(extendedRequestDTO);
             int index = resourceURLMaker.lastIndexOf('/');
             String resourceURL = resourceURLMaker.substring(0, index) + "/" + subsId;
@@ -248,7 +260,7 @@ class SubscribeApplicationNotificationsHandler extends
                 String request = aResponse.getRequest();
                 JSONObject json = new JSONObject(request);
 
-                if(json.getJSONObject("subscription").has("clientCorrelator")) {
+                if (json.getJSONObject("subscription").has("clientCorrelator")) {
 
                     responseClientCorrelator = json.getJSONObject("subscription").get("clientCorrelator").toString();
                 }
@@ -270,7 +282,7 @@ class SubscribeApplicationNotificationsHandler extends
 
     private void saveResponse(String endUserIdPath, SubscribeApplicationNotificationsResponseBean responseBean,
                               APIServiceCalls
-            apiServiceCalls, MessageProcessStatus status) throws Exception {
+                                      apiServiceCalls, MessageProcessStatus status) throws Exception {
 
         Gson gson = new Gson();
         String jsonString = gson.toJson(responseBean);
@@ -291,4 +303,23 @@ class SubscribeApplicationNotificationsHandler extends
         loggingDAO.saveMessageLog(messageLog);
     }
 
+    @Override
+    public String getApiServiceCalls() {
+        try {
+            return ServiceName.SubscribeToApplication.toString();
+        } catch (Exception ex) {
+            return null;
+        }
+    }
+
+    @Override
+    public String getJosonString(SubscribeApplicationNotificationsRequestWrapperGateway requestDTO) {
+        Gson gson = new Gson();
+        return gson.toJson(requestDTO.getSubscribeApplicationNotificationsRequestBean());
+    }
+
+    @Override
+    public String getnumber(SubscribeApplicationNotificationsRequestWrapperGateway requestDTO) {
+        return requestDTO.getSubscribeApplicationNotificationsRequestBean().getSubscription().getDestinationAddress();
+    }
 }

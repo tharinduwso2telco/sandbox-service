@@ -138,7 +138,7 @@ import java.util.List;
             responseBean.setTotalNumberOfPendingMessages(smsMessageList.size()-maxBatchSize);
 
             responseWrapper.setReceivingSMSResponseBean(responseBean);
-            responseWrapper.setHttpStatus(Response.Status.CREATED);
+            responseWrapper.setHttpStatus(Response.Status.OK);
 
             // Save Success Response
             saveResponse(registrationId, responseBean, apiServiceCalls, MessageProcessStatus.Success);
