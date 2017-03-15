@@ -17,6 +17,12 @@ public interface SMSMessagingDAO {
 			String status, Integer txntype, String criteria, String notificationFormat, User user,
 			String deliveryStatus) ;
 	public List<SendSMSToApplication> getMessageInbound(String regid, Integer userid);
+	public int saveSubscribeSMSRequest(String destinationAddress, String notifyURL, String callbackData, String criteria, String clientCorrelator, User user) throws Exception;
+	boolean saveDeliverySubscription(User userId, String sender_address, int sub_status, String notify_url, String filter,
+									 String callbackData, String clinetCorrelator, String request);
+
+	boolean isSubscriptionExists(String filterCriteria, String notifyUrl, String callbackData, String clientCorrelator);
+	boolean removeSubscription(int userId, String senderAddress);
 	public int saveSubscribeSMSRequest(SubscribeSMSRequest subscribeSMSRequest) throws Exception;
 
 	public boolean removeSubscriptionToMessage(String subscriptionID) throws Exception;

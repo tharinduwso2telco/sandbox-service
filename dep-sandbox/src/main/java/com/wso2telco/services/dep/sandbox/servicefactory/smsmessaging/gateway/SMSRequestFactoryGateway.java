@@ -34,6 +34,8 @@ public class SMSRequestFactoryGateway {
         final String RETRIVE_SMS = "registrations";
         final String OUTBOUND_REQUEST = "outbound";
         final String INBOUND_REQUEST = "inbound";
+        final String SUBSCRIBE_TO_DELEVERY_NOTIFICATION = "subscriptions";
+        final String STOP_DELIVERY_SUBSCRIPTION_NOTIFICATION = "subscription";
         final String SUBSCRIPTIONS = "subscriptions";
 
 
@@ -42,7 +44,13 @@ public class SMSRequestFactoryGateway {
             LOG.debug("LOADING SEND MT SMS SERVICE");
 
                 return new SendMTSMSService();
-            }
+            } else if (requestDTO.getRequestPath().toLowerCase().contains(SUBSCRIBE_TO_DELEVERY_NOTIFICATION)) {
+                LOG.debug("LOADING NOTIFICATION SUBSCRIPTION SERVICE");
+                return new SubscribeToDeliveryNotificationService();
+            } else if (requestDTO.getRequestPath().toLowerCase().contains(STOP_DELIVERY_SUBSCRIPTION_NOTIFICATION)) {
+                LOG.debug("LOADING STOP SUBSCRIPTION NOTIFICATION SERVICE");
+                return new StopSubscribeToDeliveryNotificationService();
+         }
 
         else if (requestDTO.getRequestPath().toLowerCase().contains(RETRIVE_SMS)
                 && requestDTO.isGet()) {

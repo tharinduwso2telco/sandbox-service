@@ -162,6 +162,94 @@ import javax.ws.rs.core.Response;
         }
     }
 
+    @POST
+    @Path("/v1_2/outbound/{senderAddress}/subscriptions")
+    @ApiOperation(value = "sms", notes = "Subscribe SMS service in Gateway", response = Response.class)
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "sandbox", value = "Authorization token",
+                    required = true, dataType = "string", paramType = "header")
+    })
+    public Response handleSubscribeToDeliveryNotifications(
+            @Context HttpServletRequest httpRequest,
+            @ApiParam(value = "senderAddress", required = true)
+            @PathParam("senderAddress") String senderAddress,
+            SubscribeToDeliveryNotificationRequestBeanGateway subscribeToDeliveryNotificationRequestBeanGateway) {
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("###SMS### /{senderAddress} invoked : senderAddress - " + senderAddress);
+        }
+        if (LOG.isDebugEnabled() && subscribeToDeliveryNotificationRequestBeanGateway != null) {
+            LOG.debug(subscribeToDeliveryNotificationRequestBeanGateway);
+        }
 
+        SubscribeToDeliveryNotificationWrapperDTOGateway requestDTO = new
+                SubscribeToDeliveryNotificationWrapperDTOGateway();
+        requestDTO.setHttpRequest(httpRequest);
+        requestDTO.setRequestType(RequestType.SMSMESSAGING);
+        requestDTO.setApiVersion("v1_2");
+        requestDTO.setSenderAddress(senderAddress);
+        requestDTO.setSubscribeToDeliveryNotificationRequestBeanGateway
+                (subscribeToDeliveryNotificationRequestBeanGateway);
 
+        RequestHandleable handler = RequestBuilderFactoryGateway.getInstance(requestDTO);
+
+        Returnable returnable = null;
+
+        try {
+            returnable = handler.execute(requestDTO);
+            Response response = Response.status(returnable.getHttpStatus()).entity(returnable.getResponse()).build();
+            return response;
+        } catch (Exception e) {
+            e.printStackTrace();
+            LOG.error("Subscribe to Notification SERVICE ERROR", e);
+            return Response.status(Response.Status.BAD_REQUEST).entity(
+                    SandboxException.SandboxErrorType.SERVICE_ERROR.getCode() + " " + SandboxException
+                            .SandboxErrorType.SERVICE_ERROR.getMessage())
+                    .build();
+        }
     }
+
+    @DELETE
+    @Path("/v1_2/outbound/{senderAddress}/subscription/{subscriptionID}")
+    @ApiOperation(value = "sms", notes = "Stop subscribing to delivery status noti:cations", response = Response.class)
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "sandbox", value = "Authorization token",
+                    required = true, dataType = "string", paramType = "header")
+    })
+    public Response handleDeleteSubscriptionNotification(
+            @Context HttpServletRequest httpRequest,
+            @ApiParam(value = "senderAddress", required = true)
+            @PathParam("senderAddress") String senderAddress, @PathParam("subscriptionID") int subscriptionID) {
+
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("###SMS### /{senderAddress} invoked : senderAddress - " + senderAddress);
+        }
+
+        StopSubscriptionNotificationRequestWrapper requestDTO = new StopSubscriptionNotificationRequestWrapper();
+
+        requestDTO.setHttpRequest(httpRequest);
+        requestDTO.setApiVersion("v1_2");
+        requestDTO.setSenderAddress(senderAddress);
+        requestDTO.setSubscriptionID(subscriptionID);
+        requestDTO.setRequestType(RequestType.SMSMESSAGING);
+
+        RequestHandleable handler = RequestBuilderFactoryGateway.getInstance(requestDTO);
+
+        Returnable returnable = null;
+
+        try {
+            returnable = handler.execute(requestDTO);
+            Response response = Response.status(returnable.getHttpStatus()).entity(returnable.getResponse()).build();
+            return response;
+        } catch (Exception e) {
+            e.printStackTrace();
+            LOG.error("Subscribe to Notification SERVICE ERROR", e);
+            return Response.status(Response.Status.BAD_REQUEST).entity(
+                    SandboxException.SandboxErrorType.SERVICE_ERROR.getCode() + " " + SandboxException
+                            .SandboxErrorType.SERVICE_ERROR.getMessage())
+                    .build();
+        }
+    }
+
+}
+
+
