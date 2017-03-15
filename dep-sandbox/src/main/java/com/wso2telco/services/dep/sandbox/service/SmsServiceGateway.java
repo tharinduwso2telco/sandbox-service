@@ -19,9 +19,7 @@ package com.wso2telco.services.dep.sandbox.service;
 import com.wordnik.swagger.annotations.*;
 import com.wso2telco.services.dep.sandbox.exception.SandboxException;
 import com.wso2telco.services.dep.sandbox.servicefactory.RequestBuilderFactoryGateway;
-import com.wso2telco.services.dep.sandbox.servicefactory.smsmessaging.gateway.OutboundSMSMessageRequestBeanGateway;
-import com.wso2telco.services.dep.sandbox.servicefactory.smsmessaging.gateway.ReceivingSMSRequestWrapperGateway;
-import com.wso2telco.services.dep.sandbox.servicefactory.smsmessaging.gateway.SendMTSMSRequestWrapperDTOGateway;
+import com.wso2telco.services.dep.sandbox.servicefactory.smsmessaging.gateway.*;
 import com.wso2telco.services.dep.sandbox.servicefactory.RequestHandleable;
 import com.wso2telco.services.dep.sandbox.servicefactory.Returnable;
 import com.wso2telco.services.dep.sandbox.util.RequestType;
@@ -111,14 +109,31 @@ import javax.ws.rs.core.Response;
 
 
 
+    @POST
+    @Path("/v1_2/inbound/subscriptions")
+    @ApiOperation(value = "sms", notes = "SMS subscriptions service in Gateway", response = Response.class)
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "sandbox", value = "Authorization token",
+                    required = true, dataType = "string", paramType = "header")
+    })
+    public Response subscribeToApplication(@Context HttpServletRequest httpRequest, SubscribeApplicationNotificationsRequestBeanGateway subscribeApplicationNotificationsRequestBean) {
 
+        SubscribeApplicationNotificationsRequestWrapperGateway requestDTO = new SubscribeApplicationNotificationsRequestWrapperGateway();
+        requestDTO.setHttpRequest(httpRequest);
+        requestDTO.setRequestType(RequestType.SMSMESSAGING);
+        requestDTO.setApiVersion("v1_2");
+        requestDTO.setSubscribeApplicationNotificationsRequestBean(subscribeApplicationNotificationsRequestBean);
+        RequestHandleable handler = RequestBuilderFactoryGateway.getInstance(requestDTO);
+        Returnable returnable = null;
 
+        try {
 
-
-
-
-
-
-
+            returnable = handler.execute(requestDTO);
+            return Response.status(returnable.getHttpStatus()).entity(returnable.getResponse()).build();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Response.status(Response.Status.BAD_REQUEST).entity(returnable.getResponse()).build();
+        }
+    }
 
     }

@@ -124,6 +124,46 @@ class HibernateSMSMessagingDAO extends HibernateCommonDAO  implements SMSMessagi
 
 	}
 
+    @Override
+    public int saveSubscribeSMSRequest(String destinationAddress, String notifyURL, String callbackData, String
+            criteria, String clientCorrelator, User user) throws Exception {
+
+
+        Session session = null;
+        Transaction transaction = null;
+        Integer subsid = null;
+
+        try {
+
+            session = getSession();
+            transaction = session.beginTransaction();
+
+            SubscribeSMSRequest subscribeSMSRequest = new SubscribeSMSRequest();
+            subscribeSMSRequest.setCallbackData(callbackData);
+            subscribeSMSRequest.setClientCorrelator(clientCorrelator);
+            subscribeSMSRequest.setCriteria(criteria);
+            subscribeSMSRequest.setDestinationAddress(destinationAddress);
+            subscribeSMSRequest.setNotifyURL(notifyURL);
+            subscribeSMSRequest.setUser(user);
+            subscribeSMSRequest.setDate(new Date());
+            subscribeSMSRequest.setNotificationFormat("JSON");
+            session.save(subscribeSMSRequest);
+            subsid = subscribeSMSRequest.getSubscribeId();
+
+            transaction.commit();
+
+        } catch (Exception e) {
+            transaction.rollback();
+            e.printStackTrace();
+        } finally {
+            session.close();
+        }
+
+        return subsid;
+
+    }
+
+
 	public boolean saveQueryDeliveryStatusTransaction(String senderAddress, String addresses, String message,
 			String clientCorrelator, String senderName, String notifyURL, String callbackData, Integer batchsize,
 			String status, Integer txntype, String criteria, String notificationFormat, User user, String requestId) {

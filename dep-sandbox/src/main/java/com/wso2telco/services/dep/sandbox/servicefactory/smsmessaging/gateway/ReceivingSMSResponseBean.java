@@ -16,10 +16,11 @@
 package com.wso2telco.services.dep.sandbox.servicefactory.smsmessaging.gateway;
 
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.wso2telco.services.dep.sandbox.dao.model.custom.InboundSMSMessage;
-
 import java.util.List;
 
+@JsonInclude(value = JsonInclude.Include.NON_NULL)
  class ReceivingSMSResponseBean {
 
     private InboundSMSMessageList inboundSMSMessageList;
@@ -59,6 +60,7 @@ import java.util.List;
         this.totalNumberOfPendingMessages = totalNumberOfPendingMessages;
     }
 
+    @JsonInclude(value = JsonInclude.Include.NON_NULL)
     public static class InboundSMSMessageList{
 
        private List<InboundSMSMessage> inboundSMSMessages;
