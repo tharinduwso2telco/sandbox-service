@@ -125,16 +125,14 @@ import javax.ws.rs.core.Response;
         RequestHandleable handler = RequestBuilderFactoryGateway.getInstance(requestDTO);
         Returnable returnable = null;
 
-        try {
+            try {
 
-            returnable = handler.execute(requestDTO);
-            return Response.status(returnable.getHttpStatus()).entity(returnable.getResponse()).build();
-        } catch (Exception e) {
-            return Response.status(Response.Status.BAD_REQUEST).entity(returnable.getResponse()).build();
+                returnable = handler.execute(requestDTO);
+                return Response.status(returnable.getHttpStatus()).entity(returnable.getResponse()).build();
+            } catch (Exception e) {
+                return Response.status(Response.Status.BAD_REQUEST).entity(returnable.getResponse()).build();
+            }
         }
-    }
-
-
 
     @DELETE
     @Path("/v1_2/inbound/subscriptions/{subscriptionID}")

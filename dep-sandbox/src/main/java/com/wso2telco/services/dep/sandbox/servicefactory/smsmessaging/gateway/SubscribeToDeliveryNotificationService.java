@@ -207,7 +207,7 @@ class SubscribeToDeliveryNotificationService extends
         messageLog.setType(MessageType.Response.getValue());
         messageLog.setServicenameid(apiServiceCalls.getApiServiceCallId());
         messageLog.setUserid(userId);
-        messageLog.setReference("msisdn");
+        messageLog.setReference("senderAddress");
         messageLog.setValue(senderAddress);
         messageLog.setMessageTimestamp(new Date());
 
