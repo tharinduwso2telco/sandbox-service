@@ -33,7 +33,7 @@ class HibernateSMSMessagingDAO extends HibernateCommonDAO  implements SMSMessagi
 		return smsMessagingParam;
 	}
 
-	public MessageLog getPreviousSMSDeliveryDetailsByMtSMSTransactionId(int mtSMSTransactionId) {
+	public MessageLog getPrevSMSDeliveryDataByTransId(int mtSMSTransactionId) {
 
 		MessageLog smsDeliveryStatus = null;
 
@@ -45,7 +45,7 @@ class HibernateSMSMessagingDAO extends HibernateCommonDAO  implements SMSMessagi
 	}
 
 
-	public SMSRequestLog getPreviousSMSRequestDetailsBySMSId(int smsId) {
+	public SMSRequestLog getPrevSMSRequestDataById(int smsId) {
 
 		SMSRequestLog smsRequestLog = null;
 
@@ -294,80 +294,8 @@ class HibernateSMSMessagingDAO extends HibernateCommonDAO  implements SMSMessagi
 		}
 
 
-    public boolean saveQueryDeliveryStatusTransaction(String senderAddress, String addresses, String message,
-                                                      String clientCorrelator, String senderName, String notifyURL,
-                                                      String callbackData, Integer batchsize,
-                                                      String status, Integer txntype, String criteria, String
-                                                              notificationFormat, User user, String requestId) {
-
-		Session session = null;
-		Transaction tx = null;
-		SMSRequestLog smsRequest = new SMSRequestLog();
-
-		try {
-			session = getSession();
-			tx = session.beginTransaction();
-
-			smsRequest.setSenderAddress(senderAddress);
-			smsRequest.setAddresses((String) addresses);
-			smsRequest.setMessage(message);
-			smsRequest.setClientCorrelator(clientCorrelator);
-			smsRequest.setSenderName(senderName);
-			smsRequest.setNotifyURL(notifyURL);
-			smsRequest.setCallbackData(callbackData);
-			smsRequest.setUser(user);
-			smsRequest.setDate(new Date());
-			smsRequest.setBatchsize(batchsize);
-			smsRequest.setTransactionstatus(status);
-			smsRequest.setTxntype(txntype);
-			smsRequest.setCriteria(criteria);
-			smsRequest.setNotificationFormat(notificationFormat);
-			smsRequest.setRequestId(requestId);
-			session.save(smsRequest);
-
-			tx.commit();
-		} catch (Exception e) {
-
-			tx.rollback();
-			return false;
-		} finally {
-
-			session.close();
-		}
-
-		return true;
-	}
-	public boolean saveDeliveryStatusResponse(String requestUrl,int status, int type, int serviceId, int userId,
-											  String reference, String referenceValue)
-	{
-		Session session = null;
-		Transaction tx = null;
-		MessageLog messageLog = new MessageLog();
-		try {
-			session = getSession();
-			tx = session.beginTransaction();
-			messageLog.setRequest(requestUrl);
-			messageLog.setStatus(status);
-			messageLog.setType(type);
-			messageLog.setServicenameid(serviceId);
-			messageLog.setUserid(userId);
-			messageLog.setReference(reference);
-			messageLog.setValue(referenceValue);
-			session.save(messageLog);
-			tx.commit();
-		}
-		catch (Exception ex)
-		{
-			tx.rollback();
-			return false;
-		}finally {
-
-			session.close();
-		}
 
 
-		return true;
-	}
 
 
 }
