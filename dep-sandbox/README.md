@@ -120,7 +120,7 @@ Please use header key as "sandbox" and value as username to invoke below given r
 
 - Manage Numbers
 
-This servivce is used to define user specific number for sandbox usage.
+This service is used to define user specific number for sandbox usage.
 
 Request :
 
@@ -1410,6 +1410,384 @@ Response :
 }
 
 ```
+
+###6.7 SMS Service
+
+####6.7.1 Introduction
+
+SMS service will provide the Service providers a list of SMS services. Basically SMS API supports 7 operations.
+
+- Send SMS - Used to send an SMS from a Web Application (to one or more mobile terminals).
+- Query the delivery status of a SMS - Query the delivery status of an SMS which has been sent from your Web application.
+- Subscribe to SMS delivery notifications - Start subscribing to delivery status notifications for all your sent SMS.
+- Stop the subscription to delivery notifications - Stop subscribing to delivery status notifications for all your sent SMS.
+- Receiving SMS - Retrieve SMS sent to your Web application.
+- Subscribe to notifications of messages sent to your application - Subscribe to notifications for SMS messages sent to your Web application.
+- Stop the subscription to message notifications - Stop subscribing to notifications for SMS messages sent to your Web application.
+
+####6.6.2 API features with postman testing
+
+
+
+- Send SMS - Used to send an SMS from a Web Application (to one or more mobile terminals).
+
+Request : 
+
+Type - POST
+
+Request URI:
+```
+http://<host>:<port>/smsmessaging/v1_2/outbound/{Short Code}/requests
+```
+
+Request Body :
+
+```
+{
+   "outboundSMSMessageRequest":{
+      "address":[
+         "tel:+94770000976",
+         "tel:+94770000977"
+      ],
+      "senderAddress":"tel:12345678",
+      "outboundSMSTextMessage":{
+         "message":"Hello World"
+      },
+      "clientCorrelator":"123456:AIN12345",
+      "receiptRequest":{
+         "notifyURL":"http://application.example.com/notiications/DeliveryInfoNotication",
+         "callbackData":"some-data-useful-to-the-requester"
+      },
+      "senderName":"ACME Inc."
+   }
+}
+```
+
+Response :
+
+```
+{
+   "outboundSMSMessageRequest":{
+      "address":[
+         "tel:+94770000976",
+         "tel:+94770000977"
+      ],
+      "deliveryInfoList":{
+         "deliveryInfo":[
+            {
+               "address":"tel:+94770000976",
+               "deliveryStatus":"MessageWaiting"
+            },
+            {
+               "address":"tel:+94770000977",
+               "deliveryStatus":"MessageWaiting"
+            }
+         ],
+         "resourceURL":"<Send SMS>/tel:+12345678 /requests/600022/deliveryInfos "
+      },
+      "senderAddress":"tel:12345678",
+      "outboundSMSTextMessage":{
+         "message":"Hello World"
+      },
+      "clientCorrelator":"123456: AIN12345",
+      "receiptRequest":{
+         "notifyURL":"http://application.example.com/notifications/DeliveryInfoNotification",
+         "callbackData":"some-data-useful-to-the-requester"
+      },
+      "senderName":"ACME Inc.",
+      "resourceURL":"<Send SMS>/tel:+12345678/requests/abc123 "
+   }
+}
+```
+
+
+Response :
+201 CREATED will be returned if the service is successful.
+Unless 400 Bad Request will be returned
+
+
+- Query the delivery status of a SMS - Query the delivery status of an SMS which has been sent from your Web application.
+
+Request : 
+
+Type - GET
+
+Request URI:
+```
+http://<host>:<port>/smsmessaging/v1_2/outbound/{senderAddress}/requests/{requestId}/deliveryInfos
+```
+
+
+Response :
+
+```
+{
+   "deliveryInfoList":{
+      "deliveryInfo":[
+         {
+            "address":"tel:+94770000976",
+            "deliveryStatus":"MessageWaiting"
+         },
+         {
+            "address":"tel:+94770000977",
+            "deliveryStatus":"MessageWaiting"
+         }
+      ],
+      "resourceURL":"<Send SMS>/tel%3A%2B12345678/requests/abc123/deliveryInfos"
+   }
+}
+```
+
+
+Response :
+200 OK will be returned if the service is successful.
+Unless 400 Bad Request will be returned
+
+
+- Subscribe to SMS delivery notifications - Start subscribing to delivery status notifications for all your sent SMS.
+
+Request : 
+
+Type - POST
+
+Request URI:
+```
+http://<host>:<port>/smsmessaging/v1_2/outbound/{Short Code}/subscriptions
+```
+
+Request Body :
+
+```
+{
+   "deliveryReceiptSubscription":{
+      "callbackReference":{
+         "callbackData":"some-data-useful-to-the-requester ",
+         "notifyURL":" http://www.yoururl.here/notifications/DeliveryInfoNotification"
+      },
+      "filterCriteria":"some-meaningful-filter-string"
+   }
+}
+```
+
+Response :
+
+```
+{
+   "deliveryReceiptSubscription":{
+      "callbackReference":{
+         "callbackData":" some-data-useful-to-the-requester ",
+         "notifyURL":" http://www.yoururl.here/notifications/DeliveryInfoNotification"
+      },
+      "filterCriteria":"some-meaningful-filter-string",
+      "resourceURL":"https: //<Delivery Notification URL>/outbound/subscription/sub789"
+   }
+}
+```
+
+Response :
+200 OK will be returned if the service is successful.
+Unless 400 Bad Request will be returned
+
+
+
+- Stop the subscription to delivery notifications - Stop subscribing to delivery status notifications for all your sent SMS.
+
+Request : 
+
+Type - DELETE
+
+Request URI:
+```
+http://<host>:<port>/smsmessaging/v1_2/outbound/{senderAddress}/subscription/{subscriptionID}
+```
+
+
+Response :
+204 DELETED will be returned if the service is successful.
+Unless 400 Bad Request will be returned
+
+
+
+- Receiving SMS - Retrieve SMS sent to your Web application.
+
+Request : 
+
+Type - GET
+
+Request URI:
+```
+http://<host>:<port>/smsmessaging/v1_2/inbound/registrations/{registrationId}/messages?maxBatchSize=2 
+```
+
+Response :
+
+```
+{
+   "inboundSMSMessageList":{
+      "inboundSMSMessage":[
+         {
+            "dateTime":"2009-11-19T12:00:00",
+            "destinationAddress":"3456",
+            "messageId":"msg1",
+            "message":"Come on Barca!",
+            "resourceURL":"<Receive SMS>/3456/messages/msg1",
+            "senderAddress":"+947725123456"
+         },
+         {
+            "dateTime":"2009-11-19T12:00:00",
+            "destinationAddress":"3456",
+            "messageId":"msg2",
+            "message":"Great goal by Messi",
+            "resourceURL":"<Receive SMS>/3456/messages/msg2",
+            "senderAddress":"+12345678012"
+         }
+      ],
+      "numberOfMessagesInThisBatch":"2",
+      "resourceURL":"<Receive SMS>/3456/messages",
+      "totalNumberOfPendingMessages":"20"
+   }
+}
+```
+Response :
+200 OK will be returned if the service is successful.
+Unless 400 Bad Request will be returned
+
+
+- Subscribe to notifications of messages sent to your application - Subscribe to notifications for SMS messages sent to your Web application.
+
+Request : 
+
+Type - POST
+
+Request URI:
+```
+http://<host>:<port>/smsmessaging/v1_2//inbound/subscriptions
+```
+
+Request Body :
+
+```
+{
+   "subscription":{
+      "callbackReference":{
+         "callbackData":"doSomething()",
+         "notifyURL":"http://www.yoururl.here/notifications/DeliveryInfoNotification"
+      },
+      "criteria":"Vote",
+      "destinationAddress":"3456",
+      "notificationFormat":"JSON",
+      "clientCorrelator":"123456:AIN12345"
+   }
+}
+```
+
+Response :
+
+```
+{
+   "subscription":{
+      "callbackReference":{
+         "callbackData":"doSomething()",
+         "notifyURL":"http://www.yoururl.here/noti:cations/DeliveryInfoNoti:cation"
+      },
+      "criteria":"Vote",
+      "destinationAddress":"3456",
+      "noti:cationFormat":"JSON",
+      "clientCorrelator":"123456:AIN12345",
+      "resourceURL":"<Subscribe Noti:cation>/sub678"
+   }
+}
+```
+
+Response :
+201 CREATED will be returned if the service is successful.
+Unless 400 Bad Request will be returned
+
+
+- Stop the subscription to message notifications - Stop subscribing to notifications for SMS messages sent to your Web application.
+
+Request : 
+
+Type - DELETE
+
+Request URI:
+```
+http://<host>:<port>/smsmessaging/v1_2/inbound/subscriptions/{subscriptionID}
+```
+
+Response :
+204 DELETED will be returned if the service is successful.
+Unless 400 Bad Request will be returned
+
+
+###6.8 USSD Service
+
+####6.8.1 Introduction
+
+USSD service will provide the Service providers a list of USSD services. Basically USSD API supports 1 operations.
+
+- Initiating Mobile Terminated USSD (NI USSD/ MT) - Initiates a USSD session with the intended end user. This request would pop up a USSD menu on the end users device.
+
+
+####6.8.2 API features with postman testing
+
+
+- Initiating Mobile Terminated USSD (NI USSD/ MT) - Initiates a USSD session with the intended end user. This request would pop up a USSD menu on the end users device.
+
+Request : 
+
+Type - POST
+
+Request URI:
+```
+http://<host>:<port>//ussd/v1/outbound/{msisdn}
+```
+
+Request Body :
+
+```
+{
+   "outboundUSSDMessageRequest":{
+      "address":"tel:+123456789",
+      "shortCode":"tel:1234",
+      "keyword":"123",
+      "outboundUSSDMessage":"Login to service?\n1. Ok\n2. Cancel",
+      "clientCorrelator":"123456:AIN12345",
+      "responseRequest":{
+         "notifyURL":"http://ussd.response.receive.url ",
+         "callbackData":"some-data-useful-to-the-requester"
+      },
+      "ussdAction":"mtinit"
+   }
+}
+```
+
+Response :
+
+```
+{
+   "outboundUSSDMessageRequest":{
+      "address":" tel:+123456789",
+      "keyword":"123",
+      "shortCode":"tel:1721",
+      "outboundUSSDMessage":" Login to service?\n1. Ok\n2. Cancel ",
+      "clientCorrelator":"123456:AIN12345",
+      "responseRequest":{
+         "notifyURL":"http://ussd.response.receive.url ",
+         "callbackData":"some-data-useful-to-the-requester"
+      },
+      "ussdAction":"mtinit",
+      "deliveryStatus":"SENT"
+   }
+}
+```
+
+
+Response :
+201 CREATED will be returned if the service is successful.
+Unless 400 Bad Request will be returned
+
+
 
 ##7 Supported API Versions 
 
