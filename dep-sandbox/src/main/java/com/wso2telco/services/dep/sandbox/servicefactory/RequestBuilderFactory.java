@@ -1,5 +1,6 @@
 package com.wso2telco.services.dep.sandbox.servicefactory;
 
+import com.wso2telco.services.dep.sandbox.servicefactory.ussd.USSDRequestFactory;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -39,6 +40,7 @@ public class RequestBuilderFactory {
 			break;
 		case USSD:
 			LOG.debug("LOADING USSD FACTORY");
+			requestHandler = USSDRequestFactory.getInstance(requestDTO);
 			break;
 		case PAYMENT:
 			LOG.debug("LOADING PAYMENT FACTORY");

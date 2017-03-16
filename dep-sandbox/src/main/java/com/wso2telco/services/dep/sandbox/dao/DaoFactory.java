@@ -48,4 +48,8 @@ public class DaoFactory {
     	return new HibernateFactory().getHibernateCreditDAO();
 
     }
+
+    public static USSDDAO getUSSDDAO() {
+        return new HibernateFactory().getHibernateUSSDDAO();
+    }
 }

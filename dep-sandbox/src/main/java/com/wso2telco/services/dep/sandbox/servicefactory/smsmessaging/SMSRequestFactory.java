@@ -1,5 +1,7 @@
 package com.wso2telco.services.dep.sandbox.servicefactory.smsmessaging;
 
+import com.wso2telco.services.dep.sandbox.servicefactory.smsmessaging.gateway
+        .StopSubscribeToDeliveryNotificationService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 

@@ -245,7 +245,7 @@ public class CreditApplyRequestHandler extends AbstractRequestHandler<CreditAppl
 					clientCorrelatorid = saveClientCorrelator(msisdn, clientCorrelator, userName);				
 					saveTransaction(responseBean);
 					}
-					responseWrapperDTO.setHttpStatus(Response.Status.OK);
+					responseWrapperDTO.setHttpStatus(Response.Status.CREATED);
 					return responseWrapperDTO;
 					
 				} else {
@@ -270,7 +270,7 @@ public class CreditApplyRequestHandler extends AbstractRequestHandler<CreditAppl
 					clientCorrelatorid = saveClientCorrelator(msisdn, clientCorrelator,userName);				
 					saveTransaction(responseBean);
 					}			
-					responseWrapperDTO.setHttpStatus(Response.Status.OK);
+					responseWrapperDTO.setHttpStatus(Response.Status.CREATED);
 					return responseWrapperDTO;
 				} else {
 					attributeValues = new AttributeValues();
@@ -285,7 +285,7 @@ public class CreditApplyRequestHandler extends AbstractRequestHandler<CreditAppl
 					clientCorrelatorid = saveClientCorrelator(msisdn, clientCorrelator,userName);				
 					saveTransaction(responseBean);
 					}
-					responseWrapperDTO.setHttpStatus(Response.Status.OK);
+					responseWrapperDTO.setHttpStatus(Response.Status.CREATED);
 					return responseWrapperDTO;
 				}
 			}

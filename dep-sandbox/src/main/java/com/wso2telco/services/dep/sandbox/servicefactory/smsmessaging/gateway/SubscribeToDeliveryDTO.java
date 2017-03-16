@@ -15,42 +15,16 @@
  ******************************************************************************/
 package com.wso2telco.services.dep.sandbox.servicefactory.smsmessaging.gateway;
 
+public class SubscribeToDeliveryDTO {
 
-import com.wso2telco.services.dep.sandbox.dao.model.custom.DeliveryReceiptSubscription;
+    private SubscribeToDeliveryNotificationResponseBean deliveryReceiptSubscription;
 
-public class SubscribeToDeliveryNotificationRequestBeanGateway {
-
-    private DeliveryReceiptSubscriptionBean deliveryReceiptSubscription;
-
-    public DeliveryReceiptSubscriptionBean getDeliveryReceiptSubscription() {
+    public SubscribeToDeliveryNotificationResponseBean getDeliveryReceiptSubscription() {
         return deliveryReceiptSubscription;
     }
 
-    public void setDeliveryReceiptSubscription(DeliveryReceiptSubscriptionBean deliveryReceiptSubscription) {
+    public void setDeliveryReceiptSubscription(SubscribeToDeliveryNotificationResponseBean
+                                                       deliveryReceiptSubscription) {
         this.deliveryReceiptSubscription = deliveryReceiptSubscription;
-    }
-
-    public static class DeliveryReceiptSubscriptionBean extends DeliveryReceiptSubscription {
-
-        private String filterCriteria;
-        private String clientCorrelator;
-
-        public String getFilterCriteria() {
-            return filterCriteria;
-        }
-
-        public void setFilterCriteria(String filterCriteria) {
-            this.filterCriteria = filterCriteria;
-        }
-
-        public String getClientCorrelator() {
-            return clientCorrelator;
-        }
-
-        public void setClientCorrelator(String clientCorrelator) {
-            this.clientCorrelator = clientCorrelator;
-        }
-
-
     }
 }
