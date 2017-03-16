@@ -162,7 +162,7 @@ import javax.ws.rs.core.Response;
 
     @POST
     @Path("/v1_2/outbound/{senderAddress}/subscriptions")
-    @ApiOperation(value = "sms", notes = "Subscribe SMS service in Gateway", response = Response.class)
+    @ApiOperation(value = "Subscribe to delivery status notifications sent by SMS", notes = "Subscribe SMS service in Gateway", response = Response.class)
     @ApiImplicitParams({
             @ApiImplicitParam(name = "sandbox", value = "Authorization token",
                     required = true, dataType = "string", paramType = "header")
@@ -197,7 +197,6 @@ import javax.ws.rs.core.Response;
             Response response = Response.status(returnable.getHttpStatus()).entity(returnable.getResponse()).build();
             return response;
         } catch (Exception e) {
-            e.printStackTrace();
             LOG.error("Subscribe to Notification SERVICE ERROR", e);
             return Response.status(Response.Status.BAD_REQUEST).entity(
                     SandboxException.SandboxErrorType.SERVICE_ERROR.getCode() + " " + SandboxException
@@ -208,7 +207,7 @@ import javax.ws.rs.core.Response;
 
     @DELETE
     @Path("/v1_2/outbound/{senderAddress}/subscription/{subscriptionID}")
-    @ApiOperation(value = "sms", notes = "Stop subscribing to delivery status noti:cations", response = Response.class)
+    @ApiOperation(value = "Stop subscribing to delivery status notifications", notes = "Stop subscribing to delivery status notifications", response = Response.class)
     @ApiImplicitParams({
             @ApiImplicitParam(name = "sandbox", value = "Authorization token",
                     required = true, dataType = "string", paramType = "header")
@@ -239,7 +238,6 @@ import javax.ws.rs.core.Response;
             Response response = Response.status(returnable.getHttpStatus()).entity(returnable.getResponse()).build();
             return response;
         } catch (Exception e) {
-            e.printStackTrace();
             LOG.error("Subscribe to Notification SERVICE ERROR", e);
             return Response.status(Response.Status.BAD_REQUEST).entity(
                     SandboxException.SandboxErrorType.SERVICE_ERROR.getCode() + " " + SandboxException

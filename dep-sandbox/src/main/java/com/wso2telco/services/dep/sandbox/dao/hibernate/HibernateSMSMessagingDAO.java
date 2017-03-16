@@ -187,112 +187,109 @@ class HibernateSMSMessagingDAO extends HibernateCommonDAO  implements SMSMessagi
 	}
 
 
-	public boolean saveQueryDeliveryStatusTransaction(String senderAddress, String addresses, String message,
-			String clientCorrelator, String senderName, String notifyURL, String callbackData, Integer batchsize,
-			String status, Integer txntype, String criteria, String notificationFormat, User user, String requestId) {
-    @Override
-    public boolean saveDeliverySubscription(User userId, String sender_address, int sub_status, String notify_url,
-                                            String filter, String callbackData, String clinetCorrelator, String
-                                                    request) {
+		public boolean saveDeliverySubscription (User userId, String sender_address,int sub_status, String notify_url,
+				String filter, String callbackData, String clinetCorrelator, String
+		request){
 
-        Session session = null;
-        Transaction transaction = null;
-        DeliverySubscription deliverySubscription = new DeliverySubscription();
+			Session session = null;
+			Transaction transaction = null;
+			DeliverySubscription deliverySubscription = new DeliverySubscription();
 
-        try {
+			try {
 
-            session = getSession();
-            transaction = session.beginTransaction();
+				session = getSession();
+				transaction = session.beginTransaction();
 
-            deliverySubscription.setUser(userId);
-            deliverySubscription.setSenderAddress(sender_address);
-            deliverySubscription.setSubStatus(sub_status);
-            deliverySubscription.setNotifyUrl(notify_url);
-            deliverySubscription.setFilterCriteria(filter);
-            deliverySubscription.setCallbackData(callbackData);
-            deliverySubscription.setClientCorrelator(clinetCorrelator);
-            deliverySubscription.setRequestData(request);
+				deliverySubscription.setUser(userId);
+				deliverySubscription.setSenderAddress(sender_address);
+				deliverySubscription.setSubStatus(sub_status);
+				deliverySubscription.setNotifyUrl(notify_url);
+				deliverySubscription.setFilterCriteria(filter);
+				deliverySubscription.setCallbackData(callbackData);
+				deliverySubscription.setClientCorrelator(clinetCorrelator);
+				deliverySubscription.setRequestData(request);
 
-            session.save(deliverySubscription);
+				session.save(deliverySubscription);
 
-            transaction.commit();
+				transaction.commit();
 
-        } catch (Exception ex) {
-            transaction.rollback();
-			throw ex;
-        } finally {
-            session.close();
-        }
-
-        return true;
-    }
-
-    @Override
-    public boolean isSubscriptionExists(String filterCriteria, String notifyUrl, String callbackData, String
-            clientCorrelator) {
-
-        boolean isExists = false;
-        Session session = getSession();
-
-        List<DeliverySubscription> resultedList = new ArrayList<>();
-
-        try {
-
-            StringBuilder hqlQueryBuilder = new StringBuilder();
-            hqlQueryBuilder.append("FROM DeliverySubscription AS ds WHERE ds.filterCriteria = :filter AND ds" +
-                    ".notifyUrl = :notify AND ds.callbackData = :callback AND ds.clientCorrelator = :client");
-
-            resultedList = session.
-                    createQuery(hqlQueryBuilder.toString())
-                    .setParameter("filter", filterCriteria)
-                    .setParameter("notify", notifyUrl)
-                    .setParameter("callback", callbackData)
-                    .setParameter("client", clientCorrelator).getResultList();
-
-            if (resultedList.size() > 0) {
-                isExists = true;
-            }
-        } catch (Exception e) {
-			LOG.error("###SUSCRIPTION### Error in retrieving subscriptions" , e);
-            throw e;
-        } finally {
-            session.close();
-        }
-        return isExists;
-    }
-
-	@Override
-	public boolean removeSubscription(int userId, String senderAddress) {
-
-		boolean isExists = false;
-		Session session = null;
-		Transaction tx = null;
-
-		try {
-			session = getSession();
-			tx = session.beginTransaction();
-			Query q = session.createQuery("delete FROM DeliverySubscription AS ds WHERE ds.id = :id AND ds" +
-					".senderAddress = :sender_address");
-			q.setInteger("id", userId);
-			q.setParameter("sender_address", senderAddress);
-
-			int i = q.executeUpdate();
-
-			if (i == 1) {
-				isExists = true;
+			} catch (Exception ex) {
+				transaction.rollback();
+				throw ex;
+			} finally {
+				session.close();
 			}
-			tx.commit();
 
-
-		} catch (Exception e) {
-			tx.rollback();
-			throw e;
-		} finally {
-			session.close();
+			return true;
 		}
 
-		return isExists;
-	}
+		@Override
+		public boolean isSubscriptionExists (String filterCriteria, String notifyUrl, String callbackData, String
+		clientCorrelator){
+
+			boolean isExists = false;
+			Session session = getSession();
+
+			List<DeliverySubscription> resultedList = new ArrayList<>();
+
+			try {
+
+				StringBuilder hqlQueryBuilder = new StringBuilder();
+				hqlQueryBuilder.append("FROM DeliverySubscription AS ds WHERE ds.filterCriteria = :filter AND ds" +
+						".notifyUrl = :notify AND ds.callbackData = :callback AND ds.clientCorrelator = :client");
+
+				resultedList = session.
+						createQuery(hqlQueryBuilder.toString())
+						.setParameter("filter", filterCriteria)
+						.setParameter("notify", notifyUrl)
+						.setParameter("callback", callbackData)
+						.setParameter("client", clientCorrelator).getResultList();
+
+				if (resultedList.size() > 0) {
+					isExists = true;
+				}
+			} catch (Exception e) {
+				LOG.error("###SUSCRIPTION### Error in retrieving subscriptions", e);
+				throw e;
+			} finally {
+				session.close();
+			}
+			return isExists;
+		}
+
+		@Override
+		public boolean removeSubscription ( int userId, String senderAddress){
+
+			boolean isExists = false;
+			Session session = null;
+			Transaction tx = null;
+
+			try {
+				session = getSession();
+				tx = session.beginTransaction();
+				Query q = session.createQuery("delete FROM DeliverySubscription AS ds WHERE ds.id = :id AND ds" +
+						".senderAddress = :sender_address");
+				q.setInteger("id", userId);
+				q.setParameter("sender_address", senderAddress);
+
+				int i = q.executeUpdate();
+
+				if (i == 1) {
+					isExists = true;
+				}
+				tx.commit();
+
+
+			} catch (Exception e) {
+				tx.rollback();
+				throw e;
+			} finally {
+				session.close();
+			}
+
+			return isExists;
+		}
+
 
     public boolean saveQueryDeliveryStatusTransaction(String senderAddress, String addresses, String message,
                                                       String clientCorrelator, String senderName, String notifyURL,
