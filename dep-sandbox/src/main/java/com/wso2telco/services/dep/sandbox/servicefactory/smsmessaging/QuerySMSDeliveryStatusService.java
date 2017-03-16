@@ -1,9 +1,6 @@
 package com.wso2telco.services.dep.sandbox.servicefactory.smsmessaging;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 import javax.ws.rs.core.Response.Status;
 
@@ -12,9 +9,10 @@ import com.google.gson.JsonSerializer;
 import com.wso2telco.dep.oneapivalidation.exceptions.CustomException;
 import com.wso2telco.dep.oneapivalidation.util.ValidationRule;
 import com.wso2telco.services.dep.sandbox.dao.hibernate.HibernateLoggingDao;
-import com.wso2telco.services.dep.sandbox.dao.model.domain.MessageLog;
-import com.wso2telco.services.dep.sandbox.servicefactory.AddressIgnorerable;
+import com.wso2telco.services.dep.sandbox.dao.model.domain.*;
+import com.wso2telco.services.dep.sandbox.servicefactory.*;
 import com.wso2telco.services.dep.sandbox.util.CommonUtil;
+import com.wso2telco.services.dep.sandbox.util.ServiceName;
 import org.apache.commons.logging.LogFactory;
 
 import com.google.gson.Gson;
@@ -23,11 +21,6 @@ import com.wso2telco.dep.oneapivalidation.service.impl.smsmessaging.ValidateDeli
 import com.wso2telco.services.dep.sandbox.dao.DaoFactory;
 import com.wso2telco.services.dep.sandbox.dao.SMSMessagingDAO;
 import com.wso2telco.services.dep.sandbox.dao.model.custom.QuerySMSDeliveryStatusRequestWrapperDTO;
-import com.wso2telco.services.dep.sandbox.dao.model.domain.SMSDeliveryStatus;
-import com.wso2telco.services.dep.sandbox.dao.model.domain.SMSRequestLog;
-import com.wso2telco.services.dep.sandbox.dao.model.domain.User;
-import com.wso2telco.services.dep.sandbox.servicefactory.AbstractRequestHandler;
-import com.wso2telco.services.dep.sandbox.servicefactory.Returnable;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -88,6 +81,14 @@ class QuerySMSDeliveryStatusService extends AbstractRequestHandler<QuerySMSDeliv
 			String id = Integer.toString(userId);
 			SMSRequestLog previousSMSRequestDetails = null;
 			MessageLog previousSMSDeliveryDetails = null;
+			QuerySMSDeliveryStatusResponseWrapper wrapper = null;
+			JSONObject jsonObject = null;
+			QuerySMSDeliveryStatusResponseBean responseBean = new QuerySMSDeliveryStatusResponseBean();
+			APITypes apiType = dao.getAPIType(extendedRequestDTO.getRequestType().toString().toLowerCase());
+			String serviceCall = ServiceName.QuerySMSStatus.toString();
+			APIServiceCalls apiService = dao.getServiceCall(apiType.getId(), serviceCall);
+			String smsServiceCall = ServiceName.SendSMS.toString();
+		 APIServiceCalls x = dao.getServiceCall(apiType.getId(),smsServiceCall);
 
 			ArrayList<HashMap<String,String>> deliveryStatusArraylist = new ArrayList();
 
@@ -141,11 +142,11 @@ class QuerySMSDeliveryStatusService extends AbstractRequestHandler<QuerySMSDeliv
 					newTransactionId = transactionId[1];
 				}
 
-				if(deliveryStatus == 1 && type == 1 && apiId == 14 && messageLogId== Integer.valueOf(newTransactionId))
+				if(deliveryStatus == MessageProcessStatus.Success.getValue() && type == MessageType.Response.getValue() && apiId == x.getApiServiceCallId() && messageLogId== Integer.valueOf(newTransactionId))
 				{
-                  //ToDo use enums for the hard coded values in JSON objects
+
 						jsonRequestString = previousSMSDeliveryDetails.getRequest();
-						JSONObject jsonObject = new JSONObject(jsonRequestString);
+					    jsonObject = new JSONObject(jsonRequestString);
 						JSONObject jsonChildObj = (JSONObject) jsonObject.getJSONObject(OUTBOUND_SMS_MESSAGE_REQUEST);
 						JSONObject jsoninnerChild = (JSONObject) jsonChildObj.getJSONObject(DELIVERY_INFO_LIST);
 
@@ -167,13 +168,8 @@ class QuerySMSDeliveryStatusService extends AbstractRequestHandler<QuerySMSDeliv
 
 						deliveryStat = status;
 						recieverAddress = address;
-						//deliveryStatuss =  jsonObject.getString("deliveryStatus");
 						resourceUrl = jsonChildObj.getString(RESOURCE_URL);
-
 						sendersAddress = jsonChildObj.getString(SENDER_ADDRESS);
-						//sendersAddress = address.toString();
-
-
 
 				}
 			}
@@ -214,38 +210,17 @@ class QuerySMSDeliveryStatusService extends AbstractRequestHandler<QuerySMSDeliv
 				responseWrapperDTO.setHttpStatus(Status.BAD_REQUEST);
 			} else {
 
-				boolean queryDeliveryStatusTransactionStatus = smsMessagingDAO.saveQueryDeliveryStatusTransaction(
-						extendedRequestDTO.getShortCode(), null, null, null, null, null, null, 0, "success", 5,
-						null, null, user, extendedRequestDTO.getMtSMSTransactionId());
-
-				/*boolean messageLogId = smsMessagingDAO.saveDeliveryStatusResponse(jsonRequestString,deliveryStatus,type,apiId,
-						userId,"shortcode",sendersAddress);*/
-				HibernateLoggingDao x = new HibernateLoggingDao();
-				int messageLogId = x.saveMessageLog(previousSMSDeliveryDetails);
-				if(messageLogId == 0)
-				{
-					responseWrapperDTO.setRequestError(constructRequestError(SERVICEEXCEPTION, "SVC0002",
-							"A service error occurred. Error code is %1", "process failure of Response of the QuerySMSDeliveryStatus"));
-				}
-				if (!queryDeliveryStatusTransactionStatus ) {
-
-					responseWrapperDTO.setRequestError(constructRequestError(SERVICEEXCEPTION, "SVC0001",
-							"A service error occurred. Error code is %1", "Access failure for API"));
-					responseWrapperDTO.setHttpStatus(Status.BAD_REQUEST);
-				} else {
-
-
 
 
 					String shortCodes[] = recieverAddress.replace("[", "").replace("]", "")
 							.split(",");
 					String deliveryStatusArray[] = deliveryStat.split(",");
 
-					QuerySMSDeliveryStatusResponseBean responseBean = new QuerySMSDeliveryStatusResponseBean();
+					//QuerySMSDeliveryStatusResponseBean responseBean = new QuerySMSDeliveryStatusResponseBean();
 
 					QuerySMSDeliveryStatusResponseBean.DeliveryInfoList responseDeliveryInfoList = new QuerySMSDeliveryStatusResponseBean.DeliveryInfoList();
 
-					List<QuerySMSDeliveryStatusResponseBean.DeliveryInfoList.DeliveryInfo> deliveryInforArrayList = new ArrayList<QuerySMSDeliveryStatusResponseBean.DeliveryInfoList.DeliveryInfo>();
+					List<QuerySMSDeliveryStatusResponseBean.DeliveryInfoList.DeliveryInfo> deliveryInforArrayList = new ArrayList();
 
 
 
@@ -257,25 +232,27 @@ class QuerySMSDeliveryStatusService extends AbstractRequestHandler<QuerySMSDeliv
 						deliveryInforArrayList.add(responseDeliveryInfos);
 
 					}
-				/*	for (int i = 0; i < shortCodes.length; i++) {
-
-						QuerySMSDeliveryStatusResponseBean.DeliveryInfoList.DeliveryInfo responseDeliveryInfo = new QuerySMSDeliveryStatusResponseBean.DeliveryInfoList.DeliveryInfo();
-
-						responseDeliveryInfo.setAddress(shortCodes[i]);
-						responseDeliveryInfo.setDeliveryStatus(deliveryStatusArray[i]);
-
-						deliveryInforArrayList.add(responseDeliveryInfo);
-					}*/
 
 					responseDeliveryInfoList.setDeliveryInfo(deliveryInforArrayList);
 					responseDeliveryInfoList
 							.setResourceURL(resourceUrl);
 
+
 					responseBean.setDeliveryInfoList(responseDeliveryInfoList);
+
 
 					responseWrapperDTO.setQuerySMSDeliveryStatusResponseBean(responseBean);
 					responseWrapperDTO.setHttpStatus(Status.OK);
+
+				int messageLogId = saveResponse(senderAddress,responseWrapperDTO.getQuerySMSDeliveryStatusResponseBean(),apiService,MessageProcessStatus.Success);
+				/*boolean delivaryStatusResponseStatus = smsMessagingDAO.saveDeliveryStatusResponse(jsonRequestString,deliveryStatus,type,apiId,
+						userId,"shortcode",sendersAddress);8*/
+				if(messageLogId == 0)
+				{
+					responseWrapperDTO.setRequestError(constructRequestError(SERVICEEXCEPTION, "SVC0002",
+							"A service error occurred. Error code is %1", "process failure of Response of the QuerySMSDeliveryStatus"));
 				}
+
 			}
 		} catch (Exception e) {
 
@@ -293,7 +270,6 @@ class QuerySMSDeliveryStatusService extends AbstractRequestHandler<QuerySMSDeliv
 
 	@Override
 	protected List<String> getAddress() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
@@ -324,4 +300,22 @@ class QuerySMSDeliveryStatusService extends AbstractRequestHandler<QuerySMSDeliv
 
 		return resourceURLBuilder;
 	}
+
+   private int saveResponse(String endUserIdPath, QuerySMSDeliveryStatusResponseBean responseBean, APIServiceCalls
+		   apiServiceCalls, MessageProcessStatus status) throws Exception {
+	   Gson gson = new Gson();
+	   String jsonString = gson.toJson(responseBean);
+	   MessageLog messageLog =new MessageLog();
+	   messageLog.setRequest(jsonString);
+	   messageLog.setServicenameid(apiServiceCalls.getApiServiceCallId());
+	   messageLog.setUserid(extendedRequestDTO.getUser().getId());
+	   messageLog.setType(MessageType.Response.getValue());
+	   messageLog.setValue(endUserIdPath);
+	   messageLog.setReference("shortcode");
+	   messageLog.setMessageTimestamp(new Date());
+	   messageLog.setStatus(status.getValue());
+	   int i = loggingDAO.saveMessageLog(messageLog);
+	   return  i;
+
+   }
 }
