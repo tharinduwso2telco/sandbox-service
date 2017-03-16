@@ -215,6 +215,7 @@ class HibernateSMSMessagingDAO extends HibernateCommonDAO  implements SMSMessagi
 
 			} catch (Exception ex) {
 				transaction.rollback();
+				LOG.error("Error occurred while trying to save subscription ",ex);
 				throw ex;
 			} finally {
 				session.close();
@@ -282,6 +283,7 @@ class HibernateSMSMessagingDAO extends HibernateCommonDAO  implements SMSMessagi
 
 			} catch (Exception e) {
 				tx.rollback();
+				LOG.error("Error occurred while removing subscription",e);
 				throw e;
 			} finally {
 				session.close();
