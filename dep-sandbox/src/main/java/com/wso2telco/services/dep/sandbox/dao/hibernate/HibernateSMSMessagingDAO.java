@@ -9,6 +9,7 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 
 import com.wso2telco.services.dep.sandbox.dao.SMSMessagingDAO;
+import org.hibernate.query.Query;
 
 class HibernateSMSMessagingDAO extends HibernateCommonDAO  implements SMSMessagingDAO{
 
@@ -125,43 +126,62 @@ class HibernateSMSMessagingDAO extends HibernateCommonDAO  implements SMSMessagi
 	}
 
     @Override
-    public int saveSubscribeSMSRequest(String destinationAddress, String notifyURL, String callbackData, String
-            criteria, String clientCorrelator, User user) throws Exception {
-
+    public int saveSubscribeSMSRequest(SubscribeSMSRequest SubscribeSMSRequest) throws Exception {
 
         Session session = null;
         Transaction transaction = null;
         Integer subsid = null;
 
         try {
-
             session = getSession();
             transaction = session.beginTransaction();
-
-            SubscribeSMSRequest subscribeSMSRequest = new SubscribeSMSRequest();
-            subscribeSMSRequest.setCallbackData(callbackData);
-            subscribeSMSRequest.setClientCorrelator(clientCorrelator);
-            subscribeSMSRequest.setCriteria(criteria);
-            subscribeSMSRequest.setDestinationAddress(destinationAddress);
-            subscribeSMSRequest.setNotifyURL(notifyURL);
-            subscribeSMSRequest.setUser(user);
-            subscribeSMSRequest.setDate(new Date());
-            subscribeSMSRequest.setNotificationFormat("JSON");
-            session.save(subscribeSMSRequest);
-            subsid = subscribeSMSRequest.getSubscribeId();
-
+            session.save(SubscribeSMSRequest);
+            subsid = SubscribeSMSRequest.getSubscribeId();
             transaction.commit();
 
         } catch (Exception e) {
             transaction.rollback();
-            e.printStackTrace();
-        } finally {
+            LOG.error("Error occurred When save subscribe SMS request",e);
+            throw e;
+
+		} finally {
             session.close();
         }
 
         return subsid;
 
     }
+
+	@Override
+	public boolean removeSubscriptionToMessage(String subscriptionID) throws Exception {
+
+        boolean isExists = false;
+        Session session = null;
+        Transaction transaction = null;
+
+        try {
+            session = getSession();
+            transaction = session.beginTransaction();
+            Query query= session.createQuery("delete FROM SubscribeSMSRequest WHERE subscribe_id = :id");
+            query.setInteger("id", Integer.parseInt(subscriptionID));
+            int i = query.executeUpdate();
+
+            if (i >0) {
+                isExists = true;
+            }
+            transaction.commit();
+
+        } catch (Exception e) {
+           transaction.rollback();
+            LOG.error("Error occurred when remove subscription to message",e);
+            throw e;
+
+        } finally {
+            session.close();
+        }
+
+        return isExists;
+	}
 
 
 	public boolean saveQueryDeliveryStatusTransaction(String senderAddress, String addresses, String message,

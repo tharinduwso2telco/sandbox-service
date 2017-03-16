@@ -36,14 +36,14 @@ import javax.ws.rs.core.Response;
 @Path("smsmessaging")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @Api(value = "/v1_2/sms", description = "sms")
+    @Api(value = "/v1_2/sms", description = " Rest Service for SMS API")
     public class SmsServiceGateway {
 
         Log LOG = LogFactory.getLog(SmsServiceGateway.class);
 
         @POST
         @Path("/v1_2/outbound/{shortCode}/requests")
-        @ApiOperation(value = "sms", notes = "Send SMS service in Gateway", response = Response.class)
+        @ApiOperation(value = "Send SMS Service", notes = "Send SMS service in Gateway", response = Response.class)
         @ApiImplicitParams({
                 @ApiImplicitParam(name = "sandbox", value = "Authorization token",
                         required = true, dataType = "string", paramType = "header")
@@ -67,7 +67,6 @@ import javax.ws.rs.core.Response;
                 returnable = handler.execute(requestDTO);
                 return Response.status(returnable.getHttpStatus()).entity(returnable.getResponse()).build();
             } catch (Exception e) {
-                e.printStackTrace();
                 return Response.status(Response.Status.BAD_REQUEST).entity(returnable.getResponse()).build();
             }
         }
@@ -75,10 +74,10 @@ import javax.ws.rs.core.Response;
 
     @GET
     @Path("/v1_2/inbound/registrations/{registrationId}/messages")
-    @ApiOperation(value = "SMS Service", notes = "SMS Service", response = Response.class)
+    @ApiOperation(value = "Receiving SMS Service", notes = "Receiving SMS API", response = Response.class)
     @ApiImplicitParams({
             @ApiImplicitParam(name = "sandbox", value = "Authorization token", required = true, dataType = "string", paramType = "header") })
-    public Response location(
+    public Response ReceivingSMS(
             @ApiParam(value = "registrationId", required = true) @PathParam("registrationId") String registrationID, @ApiParam(value = "maxBatchSize", required = true) @QueryParam("maxBatchSize") int maxBatchSize,
             @Context HttpServletRequest request) {
 
@@ -111,7 +110,7 @@ import javax.ws.rs.core.Response;
 
     @POST
     @Path("/v1_2/inbound/subscriptions")
-    @ApiOperation(value = "sms", notes = "SMS subscriptions service in Gateway", response = Response.class)
+    @ApiOperation(value = "Subscribe to Notifications of Messages Sent to Your Application Service", notes = "SMS subscriptions service in Gateway", response = Response.class)
     @ApiImplicitParams({
             @ApiImplicitParam(name = "sandbox", value = "Authorization token",
                     required = true, dataType = "string", paramType = "header")
@@ -131,9 +130,38 @@ import javax.ws.rs.core.Response;
             returnable = handler.execute(requestDTO);
             return Response.status(returnable.getHttpStatus()).entity(returnable.getResponse()).build();
         } catch (Exception e) {
-            e.printStackTrace();
             return Response.status(Response.Status.BAD_REQUEST).entity(returnable.getResponse()).build();
         }
     }
+
+
+
+    @DELETE
+    @Path("/v1_2/inbound/subscriptions/{subscriptionID}")
+    @ApiOperation(value = "Stop the Subscription to Message Notifications", notes = "SMS subscriptions service in Gateway", response = Response.class)
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "sandbox", value = "Authorization token",
+                    required = true, dataType = "string", paramType = "header")
+    })
+    public Response deleteSubscribeToApplication(@ApiParam(value = "subscriptionID", required = true) @PathParam("subscriptionID") String subscriptionID,@Context HttpServletRequest httpRequest) {
+
+        StopSubscriptionMessageNotificationRequestWrapper requestDTO = new StopSubscriptionMessageNotificationRequestWrapper();
+        requestDTO.setHttpRequest(httpRequest);
+        requestDTO.setRequestType(RequestType.SMSMESSAGING);
+        requestDTO.setApiVersion("v1_2");
+        requestDTO.setSubscriptionID(subscriptionID);
+        RequestHandleable handler = RequestBuilderFactoryGateway.getInstance(requestDTO);
+        Returnable returnable = null;
+
+        try {
+
+            returnable = handler.execute(requestDTO);
+            return Response.status(returnable.getHttpStatus()).entity(returnable.getResponse()).build();
+        } catch (Exception e) {
+            return Response.status(Response.Status.BAD_REQUEST).entity(returnable.getResponse()).build();
+        }
+    }
+
+
 
     }

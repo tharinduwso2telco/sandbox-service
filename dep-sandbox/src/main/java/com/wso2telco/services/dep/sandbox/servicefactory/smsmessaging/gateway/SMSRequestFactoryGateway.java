@@ -57,6 +57,14 @@ public class SMSRequestFactoryGateway {
 
              return new SubscribeApplicationNotificationsHandler();
          }
+
+         else if (requestDTO.getRequestPath().toLowerCase().contains(SUBSCRIPTIONS)
+                 && requestDTO.isDelete()) {
+             LOG.debug("LOADING SUBSCRIPTIONS SMS SERVICE");
+
+             return new StopSubscriptionMessageNotificationHandler();
+         }
+
        else {
              return null;
          }
