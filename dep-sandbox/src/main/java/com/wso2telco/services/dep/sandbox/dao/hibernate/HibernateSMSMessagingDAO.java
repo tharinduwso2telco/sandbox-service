@@ -13,7 +13,6 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 
 import com.wso2telco.services.dep.sandbox.dao.SMSMessagingDAO;
-import org.hibernate.query.Query;
 
 class HibernateSMSMessagingDAO extends HibernateCommonDAO  implements SMSMessagingDAO{
 
@@ -220,7 +219,7 @@ class HibernateSMSMessagingDAO extends HibernateCommonDAO  implements SMSMessagi
 
         } catch (Exception ex) {
             transaction.rollback();
-            return false;
+			throw ex;
         } finally {
             session.close();
         }
@@ -254,43 +253,46 @@ class HibernateSMSMessagingDAO extends HibernateCommonDAO  implements SMSMessagi
                 isExists = true;
             }
         } catch (Exception e) {
-            System.out.println("isSubscriptionExists : " + e);
+			LOG.error("###SUSCRIPTION### Error in retrieving subscriptions" , e);
+            throw e;
         } finally {
             session.close();
         }
         return isExists;
     }
 
-    @Override
-    public boolean removeSubscription(int userId, String senderAddress) {
+	@Override
+	public boolean removeSubscription(int userId, String senderAddress) {
 
-        boolean isExists = false;
-        Session session = null;
-        Transaction tx = null;
+		boolean isExists = false;
+		Session session = null;
+		Transaction tx = null;
 
-        try {
-            session = getSession();
-            tx = session.beginTransaction();
-            Query q = session.createQuery("delete FROM DeliverySubscription AS ds WHERE ds.id = :id AND ds.senderAddress = :sender_address");
-            q.setInteger("id", userId);
-            q.setParameter("sender_address", senderAddress);
+		try {
+			session = getSession();
+			tx = session.beginTransaction();
+			Query q = session.createQuery("delete FROM DeliverySubscription AS ds WHERE ds.id = :id AND ds" +
+					".senderAddress = :sender_address");
+			q.setInteger("id", userId);
+			q.setParameter("sender_address", senderAddress);
 
-            int i = q.executeUpdate();
+			int i = q.executeUpdate();
 
-            if (i == 1) {
-                isExists = true;
-            }
-            tx.commit();
+			if (i == 1) {
+				isExists = true;
+			}
+			tx.commit();
 
 
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            session.close();
-        }
+		} catch (Exception e) {
+			tx.rollback();
+			throw e;
+		} finally {
+			session.close();
+		}
 
-        return isExists;
-    }}
+		return isExists;
+	}
 
     public boolean saveQueryDeliveryStatusTransaction(String senderAddress, String addresses, String message,
                                                       String clientCorrelator, String senderName, String notifyURL,

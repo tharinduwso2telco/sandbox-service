@@ -15,7 +15,6 @@
  ******************************************************************************/
 package com.wso2telco.services.dep.sandbox.servicefactory.smsmessaging.gateway;
 
-import com.google.gson.Gson;
 import com.wso2telco.core.dbutils.exception.ServiceError;
 import com.wso2telco.dep.oneapivalidation.exceptions.CustomException;
 import com.wso2telco.dep.oneapivalidation.util.Validation;
@@ -85,7 +84,7 @@ public class StopSubscribeToDeliveryNotificationService extends
             Validation.checkRequestParams(validationRules);
 
         } catch (CustomException ex) {
-            LOG.error("###PAYMENT### Error in Validations. ", ex);
+            LOG.error("###SUBSCRIPTION### Error in Validations. ", ex);
             return false;
         }
 
@@ -106,7 +105,7 @@ public class StopSubscribeToDeliveryNotificationService extends
         // check for existing subscription
         boolean isDelete = smsMessagingDAO.removeSubscription(subscriptionID, senderAddress);
 
-        String deletedMessage = "Subscriber "+subscriptionID+ "removed from subscription";
+        String deletedMessage = "Subscriber "+subscriptionID+ " removed from subscription";
 
         if (isDelete) {
             responseWrapper.setStatus("NO CONTENT");

@@ -136,7 +136,7 @@ class SubscribeToDeliveryNotificationService extends
                     MessageProcessStatus.Success, MessageType.Response);
 
             if (response != null) {
-
+                // send already saved response
                 SubscribeToDeliveryNotificationResponseBean object = null;
                 object = gson.fromJson(response, SubscribeToDeliveryNotificationResponseBean.class);
                 SubscribeToDeliveryDTO dto = new SubscribeToDeliveryDTO();
