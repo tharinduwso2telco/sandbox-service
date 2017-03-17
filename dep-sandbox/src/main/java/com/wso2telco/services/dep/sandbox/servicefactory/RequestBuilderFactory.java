@@ -79,12 +79,14 @@ public class RequestBuilderFactory {
 		    LOG.debug("LOADING WALLET CONFIGURATION FACTORY");
 		    requestHandler = WalletConfigServiceFactory.getInstance(requestDTO);
 		    break;
-
 		    case USSDCONFIG:
 		        LOG.debug("LOADING USSD CONFIGURATION FACTORY");
                 requestHandler = USSDConfigServiceFactory.getInstance(requestDTO);
                 break;
-
+            case SMSCONFIG:
+                LOG.debug("LOADING SMS CONFIGURATION FACTORY");
+                requestHandler = SMSRequestFactory.getInstance(requestDTO);
+                break;
 			default:
 			LOG.debug("APPROPIATE FACTORY CLASS NOT FOUND");
 			break;

@@ -42,6 +42,7 @@ public class Application extends AbstractApplication<SandboxDTO> {
 		listOfObject.add(new LocationService());
 		listOfObject.add(new USSDService());
 		listOfObject.add(new USSSDConfigurationService());
+		listOfObject.add(new SMSConfigurationService());
 
 		if(getBehaveType().equals("Hub")){
 
@@ -58,6 +59,7 @@ public class Application extends AbstractApplication<SandboxDTO> {
 		try {
 			new Application().run(args);
 		}   catch (Exception e) {
+		    e.printStackTrace();
 			System.out.println("Unable to start the server " + e.getMessage());
 		}
 	}
