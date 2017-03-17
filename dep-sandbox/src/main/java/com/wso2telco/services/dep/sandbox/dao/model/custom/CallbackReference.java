@@ -15,6 +15,9 @@
  ******************************************************************************/
 package com.wso2telco.services.dep.sandbox.dao.model.custom;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+
+@JsonInclude(value = JsonInclude.Include.NON_NULL)
 public class CallbackReference {
 	private String notifyURL;
 
