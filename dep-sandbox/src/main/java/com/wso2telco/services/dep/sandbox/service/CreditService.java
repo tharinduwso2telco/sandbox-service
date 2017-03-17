@@ -59,8 +59,8 @@ public class CreditService {
 		
 		try {
 			returnable = handler.execute(requestDTO);
-			Response response = Response.status(returnable.getHttpStatus()).entity(returnable.getResponse()).build();
-			return response;
+			return  Response.status(returnable.getHttpStatus()).entity(returnable.getResponse()).build();
+
 		} catch (Exception ex) {
 			LOG.error("###CREDIT### Error in Credit Service", ex);
 			Response response = Response.status(Status.BAD_REQUEST).entity(SandboxErrorType.SERVICE_ERROR.getCode() + " " + SandboxErrorType.SERVICE_ERROR.getMessage()).build();

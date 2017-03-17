@@ -162,9 +162,12 @@ public abstract class AbstractRequestHandler<E2 extends RequestDTO> implements R
 
 	protected RequestError constructRequestError(int type, String messageId, String text, String variable) {
 		RequestError error = new RequestError();
+
+		variable = variable + " Not Whitelisted";
 		if (type == SERVICEEXCEPTION) {
 			ServiceException serviceException = new ServiceException(messageId, text, variable);
 			error.setServiceException(serviceException);
+
 
 		} else if (type == POLICYEXCEPTION) {
 			PolicyException policyException = new PolicyException(messageId, text, variable);
