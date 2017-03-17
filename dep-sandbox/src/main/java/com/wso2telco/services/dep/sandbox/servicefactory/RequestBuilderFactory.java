@@ -1,5 +1,6 @@
 package com.wso2telco.services.dep.sandbox.servicefactory;
 
+import com.wso2telco.services.dep.sandbox.servicefactory.ussd.USSDConfigServiceFactory;
 import com.wso2telco.services.dep.sandbox.servicefactory.ussd.USSDRequestFactory;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -78,7 +79,13 @@ public class RequestBuilderFactory {
 		    LOG.debug("LOADING WALLET CONFIGURATION FACTORY");
 		    requestHandler = WalletConfigServiceFactory.getInstance(requestDTO);
 		    break;
-		default:
+
+		    case USSDCONFIG:
+		        LOG.debug("LOADING USSD CONFIGURATION FACTORY");
+                requestHandler = USSDConfigServiceFactory.getInstance(requestDTO);
+                break;
+
+			default:
 			LOG.debug("APPROPIATE FACTORY CLASS NOT FOUND");
 			break;
 		}

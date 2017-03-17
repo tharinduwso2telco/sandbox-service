@@ -13,16 +13,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
+package com.wso2telco.services.dep.sandbox.servicefactory.ussd;
 
-package com.wso2telco.services.dep.sandbox.dao;
 
-import com.wso2telco.services.dep.sandbox.dao.model.domain.UssdApplication;
+import com.wso2telco.services.dep.sandbox.dao.model.custom.ErrorResponseDTO;
+import com.wso2telco.services.dep.sandbox.servicefactory.AbstractReturnWrapperDTO;
 
-import java.util.List;
+public class USSDApplicationConfigResponseWrapper extends AbstractReturnWrapperDTO {
+    private String status;
 
-public interface USSDDAO {
+    public String getStatus() {
+        return status;
+    }
 
-    List<UssdApplication> getUssdApplications(int userid, String shortCode, String keyWord);
-    boolean saveUSSDApplications(String shortCode,String keyWord, int userId) throws Exception;
+    public void setStatus(String status) {
+        this.status = status;
+    }
 
+    @Override
+    public Object getResponse() {
+
+        if (getRequestError() == null) {
+            return status;
+        } else {
+            ErrorResponseDTO response = new ErrorResponseDTO(getRequestError());
+            return response;
+        }
+    }
 }

@@ -29,7 +29,7 @@ CREATE TABLE IF NOT EXISTS `sbxapitypes` (
 -- Dumping data for table `sbxapitypes`
 --
 
-INSERT INTO `sbxapitypes` VALUES (1,'LOCATION'),(2,'SMS'),(3,'USSD'),(4,'PAYMENT'),(5,'CREDIT'),(6,'WALLET'),(7,'PROVISIONING'),(8,'CUSTOMERINFO');
+INSERT INTO `sbxapitypes` VALUES (1,'LOCATION'),(2,'SMSMESSAGING'),(3,'USSD'),(4,'PAYMENT'),(5,'CREDIT'),(6,'WALLET'),(7,'PROVISIONING'),(8,'CUSTOMERINFO');
 
 
 --
@@ -49,7 +49,8 @@ CREATE TABLE IF NOT EXISTS `sbxapiservicecalls` (
 -- Dumping data for table `sbxapiservicecalls`
 --
 
-INSERT INTO `sbxapiservicecalls` VALUES (1,8,'GetAttribute'),(2,8,'GetProfile'),(3,7,'GetApplicable'),(4,6,'MakePayment'),(5,6,'ListPayment'),(6,6,'RefundPayment'),(7,6,'BalanceLookup'),(8,5,'ApplyCredit'),(9,5,'PartialRefund'),(10,4,'ChargeUser'),(11,4,'RefundUser'),(12,4,'ListPayment'),(13,1,'Location');
+INSERT INTO `sbxapiservicecalls` VALUES (1,8,'GetAttribute'),(2,8,'GetProfile'),(3,7,'GetApplicable'),(4,6,'MakePayment'),(5,6,'ListPayment'),(6,6,'RefundPayment'),(7,6,'BalanceLookup'),(8,5,'ApplyCredit'),(9,5,'PartialRefund'),(10,4,'ChargeUser'),(11,4,'RefundUser'),(12,4,'ListPayment'),(13,1,'Location'),(14,3,'InitUSSD'),(15,2,'SendSMS'),(16,2,'ReceivingSMS'),(17,2,'QuerySMS'),(18,2,'SubscribeToSMSDelivery'),(19,2,'SubscribeToApplication'),(20,2,'StopSubscriptionDelivery'),(21,2,'StopSubscribeToApplication');
+
 
 
 

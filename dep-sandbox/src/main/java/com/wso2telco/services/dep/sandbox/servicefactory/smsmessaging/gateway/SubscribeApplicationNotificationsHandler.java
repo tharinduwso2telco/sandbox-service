@@ -106,7 +106,6 @@ class SubscribeApplicationNotificationsHandler extends
             LOG.error("###SMS### Error in Validations. ", ex);
             responseWrapper.setRequestError(
                     constructRequestError(SERVICEEXCEPTION, ex.getErrcode(), ex.getErrmsg(), ex.getErrvar()[0]));
-            responseWrapper.setHttpStatus(Response.Status.BAD_REQUEST);
             return false;
         }
         return true;
@@ -115,6 +114,11 @@ class SubscribeApplicationNotificationsHandler extends
     @Override
     protected Returnable process(SubscribeApplicationNotificationsRequestWrapperGateway extendedRequestDTO) throws
             Exception {
+
+        if (responseWrapper.getRequestError() != null) {
+            responseWrapper.setHttpStatus(Response.Status.BAD_REQUEST);
+            return responseWrapper;
+        }
 
         try {
 

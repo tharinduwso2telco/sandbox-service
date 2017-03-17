@@ -13,16 +13,36 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
+package com.wso2telco.services.dep.sandbox.servicefactory.ussd;
 
-package com.wso2telco.services.dep.sandbox.dao;
 
-import com.wso2telco.services.dep.sandbox.dao.model.domain.UssdApplication;
+public class USSDApplicationConfigRequestBean {
 
-import java.util.List;
+    private String shortCode;
+    private String keyWord;
+    private int userID;
 
-public interface USSDDAO {
+    public String getShortCode() {
+        return shortCode;
+    }
 
-    List<UssdApplication> getUssdApplications(int userid, String shortCode, String keyWord);
-    boolean saveUSSDApplications(String shortCode,String keyWord, int userId) throws Exception;
+    public void setShortCode(String shortCode) {
+        this.shortCode = shortCode;
+    }
 
+    public String getKeyWord() {
+        return keyWord;
+    }
+
+    public void setKeyWord(String keyWord) {
+        this.keyWord = keyWord;
+    }
+
+    public int getUserID() {
+        return userID;
+    }
+
+    public void setUserID(int userID) {
+        this.userID = userID;
+    }
 }

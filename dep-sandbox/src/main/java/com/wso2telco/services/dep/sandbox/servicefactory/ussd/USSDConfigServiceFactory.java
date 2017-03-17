@@ -13,16 +13,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
+package com.wso2telco.services.dep.sandbox.servicefactory.ussd;
 
-package com.wso2telco.services.dep.sandbox.dao;
 
-import com.wso2telco.services.dep.sandbox.dao.model.domain.UssdApplication;
+import com.wso2telco.services.dep.sandbox.dao.model.custom.RequestDTO;
+import com.wso2telco.services.dep.sandbox.servicefactory.RequestHandleable;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
-import java.util.List;
+public class USSDConfigServiceFactory {
 
-public interface USSDDAO {
 
-    List<UssdApplication> getUssdApplications(int userid, String shortCode, String keyWord);
-    boolean saveUSSDApplications(String shortCode,String keyWord, int userId) throws Exception;
+    private static Log LOG = LogFactory.getLog(USSDConfigServiceFactory.class);
+
+    public static RequestHandleable getInstance(final RequestDTO requestDTO) {
+
+        final String APPLICATION = "Application";
+
+        if (requestDTO.getRequestPath().contains(APPLICATION)) {
+            LOG.debug("LOADING APPLICATION SAVE SERVICE");
+            return new USSDApplicationConfigHandler();
+        } else
+            return null;
+    }
+
 
 }

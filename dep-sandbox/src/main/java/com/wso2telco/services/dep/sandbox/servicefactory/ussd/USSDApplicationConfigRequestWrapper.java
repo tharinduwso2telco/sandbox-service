@@ -13,16 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
+package com.wso2telco.services.dep.sandbox.servicefactory.ussd;
 
-package com.wso2telco.services.dep.sandbox.dao;
 
-import com.wso2telco.services.dep.sandbox.dao.model.domain.UssdApplication;
+import com.wso2telco.services.dep.sandbox.dao.model.custom.RequestDTO;
 
-import java.util.List;
+public class USSDApplicationConfigRequestWrapper extends RequestDTO {
 
-public interface USSDDAO {
+    private USSDApplicationConfigRequestBean ussdApplicationConfigRequestBean;
 
-    List<UssdApplication> getUssdApplications(int userid, String shortCode, String keyWord);
-    boolean saveUSSDApplications(String shortCode,String keyWord, int userId) throws Exception;
+    public USSDApplicationConfigRequestBean getUssdApplicationConfigRequestBean() {
+        return ussdApplicationConfigRequestBean;
+    }
 
+    public void setUssdApplicationConfigRequestBean(USSDApplicationConfigRequestBean ussdApplicationConfigRequestBean) {
+        this.ussdApplicationConfigRequestBean = ussdApplicationConfigRequestBean;
+    }
 }

@@ -21,6 +21,7 @@ import org.apache.commons.logging.LogFactory;
 import org.hibernate.Session;
 import org.hibernate.query.Query;
 
+import javax.persistence.NoResultException;
 import java.util.*;
 
 public class HibernateUSSDDAO extends AbstractDAO implements USSDDAO {
@@ -65,5 +66,28 @@ public class HibernateUSSDDAO extends AbstractDAO implements USSDDAO {
         appdistributionList = (List<UssdApplication>) query.getResultList();
 
         return appdistributionList;
+    }
+
+    @Override
+    public boolean saveUSSDApplications(String shortCode, String keyWord, int userId) throws Exception {
+
+        UssdApplication application = new UssdApplication();
+        application.setShortCode(shortCode);
+        application.setKeyword(keyWord);
+        application.setUserid(userId);
+
+        try {
+            Session session = getSession();
+            session.save(application);
+
+        } catch (NoResultException e) {
+            return false;
+
+        } catch (Exception ex) {
+            LOG.error("###USSD Config### Error in USSD Config Service ", ex);
+            throw ex;
+        }
+        return true;
+
     }
 }
