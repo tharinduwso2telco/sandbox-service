@@ -19,8 +19,8 @@ class HibernateSMSMessagingDAO extends HibernateCommonDAO  implements SMSMessagi
 	{
 		LOG = LogFactory.getLog(HibernateSMSMessagingDAO.class);
 	}
-	
-	
+
+
 	public SMSMessagingParam getSMSMessagingParam(int userId) {
 
 		SMSMessagingParam smsMessagingParam = null;
@@ -33,18 +33,19 @@ class HibernateSMSMessagingDAO extends HibernateCommonDAO  implements SMSMessagi
 		return smsMessagingParam;
 	}
 
-	public SMSDeliveryStatus getPreviousSMSDeliveryDetailsByMtSMSTransactionId(String mtSMSTransactionId) {
+	public MessageLog getPrevSMSDeliveryDataByTransId(int mtSMSTransactionId) {
 
-		SMSDeliveryStatus smsDeliveryStatus = null;
+		MessageLog smsDeliveryStatus = null;
 
 		Session session = getSession();
 
-		smsDeliveryStatus = (SMSDeliveryStatus) session.get(SMSDeliveryStatus.class, mtSMSTransactionId);
+		smsDeliveryStatus = (MessageLog) session.get(MessageLog.class, mtSMSTransactionId);
 
 		return smsDeliveryStatus;
 	}
 
-	public SMSRequestLog getPreviousSMSRequestDetailsBySMSId(int smsId) {
+
+	public SMSRequestLog getPrevSMSRequestDataById(int smsId) {
 
 		SMSRequestLog smsRequestLog = null;
 
@@ -293,47 +294,8 @@ class HibernateSMSMessagingDAO extends HibernateCommonDAO  implements SMSMessagi
 		}
 
 
-    public boolean saveQueryDeliveryStatusTransaction(String senderAddress, String addresses, String message,
-                                                      String clientCorrelator, String senderName, String notifyURL,
-                                                      String callbackData, Integer batchsize,
-                                                      String status, Integer txntype, String criteria, String
-                                                              notificationFormat, User user, String requestId) {
 
-		Session session = null;
-		Transaction tx = null;
-		SMSRequestLog smsRequest = new SMSRequestLog();
 
-		try {
-			session = getSession();
-			tx = session.beginTransaction();
 
-			smsRequest.setSenderAddress(senderAddress);
-			smsRequest.setAddresses((String) addresses);
-			smsRequest.setMessage(message);
-			smsRequest.setClientCorrelator(clientCorrelator);
-			smsRequest.setSenderName(senderName);
-			smsRequest.setNotifyURL(notifyURL);
-			smsRequest.setCallbackData(callbackData);
-			smsRequest.setUser(user);
-			smsRequest.setDate(new Date());
-			smsRequest.setBatchsize(batchsize);
-			smsRequest.setTransactionstatus(status);
-			smsRequest.setTxntype(txntype);
-			smsRequest.setCriteria(criteria);
-			smsRequest.setNotificationFormat(notificationFormat);
-			smsRequest.setRequestId(requestId);
-			session.save(smsRequest);
 
-			tx.commit();
-		} catch (Exception e) {
-
-			tx.rollback();
-			return false;
-		} finally {
-
-			session.close();
-		}
-
-		return true;
-	}
 }

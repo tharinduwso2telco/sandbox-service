@@ -16,8 +16,16 @@
 package com.wso2telco.services.dep.sandbox.service;
 
 
+
 import com.wordnik.swagger.annotations.*;
 import com.wso2telco.services.dep.sandbox.exception.SandboxException;
+
+import com.wordnik.swagger.annotations.Api;
+import com.wordnik.swagger.annotations.ApiImplicitParam;
+import com.wordnik.swagger.annotations.ApiImplicitParams;
+import com.wordnik.swagger.annotations.ApiOperation;
+import com.wso2telco.services.dep.sandbox.dao.model.custom.QuerySMSDeliveryStatusRequestWrapperDTO;
+import com.wso2telco.services.dep.sandbox.servicefactory.RequestBuilderFactory;
 import com.wso2telco.services.dep.sandbox.servicefactory.RequestBuilderFactoryGateway;
 import com.wso2telco.services.dep.sandbox.servicefactory.smsmessaging.gateway.*;
 import com.wso2telco.services.dep.sandbox.servicefactory.RequestHandleable;
@@ -105,8 +113,6 @@ import javax.ws.rs.core.Response;
         }
 
     }
-
-
 
     @POST
     @Path("/v1_2/inbound/subscriptions")
@@ -246,6 +252,34 @@ import javax.ws.rs.core.Response;
         }
     }
 
-}
+    @GET
+    @Path("/v1_2/outbound/{shortCode}/requests/{smsTransactionId}/deliveryInfos")
+    @ApiOperation(value = "querySMSDeliveryStatusRequest", notes = "Request SMS Delivary Status", response = Response.class)
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "sandbox", value = "Authorization token", required = true, dataType = "string", paramType = "header")})
 
+    public Response handleQuerySmsDelivaryStatusRequest(@Context HttpServletRequest httpServletRequest, @PathParam("shortCode") String shortCode, @PathParam("smsTransactionId") String smsTransactionId)
+    {
+        QuerySMSDeliveryStatusRequestWrapperDTO requestWrapperDTO = new QuerySMSDeliveryStatusRequestWrapperDTO();
+        requestWrapperDTO.setShortCode(shortCode);
+        requestWrapperDTO.setApiVersion("v1_2");
+        requestWrapperDTO.setMtSMSTransactionId(smsTransactionId);
+        requestWrapperDTO.setHttpRequest(httpServletRequest);
+        requestWrapperDTO.setRequestType(RequestType.SMSMESSAGING);
+        RequestHandleable requestHandler = RequestBuilderFactory.getInstance(requestWrapperDTO);
+        Returnable returnable = null;
+        try {
+            returnable = requestHandler.execute(requestWrapperDTO);
+            return  Response.status(returnable.getHttpStatus()).entity(returnable.getResponse()).build();
+        } catch (Exception e) {
+           LOG.error("SMS QUERY DELIVERY STATUS ERROR"+e);
+            return Response.status(Response.Status.BAD_REQUEST).entity(returnable.getResponse()).build();
+        }
+
+
+    }
+
+
+
+}
 

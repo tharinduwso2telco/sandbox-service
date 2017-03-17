@@ -29,7 +29,7 @@ public class SMSRequestFactoryGateway {
 
     public static RequestHandleable getInstance(final RequestDTO requestDTO) {
 
-        final String QUERY_DELIVERY_STATUS = "deliveryInfos";
+        final String QUERY_DELIVERY_STATUS = "deliveryinfos";
         final String SEND_MT_SMS = "requests";
         final String RETRIVE_SMS = "registrations";
         final String OUTBOUND_REQUEST = "outbound";

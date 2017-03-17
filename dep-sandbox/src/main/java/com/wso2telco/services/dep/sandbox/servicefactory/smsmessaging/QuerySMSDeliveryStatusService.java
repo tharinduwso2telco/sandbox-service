@@ -1,26 +1,37 @@
 package com.wso2telco.services.dep.sandbox.servicefactory.smsmessaging;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 import javax.ws.rs.core.Response.Status;
 
+import com.wso2telco.dep.oneapivalidation.exceptions.CustomException;
+import com.wso2telco.dep.oneapivalidation.util.ValidationRule;
+import com.wso2telco.services.dep.sandbox.dao.model.domain.*;
+import com.wso2telco.services.dep.sandbox.servicefactory.*;
+import com.wso2telco.services.dep.sandbox.util.CommonUtil;
+import com.wso2telco.services.dep.sandbox.util.ServiceName;
 import org.apache.commons.logging.LogFactory;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.wso2telco.dep.oneapivalidation.service.impl.smsmessaging.ValidateDeliveryStatus;
 import com.wso2telco.services.dep.sandbox.dao.DaoFactory;
 import com.wso2telco.services.dep.sandbox.dao.SMSMessagingDAO;
 import com.wso2telco.services.dep.sandbox.dao.model.custom.QuerySMSDeliveryStatusRequestWrapperDTO;
-import com.wso2telco.services.dep.sandbox.dao.model.domain.SMSDeliveryStatus;
-import com.wso2telco.services.dep.sandbox.dao.model.domain.SMSRequestLog;
-import com.wso2telco.services.dep.sandbox.dao.model.domain.User;
-import com.wso2telco.services.dep.sandbox.servicefactory.AbstractRequestHandler;
-import com.wso2telco.services.dep.sandbox.servicefactory.Returnable;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
-class QuerySMSDeliveryStatusService extends AbstractRequestHandler<QuerySMSDeliveryStatusRequestWrapperDTO> {
+class QuerySMSDeliveryStatusService extends AbstractRequestHandler<QuerySMSDeliveryStatusRequestWrapperDTO> implements AddressIgnorerable {
 
+
+	public static final String OUTBOUND_SMS_MESSAGE_REQUEST= "outboundSMSMessageRequest";
+	public static  final String DELIVERY_INFO_LIST = "deliveryInfoList";
+	public static  final String DELIVERY_INFO =  "deliveryInfo";
+	public static  final String ADDRESS = "address";
+	public static  final String DELIVERY_STATUS = "deliveryStatus";
+	public static  final String RESOURCE_URL="resourceURL";
+	public static  final String SENDER_ADDRESS ="senderAddress";
+	public static  final String PARAM_SENDER_ADDRESS = "sender_address";
+	public static  final String PARAM_TRANSACTION_ID ="transaction_id";
 	Gson gson = new GsonBuilder().serializeNulls().create();
 	QuerySMSDeliveryStatusRequestWrapperDTO extendedRequestDTO = null;
 	QuerySMSDeliveryStatusResponseWrapper responseWrapperDTO = null;
@@ -34,10 +45,26 @@ class QuerySMSDeliveryStatusService extends AbstractRequestHandler<QuerySMSDeliv
 	@Override
 	protected boolean validate(QuerySMSDeliveryStatusRequestWrapperDTO wrapperDTO) throws Exception {
 
-		ValidateDeliveryStatus validator = new ValidateDeliveryStatus();
-		String[] params = { wrapperDTO.getShortCode(), wrapperDTO.getMtSMSTransactionId() };
-		validator.validate(params);
-		return false;
+	    String shortCode = CommonUtil.getNullOrTrimmedValue(wrapperDTO.getShortCode());
+	    String transactionId = CommonUtil.getNullOrTrimmedValue(wrapperDTO.getMtSMSTransactionId());
+		List<ValidationRule> validationRulesList = new ArrayList<>();
+
+		try
+		{
+               validationRulesList.add(new ValidationRule(ValidationRule.VALIDATION_TYPE_MANDATORY,PARAM_SENDER_ADDRESS,shortCode));
+               validationRulesList.add(new ValidationRule(ValidationRule.VALIDATION_TYPE_MANDATORY,PARAM_TRANSACTION_ID,transactionId));
+		}
+		catch (CustomException ex)
+		{
+
+			LOG.error("###QuerySMSDeliveryStatus### Error in Validations. ", ex);
+			responseWrapperDTO.setRequestError(
+					constructRequestError(SERVICEEXCEPTION, ex.getErrcode(), ex.getErrmsg(), ex.getErrvar()[0]));
+			return false;
+		}
+
+
+		return true;
 	}
 
 	@Override
@@ -46,99 +73,178 @@ class QuerySMSDeliveryStatusService extends AbstractRequestHandler<QuerySMSDeliv
 		try {
 
 			User user = extendedRequestDTO.getUser();
+			int userId = user.getId();
+			String id = Integer.toString(userId);
+			SMSRequestLog previousSMSRequestDetails = null;
+			MessageLog previousSMSDeliveryDetails = null;
+			JSONObject jsonObject = null;
+			QuerySMSDeliveryStatusResponseBean responseBean = new QuerySMSDeliveryStatusResponseBean();
+			APITypes apiType = dao.getAPIType(extendedRequestDTO.getRequestType().toString().toLowerCase());
+			String serviceCall = ServiceName.QuerySMSStatus.toString();
+			APIServiceCalls apiService = dao.getServiceCall(apiType.getId(), serviceCall);
+			String previousServiceCall = ServiceName.SendSMS.toString();
+		 APIServiceCalls previousApiService = dao.getServiceCall(apiType.getId(),previousServiceCall);
+
+			ArrayList<HashMap<String,String>> deliveryStatusArraylist = new ArrayList();
 
 			String mtSMSTransactionIdParts[] = extendedRequestDTO.getMtSMSTransactionId().split("-");
 
-			String previousShortCode = null;
-			String previousDeliveryStatus = null;
+			String sendersAddress = null;
+			String deliveryStat = null;
+			String resourceUrl = null;
+			String recieverAddress = null;
 
 			String senderAddress = extendedRequestDTO.getShortCode();
 			if (extendedRequestDTO.getShortCode().contains("tel:+")) {
 				senderAddress = extendedRequestDTO.getShortCode().replace("tel:+", "").trim();
+
 			} else if (extendedRequestDTO.getShortCode().contains("tel:")) {
 				senderAddress = extendedRequestDTO.getShortCode().replace("tel:", "").trim();
+
 			}
 
-			SMSDeliveryStatus previousSMSDeliveryDetails = smsMessagingDAO
-					.getPreviousSMSDeliveryDetailsByMtSMSTransactionId(extendedRequestDTO.getMtSMSTransactionId());
-			if (previousSMSDeliveryDetails != null) {
-				previousShortCode = previousSMSDeliveryDetails.getSenderAddress();
-				previousDeliveryStatus = previousSMSDeliveryDetails.getDeliveryStatus();
+			int deliveryStatus = 0;
+			int type = 0;
+			int apiId = 0;
+			String jsonRequestString = null;
+
+			if(mtSMSTransactionIdParts.length !=2)
+			{
+				 previousSMSDeliveryDetails = smsMessagingDAO.getPrevSMSDeliveryDataByTransId(Integer.valueOf(mtSMSTransactionIdParts[0]));
+			}
+			else if (mtSMSTransactionIdParts.length ==2)
+			{
+				previousSMSDeliveryDetails = smsMessagingDAO.getPrevSMSDeliveryDataByTransId(Integer.valueOf(mtSMSTransactionIdParts[1]));
 			}
 
-			if (mtSMSTransactionIdParts.length != 2) {
+
+			if(previousSMSDeliveryDetails != null)
+			{
+				 deliveryStatus = previousSMSDeliveryDetails.getStatus();
+				 type = previousSMSDeliveryDetails.getType();
+			 apiId = previousSMSDeliveryDetails.getServicenameid();
+
+			 int messageLogId = previousSMSDeliveryDetails.getId();
+
+				String transactionId[] =extendedRequestDTO.getMtSMSTransactionId().split("-");
+				String newTransactionId = null;
+				if(transactionId.length != 2)
+				{
+					newTransactionId = transactionId[0];
+				}
+				if(transactionId.length == 2)
+				{
+					newTransactionId = transactionId[1];
+				}
+
+				if(deliveryStatus == MessageProcessStatus.Success.getValue() && type == MessageType.Response.getValue() && apiId == previousApiService.getApiServiceCallId() && messageLogId== Integer.valueOf(newTransactionId))
+				{
+
+						jsonRequestString = previousSMSDeliveryDetails.getRequest();
+					    jsonObject = new JSONObject(jsonRequestString);
+						JSONObject jsonChildObj = (JSONObject) jsonObject.getJSONObject(OUTBOUND_SMS_MESSAGE_REQUEST);
+						JSONObject jsoninnerChild = (JSONObject) jsonChildObj.getJSONObject(DELIVERY_INFO_LIST);
+
+						String address = null;
+						String status = null;
+
+						JSONArray deliveryListArray = jsoninnerChild.getJSONArray(DELIVERY_INFO);
+						String arrayList = deliveryListArray.toString();
+						for (int i = 0; i < deliveryListArray.length(); i++) {
+							HashMap<String, String> delivaryStatusHashmap = new HashMap<>();
+							JSONObject jsonArrayList = deliveryListArray.getJSONObject(i);
+							address = jsonArrayList.optString(ADDRESS);
+							status = jsonArrayList.optString(DELIVERY_STATUS);
+							delivaryStatusHashmap.put(ADDRESS, address);
+							delivaryStatusHashmap.put(DELIVERY_STATUS, status);
+							deliveryStatusArraylist.add(delivaryStatusHashmap);
+
+						}
+
+						deliveryStat = status;
+						recieverAddress = address;
+						resourceUrl = jsonChildObj.getString(RESOURCE_URL);
+						sendersAddress = jsonChildObj.getString(SENDER_ADDRESS);
+
+				}
+			}
+
+
+			if(mtSMSTransactionIdParts.length != 2)
+			{
+				previousSMSRequestDetails = smsMessagingDAO
+						.getPrevSMSRequestDataById(Integer.parseInt(mtSMSTransactionIdParts[0]));
+			}
+			if(mtSMSTransactionIdParts.length == 2)
+			{
+				previousSMSRequestDetails = smsMessagingDAO
+						.getPrevSMSRequestDataById(Integer.parseInt(mtSMSTransactionIdParts[1]));
+			}
+
+
+			if (previousSMSRequestDetails == null) {
 
 				responseWrapperDTO.setRequestError(constructRequestError(SERVICEEXCEPTION, "SVC0002",
 						"Invalid input value for message part %1", extendedRequestDTO.getMtSMSTransactionId()));
 				responseWrapperDTO.setHttpStatus(Status.BAD_REQUEST);
+			} else if (!dao.isWhiteListedSenderAddress(user.getId(), senderAddress)) {
+
+				responseWrapperDTO.setRequestError(constructRequestError(SERVICEEXCEPTION, "SVC0001",
+						"A service error occurred. Error code is %1",
+						extendedRequestDTO.getShortCode() + " Not Provisioned"));
+				responseWrapperDTO.setHttpStatus(Status.BAD_REQUEST);
+			} else if (previousSMSDeliveryDetails == null) {
+
+				responseWrapperDTO.setRequestError(constructRequestError(SERVICEEXCEPTION, "SVC0002",
+						"Invalid input value for message part %1", extendedRequestDTO.getMtSMSTransactionId()));
+				responseWrapperDTO.setHttpStatus(Status.BAD_REQUEST);
+			} else if (!senderAddress.equals(sendersAddress)) {
+
+				responseWrapperDTO.setRequestError(constructRequestError(SERVICEEXCEPTION, "SVC0004",
+						"No valid addresses provided in message part %1", extendedRequestDTO.getShortCode()));
+				responseWrapperDTO.setHttpStatus(Status.BAD_REQUEST);
 			} else {
 
-				SMSRequestLog previousSMSRequestDetails = smsMessagingDAO
-						.getPreviousSMSRequestDetailsBySMSId(Integer.parseInt(mtSMSTransactionIdParts[1]));
 
-				if (previousSMSRequestDetails == null) {
 
-					responseWrapperDTO.setRequestError(constructRequestError(SERVICEEXCEPTION, "SVC0002",
-							"Invalid input value for message part %1", extendedRequestDTO.getMtSMSTransactionId()));
-					responseWrapperDTO.setHttpStatus(Status.BAD_REQUEST);
-				} else if (!dao.isWhiteListedSenderAddress(user.getId(), senderAddress)) {
+					String shortCodes[] = recieverAddress.replace("[", "").replace("]", "")
+							.split(",");
+					String deliveryStatusArray[] = deliveryStat.split(",");
 
-					responseWrapperDTO.setRequestError(constructRequestError(SERVICEEXCEPTION, "SVC0001",
-							"A service error occurred. Error code is %1",
-							extendedRequestDTO.getShortCode() + " Not Provisioned"));
-					responseWrapperDTO.setHttpStatus(Status.BAD_REQUEST);
-				} else if (previousSMSDeliveryDetails == null) {
+					QuerySMSDeliveryStatusResponseBean.DeliveryInfoList responseDeliveryInfoList = new QuerySMSDeliveryStatusResponseBean.DeliveryInfoList();
 
-					responseWrapperDTO.setRequestError(constructRequestError(SERVICEEXCEPTION, "SVC0002",
-							"Invalid input value for message part %1", extendedRequestDTO.getMtSMSTransactionId()));
-					responseWrapperDTO.setHttpStatus(Status.BAD_REQUEST);
-				} else if (!extendedRequestDTO.getShortCode().equals(previousShortCode)) {
+					List<QuerySMSDeliveryStatusResponseBean.DeliveryInfoList.DeliveryInfo> deliveryInforArrayList = new ArrayList();
 
-					responseWrapperDTO.setRequestError(constructRequestError(SERVICEEXCEPTION, "SVC0004",
-							"No valid addresses provided in message part %1", extendedRequestDTO.getShortCode()));
-					responseWrapperDTO.setHttpStatus(Status.BAD_REQUEST);
-				} else {
 
-					boolean queryDeliveryStatusTransactionStatus = smsMessagingDAO.saveQueryDeliveryStatusTransaction(
-							extendedRequestDTO.getShortCode(), null, null, null, null, null, null, 0, "success", 5,
-							null, null, user, extendedRequestDTO.getMtSMSTransactionId());
 
-					if (!queryDeliveryStatusTransactionStatus) {
+					for(int i=0; i<deliveryStatusArraylist.size();i++)
+					{
+						QuerySMSDeliveryStatusResponseBean.DeliveryInfoList.DeliveryInfo responseDeliveryInfos = new QuerySMSDeliveryStatusResponseBean.DeliveryInfoList.DeliveryInfo();
+						responseDeliveryInfos.setAddress(deliveryStatusArraylist.get(i).get(ADDRESS));
+						responseDeliveryInfos.setDeliveryStatus(deliveryStatusArraylist.get(i).get(DELIVERY_STATUS));
+						deliveryInforArrayList.add(responseDeliveryInfos);
 
-						responseWrapperDTO.setRequestError(constructRequestError(SERVICEEXCEPTION, "SVC0001",
-								"A service error occurred. Error code is %1", "Access failure for API"));
-						responseWrapperDTO.setHttpStatus(Status.BAD_REQUEST);
-					} else {
-
-						String shortCodes[] = previousSMSRequestDetails.getAddresses().replace("[", "").replace("]", "")
-								.split(",");
-
-						QuerySMSDeliveryStatusResponseBean responseBean = new QuerySMSDeliveryStatusResponseBean();
-
-						QuerySMSDeliveryStatusResponseBean.DeliveryInfoList responseDeliveryInfoList = new QuerySMSDeliveryStatusResponseBean.DeliveryInfoList();
-
-						List<QuerySMSDeliveryStatusResponseBean.DeliveryInfoList.DeliveryInfo> deliveryInforArrayList = new ArrayList<QuerySMSDeliveryStatusResponseBean.DeliveryInfoList.DeliveryInfo>();
-
-						for (int i = 0; i < shortCodes.length; i++) {
-
-							QuerySMSDeliveryStatusResponseBean.DeliveryInfoList.DeliveryInfo responseDeliveryInfo = new QuerySMSDeliveryStatusResponseBean.DeliveryInfoList.DeliveryInfo();
-
-							responseDeliveryInfo.setAddress(shortCodes[i]);
-							responseDeliveryInfo.setDeliveryStatus(previousDeliveryStatus);
-
-							deliveryInforArrayList.add(responseDeliveryInfo);
-						}
-
-						responseDeliveryInfoList.setDeliveryInfo(deliveryInforArrayList);
-						responseDeliveryInfoList
-								.setResourceURL(getresourceURL(extendedRequestDTO.getMtSMSTransactionId()).toString());
-
-						responseBean.setDeliveryInfoList(responseDeliveryInfoList);
-
-						responseWrapperDTO.setQuerySMSDeliveryStatusResponseBean(responseBean);
-						responseWrapperDTO.setHttpStatus(Status.OK);
 					}
+
+					responseDeliveryInfoList.setDeliveryInfo(deliveryInforArrayList);
+					responseDeliveryInfoList
+							.setResourceURL(resourceUrl);
+
+
+					responseBean.setDeliveryInfoList(responseDeliveryInfoList);
+
+
+					responseWrapperDTO.setQuerySMSDeliveryStatusResponseBean(responseBean);
+					responseWrapperDTO.setHttpStatus(Status.OK);
+
+				int messageLogId = saveResponse(senderAddress,responseWrapperDTO.getQuerySMSDeliveryStatusResponseBean(),apiService,MessageProcessStatus.Success);
+
+				if(messageLogId == 0)
+				{
+					responseWrapperDTO.setRequestError(constructRequestError(SERVICEEXCEPTION, "SVC0002",
+							"A service error occurred. Error code is %1", "process failure of Response of the QuerySMSDeliveryStatus"));
 				}
+
 			}
 		} catch (Exception e) {
 
@@ -156,7 +262,6 @@ class QuerySMSDeliveryStatusService extends AbstractRequestHandler<QuerySMSDeliv
 
 	@Override
 	protected List<String> getAddress() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
@@ -187,4 +292,22 @@ class QuerySMSDeliveryStatusService extends AbstractRequestHandler<QuerySMSDeliv
 
 		return resourceURLBuilder;
 	}
+
+   private int saveResponse(String endUserIdPath, QuerySMSDeliveryStatusResponseBean responseBean, APIServiceCalls
+		   apiServiceCalls, MessageProcessStatus status) throws Exception {
+	   Gson gson = new Gson();
+	   String jsonString = gson.toJson(responseBean);
+	   MessageLog messageLog =new MessageLog();
+	   messageLog.setRequest(jsonString);
+	   messageLog.setServicenameid(apiServiceCalls.getApiServiceCallId());
+	   messageLog.setUserid(extendedRequestDTO.getUser().getId());
+	   messageLog.setType(MessageType.Response.getValue());
+	   messageLog.setValue(endUserIdPath);
+	   messageLog.setReference("shortcode");
+	   messageLog.setMessageTimestamp(new Date());
+	   messageLog.setStatus(status.getValue());
+	   int i = loggingDAO.saveMessageLog(messageLog);
+	   return  i;
+
+   }
 }
