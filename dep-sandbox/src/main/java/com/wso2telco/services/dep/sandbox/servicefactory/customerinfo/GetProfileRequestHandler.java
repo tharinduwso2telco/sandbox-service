@@ -129,9 +129,7 @@ public class GetProfileRequestHandler extends AbstractRequestHandler<GetProfileR
 				validationRulesList.add(new ValidationRule(
 						ValidationRule.VALIDATION_TYPE_OPTIONAL_INT_GE_ZERO,
 						"mnc", mnc));
-				validationRulesList.add(new ValidationRule(
-						ValidationRule.VALIDATION_TYPE_MANDATORY_INT_GE_ZERO,
-						"mcc", mcc));
+
 			}
 	    
 	    
@@ -178,7 +176,7 @@ public class GetProfileRequestHandler extends AbstractRequestHandler<GetProfileR
     	
     	APITypes apiTypes = dao.getAPIType(extendedRequestDTO.getRequestType().toString().toLowerCase());
     	APIServiceCalls apiServiceCalls = dao.getServiceCall(apiTypes.getId(), ServiceName.GetProfile.toString().toLowerCase());
-    	JSONObject obj = new JSONObject();
+		JSONObject obj = new JSONObject();
     	obj.put("msisdn",extendedRequestDTO.getMsisdn());
     	obj.put("imsi",extendedRequestDTO.getImsi());
     	obj.put("mcc",extendedRequestDTO.getMcc());

@@ -13,6 +13,7 @@ import com.wso2telco.services.dep.sandbox.dao.model.domain.*;
 import com.wso2telco.services.dep.sandbox.util.RequestError;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
+import org.bouncycastle.asn1.dvcs.ServiceType;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -75,13 +76,14 @@ public abstract class AbstractRequestHandler<E2 extends RequestDTO> implements R
 		 */
 		if (!(this instanceof AddressIgnorerable)) {
 			List<String> userNotWhiteListed = getNotWhitelistedNumbers(user);
+
 			if (userNotWhiteListed != null && !userNotWhiteListed.isEmpty()) {
 				Returnable responseDTO = getResponseDTO();
 				
 				LOG.debug("Location parameters are empty");
 				responseDTO.setRequestError(
 						constructRequestError(SERVICEEXCEPTION, "SVC0002", "A service error occurred. Error code is %1",
-								StringUtils.join(userNotWhiteListed.toArray())));
+								StringUtils.join(userNotWhiteListed.toArray())+" Not WhiteListed"));
 				responseDTO.setHttpStatus(Status.BAD_REQUEST);
 				return responseDTO;
 			}

@@ -340,6 +340,7 @@ class HibernateCommonDAO extends AbstractDAO implements GenaricDAO {
 
 	    number = (ManageNumber) query.getSingleResult();
 	} catch (NoResultException e) {
+
 	    return null;
 	} catch (Exception ex) {
 	    LOG.error("###CUSTOMERINFO### Error While Retriving MSISDN", ex);

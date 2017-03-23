@@ -58,6 +58,7 @@ public class CreditApplyRequestHandler extends AbstractRequestHandler<CreditAppl
 	private CreditApplyResponseWrapper responseWrapperDTO;
 	private Integer correlatorid;
 	Integer clientCorrelatorid ;
+	private CreditApplyResponseWrapper creditApplyResponseWrapper;
 	
 	final String TYPE_MONEY = "money";
 	final String TYPE_SMS = "sms";
