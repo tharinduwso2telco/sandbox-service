@@ -189,7 +189,16 @@ public class CreditApplyRequestHandler extends AbstractRequestHandler<CreditAppl
 		String callbackData = CommonUtil.getNullOrTrimmedValue(request.getReceiptRequest().getCallbackData());
 		String referenceCode = CommonUtil.getNullOrTrimmedValue(request.getReferenceCode());
 
-		try {	
+		try {
+		    if(type.toLowerCase().equals("sms")){
+                if (!((amount == Math.floor(amount)) && !Double.isInfinite(amount))) {
+                    responseWrapperDTO.setRequestError(constructRequestError(SERVICEEXCEPTION,
+                            ServiceError.INVALID_INPUT_VALUE, "SMS Should be a Integer Number"));
+                    responseWrapperDTO.setHttpStatus(Status.BAD_REQUEST);
+                    return responseWrapperDTO;
+                }
+            }
+
 			String clientCorrelatorAttribute = AttributeName.clientCorrelator.toString();
 			Integer userId = extendedRequestDTO.getUser().getId();
 			 String userName = extendedRequestDTO.getUser().getUserName();
