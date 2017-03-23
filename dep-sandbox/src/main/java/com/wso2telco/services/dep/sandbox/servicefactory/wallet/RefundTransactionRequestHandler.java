@@ -211,9 +211,9 @@ public class RefundTransactionRequestHandler extends AbstractRequestHandler<Refu
 					MessageType.Response, referenceCode);
 
 			if ((result != null)) {
-				LOG.error("###PAYMENT### Already charged for this reference code");
+				LOG.error("###PAYMENT### Already used reference code");
 				responseWrapper.setRequestError(constructRequestError(SERVICEEXCEPTION,
-						ServiceError.INVALID_INPUT_VALUE, "Already charged for this reference code"));
+						ServiceError.INVALID_INPUT_VALUE, "Already used reference code"));
 				responseWrapper.setHttpStatus(Response.Status.BAD_REQUEST);
 				return responseWrapper;
 			}
@@ -226,6 +226,9 @@ public class RefundTransactionRequestHandler extends AbstractRequestHandler<Refu
 			Double validTransaction = checkOriginalServerReferenceWithServerReference(userId, serviceIdForMakePayment,
 					endUserId, MessageProcessStatus.Success, MessageType.Response, originalServerReferenceCode,
 					originalReferenceCode);
+
+            AttributeValues accountStatusValue = walletDAO.getAttributeValue(endUserId, serviceCallRefund,
+                    AttributeName.transactionStatus.toString(), userId);
 
 
 			// check path param endUserId and request body endUserId
@@ -341,8 +344,15 @@ public class RefundTransactionRequestHandler extends AbstractRequestHandler<Refu
                 Double updateBalance = manageNumber.getBalance() + chargeAmount;
                 manageNumber.setBalance(updateBalance);
 
+                if (accountStatusValue != null) {
+                    String accountStatus = accountStatusValue.getValue();
+                    // set transaction operation status as Refused
+                    if (accountStatus.equals(TransactionStatus.Refused.toString())) {
+                        responseBean.setTransactionOperationStatus(TransactionStatus.Refused.toString());
+                    }
+                }
                 // set transaction operation status as Refunded
-                if (walletDAO.saveManageNumbers(manageNumber)) {
+                else if (walletDAO.saveManageNumbers(manageNumber)) {
                     responseBean.setTransactionOperationStatus(TransactionStatus.Refunded.toString());
                 }
             } else {
@@ -535,71 +545,41 @@ public class RefundTransactionRequestHandler extends AbstractRequestHandler<Refu
 
         if (isOriginalServerReferenceCode) {
 
-            for (int i = 0; i < originalServerReferenceCodeList.size(); i++) {
+            APITypes apiTypeCredit = dao.getAPIType(RequestType.WALLET.toString());
+            APIServiceCalls apiServiceCallCredit = dao.getServiceCall(apiTypeCredit.getId(), ServiceName.RefundPayment
+                    .toString());
+            List<Integer> refundIdList = new ArrayList<>();
+            refundIdList.add(apiServiceCallCredit.getApiServiceCallId());
 
-                if (originalServerReferenceCodeList != null) {
+            List<MessageLog> messageLogForPartialRefund = loggingDAO.getMessageLogs(userId, refundIdList, "msisdn",
+                    "tel:+" + tel, null, null);
 
-                    int responseStatus = originalServerReferenceCodeList.get(i).getStatus();
-                    int responseType = originalServerReferenceCodeList.get(i).getType();
+            if (messageLogForPartialRefund != null) {
+
+                for (int i = 0; i < messageLogForPartialRefund.size(); i++) {
+
+                    int responseStatus = messageLogForPartialRefund.get(i).getStatus();
+                    int responseType = messageLogForPartialRefund.get(i).getType();
 
                     if (responseType == type.getValue() && responseStatus == status.getValue()) {
-                        String request = originalServerReferenceCodeList.get(i).getRequest();
+
+                        String request = messageLogForPartialRefund.get(i).getRequest();
                         JSONObject json = new JSONObject(request);
                         String responseOriginalServerReferenceCode = json.get("originalServerReferenceCode").toString();
-                        String responseReferenceCode = json.get("referenceCode").toString();
 
-                        int responseUserId = originalServerReferenceCodeList.get(i).getUserid();
-                        String responseTel = originalServerReferenceCodeList.get(i).getValue();
+                        int responseUserId = messageLogForPartialRefund.get(i).getUserid();
+                        String responseTel = messageLogForPartialRefund.get(i).getValue();
 
                         // Check reference CodeDuplication
                         if (responseUserId == userId && responseTel.equals("tel:+" + tel) &&
-                                responseOriginalServerReferenceCode.equals(originalServerReferenceCode) &&
-                                responseReferenceCode.equals(originalReferenceCode)) {
+                                responseOriginalServerReferenceCode.equals(originalServerReferenceCode)) {
                             totalAmountRefunded += Double.valueOf(json.getJSONObject("paymentAmount").getJSONObject
                                     ("chargingInformation").get("amount").toString());
                         }
                     }
-
                 }
 
             }
-
-        }
-
-        APITypes apiTypeCredit = dao.getAPIType(RequestType.WALLET.toString());
-        APIServiceCalls apiServiceCallCredit = dao.getServiceCall(apiTypeCredit.getId(), ServiceName.RefundPayment
-                .toString());
-        List<Integer> refundIdList = new ArrayList<>();
-        refundIdList.add(apiServiceCallCredit.getApiServiceCallId());
-
-        List<MessageLog> messageLogForPartialRefund = loggingDAO.getMessageLogs(userId, refundIdList, "msisdn",
-                "tel:+" + tel, null, null);
-
-        if (messageLogForPartialRefund != null) {
-
-            for (int i = 0; i < messageLogForPartialRefund.size(); i++) {
-
-                int responseStatus = messageLogForPartialRefund.get(i).getStatus();
-                int responseType = messageLogForPartialRefund.get(i).getType();
-
-                if (responseType == type.getValue() && responseStatus == status.getValue()) {
-
-                    String request = messageLogForPartialRefund.get(i).getRequest();
-                    JSONObject json = new JSONObject(request);
-                    String responseOriginalServerReferenceCode = json.get("originalServerReferenceCode").toString();
-
-                    int responseUserId = messageLogForPartialRefund.get(i).getUserid();
-                    String responseTel = messageLogForPartialRefund.get(i).getValue();
-
-                    // Check reference CodeDuplication
-                    if (responseUserId == userId && responseTel.equals("tel:+" + tel) &&
-                            responseOriginalServerReferenceCode.equals(originalServerReferenceCode)) {
-                        totalAmountRefunded += Double.valueOf(json.getJSONObject("paymentAmount").getJSONObject
-                                ("chargingInformation").get("amount").toString());
-                    }
-                }
-            }
-
         }
 
         return (paymentAmount - totalAmountRefunded);

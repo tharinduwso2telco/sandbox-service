@@ -213,9 +213,9 @@ public class MakePaymentRequestHandler extends AbstractRequestHandler<MakePaymen
                     .Success, MessageType.Response, referenceCode);
 
             if ((duplicateReferenceCode != null)) {
-                LOG.error("###WALLET### Already charged for this reference code");
+                LOG.error("###WALLET### Already used reference code");
                 responseWrapper.setRequestError(constructRequestError(SERVICEEXCEPTION,
-                        ServiceError.INVALID_INPUT_VALUE, "Already charged for this reference code"));
+                        ServiceError.INVALID_INPUT_VALUE, "Already used reference code"));
                 responseWrapper.setHttpStatus(Response.Status.BAD_REQUEST);
                 return responseWrapper;
             }
@@ -310,6 +310,8 @@ public class MakePaymentRequestHandler extends AbstractRequestHandler<MakePaymen
 			ManageNumber manageNumber = numberDAO.getNumber(endUserId,
 					extendedRequestDTO.getUser().getUserName().toString());
 			Double balance = manageNumber.getBalance();
+			AttributeValues transactionStatusValue = walletDAO.getAttributeValue(endUserId, serviceCallPayment,
+					AttributeName.transactionStatus.toString(), userId);
 
 			// transaction operation status as denied
 			if ((balance < chargeAmount)) {
@@ -320,8 +322,14 @@ public class MakePaymentRequestHandler extends AbstractRequestHandler<MakePaymen
 								"Denied : Account balance insufficient to charge request"));
 				return responseWrapper;
 			}
+            // set transaction operation status as refused
+            else if (transactionStatusValue != null) {
+                String transactionStatus = transactionStatusValue.getValue();
+                if (transactionStatus.equals(TransactionStatus.Refused.toString())) {
+                    responseBean.setTransactionOperationStatus(TransactionStatus.Refused.toString());
+                }
 
-		 else if (balance >= chargeAmount) {
+            } else if (balance >= chargeAmount) {
 				balance = balance - chargeAmount;
 				manageNumber.setBalance(balance);
 				numberDAO.saveManageNumbers(manageNumber);
