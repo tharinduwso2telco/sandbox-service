@@ -13,16 +13,38 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
+package com.wso2telco.services.dep.sandbox.servicefactory.smsmessaging;
 
-package com.wso2telco.services.dep.sandbox.dao;
+public class SMSParameterConfigRequestBean {
 
-import com.wso2telco.services.dep.sandbox.dao.model.domain.UssdApplication;
 
-import java.util.List;
+    private String deliveryStatus;
+    private String maxNotifications;
+    private String notificationDelay;
 
-public interface USSDDAO {
 
-    List<UssdApplication> getUssdApplications(int userid, String shortCode, String keyWord);
-    boolean saveUSSDApplications(UssdApplication ussdApplication) throws Exception;
+    public String getDeliveryStatus() {
+        return deliveryStatus;
+    }
+
+    public void setDeliveryStatus(String deliveryStatus) {
+        this.deliveryStatus = deliveryStatus;
+    }
+
+    public String getMaxNotifications() {
+        return maxNotifications;
+    }
+
+    public void setMaxNotifications(String maxNotifications) {
+        this.maxNotifications = maxNotifications;
+    }
+
+    public String getNotificationDelay() {
+        return notificationDelay;
+    }
+
+    public void setNotificationDelay(String notificationDelay) {
+        this.notificationDelay = notificationDelay;
+    }
 
 }

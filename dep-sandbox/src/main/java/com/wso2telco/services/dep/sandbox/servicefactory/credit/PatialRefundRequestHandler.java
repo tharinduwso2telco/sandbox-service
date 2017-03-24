@@ -124,6 +124,8 @@ public class PatialRefundRequestHandler extends AbstractRequestHandler<PatialRef
         PaymentAmountWithTax paymentAmountWithTax = request.getPaymentAmount();
         ChargingInformation chargingInformation = paymentAmountWithTax.getChargingInformation();
         ChargingMetaDataWithTax metadata = paymentAmountWithTax.getChargingMetaData();
+        String callbackData = null;
+        String notifyURL = null;
 
         if (requestBean != null && request != null) {
 
@@ -139,8 +141,12 @@ public class PatialRefundRequestHandler extends AbstractRequestHandler<PatialRef
             String referenceCode = CommonUtil.getNullOrTrimmedValue(request.getReferenceCode());
             String currency = CommonUtil.getNullOrTrimmedValue(chargingInformation.getCurrency());
             String amount = CommonUtil.getNullOrTrimmedValue(chargingInformation.getAmount());
-            String callbackData = CommonUtil.getNullOrTrimmedValue(request.getCallbackData());
-            String notifyURL =  CommonUtil.getNullOrTrimmedValue(request.getNotifyURL());
+
+            if(request.getReceiptRequest()!=null) {
+                 callbackData = CommonUtil.getNullOrTrimmedValue(request.getReceiptRequest().getCallbackData());
+                 notifyURL = CommonUtil.getNullOrTrimmedValue(request.getReceiptRequest().getNotifyURL());
+            }
+
             String merchantIdentification = CommonUtil.getNullOrTrimmedValue(request.getMerchantIdentification());
             String description = CommonUtil.getNullOrTrimmedValue(chargingInformation.getDescription());
             String purchaseCategoryCode = CommonUtil.getNullOrTrimmedValue(metadata.getPurchaseCategoryCode());
@@ -160,8 +166,8 @@ public class PatialRefundRequestHandler extends AbstractRequestHandler<PatialRef
                         new ValidationRule(ValidationRule.VALIDATION_TYPE_OPTIONAL, CURRENCY, currency),
                         new ValidationRule(ValidationRule.VALIDATION_TYPE_MANDATORY_DOUBLE_GE_ZERO, AMOUNT, amount),
                         new ValidationRule(ValidationRule.VALIDATION_TYPE_OPTIONAL, CALL_BACK_DATA, callbackData),
-                        new ValidationRule(ValidationRule.VALIDATION_TYPE_OPTIONAL, NOTIFY_URL, notifyURL),
-                        new ValidationRule(ValidationRule.VALIDATION_TYPE_OPTIONAL, MERCHANT_IDENTIFICATION, merchantIdentification),
+                        new ValidationRule(ValidationRule.VALIDATION_TYPE_MANDATORY, NOTIFY_URL, notifyURL),
+                        new ValidationRule(ValidationRule.VALIDATION_TYPE_MANDATORY, MERCHANT_IDENTIFICATION, merchantIdentification),
                         new ValidationRule(ValidationRule.VALIDATION_TYPE_OPTIONAL, DESCRIPTION, description),
                         new ValidationRule(ValidationRule.VALIDATION_TYPE_OPTIONAL, PURCHASE_CATEGORY_CODE, purchaseCategoryCode)
 
@@ -202,7 +208,6 @@ public class PatialRefundRequestHandler extends AbstractRequestHandler<PatialRef
         String msisdn = CommonUtil.getNullOrTrimmedValue(request.getMsisdn());
         String clientCorrelator = CommonUtil.getNullOrTrimmedValue(request.getClientCorrelator());
         String reasonForRefund = CommonUtil.getNullOrTrimmedValue(request.getReasonForRefund());
-        String merchantIdentification = CommonUtil.getNullOrTrimmedValue(request.getMsisdn());
         String serverTransactionReference = CommonUtil.getNullOrTrimmedValue(request.getOriginalServerReferenceCode());
         String userName = extendedRequestDTO.getUser().getUserName();
         String serviceCreditApply = ServiceName.PartialRefund.toString();
@@ -210,7 +215,11 @@ public class PatialRefundRequestHandler extends AbstractRequestHandler<PatialRef
         String referenceCode = CommonUtil.getNullOrTrimmedValue(String.valueOf(request.getReferenceCode()));
         String endUserID = getLastMobileNumber(extendedRequestDTO.getMsisdn());
         String currency = CommonUtil.getNullOrTrimmedValue(chargingInformation.getCurrency());
+        String endUserIdPath = extendedRequestDTO.getMsisdn();
         amount = Double.parseDouble(CommonUtil.getNullOrTrimmedValue(chargingInformation.getAmount()));
+        String callbackData = CommonUtil.getNullOrTrimmedValue(request.getReceiptRequest().getCallbackData());
+        String notifyURL =  CommonUtil.getNullOrTrimmedValue(request.getReceiptRequest().getNotifyURL());
+        String merchantIdentification = CommonUtil.getNullOrTrimmedValue(request.getMerchantIdentification());
 
 
         String serverReferenceCodeFormat = String.format("%06d", getReferenceNumber());
@@ -279,6 +288,16 @@ public class PatialRefundRequestHandler extends AbstractRequestHandler<PatialRef
 
                 }
             }
+
+            // check path param endUserId and request body endUserId
+            if (!(getLastMobileNumber(endUserIdPath).equals(getLastMobileNumber(msisdn)))) {
+                LOG.error("###REFUND### two different endUserId provided");
+                responseWrapperDTO.setRequestError(constructRequestError(SERVICEEXCEPTION,
+                        ServiceError.INVALID_INPUT_VALUE, "two different endUserId provided"));
+                responseWrapperDTO.setHttpStatus(Status.BAD_REQUEST);
+                return responseWrapperDTO;
+            }
+
             //Check channel.
             if (channel != null && !containsChannel(channel)) {
                 LOG.error("###REFUND### Valid channel doesn't exists for the given inputs");
@@ -313,6 +332,9 @@ public class PatialRefundRequestHandler extends AbstractRequestHandler<PatialRef
                 return responseWrapperDTO;
             }
 
+            ReceiptResponse receiptResponse = new ReceiptResponse();
+            receiptResponse.setCallbackData(callbackData);
+            receiptResponse.setNotifyURL(notifyURL);
 
             if (RefundAmount <= validTransaction) {
 
@@ -320,11 +342,10 @@ public class PatialRefundRequestHandler extends AbstractRequestHandler<PatialRef
                 ManageNumber manageNumber = numberDao.getNumber(endUserID, userName);
                 if (manageNumber != null) {
                     updateBalance(manageNumber, RefundAmount);
-                    RefundResponseBean responseBean = buildJsonResponseBody(RefundAmount, clientCorrelator, merchantIdentification, reasonForRefund,
-                            serverTransactionReference, OperationStatus.Refunded.toString(), referenceCode, serverReferenceCode, chargingInformation, metadata);
+                    RefundResponseBean responseBean = buildJsonResponseBody(RefundAmount, clientCorrelator, msisdn, reasonForRefund,
+                            serverTransactionReference, OperationStatus.Refunded.toString(), referenceCode, serverReferenceCode, chargingInformation, metadata,receiptResponse,merchantIdentification);
 
-
-                    saveResponse(extendedRequestDTO, extendedRequestDTO.getMsisdn(), responseBean, apiServiceCalls, MessageProcessStatus.Success);
+                    saveResponse(extendedRequestDTO, endUserID, responseBean, apiServiceCalls, MessageProcessStatus.Success);
                     responseWrapperDTO.setHttpStatus(Response.Status.CREATED);
                     return responseWrapperDTO;
                 } else {
@@ -345,16 +366,12 @@ public class PatialRefundRequestHandler extends AbstractRequestHandler<PatialRef
 
 
         } catch (Exception ex) {
-            RefundResponseBean responseBean = buildJsonResponseBody(RefundAmount, clientCorrelator, merchantIdentification, reasonForRefund,
-                    serverTransactionReference, OperationStatus.Refunded.toString(), referenceCode, serverReferenceCode, chargingInformation, metadata);
-            saveResponse(extendedRequestDTO, extendedRequestDTO.getMsisdn(), responseBean, apiServiceCalls, MessageProcessStatus.Failed);
             LOG.error("###REFUND### Error in processing credit service request. ", ex);
             responseWrapperDTO
                     .setRequestError(constructRequestError(SERVICEEXCEPTION, ServiceError.SERVICE_ERROR_OCCURED, null));
             responseWrapperDTO.setHttpStatus(Status.BAD_REQUEST);
             return responseWrapperDTO;
         }
-
     }
 
     @Override
@@ -370,8 +387,13 @@ public class PatialRefundRequestHandler extends AbstractRequestHandler<PatialRef
         numberDao.saveManageNumbers(manageNumber);
     }
 
-    private RefundResponseBean buildJsonResponseBody(double amount, String clientCorrelator, String merchantIdentification,
-                                                     String reason, String serverTransactionReference, String operationStatus, String referenceCode, String serverReferenceCode, ChargingInformation chargingInformation, ChargingMetaDataWithTax chargingMetaDataWithTax) {
+    private RefundResponseBean buildJsonResponseBody(double amount, String clientCorrelator, String enduserID,
+                                                     String reason, String serverTransactionReference, String
+                                                             operationStatus, String referenceCode, String
+                                                             serverReferenceCode, ChargingInformation
+                                                             chargingInformation, ChargingMetaDataWithTax
+                                                             chargingMetaDataWithTax, ReceiptResponse receiptResponse,
+                                                     String merchantIdentification) {
 
         PaymentAmountWithTax paymentAmountWithTax = new PaymentAmountWithTax();
         paymentAmountWithTax.setChargingInformation(chargingInformation);
@@ -381,13 +403,16 @@ public class PatialRefundRequestHandler extends AbstractRequestHandler<PatialRef
         refundResponse.setRefundAmount(amount);
         refundResponse.setOriginalServerReferenceCode(serverTransactionReference);
         refundResponse.setClientCorrelator(clientCorrelator);
-        refundResponse.setEndUserID(merchantIdentification);
+        refundResponse.setEndUserID(enduserID);
         refundResponse.setReasonForRefund(reason);
+        refundResponse.setMerchantIdentification(merchantIdentification);
         refundResponse.setPaymentAmount(paymentAmountWithTax);
+        refundResponse.setReceiptResponse(receiptResponse);
         refundResponse.setReferenceCode(referenceCode);
         refundResponse.setServerReferanceCode(serverReferenceCode);
         refundResponse.setResourceURL(CommonUtil.getResourceUrl(requestWrapperDTO));
         refundResponse.setTransactionOperationStatus(operationStatus);
+
         RefundResponseBean refundResponseBean = new RefundResponseBean();
         refundResponseBean.setRefundResponse(refundResponse);
         responseWrapperDTO.setRefundResponseBean(refundResponseBean);
@@ -597,7 +622,7 @@ public class PatialRefundRequestHandler extends AbstractRequestHandler<PatialRef
         messageLog.setServicenameid(apiServiceCalls.getApiServiceCallId());
         messageLog.setUserid(extendedRequestDTO.getUser().getId());
         messageLog.setReference("msisdn");
-        messageLog.setValue(endUserIdPath);
+        messageLog.setValue("tel:+"+endUserIdPath);
         messageLog.setMessageTimestamp(new Date());
 
         loggingDAO.saveMessageLog(messageLog);
@@ -617,7 +642,7 @@ public class PatialRefundRequestHandler extends AbstractRequestHandler<PatialRef
     }
 
     @Override
-    public String getnumber(PatialRefundRequestWrapper requestDTO) {
-        return requestDTO.getMsisdn();
+    public String getnumber(PatialRefundRequestWrapper requestDTO) throws Exception {
+        return getLastMobileNumber(requestDTO.getMsisdn());
     }
 }

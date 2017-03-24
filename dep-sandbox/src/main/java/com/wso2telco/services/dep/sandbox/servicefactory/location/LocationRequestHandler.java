@@ -114,7 +114,7 @@ public class LocationRequestHandler  extends AbstractRequestHandler<LocationRequ
 					objTerminalLocationList.setTerminalLocation(objTerminalLocation);
 
 					responseWrapperDTO.setTerminalLocationList(objTerminalLocationList);
-					responseWrapperDTO.setHttpStatus(Status.OK);
+					responseWrapperDTO.setHttpStatus(Status.CREATED);
 
 				} else if (locparam.getLocationRetrieveStatus().equals("Error")) {
 

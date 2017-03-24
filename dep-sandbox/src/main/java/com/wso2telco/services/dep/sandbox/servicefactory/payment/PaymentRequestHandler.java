@@ -118,7 +118,7 @@ public class PaymentRequestHandler extends AbstractRequestHandler<ChargePaymentR
             validationRulesList.add(new ValidationRule(ValidationRule.VALIDATION_TYPE_MANDATORY_TEL_END_USER_ID,
                     "endUserID", endUserID));
             validationRulesList.add(new ValidationRule(ValidationRule.VALIDATION_TYPE_MANDATORY_TEL_END_USER_ID,
-                    "endUserID", msisdn));
+                    "msisdn", msisdn));
             validationRulesList.add(new ValidationRule(ValidationRule.VALIDATION_TYPE_MANDATORY,
                     "amount", amount));
             validationRulesList.add(new ValidationRule(ValidationRule.VALIDATION_TYPE_MANDATORY,
@@ -231,7 +231,7 @@ public class PaymentRequestHandler extends AbstractRequestHandler<ChargePaymentR
 
 
             // check path param endUserId and request body endUserId
-            if (!(endUserIdPath.equals(endUserIdRequest))) {
+            if (!(getLastMobileNumber(endUserIdPath).equals(getLastMobileNumber(endUserIdRequest)))) {
                 LOG.error("###PAYMENT### two different endUserId provided");
                 responseWrapper.setRequestError(constructRequestError(SERVICEEXCEPTION,
                         ServiceError.INVALID_INPUT_VALUE, "two different endUserId provided"));
@@ -344,7 +344,7 @@ public class PaymentRequestHandler extends AbstractRequestHandler<ChargePaymentR
             responseWrapper.setHttpStatus(Response.Status.CREATED);
 
             // Save Success Response
-            saveResponse(extendedRequestDTO, endUserIdPath, responseBean, apiServiceCalls, MessageProcessStatus.Success);
+            saveResponse(extendedRequestDTO, endUserId, responseBean, apiServiceCalls, MessageProcessStatus.Success);
 
         } catch (Exception ex) {
             LOG.error("###PAYMENT### Error Occured in PAYMENT Service. ", ex);
@@ -460,7 +460,7 @@ public class PaymentRequestHandler extends AbstractRequestHandler<ChargePaymentR
         messageLog1.setServicenameid(apiServiceCalls.getApiServiceCallId());
         messageLog1.setUserid(extendedRequestDTO.getUser().getId());
         messageLog1.setReference("msisdn");
-        messageLog1.setValue(endUserIdPath);
+        messageLog1.setValue("tel:+"+endUserIdPath);
         messageLog1.setMessageTimestamp(new Date());
 
         loggingDAO.saveMessageLog(messageLog1);
@@ -498,7 +498,7 @@ public class PaymentRequestHandler extends AbstractRequestHandler<ChargePaymentR
     }
 
     @Override
-    public String getnumber(ChargePaymentRequestWrapperDTO requestDTO) {
-        return requestDTO.getEndUserId();
+    public String getnumber(ChargePaymentRequestWrapperDTO requestDTO) throws Exception {
+        return getLastMobileNumber(requestDTO.getEndUserId());
     }
 }

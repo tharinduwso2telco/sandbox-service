@@ -14,6 +14,8 @@ import org.hibernate.Transaction;
 
 import com.wso2telco.services.dep.sandbox.dao.SMSMessagingDAO;
 
+import javax.persistence.NoResultException;
+
 class HibernateSMSMessagingDAO extends HibernateCommonDAO  implements SMSMessagingDAO{
 
 	{
@@ -187,8 +189,24 @@ class HibernateSMSMessagingDAO extends HibernateCommonDAO  implements SMSMessagi
         return isExists;
 	}
 
+	@Override
+	public boolean saveSMSParameters(SMSMessagingParam messagingParam) {
+		try {
+			Session session = getSession();
+			session.save(messagingParam);
 
-		public boolean saveDeliverySubscription (User userId, String sender_address,int sub_status, String notify_url,
+		} catch (NoResultException e) {
+			return false;
+
+		} catch (Exception ex) {
+			LOG.error("###SMS Config### Error in SMS Config Service ", ex);
+			throw ex;
+		}
+		return true;
+	}
+
+
+	public boolean saveDeliverySubscription (User userId, String sender_address,int sub_status, String notify_url,
 				String filter, String callbackData, String clinetCorrelator, String
 		request){
 

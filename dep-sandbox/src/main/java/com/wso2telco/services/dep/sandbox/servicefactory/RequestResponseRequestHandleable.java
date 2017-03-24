@@ -22,7 +22,7 @@ public interface RequestResponseRequestHandleable <E2 extends RequestDTO> {
 
      String getApiServiceCalls() ;
      String getJosonString(final E2 requestDTO);
-     String getnumber(final E2 requestDTO);
+     String getnumber(final E2 requestDTO) throws Exception;
 
 
 }

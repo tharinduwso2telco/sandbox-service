@@ -13,16 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
+package com.wso2telco.services.dep.sandbox.servicefactory.smsmessaging;
 
-package com.wso2telco.services.dep.sandbox.dao;
 
-import com.wso2telco.services.dep.sandbox.dao.model.domain.UssdApplication;
+import com.wso2telco.services.dep.sandbox.dao.model.custom.RequestDTO;
 
-import java.util.List;
+public class SMSParameterConfigRequestWrapper extends RequestDTO {
 
-public interface USSDDAO {
+    private SMSParameterConfigRequestBean parameterConfigRequestBean;
 
-    List<UssdApplication> getUssdApplications(int userid, String shortCode, String keyWord);
-    boolean saveUSSDApplications(UssdApplication ussdApplication) throws Exception;
 
+    public SMSParameterConfigRequestBean getParameterConfigRequestBean() {
+        return parameterConfigRequestBean;
+    }
+
+    public void setParameterConfigRequestBean(SMSParameterConfigRequestBean parameterConfigRequestBean) {
+        this.parameterConfigRequestBean = parameterConfigRequestBean;
+    }
 }

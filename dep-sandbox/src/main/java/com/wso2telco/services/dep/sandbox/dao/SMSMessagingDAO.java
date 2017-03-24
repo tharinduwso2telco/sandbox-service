@@ -20,8 +20,6 @@ public interface SMSMessagingDAO {
 	boolean removeSubscription(int userId, String senderAddress);
 	public int saveSubscribeSMSRequest(SubscribeSMSRequest subscribeSMSRequest) throws Exception;
 	public boolean removeSubscriptionToMessage(String subscriptionID) throws Exception;
-
-
-
+	boolean saveSMSParameters(SMSMessagingParam messagingParam);
 
 }

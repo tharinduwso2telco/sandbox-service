@@ -396,7 +396,7 @@ public class RemoveProvisionedServices extends
 				.setServiceRemoveResponse(serviceRemovalResponse);
 		responseWrapper
 				.setRemoveProvisionedResponseBean(removeProvisionResponseBean);
-		responseWrapper.setHttpStatus(Response.Status.OK);
+		responseWrapper.setHttpStatus(Response.Status.CREATED);
 
 	}
 

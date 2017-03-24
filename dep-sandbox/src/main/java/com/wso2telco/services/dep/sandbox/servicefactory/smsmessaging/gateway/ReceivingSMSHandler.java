@@ -81,7 +81,6 @@ import java.util.List;
             LOG.error("###SMS### Error in Validations. ", ex);
             responseWrapper.setRequestError(
                     constructRequestError(SERVICEEXCEPTION, ex.getErrcode(), ex.getErrmsg(), ex.getErrvar()[0]));
-            responseWrapper.setHttpStatus(Response.Status.BAD_REQUEST);
             return false;
         }
         return true;
@@ -89,6 +88,11 @@ import java.util.List;
 
     @Override
     protected Returnable process(ReceivingSMSRequestWrapperGateway extendedRequestDTO) throws Exception {
+
+        if (responseWrapper.getRequestError() != null) {
+            responseWrapper.setHttpStatus(Response.Status.BAD_REQUEST);
+            return responseWrapper;
+        }
 
         try {
             String registrationId = extendedRequestDTO.getRegistrationID();

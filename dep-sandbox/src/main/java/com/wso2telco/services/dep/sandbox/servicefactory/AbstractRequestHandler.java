@@ -1,6 +1,7 @@
 package com.wso2telco.services.dep.sandbox.servicefactory;
 
 import com.wso2telco.core.dbutils.exception.ThrowableError;
+import com.wso2telco.dep.oneapivalidation.exceptions.CustomException;
 import com.wso2telco.dep.oneapivalidation.exceptions.PolicyException;
 import com.wso2telco.dep.oneapivalidation.exceptions.ServiceException;
 import com.wso2telco.services.dep.sandbox.dao.DaoFactory;
@@ -128,9 +129,38 @@ public abstract class AbstractRequestHandler<E2 extends RequestDTO> implements R
 
 	protected abstract void init(final E2 extendedRequestDTO) throws Exception;
 
-	protected String getLastMobileNumber(String str) {
-		return str.substring(Math.max(0, str.length() - 11));
-	}
+    protected String getLastMobileNumber(String str) throws Exception {
+
+        if (str.contains("tel:+")) {
+            String[] parts = str.split("\\+");
+            String numberOnly = parts[1];
+            return str.substring(Math.max(0, str.length() - numberOnly.length()));
+
+        } else if (str.contains("tel:")) {
+            String[] parts = str.split("\\:");
+            String numberOnly = parts[1];
+            return str.substring(Math.max(0, str.length() - numberOnly.length()));
+
+        } else if (str.contains("etel:")) {
+            String[] parts = str.split("\\:");
+            String numberOnly = parts[1];
+            return str.substring(Math.max(0, str.length() - numberOnly.length()));
+
+        } else if (str.contains("etel:+")) {
+            String[] parts = str.split("\\+");
+            String numberOnly = parts[1];
+            return str.substring(Math.max(0, str.length() - numberOnly.length()));
+
+        } else if (str.contains("+")) {
+            String[] parts = str.split("\\+");
+            String numberOnly = parts[1];
+            return str.substring(Math.max(0, str.length() - numberOnly.length()));
+
+        } else {
+
+            return str;
+        }
+    }
 
 	private String getProfileIdFromRequest(RequestDTO requestDTO) {
 
@@ -162,12 +192,9 @@ public abstract class AbstractRequestHandler<E2 extends RequestDTO> implements R
 
 	protected RequestError constructRequestError(int type, String messageId, String text, String variable) {
 		RequestError error = new RequestError();
-
-		variable = variable + " Not Whitelisted";
 		if (type == SERVICEEXCEPTION) {
 			ServiceException serviceException = new ServiceException(messageId, text, variable);
 			error.setServiceException(serviceException);
-
 
 		} else if (type == POLICYEXCEPTION) {
 			PolicyException policyException = new PolicyException(messageId, text, variable);
@@ -215,7 +242,7 @@ public abstract class AbstractRequestHandler<E2 extends RequestDTO> implements R
         messageLog.setReference("msisdn");
         messageLog.setStatus(0);
         messageLog.setType(MessageType.Request.getValue());
-        messageLog.setValue(number);
+        messageLog.setValue("tel:+"+number);
         messageLog.setRequest(jsonString);
         messageLog.setMessageTimestamp(new Date());
         int ref_number = loggingDAO.saveMessageLog(messageLog);

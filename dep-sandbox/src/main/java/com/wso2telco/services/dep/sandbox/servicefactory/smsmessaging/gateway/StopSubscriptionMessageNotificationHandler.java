@@ -85,6 +85,11 @@ public class StopSubscriptionMessageNotificationHandler extends AbstractRequestH
     @Override
     protected Returnable process(StopSubscriptionMessageNotificationRequestWrapper extendedRequestDTO) throws Exception {
 
+        if (responseWrapper.getRequestError() != null) {
+            responseWrapper.setHttpStatus(Response.Status.BAD_REQUEST);
+            return responseWrapper;
+        }
+
         String subscriptionID = extendedRequestDTO.getSubscriptionID();
 
         APITypes apiTypes = dao.getAPIType(extendedRequestDTO.getRequestType().toString().toLowerCase());

@@ -1,3 +1,4 @@
+
 /*******************************************************************************
  * Copyright (c) 2015-2017, WSO2.Telco Inc. (http://www.wso2telco.com)
  *
@@ -13,16 +14,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
+package com.wso2telco.services.dep.sandbox.dao.model.custom;
 
-package com.wso2telco.services.dep.sandbox.dao;
+import com.fasterxml.jackson.annotation.JsonInclude;
 
-import com.wso2telco.services.dep.sandbox.dao.model.domain.UssdApplication;
+@JsonInclude(value= JsonInclude.Include.NON_NULL)
+public class ReceiptResponse {
 
-import java.util.List;
+    private String notifyURL;
+    private String callbackData;
 
-public interface USSDDAO {
+    public String getNotifyURL() {
+        return notifyURL;
+    }
 
-    List<UssdApplication> getUssdApplications(int userid, String shortCode, String keyWord);
-    boolean saveUSSDApplications(UssdApplication ussdApplication) throws Exception;
+    public void setNotifyURL(String notifyURL) {
+        this.notifyURL = notifyURL;
+    }
 
+    public String getCallbackData() {
+        return callbackData;
+    }
+
+    public void setCallbackData(String callbackData) {
+        this.callbackData = callbackData;
+    }
 }
+
+

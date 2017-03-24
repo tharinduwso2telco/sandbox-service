@@ -13,14 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
+
 package com.wso2telco.services.dep.sandbox.service;
 
 import com.wordnik.swagger.annotations.*;
-import com.wso2telco.services.dep.sandbox.dao.model.custom.LocationRequestWrapperDTO;
+import com.wso2telco.services.dep.sandbox.dao.model.custom.RequestDTO;
 import com.wso2telco.services.dep.sandbox.exception.SandboxException;
 import com.wso2telco.services.dep.sandbox.servicefactory.RequestBuilderFactory;
 import com.wso2telco.services.dep.sandbox.servicefactory.RequestHandleable;
 import com.wso2telco.services.dep.sandbox.servicefactory.Returnable;
+import com.wso2telco.services.dep.sandbox.servicefactory.ussd.USSDApplicationConfigRequestBean;
+import com.wso2telco.services.dep.sandbox.servicefactory.ussd.USSDApplicationConfigRequestWrapper;
 import com.wso2telco.services.dep.sandbox.util.RequestType;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -31,45 +34,58 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-@Path("/location/v1")
-@Produces({MediaType.APPLICATION_JSON})
-@Api(value = "location", description = "Rest Service for Location API")
-public class LocationService {
+@Path("/ussd/{v1}/config")
+@Consumes({ MediaType.APPLICATION_JSON, MediaType.TEXT_PLAIN })
+@Produces({ MediaType.APPLICATION_JSON })
+@Api(value = "/ussd/{v1}/config", description = "Rest Services for USSD API related Configurations")
+public class USSSDConfigurationService {
 
-    Log LOG = LogFactory.getLog(LocationService.class);
 
-    @GET
-    @Path("/queries/location")
-    @ApiOperation(value = "locationService", notes = "locationService", response = Response.class)
+    Log log = LogFactory.getLog(USSSDConfigurationService.class);
+
+    @POST
+    @Path("/addApplicationInfo")
+    @ApiOperation(value = "addApplicationInfo", notes = "Add new application for ussd", response = Response.class)
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "sandbox", value = "Authorization token", required = true, dataType = "string", paramType = "header") })
-    public Response location(
-            @ApiParam(value = "address", required = true) @QueryParam("address") String address, @ApiParam(value = "requestedAccuracy", required = true) @QueryParam("requestedAccuracy") String requestedAccuracy,
-            @Context HttpServletRequest request) {
-        LOG.debug("address={address}&requestedAccuracy={requestedAccuracy} invorked :" + address +" " +requestedAccuracy);
-        LocationRequestWrapperDTO requestDTO = new LocationRequestWrapperDTO();
-        requestDTO.setHttpRequest(request);
-        requestDTO.setAddress(address);
-        requestDTO.setRequestedAccuracy(requestedAccuracy);
-        requestDTO.setRequestType(RequestType.LOCATION);
+            @ApiImplicitParam(name = "sandbox", value = "username", required = true, dataType = "string", paramType = "header") })
+    public Response addAccountInfo(
+            USSDApplicationConfigRequestBean ussdApplicationConfigRequestBean, @Context HttpServletRequest request) {
 
-        RequestHandleable handler = RequestBuilderFactory.getInstance(requestDTO);
+        USSDApplicationConfigRequestWrapper requestDTO = new USSDApplicationConfigRequestWrapper();
+        requestDTO.setHttpRequest(request);
+        requestDTO.setUssdApplicationConfigRequestBean(ussdApplicationConfigRequestBean);
+        requestDTO.setRequestType(RequestType.USSDCONFIG);
+
+        RequestHandleable<RequestDTO> handler = RequestBuilderFactory.getInstance(requestDTO);
         Returnable returnable = null;
 
         try {
             returnable = handler.execute(requestDTO);
             Response response = Response.status(returnable.getHttpStatus()).entity(returnable.getResponse()).build();
-            LOG.debug("Location SERVICE RESPONSE : " + response);
             return response;
         } catch (Exception ex) {
-            LOG.error("Location SERVICE ERROR : ", ex);
-            return Response.status(Response.Status.BAD_REQUEST).entity(
+            log.error("###USSD### Error in USSD Configuration add Application info service", ex);
+            Response response = Response.status(Response.Status.BAD_REQUEST).entity(
                     SandboxException.SandboxErrorType.SERVICE_ERROR.getCode() + " " + SandboxException.SandboxErrorType.SERVICE_ERROR.getMessage())
                     .build();
+            return response;
         }
-
     }
 
 
 
+
+
+
+
+
+
+
+
+
+
 }
+
+
+
+

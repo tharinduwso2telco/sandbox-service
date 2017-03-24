@@ -106,7 +106,6 @@ class SendMTSMSService extends AbstractRequestHandler<SendMTSMSRequestWrapperDTO
             LOG.error("###SMS### Error in Validations. ", ex);
             responseWrapper.setRequestError(
                     constructRequestError(SERVICEEXCEPTION, ex.getErrcode(), ex.getErrmsg(), ex.getErrvar()[0]));
-            responseWrapper.setHttpStatus(Response.Status.BAD_REQUEST);
             return false;
         }
         return true;
@@ -115,7 +114,10 @@ class SendMTSMSService extends AbstractRequestHandler<SendMTSMSRequestWrapperDTO
     @Override
     protected Returnable process(SendMTSMSRequestWrapperDTOGateway extendedRequestDTO) throws Exception {
 
-
+        if (responseWrapper.getRequestError() != null) {
+            responseWrapper.setHttpStatus(Response.Status.BAD_REQUEST);
+            return responseWrapper;
+        }
         try {
             User user = extendedRequestDTO.getUser();
             SMSMessagingParam smsMessagingParam = smsMessagingDAO.getSMSMessagingParam(user.getId());
