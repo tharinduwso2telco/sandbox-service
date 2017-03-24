@@ -1,3 +1,4 @@
+
 /*******************************************************************************
  * Copyright (c) 2015-2017, WSO2.Telco Inc. (http://www.wso2telco.com)
  *
@@ -13,13 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-
 package com.wso2telco.services.dep.sandbox.dao.model.custom;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 
 @JsonInclude(value= JsonInclude.Include.NON_NULL)
-public class ReceiptRequest {
+public class ReceiptResponse {
 
     private String notifyURL;
     private String callbackData;
@@ -40,3 +40,5 @@ public class ReceiptRequest {
         this.callbackData = callbackData;
     }
 }
+
+

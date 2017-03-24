@@ -15,6 +15,8 @@
  ******************************************************************************/
 package com.wso2telco.services.dep.sandbox.dao.model.custom;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+
 public class RefundResponseBean {
 
     private RefundResponse refundResponse;
@@ -29,7 +31,7 @@ public class RefundResponseBean {
         this.refundResponse = refundResponse;
     }
 
-
+    @JsonInclude(value= JsonInclude.Include.NON_NULL)
     public static class RefundResponse {
 
         private String clientCorrelator;
@@ -42,7 +44,11 @@ public class RefundResponseBean {
 
         private double refundAmount;
 
+        private String merchantIdentification;
+
         private PaymentAmountWithTax paymentAmount;
+
+        private ReceiptResponse receiptResponse;
 
         private String referenceCode;
 
@@ -132,6 +138,22 @@ public class RefundResponseBean {
 
         public void setServerReferanceCode(String serverReferanceCode) {
             this.serverReferanceCode = serverReferanceCode;
+        }
+
+        public ReceiptResponse getReceiptResponse() {
+            return receiptResponse;
+        }
+
+        public void setReceiptResponse(ReceiptResponse receiptResponse) {
+            this.receiptResponse = receiptResponse;
+        }
+
+        public String getMerchantIdentification() {
+            return merchantIdentification;
+        }
+
+        public void setMerchantIdentification(String merchantIdentification) {
+            this.merchantIdentification = merchantIdentification;
         }
     }
 

@@ -47,11 +47,9 @@ public class RefundRequestBean {
 
 		private String referenceCode;
 
-		private String callbackData;
-
-		private String notifyURL;
-
 		private String merchantIdentification;
+
+		private ReceiptRequest receiptRequest;
 
 		public String getClientCorrelator() {
 			return clientCorrelator;
@@ -111,21 +109,6 @@ public class RefundRequestBean {
 			this.referenceCode = referenceCode;
 		}
 
-		public String getCallbackData() {
-			return callbackData;
-		}
-
-		public void setCallbackData(String callbackData) {
-			this.callbackData = callbackData;
-		}
-
-        public String getNotifyURL() {
-            return notifyURL;
-        }
-
-        public void setNotifyURL(String notifyURL) {
-            this.notifyURL = notifyURL;
-        }
 
         public String getMerchantIdentification() {
             return merchantIdentification;
@@ -135,15 +118,23 @@ public class RefundRequestBean {
             this.merchantIdentification = merchantIdentification;
         }
 
-        public String toString() {
+		public ReceiptRequest getReceiptRequest() {
+			return receiptRequest;
+		}
+
+		public void setReceiptRequest(ReceiptRequest receiptRequest) {
+			this.receiptRequest = receiptRequest;
+		}
+
+		public String toString() {
 			StringBuilder builder = new StringBuilder();
 			builder.append("Client Correlator : " + getClientCorrelator());
 			builder.append("msisdn : " + getMsisdn());
 			builder.append("OriginalServerReferenceCode : " +getOriginalServerReferenceCode());
 			builder.append("reasonForRefund : " + getReasonForRefund());
 			builder.append("refundAmount : " + getPaymentAmount());
-			builder.append("callbackData : " +getCallbackData());
-			builder.append("notifyURL : "+getNotifyURL());
+			builder.append("callbackData : " +receiptRequest.getCallbackData());
+			builder.append("notifyURL : "+receiptRequest.getNotifyURL());
 			builder.append("merchantIdentification : "+getMerchantIdentification());
 
 			if (getPaymentAmount() != null) {
