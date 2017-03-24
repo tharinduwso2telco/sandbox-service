@@ -22,6 +22,7 @@ import com.wso2telco.dep.oneapivalidation.util.Validation;
 import com.wso2telco.dep.oneapivalidation.util.ValidationRule;
 import com.wso2telco.services.dep.sandbox.dao.DaoFactory;
 import com.wso2telco.services.dep.sandbox.dao.USSDDAO;
+import com.wso2telco.services.dep.sandbox.dao.model.domain.UssdApplication;
 import com.wso2telco.services.dep.sandbox.servicefactory.AbstractRequestHandler;
 import com.wso2telco.services.dep.sandbox.servicefactory.AddressIgnorerable;
 import com.wso2telco.services.dep.sandbox.servicefactory.Returnable;
@@ -102,7 +103,12 @@ public class USSDApplicationConfigHandler extends AbstractRequestHandler<USSDApp
             String keyword = requestBean.getKeyWord();
             int userId = requestBean.getUserID();
 
-            boolean result = ussdDAO.saveUSSDApplications(shortCode, keyword, userId);
+            UssdApplication application = new UssdApplication();
+            application.setShortCode(shortCode);
+            application.setKeyword(keyword);
+            application.setUserid(userId);
+
+            boolean result = ussdDAO.saveUSSDApplications(application);
 
             if (!result) {
                 LOG.error("###USSD CONFIG### Error occur in save applications");

@@ -31,7 +31,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-@Path("/location")
+@Path("/location/v1")
 @Produces({MediaType.APPLICATION_JSON})
 @Api(value = "location", description = "Rest Service for Location API")
 public class LocationService {
@@ -39,6 +39,7 @@ public class LocationService {
     Log LOG = LogFactory.getLog(LocationService.class);
 
     @GET
+    @Path("/queries/location")
     @ApiOperation(value = "locationService", notes = "locationService", response = Response.class)
     @ApiImplicitParams({
             @ApiImplicitParam(name = "sandbox", value = "Authorization token", required = true, dataType = "string", paramType = "header") })

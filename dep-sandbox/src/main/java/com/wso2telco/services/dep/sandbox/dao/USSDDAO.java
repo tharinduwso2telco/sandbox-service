@@ -23,6 +23,6 @@ import java.util.List;
 public interface USSDDAO {
 
     List<UssdApplication> getUssdApplications(int userid, String shortCode, String keyWord);
-    boolean saveUSSDApplications(String shortCode,String keyWord, int userId) throws Exception;
+    boolean saveUSSDApplications(UssdApplication ussdApplication) throws Exception;
 
 }

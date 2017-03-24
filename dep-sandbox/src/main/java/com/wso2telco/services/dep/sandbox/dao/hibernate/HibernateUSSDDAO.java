@@ -69,25 +69,15 @@ public class HibernateUSSDDAO extends AbstractDAO implements USSDDAO {
     }
 
     @Override
-    public boolean saveUSSDApplications(String shortCode, String keyWord, int userId) throws Exception {
-
-        UssdApplication application = new UssdApplication();
-        application.setShortCode(shortCode);
-        application.setKeyword(keyWord);
-        application.setUserid(userId);
+    public boolean saveUSSDApplications(UssdApplication ussdApplication) throws Exception {
 
         try {
-            Session session = getSession();
-            session.save(application);
-
-        } catch (NoResultException e) {
-            return false;
+            saveOrUpdate(ussdApplication);
+            return true;
 
         } catch (Exception ex) {
             LOG.error("###USSD Config### Error in USSD Config Service ", ex);
             throw ex;
         }
-        return true;
-
     }
 }
