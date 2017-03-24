@@ -1,6 +1,6 @@
 USE `sandbox`;
 
-INSERT INTO `sbxapiservicecalls` VALUES (14,3,'InitUSSD'),(15,2,'SendSMS'),(16,2,'ReceivingSMS'),(17,2,'QuerySMS'),(18,2,'SubscribeToSMSDelivery'),(19,2,'SubscribeToApplication'),(20,2,'StopSubscriptionDelivery'),(21,2,'StopSubscribeToApplication');
+INSERT INTO `sbxapiservicecalls` VALUES (14,3,'InitUSSD'),(15,2,'SendSMS'),(16,2,'ReceivingSMS'),(17,2,'QuerySMSStatus'),(18,2,'SubscribeToSMSDelivery'),(19,2,'SubscribeToApplication'),(20,2,'StopSubscriptionDelivery'),(21,2,'StopSubscribeToApplication');
 
 UPDATE `sbxapitypes` SET `apiname`='SMSMESSAGING' WHERE `id`='2';
 

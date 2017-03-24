@@ -269,7 +269,7 @@ public class PaymentRefundRequestHandler0_8 extends AbstractRequestHandler<Payme
             Double validTransaction = checkOriginalServerReferenceWithServerReference(userId, serviceIdForMakePayment, endUserId, MessageProcessStatus.Success, MessageType.Response, originalServerReferenceCode);
 
             // check path param endUserId and request body endUserId
-            if (!(endUserIdPath.equals(endUserIdRequest))) {
+            if (!(getLastMobileNumber(endUserIdPath).equals(getLastMobileNumber(endUserIdRequest)))) {
                 LOG.error("###REFUND### two different endUserId provided");
                 responseWrapper.setRequestError(constructRequestError(SERVICEEXCEPTION,
                         ServiceError.INVALID_INPUT_VALUE, "two different endUserId provided"));
@@ -398,7 +398,7 @@ public class PaymentRefundRequestHandler0_8 extends AbstractRequestHandler<Payme
             responseWrapper.setRefundPaymentDTO(refundPaymentDTO);
 
             // Save Response in message log table
-            saveResponse(userId, endUserIdPath, responseBean, apiServiceCalls, MessageProcessStatus.Success);
+            saveResponse(userId, endUserId, responseBean, apiServiceCalls, MessageProcessStatus.Success);
 
         } catch (Exception ex) {
             LOG.error("###REFUND### Error Occured in PAYMENT Service. ", ex);
@@ -613,18 +613,18 @@ public class PaymentRefundRequestHandler0_8 extends AbstractRequestHandler<Payme
         jsonInString = asJsonObject.toString();
 
         //setting messagelog responses
-        MessageLog messageLog1 = new MessageLog();
-        messageLog1 = new MessageLog();
-        messageLog1.setRequest(jsonInString);
-        messageLog1.setStatus(status.getValue());
-        messageLog1.setType(MessageType.Response.getValue());
-        messageLog1.setServicenameid(apiServiceCalls.getApiServiceCallId());
-        messageLog1.setUserid(userId);
-        messageLog1.setReference("msisdn");
-        messageLog1.setValue(endUserIdPath);
-        messageLog1.setMessageTimestamp(new Date());
+        MessageLog messageLog = new MessageLog();
+        messageLog = new MessageLog();
+        messageLog.setRequest(jsonInString);
+        messageLog.setStatus(status.getValue());
+        messageLog.setType(MessageType.Response.getValue());
+        messageLog.setServicenameid(apiServiceCalls.getApiServiceCallId());
+        messageLog.setUserid(userId);
+        messageLog.setReference("msisdn");
+        messageLog.setValue("tel:+"+endUserIdPath);
+        messageLog.setMessageTimestamp(new Date());
 
-        loggingDAO.saveMessageLog(messageLog1);
+        loggingDAO.saveMessageLog(messageLog);
     }
 
     private static boolean currencySymbol(@Nonnull final String currencyCode) {
@@ -659,7 +659,7 @@ public class PaymentRefundRequestHandler0_8 extends AbstractRequestHandler<Payme
         return jsonString;    }
 
     @Override
-    public String getnumber(PaymentRefundRequestWrapperDTO requestDTO) {
-        return requestDTO.getEndUserId();
+    public String getnumber(PaymentRefundRequestWrapperDTO requestDTO) throws Exception {
+        return getLastMobileNumber(requestDTO.getEndUserId());
     }
 }

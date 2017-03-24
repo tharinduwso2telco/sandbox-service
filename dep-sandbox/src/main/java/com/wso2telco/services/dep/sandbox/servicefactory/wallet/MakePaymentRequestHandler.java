@@ -221,7 +221,7 @@ public class MakePaymentRequestHandler extends AbstractRequestHandler<MakePaymen
             }
 
 			// check path param endUserId and request body endUserId
-			if (!(endUserIdPath.equals(endUserIdRequest))) {
+			if (!(getLastMobileNumber(endUserIdPath).equals(getLastMobileNumber(endUserIdRequest)))) {
 				LOG.error("###WALLET### two different endUserId provided");
 				responseWrapper.setRequestError(constructRequestError(SERVICEEXCEPTION,
 						ServiceError.INVALID_INPUT_VALUE, "two different endUserId provided"));
@@ -347,7 +347,7 @@ public class MakePaymentRequestHandler extends AbstractRequestHandler<MakePaymen
 			responseWrapper.setHttpStatus(Response.Status.CREATED);
 
             // Save Success Response
-            saveResponse(extendedRequestDTO, endUserIdPath, responseBean, apiServiceCalls, MessageProcessStatus.Success);
+            saveResponse(extendedRequestDTO, endUserId, responseBean, apiServiceCalls, MessageProcessStatus.Success);
 
 		} catch (Exception ex) {
 			LOG.error("###WALLET### Error Occured in WALLET Service. ", ex);
@@ -478,7 +478,7 @@ public class MakePaymentRequestHandler extends AbstractRequestHandler<MakePaymen
         messageLog.setServicenameid(apiServiceCalls.getApiServiceCallId());
         messageLog.setUserid(extendedRequestDTO.getUser().getId());
         messageLog.setReference("msisdn");
-        messageLog.setValue(endUserIdPath);
+        messageLog.setValue("tel:+"+endUserIdPath);
         messageLog.setMessageTimestamp(new Date());
 
         loggingDAO.saveMessageLog(messageLog);
@@ -498,7 +498,7 @@ public class MakePaymentRequestHandler extends AbstractRequestHandler<MakePaymen
     }
 
     @Override
-    public String getnumber(MakePaymentRequestWrapperDTO requestDTO) {
-        return requestDTO.getEndUserId();
+    public String getnumber(MakePaymentRequestWrapperDTO requestDTO) throws Exception {
+        return getLastMobileNumber(requestDTO.getEndUserId());
     }
 }

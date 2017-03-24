@@ -232,7 +232,7 @@ public class RefundTransactionRequestHandler extends AbstractRequestHandler<Refu
 
 
 			// check path param endUserId and request body endUserId
-			if (!(endUserIdPath.equals(endUserIdRequest))) {
+			if (!(getLastMobileNumber(endUserIdPath).equals(getLastMobileNumber(endUserIdRequest)))) {
 				LOG.error("###WALLET### two different endUserId provided");
 				responseWrapper.setRequestError(constructRequestError(SERVICEEXCEPTION,
 						ServiceError.INVALID_INPUT_VALUE, "two different endUserId provided"));
@@ -372,7 +372,7 @@ public class RefundTransactionRequestHandler extends AbstractRequestHandler<Refu
             responseWrapper.setHttpStatus(Response.Status.CREATED);
 
 
-            saveResponse(userId, endUserIdPath, responseBean, apiServiceCalls, MessageProcessStatus.Success);
+            saveResponse(userId, endUserId, responseBean, apiServiceCalls, MessageProcessStatus.Success);
 
 		} catch (Exception ex) {
 			LOG.error("###WALLET### Error Occured in WALLET Service. ", ex);
@@ -604,7 +604,7 @@ public class RefundTransactionRequestHandler extends AbstractRequestHandler<Refu
         messageLog.setServicenameid(apiServiceCalls.getApiServiceCallId());
         messageLog.setUserid(userId);
         messageLog.setReference("msisdn");
-        messageLog.setValue(endUserIdPath);
+        messageLog.setValue("tel:+"+endUserIdPath);
         messageLog.setMessageTimestamp(new Date());
 
         loggingDAO.saveMessageLog(messageLog);
@@ -624,7 +624,7 @@ public class RefundTransactionRequestHandler extends AbstractRequestHandler<Refu
     }
 
     @Override
-    public String getnumber(RefundRequestWrapperDTO requestDTO) {
-        return requestDTO.getEndUserId();
+    public String getnumber(RefundRequestWrapperDTO requestDTO) throws Exception {
+        return getLastMobileNumber(requestDTO.getEndUserId());
     }
 }

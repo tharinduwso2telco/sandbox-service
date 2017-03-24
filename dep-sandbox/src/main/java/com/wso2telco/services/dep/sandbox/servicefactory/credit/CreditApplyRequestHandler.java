@@ -60,6 +60,7 @@ public class CreditApplyRequestHandler extends AbstractRequestHandler<CreditAppl
 	Integer clientCorrelatorid ;
 	
 	final String TYPE_MONEY = "money";
+	final String TYPE_SMS = "sms";
 	final String NUMBERS_TABLE = "numbers";
 	final String CREDIT_REQUEST = "creditApplyRequest";
 	final String MSISDN = "msisdn";
@@ -190,14 +191,6 @@ public class CreditApplyRequestHandler extends AbstractRequestHandler<CreditAppl
 		String referenceCode = CommonUtil.getNullOrTrimmedValue(request.getReferenceCode());
 
 		try {
-		    if(type.toLowerCase().equals("sms")){
-                if (!((amount == Math.floor(amount)) && !Double.isInfinite(amount))) {
-                    responseWrapperDTO.setRequestError(constructRequestError(SERVICEEXCEPTION,
-                            ServiceError.INVALID_INPUT_VALUE, "SMS Should be a Integer Number"));
-                    responseWrapperDTO.setHttpStatus(Status.BAD_REQUEST);
-                    return responseWrapperDTO;
-                }
-            }
 
 			String clientCorrelatorAttribute = AttributeName.clientCorrelator.toString();
 			Integer userId = extendedRequestDTO.getUser().getId();
@@ -228,7 +221,16 @@ public class CreditApplyRequestHandler extends AbstractRequestHandler<CreditAppl
 						return responseWrapperDTO;
 					}
 				 }
-			}		
+			}
+            //check SMS is integer or not
+			if(type.toLowerCase().equals(TYPE_SMS)){
+				if (!((amount == Math.floor(amount)) && !Double.isInfinite(amount))) {
+					responseWrapperDTO.setRequestError(constructRequestError(SERVICEEXCEPTION,
+							ServiceError.INVALID_INPUT_VALUE, "SMS Should be a Integer Number"));
+					responseWrapperDTO.setHttpStatus(Status.BAD_REQUEST);
+					return responseWrapperDTO;
+				}
+			}
 			//check reference code duplication
 			String referenceCodeAttribute =  AttributeName.referenceCodeCredit.toString();
 			AttributeValues value =	creditDAO.checkDuplication(userId, serviceCreditApply, referenceCode, referenceCodeAttribute);
