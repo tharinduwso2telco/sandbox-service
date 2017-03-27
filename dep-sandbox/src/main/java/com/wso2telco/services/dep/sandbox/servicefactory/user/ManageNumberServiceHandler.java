@@ -107,6 +107,10 @@ public class ManageNumberServiceHandler extends AbstractRequestHandler<ManageNum
 				manageNumber.setIMSI(extendedRequestDTO.getManageNumberRequest().getImsi());
 				manageNumber.setMCC(extendedRequestDTO.getManageNumberRequest().getMcc());
 				manageNumber.setMNC(extendedRequestDTO.getManageNumberRequest().getMnc());
+				manageNumber.setAltitude(extendedRequestDTO.getManageNumberRequest().getAltitude());
+				manageNumber.setLatitude(extendedRequestDTO.getManageNumberRequest().getLatitude());
+				manageNumber.setLongitude(extendedRequestDTO.getManageNumberRequest().getLongitude());
+				manageNumber.setLocationRetrieveStatus(extendedRequestDTO.getManageNumberRequest().getLocationRetrieveStatus());
 				numberDAO.saveManageNumbers(manageNumber);
 				responseWrapper.setHttpStatus(Response.Status.CREATED);
 				responseWrapper.setStatus("Successful");

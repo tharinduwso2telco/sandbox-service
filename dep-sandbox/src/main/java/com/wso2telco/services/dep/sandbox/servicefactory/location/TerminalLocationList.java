@@ -16,21 +16,24 @@
 
 package com.wso2telco.services.dep.sandbox.servicefactory.location;
 
+import java.util.List;
+
 public class TerminalLocationList {
     
-    private TerminalLocation terminalLocation;
+    private List<TerminalLocation> terminalLocation;
 
     /**
      * @return the terminalLocation
      */
-    public TerminalLocation getTerminalLocation() {
+    public List<TerminalLocation> getTerminalLocation() {
         return terminalLocation;
     }
 
     /**
      * @param terminalLocation the terminalLocation to set
      */
-    public void setTerminalLocation(TerminalLocation terminalLocation) {
+
+    public void setTerminalLocation(List<TerminalLocation> terminalLocation) {
         this.terminalLocation = terminalLocation;
     }
 }

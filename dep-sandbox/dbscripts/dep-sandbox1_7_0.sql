@@ -179,6 +179,10 @@ CREATE TABLE IF NOT EXISTS `numbers` (
   `reserved_amount` double NOT NULL DEFAULT '0',
   `num_description` varchar(255) DEFAULT NULL,
   `num_status` int(11) DEFAULT NULL,
+  `altitude` VARCHAR(255) DEFAULT NULL,
+  `latitude` VARCHAR(255) DEFAULT NULL,
+  `longitude` VARCHAR(255) DEFAULT NULL,
+  `loc_ret_status` VARCHAR(45) DEFAULT NULL,
   `user_id` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`),
   CONSTRAINT `FK88C28E4A9E083448` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`)
@@ -188,7 +192,7 @@ CREATE TABLE IF NOT EXISTS `numbers` (
 -- Dumping data for table `numbers`
 --
 
-INSERT INTO `numbers` VALUES (1,'94773524308',4343,3413,13414,989.85,0,'test number',1,1),(2,'94123123123',1344,134413,13413,1000,0,'testAuxenta',1,5),(3,'94771564812',134134,13431,1343,1000,0,'dfaf',1,1);
+INSERT INTO `numbers` VALUES (1,'94773524308',4343,3413,13414,989.85,0,'test number',1,'2341','45244444','135131','Retrieved',1),(2,'94123123123',1344,134413,13413,1000,0,'testAuxenta',1,'','','','',5),(3,'94771564812',134134,13431,1343,1000,0,'dfaf',1,'','','','',1);
 
 --
 -- Table structure for table `payment_gen`

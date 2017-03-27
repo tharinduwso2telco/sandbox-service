@@ -98,7 +98,7 @@ public class RefundTransactionRequestHandler extends AbstractRequestHandler<Refu
 		String endUserID = CommonUtil.getNullOrTrimmedValue(request.getEndUserId());
 		String originalReferenceCode = CommonUtil.getNullOrTrimmedValue(request.getOriginalReferenceCode());
 		String originalServerReferenceCode = CommonUtil.getNullOrTrimmedValue(request.getOriginalServerReferenceCode());
-		String amount = CommonUtil.getNullOrTrimmedValue(chargingInformation.getAmount());
+		String amount = CommonUtil.getNullOrTrimmedValue(String.valueOf(chargingInformation.getAmount()));
 		String currency = CommonUtil.getNullOrTrimmedValue(chargingInformation.getCurrency());
 		String description = CommonUtil.getNullOrTrimmedValue(chargingInformation.getDescription());
 		String onBehalfOf = CommonUtil.getNullOrTrimmedValue(metaData.getOnBehalfOf());
@@ -169,7 +169,7 @@ public class RefundTransactionRequestHandler extends AbstractRequestHandler<Refu
 			String originalReferenceCode = CommonUtil.getNullOrTrimmedValue(request.getOriginalReferenceCode());
 			String originalServerReferenceCode = CommonUtil
 					.getNullOrTrimmedValue(request.getOriginalServerReferenceCode());
-			String amount = CommonUtil.getNullOrTrimmedValue(chargingInformation.getAmount());
+			String amount = CommonUtil.getNullOrTrimmedValue(String.valueOf(chargingInformation.getAmount()));
 			String currency = CommonUtil.getNullOrTrimmedValue(chargingInformation.getCurrency());
 			String description = CommonUtil.getNullOrTrimmedValue(chargingInformation.getDescription());
 			String onBehalfOf = CommonUtil.getNullOrTrimmedValue(metadata.getOnBehalfOf());
@@ -303,7 +303,7 @@ public class RefundTransactionRequestHandler extends AbstractRequestHandler<Refu
 			responseBean.setOriginalReferenceCode(originalReferenceCode);
 			responseBean.setOriginalServerReferenceCode(originalServerReferenceCode);
 
-			chargeInformation.setAmount(amount);
+			chargeInformation.setAmount(Double.parseDouble(amount));
 			chargeInformation.setCurrency(currency);
 			chargeInformation.setDescription(description);
 

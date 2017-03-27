@@ -106,7 +106,7 @@ public class PaymentRefundRequestHandler0_8 extends AbstractRequestHandler<Payme
         String clientCorrelator = CommonUtil.getNullOrTrimmedValue(request.getClientCorrelator());
         String endUserID = CommonUtil.getNullOrTrimmedValue(wrapperDTO.getEndUserId());
         String msisdn = CommonUtil.getNullOrTrimmedValue(request.getEndUserId());
-        String amount = CommonUtil.getNullOrTrimmedValue(chargingInformation.getAmount().toString());
+        String amount = CommonUtil.getNullOrTrimmedValue(String.valueOf(chargingInformation.getAmount()));
         String currency = CommonUtil.getNullOrTrimmedValue(chargingInformation.getCurrency().toString());
         String description = CommonUtil.getNullOrTrimmedValue(chargingInformation.getDescription());
         String onBehalfOf = CommonUtil.getNullOrTrimmedValue(metaData.getOnBehalfOf());
@@ -201,7 +201,7 @@ public class PaymentRefundRequestHandler0_8 extends AbstractRequestHandler<Payme
             String endUserId = getLastMobileNumber(endUserIdPath);
             String originalServerReferenceCode = CommonUtil
                     .getNullOrTrimmedValue(request.getOriginalServerReferenceCode());
-            String amount = CommonUtil.getNullOrTrimmedValue(chargingInformation.getAmount());
+            String amount = CommonUtil.getNullOrTrimmedValue(String.valueOf(chargingInformation.getAmount()));
             String currency = CommonUtil.getNullOrTrimmedValue(chargingInformation.getCurrency());
             String description = CommonUtil.getNullOrTrimmedValue(chargingInformation.getDescription());
             String onBehalfOf = CommonUtil.getNullOrTrimmedValue(metadata.getOnBehalfOf());
@@ -331,7 +331,7 @@ public class PaymentRefundRequestHandler0_8 extends AbstractRequestHandler<Payme
             responseBean.setProductID(productID);
             responseBean.setServiceID(serviceID);
 
-            chargeInformation.setAmount(amount);
+            chargeInformation.setAmount(Double.parseDouble(amount));
             chargeInformation.setCurrency(currency);
             chargeInformation.setDescription(description);
 
@@ -353,7 +353,7 @@ public class PaymentRefundRequestHandler0_8 extends AbstractRequestHandler<Payme
             totalAmountToRefund+=totalAmountRefunded;
 
             // Setting the total Amount Refund
-            payAmount.setTotalAmountRefunded(totalAmountToRefund.toString());
+            payAmount.setTotalAmountRefunded(Double.parseDouble(totalAmountToRefund.toString()));
 
             if (!isOriginalServerReferenceCode) {
                 LOG.error("###REFUND### no payment matching for this Refund");

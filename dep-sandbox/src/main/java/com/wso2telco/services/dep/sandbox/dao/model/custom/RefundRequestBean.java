@@ -41,7 +41,7 @@ public class RefundRequestBean {
 
 		private String reasonForRefund;
 
-		private double refundAmount;
+		private String refundAmount;
 
 		private PaymentAmountWithTax paymentAmount;
 
@@ -84,11 +84,11 @@ public class RefundRequestBean {
 			this.reasonForRefund = reasonForRefund;
 		}
 
-		public double getRefundAmount() {
+		public String getRefundAmount() {
 			return refundAmount;
 		}
 
-		public void setRefundAmount(double refundAmount) {
+		public void setRefundAmount(String refundAmount) {
 			this.refundAmount = refundAmount;
 		}
 

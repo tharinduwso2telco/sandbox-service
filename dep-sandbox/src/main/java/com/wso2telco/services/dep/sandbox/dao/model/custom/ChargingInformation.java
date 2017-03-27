@@ -19,17 +19,17 @@ import java.text.DecimalFormat;
 
 public class ChargingInformation {
 
-	private String amount;
+	private double amount;
 
 	private String currency;
 
 	private String description;
 	
-	public String getAmount() {
+	public double getAmount() {
 		return amount;
 	}
 
-	public void setAmount(String amount) {
+	public void setAmount(double amount) {
 		this.amount = amount;
 	}
 
