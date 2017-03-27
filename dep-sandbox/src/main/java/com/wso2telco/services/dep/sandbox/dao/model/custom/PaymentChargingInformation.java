@@ -17,17 +17,17 @@ package com.wso2telco.services.dep.sandbox.dao.model.custom;
 
 public class PaymentChargingInformation {
 
-	private String amount;
+	private double amount;
 
 	private String currency;
 
 	private String description;
 	
-	public String getAmount() {
+	public double getAmount() {
 		return amount;
 	}
 
-	public void setAmount(String amount) {
+	public void setAmount(double amount) {
 		this.amount = amount;
 	}
 

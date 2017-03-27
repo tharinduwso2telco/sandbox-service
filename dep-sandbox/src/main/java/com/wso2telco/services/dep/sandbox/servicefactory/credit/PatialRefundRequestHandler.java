@@ -129,7 +129,7 @@ public class PatialRefundRequestHandler extends AbstractRequestHandler<PatialRef
 
         if (requestBean != null && request != null) {
 
-            double RefundAmount = request.getRefundAmount();
+            String RefundAmount = CommonUtil.getNullOrTrimmedValue(request.getRefundAmount());
             String msisdn = CommonUtil.getNullOrTrimmedValue(request.getMsisdn());
             String clientCorrelator = CommonUtil.getNullOrTrimmedValue(request.getClientCorrelator());
             String reasonForRefund = CommonUtil.getNullOrTrimmedValue(request.getReasonForRefund());
@@ -140,7 +140,7 @@ public class PatialRefundRequestHandler extends AbstractRequestHandler<PatialRef
             String taxAmount = CommonUtil.getNullOrTrimmedValue(metadata.getTax());
             String referenceCode = CommonUtil.getNullOrTrimmedValue(request.getReferenceCode());
             String currency = CommonUtil.getNullOrTrimmedValue(chargingInformation.getCurrency());
-            String amount = CommonUtil.getNullOrTrimmedValue(chargingInformation.getAmount());
+            String amount = CommonUtil.getNullOrTrimmedValue(String.valueOf(chargingInformation.getAmount()));
 
             if(request.getReceiptRequest()!=null) {
                  callbackData = CommonUtil.getNullOrTrimmedValue(request.getReceiptRequest().getCallbackData());
@@ -204,7 +204,7 @@ public class PatialRefundRequestHandler extends AbstractRequestHandler<PatialRef
         ChargingInformation chargingInformation = paymentAmountWithTax.getChargingInformation();
         ChargingMetaDataWithTax metadata = paymentAmountWithTax.getChargingMetaData();
 
-        double RefundAmount = request.getRefundAmount();
+        String RefundAmount =  CommonUtil.getNullOrTrimmedValue(request.getRefundAmount());
         String msisdn = CommonUtil.getNullOrTrimmedValue(request.getMsisdn());
         String clientCorrelator = CommonUtil.getNullOrTrimmedValue(request.getClientCorrelator());
         String reasonForRefund = CommonUtil.getNullOrTrimmedValue(request.getReasonForRefund());
@@ -216,7 +216,7 @@ public class PatialRefundRequestHandler extends AbstractRequestHandler<PatialRef
         String endUserID = getLastMobileNumber(extendedRequestDTO.getMsisdn());
         String currency = CommonUtil.getNullOrTrimmedValue(chargingInformation.getCurrency());
         String endUserIdPath = extendedRequestDTO.getMsisdn();
-        amount = Double.parseDouble(CommonUtil.getNullOrTrimmedValue(chargingInformation.getAmount()));
+        amount = Double.parseDouble(CommonUtil.getNullOrTrimmedValue(String.valueOf(chargingInformation.getAmount())));
         String callbackData = CommonUtil.getNullOrTrimmedValue(request.getReceiptRequest().getCallbackData());
         String notifyURL =  CommonUtil.getNullOrTrimmedValue(request.getReceiptRequest().getNotifyURL());
         String merchantIdentification = CommonUtil.getNullOrTrimmedValue(request.getMerchantIdentification());
@@ -265,9 +265,10 @@ public class PatialRefundRequestHandler extends AbstractRequestHandler<PatialRef
             Double validTransaction = checkOriginalServerReferenceWithServerReference(userId, endUserID, MessageProcessStatus.Success, MessageType.Response, serverTransactionReference);
 
             // check account amount decimal format
+            Double partialRefundAmount = Double.parseDouble(RefundAmount);
             BigDecimal bigDecimal = new BigDecimal(RefundAmount);
             Integer decimalDigits = bigDecimal.scale();
-            if (!((decimalDigits <= 2) && (decimalDigits >= 0)) || RefundAmount < 0) {
+            if (!((decimalDigits <= 2) && (decimalDigits >= 0)) || partialRefundAmount < 0) {
                 LOG.error("###REFUND### amount should be a whole number or two digit decimal");
                 responseWrapperDTO
                         .setRequestError(constructRequestError(SERVICEEXCEPTION, ServiceError.INVALID_INPUT_VALUE,
@@ -336,12 +337,12 @@ public class PatialRefundRequestHandler extends AbstractRequestHandler<PatialRef
             receiptResponse.setCallbackData(callbackData);
             receiptResponse.setNotifyURL(notifyURL);
 
-            if (RefundAmount <= validTransaction) {
+            if (partialRefundAmount <= validTransaction) {
 
 
                 ManageNumber manageNumber = numberDao.getNumber(endUserID, userName);
                 if (manageNumber != null) {
-                    updateBalance(manageNumber, RefundAmount);
+                    updateBalance(manageNumber, Double.parseDouble(RefundAmount));
                     RefundResponseBean responseBean = buildJsonResponseBody(RefundAmount, clientCorrelator, msisdn, reasonForRefund,
                             serverTransactionReference, OperationStatus.Refunded.toString(), referenceCode, serverReferenceCode, chargingInformation, metadata,receiptResponse,merchantIdentification);
 
@@ -387,7 +388,7 @@ public class PatialRefundRequestHandler extends AbstractRequestHandler<PatialRef
         numberDao.saveManageNumbers(manageNumber);
     }
 
-    private RefundResponseBean buildJsonResponseBody(double amount, String clientCorrelator, String enduserID,
+    private RefundResponseBean buildJsonResponseBody(String amount, String clientCorrelator, String enduserID,
                                                      String reason, String serverTransactionReference, String
                                                              operationStatus, String referenceCode, String
                                                              serverReferenceCode, ChargingInformation
@@ -400,7 +401,7 @@ public class PatialRefundRequestHandler extends AbstractRequestHandler<PatialRef
         paymentAmountWithTax.setChargingMetaData(chargingMetaDataWithTax);
 
         RefundResponse refundResponse = new RefundResponse();
-        refundResponse.setRefundAmount(amount);
+        refundResponse.setRefundAmount(Double.parseDouble(amount));
         refundResponse.setOriginalServerReferenceCode(serverTransactionReference);
         refundResponse.setClientCorrelator(clientCorrelator);
         refundResponse.setEndUserID(enduserID);

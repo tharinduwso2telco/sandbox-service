@@ -23,7 +23,7 @@ public class ChargeRefundAmountResponse {
 	
 	private PaymentChargingInformation chargingInformation;
 
-	private String totalAmountRefunded;
+	private double totalAmountRefunded;
 
 	private PaymentChargingMetaData chargingMetaData;
 
@@ -43,11 +43,11 @@ public class ChargeRefundAmountResponse {
 		this.chargingMetaData = chargingMetaData;
 	}
 
-	public String getTotalAmountRefunded() {
+	public double getTotalAmountRefunded() {
 		return totalAmountRefunded;
 	}
 
-	public void setTotalAmountRefunded(String totalAmountRefunded) {
+	public void setTotalAmountRefunded(double totalAmountRefunded) {
 		this.totalAmountRefunded = totalAmountRefunded;
 	}
 }
