@@ -50,6 +50,18 @@ public class ManageNumber implements Serializable {
 	@Column(name = "num_status")
 	private int status;
 
+	@Column(name="altitude")
+	private String altitude;
+
+	@Column(name="latitude")
+	private String latitude;
+
+	@Column(name="longitude")
+	private String longitude;
+
+	@Column(name="loc_ret_status")
+	private String locationRetrieveStatus;
+
 	@ManyToOne
 	@JoinColumn(name = "user_id", referencedColumnName = "id")
 	private User user;
@@ -181,5 +193,69 @@ public class ManageNumber implements Serializable {
 	 */
 	public void setReserved_amount(double reserved_amount) {
 		this.reserved_amount = reserved_amount;
+	}
+
+	/**
+	 * get location parameter altitude.
+	 * @return altitude
+	 */
+	public String getAltitude() {
+		return altitude;
+	}
+
+	/**
+	 * Set location parameter altitude.
+	 * @param altitude altitude
+	 */
+	public void setAltitude(String altitude) {
+		this.altitude = altitude;
+	}
+
+    /**
+     * Get location parameter latitude
+     * @return latitude
+     */
+	public String getLatitude() {
+		return latitude;
+	}
+
+    /**
+     * Set location parameter latitude.
+     * @param latitude latitude
+     */
+	public void setLatitude(String latitude) {
+		this.latitude = latitude;
+	}
+
+    /**
+     * Get location parameter longitude.
+     * @return longitude
+     */
+	public String getLongitude() {
+		return longitude;
+	}
+
+    /**
+     * Set location parameter longitude.
+     * @param longitude longitude
+     */
+	public void setLongitude(String longitude) {
+		this.longitude = longitude;
+	}
+
+    /**
+     * Get Location Retrieve Status.
+     * @return status
+     */
+	public String getLocationRetrieveStatus() {
+		return locationRetrieveStatus;
+	}
+
+    /**
+     * Set Location Retrieve Status.
+     * @param locationRetrieveStatus status
+     */
+	public void setLocationRetrieveStatus(String locationRetrieveStatus) {
+		this.locationRetrieveStatus = locationRetrieveStatus;
 	}
 }

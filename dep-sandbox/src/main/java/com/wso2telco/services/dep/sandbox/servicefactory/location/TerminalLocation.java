@@ -15,6 +15,9 @@
  ******************************************************************************/
 package com.wso2telco.services.dep.sandbox.servicefactory.location;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+
+@JsonInclude(value= JsonInclude.Include.NON_NULL)
 public class TerminalLocation {
     
     private String address=null;
@@ -64,6 +67,7 @@ public class TerminalLocation {
         this.locationRetrievalStatus = locationRetrievalStatus;
     }
 
+    @JsonInclude(value= JsonInclude.Include.NON_NULL)
     public static class CurrentLocation {
         
         private Double accuracy=0.0;

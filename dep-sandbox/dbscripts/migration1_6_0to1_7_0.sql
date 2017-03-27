@@ -15,4 +15,8 @@ CREATE TABLE IF NOT EXISTS `ussd_applications` (
 );
 
 
-
+ALTER TABLE `sandbox`.`numbers`
+ADD COLUMN `altitude` VARCHAR(255) NULL DEFAULT NULL AFTER `num_status`,
+ADD COLUMN `latitude` VARCHAR(255) NULL DEFAULT NULL AFTER `altitude`,
+ADD COLUMN `longitude` VARCHAR(255) NULL DEFAULT NULL AFTER `latitude`,
+ADD COLUMN `loc_ret_status` VARCHAR(45) NULL DEFAULT NULL AFTER `longitude`;
