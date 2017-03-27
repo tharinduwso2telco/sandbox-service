@@ -16,8 +16,9 @@
 package com.wso2telco.services.dep.sandbox.dao.model.custom;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.wso2telco.services.dep.sandbox.servicefactory.customerinfo.GetAttributeResponseWrapper;
 
-public class ListCustomerInfoDTO {
+public class ListCustomerInfoDTO extends GetAttributeResponseWrapper.ListCustomerInfoDTO {
 
 	private ListCustomerInfoAttributesDTO customerInfo;
 

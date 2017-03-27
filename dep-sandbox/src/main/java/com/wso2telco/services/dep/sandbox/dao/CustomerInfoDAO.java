@@ -29,4 +29,5 @@ public interface CustomerInfoDAO {
 	public List<AttributeValues> getAttributeServices (String msisdn,Integer userID, String imsi,String[] schema) throws Exception;
 	
 	public boolean checkSchema (String [] schema) throws Exception;
+
 }

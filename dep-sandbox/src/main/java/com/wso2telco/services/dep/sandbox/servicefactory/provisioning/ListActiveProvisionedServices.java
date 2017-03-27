@@ -113,17 +113,22 @@ public class ListActiveProvisionedServices extends
 			validationRulesList.add(new ValidationRule(
 					ValidationRule.VALIDATION_TYPE_OPTIONAL_INT_GE_ZERO,
 					"limit", limit));
-			
-			
-			if ((mcc != null && mcc.trim().length() > 0)
-					|| (mnc != null && mnc.trim().length() > 0)) {
 
+
+			if (mcc != null) {
 				validationRulesList.add(new ValidationRule(
-						ValidationRule.VALIDATION_TYPE_MANDATORY_NUMBER, "mcc",
-						mcc));
+						ValidationRule.VALIDATION_TYPE_OPTIONAL_INT_GE_ZERO,
+						"mcc", mcc));
 				validationRulesList.add(new ValidationRule(
-						ValidationRule.VALIDATION_TYPE_MANDATORY_NUMBER, "mnc",
-						mnc));
+						ValidationRule.VALIDATION_TYPE_MANDATORY_INT_GE_ZERO,
+						"mnc", mnc));
+			} else if (mnc != null) {
+				validationRulesList.add(new ValidationRule(
+						ValidationRule.VALIDATION_TYPE_OPTIONAL_INT_GE_ZERO,
+						"mnc", mnc));
+				validationRulesList.add(new ValidationRule(
+						ValidationRule.VALIDATION_TYPE_OPTIONAL_INT_GE_ZERO,
+						"mcc", mcc));
 			} else {
 
 				validationRulesList.add(new ValidationRule(

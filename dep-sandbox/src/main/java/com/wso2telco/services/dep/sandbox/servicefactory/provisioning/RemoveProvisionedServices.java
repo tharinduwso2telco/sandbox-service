@@ -139,17 +139,20 @@ public class RemoveProvisionedServices extends
 
 				try {
 
-					if ((mcc != null && mcc.trim().length() > 0)
-							|| (mnc != null && mnc.trim().length() > 0)) {
-
-						validationRules
-								.add(new ValidationRule(
-										ValidationRule.VALIDATION_TYPE_MANDATORY_NUMBER,
-										"mcc", mcc));
-						validationRules
-								.add(new ValidationRule(
-										ValidationRule.VALIDATION_TYPE_MANDATORY_NUMBER,
-										"mnc", mnc));
+					if (mcc != null) {
+						validationRules.add(new ValidationRule(
+								ValidationRule.VALIDATION_TYPE_OPTIONAL_INT_GE_ZERO,
+								"mcc", mcc));
+						validationRules.add(new ValidationRule(
+								ValidationRule.VALIDATION_TYPE_MANDATORY_INT_GE_ZERO,
+								"mnc", mnc));
+					} else if (mnc != null) {
+						validationRules.add(new ValidationRule(
+								ValidationRule.VALIDATION_TYPE_OPTIONAL_INT_GE_ZERO,
+								"mnc", mnc));
+						validationRules.add(new ValidationRule(
+								ValidationRule.VALIDATION_TYPE_OPTIONAL_INT_GE_ZERO,
+								"mcc", mcc));
 					} else {
 
 						validationRules.add(new ValidationRule(

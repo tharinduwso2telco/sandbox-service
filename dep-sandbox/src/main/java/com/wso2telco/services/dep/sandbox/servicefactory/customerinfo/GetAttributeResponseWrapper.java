@@ -22,27 +22,49 @@ import com.wso2telco.services.dep.sandbox.servicefactory.AbstractReturnWrapperDT
 
 public class GetAttributeResponseWrapper extends AbstractReturnWrapperDTO {
 
-	private ListCustomerInfoAttributesDTO customerInfo;
+	//private ListCustomerInfoAttributesDTO customerInfo;
 
-	private ListCustomerInfoDTO Customer;
+	public ListCustomerInfoDTO getListCustomerInfoDTO() {
+		return listCustomerInfoDTO;
+	}
+
+	public void setListCustomerInfoDTO(ListCustomerInfoDTO listCustomerInfoDTO) {
+		this.listCustomerInfoDTO = listCustomerInfoDTO;
+	}
+
+	private ListCustomerInfoDTO listCustomerInfoDTO;
 
 	@Override
 	public Object getResponse() {
 		
 		if(getRequestError()==null)		
-			return Customer;
+			return listCustomerInfoDTO;
 		else{
 			ErrorResponseDTO response= new ErrorResponseDTO(getRequestError());
 			return response;
 		}
 	}
 
-	public ListCustomerInfoDTO getCustomer() {
+	/*public ListCustomerInfoDTO getCustomer() {
 		return Customer;
 	}
 
 	public void setCustomer(ListCustomerInfoDTO Customer) {
 		this.Customer = Customer;
+	}*/
+
+	public static class ListCustomerInfoDTO
+	{
+		public ListCustomerInfoAttributesDTO getCustomer() {
+			return customer;
+		}
+
+		public void setCustomer(ListCustomerInfoAttributesDTO customer) {
+			this.customer = customer;
+		}
+
+		private ListCustomerInfoAttributesDTO customer;
+
 	}
 
 
