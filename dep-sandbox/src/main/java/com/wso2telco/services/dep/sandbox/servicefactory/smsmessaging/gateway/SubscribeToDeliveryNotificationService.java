@@ -208,7 +208,7 @@ class SubscribeToDeliveryNotificationService extends
         messageLog.setServicenameid(apiServiceCalls.getApiServiceCallId());
         messageLog.setUserid(userId);
         messageLog.setReference("senderAddress");
-        messageLog.setValue(senderAddress);
+        messageLog.setValue(getLastMobileNumber(senderAddress));
         messageLog.setMessageTimestamp(new Date());
 
         loggingDAO.saveMessageLog(messageLog);
@@ -219,7 +219,7 @@ class SubscribeToDeliveryNotificationService extends
 
         List<Integer> list = new ArrayList<>();
         list.add(serviceNameId);
-        List<MessageLog> response = loggingDAO.getMessageLogs(userId, list, "msisdn", senderAddress, null, null);
+        List<MessageLog> response = loggingDAO.getMessageLogs(userId, list, "senderAddress", getLastMobileNumber(senderAddress), null, null);
 
         String jsonString = null;
 

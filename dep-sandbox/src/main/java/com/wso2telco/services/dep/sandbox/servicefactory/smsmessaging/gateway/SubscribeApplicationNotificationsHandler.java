@@ -161,7 +161,7 @@ class SubscribeApplicationNotificationsHandler extends
                 }
             }
 
-            if (!dao.isWhiteListedSenderAddress(user.getId(), destinationAddress)) {
+            if (!dao.isWhiteListedSenderAddress(user.getId(), getLastMobileNumber(destinationAddress))) {
                 LOG.error("###SMS### Destination Address is not WhiteListed ");
                 responseWrapper.setRequestError(constructRequestError(SERVICEEXCEPTION,
                         ServiceError.INVALID_INPUT_VALUE, "Destination Address is not WhiteListed"));
@@ -250,7 +250,7 @@ class SubscribeApplicationNotificationsHandler extends
         List<Integer> list = new ArrayList<>();
         list.add(serviceNameId);
 
-        List<MessageLog> response = loggingDAO.getMessageLogs(userId, list, "destinationAddress", tel, null, null);
+        List<MessageLog> response = loggingDAO.getMessageLogs(userId, list, "destinationAddress", getLastMobileNumber(tel), null, null);
 
         String jsonString = null;
 
@@ -273,7 +273,7 @@ class SubscribeApplicationNotificationsHandler extends
 
                 // check for duplicate clientCorrelators
                 if ((responseClientCorrelator != null && responseClientCorrelator.equals(clientCorrelator)) &&
-                        responseUserId == userId && responseTel.equals(tel)) {
+                        responseUserId == userId && responseTel.equals(getLastMobileNumber(tel))) {
                     jsonString = json.toString();
                     break;
                 }
@@ -301,7 +301,7 @@ class SubscribeApplicationNotificationsHandler extends
         messageLog.setServicenameid(apiServiceCalls.getApiServiceCallId());
         messageLog.setUserid(user.getId());
         messageLog.setReference("destinationAddress");
-        messageLog.setValue(endUserIdPath);
+        messageLog.setValue(getLastMobileNumber(endUserIdPath));
         messageLog.setMessageTimestamp(new Date());
 
         loggingDAO.saveMessageLog(messageLog);

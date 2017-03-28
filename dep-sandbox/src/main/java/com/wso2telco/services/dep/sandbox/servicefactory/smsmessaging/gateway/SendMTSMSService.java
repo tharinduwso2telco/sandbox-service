@@ -167,7 +167,7 @@ class SendMTSMSService extends AbstractRequestHandler<SendMTSMSRequestWrapperDTO
                 return responseWrapper;
             }
 
-            smsMessageResponse.setResourceURL(getoutSideResourceURL(Integer.toString(getReferenceNumber())));
+            smsMessageResponse.setResourceURL(getoutSideResourceURL(getReferenceNumber()));
             smsMessageResponse.setSenderAddress(requestBean.getOutboundSMSMessageRequest().getSenderAddress());
             smsMessageResponse.setReceiptRequest(requestBean.getOutboundSMSMessageRequest().getReceiptRequest());
             smsMessageResponse.setSenderAddress(requestBean.getOutboundSMSMessageRequest().getSenderAddress());
@@ -178,7 +178,7 @@ class SendMTSMSService extends AbstractRequestHandler<SendMTSMSRequestWrapperDTO
             smsMessageResponse.setSenderName(requestBean.getOutboundSMSMessageRequest().getSenderName());
 
             DeliveryInfoList deliveryInfoList = new DeliveryInfoList();
-            deliveryInfoList.setResourceURL(getinSideResourceURL(Integer.toString(getReferenceNumber())));
+            deliveryInfoList.setResourceURL(getinSideResourceURL(getReferenceNumber()));
             List<DeliveryInfoList.DeliveryInfo> infoList = new ArrayList();
 
             for (String s : requestBean.getOutboundSMSMessageRequest().getAddress()) {
@@ -228,9 +228,11 @@ class SendMTSMSService extends AbstractRequestHandler<SendMTSMSRequestWrapperDTO
      * @param mtSMSTransactionId Unique ID
      * @return URL
      */
-    private String getinSideResourceURL(final String mtSMSTransactionId) {
+    private String getinSideResourceURL(int mtSMSTransactionId) {
 
-        return resourceURL + "/deliveryInfos";
+        int index = resourceURL.lastIndexOf('/');
+        String resourceURLs = resourceURL.substring(0, index) + "/" + (mtSMSTransactionId + 1);
+        return resourceURLs + "/deliveryInfos";
     }
 
     /**
@@ -239,9 +241,11 @@ class SendMTSMSService extends AbstractRequestHandler<SendMTSMSRequestWrapperDTO
      * @param mtSMSTransactionId Unique Id.
      * @return URL
      */
-    private String getoutSideResourceURL(final String mtSMSTransactionId) {
+    private String getoutSideResourceURL(int mtSMSTransactionId) {
 
-        return resourceURL;
+        int index = resourceURL.lastIndexOf('/');
+        String resourceURLs = resourceURL.substring(0, index) + "/" + (mtSMSTransactionId + 1);
+        return resourceURLs;
     }
 
 
