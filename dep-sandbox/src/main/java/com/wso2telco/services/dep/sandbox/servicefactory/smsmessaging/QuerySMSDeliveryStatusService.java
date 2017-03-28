@@ -93,13 +93,15 @@ class QuerySMSDeliveryStatusService extends AbstractRequestHandler<QuerySMSDeliv
 			String deliveryStat = null;
 			String resourceUrl = null;
 			String recieverAddress = null;
+			String trimmedAddress = null;
 
 			String senderAddress = extendedRequestDTO.getShortCode();
 			if (extendedRequestDTO.getShortCode().contains("tel:+")) {
-				senderAddress = extendedRequestDTO.getShortCode().replace("tel:+", "").trim();
+				senderAddress = getLastMobileNumber(extendedRequestDTO.getShortCode());
 
 			} else if (extendedRequestDTO.getShortCode().contains("tel:")) {
-				senderAddress = extendedRequestDTO.getShortCode().replace("tel:", "").trim();
+				senderAddress = getLastMobileNumber(extendedRequestDTO.getShortCode());
+
 
 			}
 
@@ -116,7 +118,6 @@ class QuerySMSDeliveryStatusService extends AbstractRequestHandler<QuerySMSDeliv
 			{
 				previousSMSDeliveryDetails = smsMessagingDAO.getPrevSMSDeliveryDataByTransId(Integer.valueOf(mtSMSTransactionIdParts[1]));
 			}
-
 
 			if(previousSMSDeliveryDetails != null)
 			{
@@ -166,23 +167,15 @@ class QuerySMSDeliveryStatusService extends AbstractRequestHandler<QuerySMSDeliv
 						resourceUrl = jsonChildObj.getString(RESOURCE_URL);
 						sendersAddress = jsonChildObj.getString(SENDER_ADDRESS);
 
+					trimmedAddress = getLastMobileNumber(sendersAddress);
+
 				}
+
+
 			}
 
 
-			if(mtSMSTransactionIdParts.length != 2)
-			{
-				previousSMSRequestDetails = smsMessagingDAO
-						.getPrevSMSRequestDataById(Integer.parseInt(mtSMSTransactionIdParts[0]));
-			}
-			if(mtSMSTransactionIdParts.length == 2)
-			{
-				previousSMSRequestDetails = smsMessagingDAO
-						.getPrevSMSRequestDataById(Integer.parseInt(mtSMSTransactionIdParts[1]));
-			}
-
-
-			if (previousSMSRequestDetails == null) {
+			if (previousSMSDeliveryDetails == null) {
 
 				responseWrapperDTO.setRequestError(constructRequestError(SERVICEEXCEPTION, "SVC0002",
 						"Invalid input value for message part %1", extendedRequestDTO.getMtSMSTransactionId()));
@@ -193,12 +186,7 @@ class QuerySMSDeliveryStatusService extends AbstractRequestHandler<QuerySMSDeliv
 						"A service error occurred. Error code is %1",
 						extendedRequestDTO.getShortCode() + " Not Provisioned"));
 				responseWrapperDTO.setHttpStatus(Status.BAD_REQUEST);
-			} else if (previousSMSDeliveryDetails == null) {
-
-				responseWrapperDTO.setRequestError(constructRequestError(SERVICEEXCEPTION, "SVC0002",
-						"Invalid input value for message part %1", extendedRequestDTO.getMtSMSTransactionId()));
-				responseWrapperDTO.setHttpStatus(Status.BAD_REQUEST);
-			} else if (!senderAddress.equals(sendersAddress)) {
+			} else if (!senderAddress.equals(trimmedAddress)) {
 
 				responseWrapperDTO.setRequestError(constructRequestError(SERVICEEXCEPTION, "SVC0004",
 						"No valid addresses provided in message part %1", extendedRequestDTO.getShortCode()));
