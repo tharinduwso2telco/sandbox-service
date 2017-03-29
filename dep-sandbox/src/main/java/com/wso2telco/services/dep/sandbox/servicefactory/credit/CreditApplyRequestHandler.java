@@ -137,7 +137,7 @@ public class CreditApplyRequestHandler extends AbstractRequestHandler<CreditAppl
 				} catch (CustomException ex) {
 					LOG.error("###CREDIT### Error in Validation : " + ex);
 					responseWrapperDTO.setRequestError(constructRequestError(SERVICEEXCEPTION, ex.getErrcode(),
-							ex.getErrmsg(), wrapperDTO.getMsisdn()));
+							ex.getErrmsg(), ex.getErrvar()[0]));
 					responseWrapperDTO.setHttpStatus(javax.ws.rs.core.Response.Status.BAD_REQUEST);
 				}
 				return true;
@@ -306,7 +306,7 @@ public class CreditApplyRequestHandler extends AbstractRequestHandler<CreditAppl
 			buildJsonResponseBody(amount, type, clientCorrelator, merchantIdentification, reasonForCredit,
 					CreditStatusCodes.ERROR.toString(), callbackData, notifyURL, referenceCode, serverReferenceCode);
 			responseWrapperDTO
-					.setRequestError(constructRequestError(SERVICEEXCEPTION, ServiceError.SERVICE_ERROR_OCCURED, null));
+					.setRequestError(constructRequestError(SERVICEEXCEPTION, ServiceError.SERVICE_ERROR_OCCURED, "Error in processing credit service request"));
 			responseWrapperDTO.setHttpStatus(Status.BAD_REQUEST);
 			return responseWrapperDTO;
 		}
