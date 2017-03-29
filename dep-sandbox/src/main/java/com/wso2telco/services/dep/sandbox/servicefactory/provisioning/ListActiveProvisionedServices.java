@@ -23,6 +23,13 @@ import java.util.List;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.wso2telco.services.dep.sandbox.dao.model.custom.*;
+import com.wso2telco.services.dep.sandbox.dao.model.domain.*;
+import com.wso2telco.services.dep.sandbox.servicefactory.MessageProcessStatus;
+import com.wso2telco.services.dep.sandbox.servicefactory.MessageType;
+import com.wso2telco.services.dep.sandbox.util.ServiceName;
 import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.logging.LogFactory;
 
@@ -33,14 +40,6 @@ import com.wso2telco.dep.oneapivalidation.util.Validation;
 import com.wso2telco.dep.oneapivalidation.util.ValidationRule;
 import com.wso2telco.services.dep.sandbox.dao.DaoFactory;
 import com.wso2telco.services.dep.sandbox.dao.ProvisioningDAO;
-import com.wso2telco.services.dep.sandbox.dao.model.custom.ListProvisionedDTO;
-import com.wso2telco.services.dep.sandbox.dao.model.custom.ListProvisionedRequestWrapperDTO;
-import com.wso2telco.services.dep.sandbox.dao.model.custom.ServiceInfoListProvisionedDTO;
-import com.wso2telco.services.dep.sandbox.dao.model.custom.ServiceListProvisioned;
-import com.wso2telco.services.dep.sandbox.dao.model.custom.ServiceListProvisionedDTO;
-import com.wso2telco.services.dep.sandbox.dao.model.custom.ServiceMetaInfoListProvisionedDTO;
-import com.wso2telco.services.dep.sandbox.dao.model.domain.ManageNumber;
-import com.wso2telco.services.dep.sandbox.dao.model.domain.User;
 import com.wso2telco.services.dep.sandbox.exception.SandboxException;
 import com.wso2telco.services.dep.sandbox.exception.SandboxException.SandboxErrorType;
 import com.wso2telco.services.dep.sandbox.service.SandboxDTO;
@@ -50,6 +49,7 @@ import com.wso2telco.services.dep.sandbox.util.CommonUtil;
 import com.wso2telco.services.dep.sandbox.util.ProvisioningStatusCodes;
 import com.wso2telco.services.dep.sandbox.util.ProvisioningUtil;
 import com.wso2telco.services.dep.sandbox.util.ProvisioningUtil.ProvisionRequestTypes;
+import org.json.JSONObject;
 
 /**
  * 
@@ -62,6 +62,10 @@ public class ListActiveProvisionedServices extends
 	private ProvisioningDAO provisioningDao;
 	private ListProvisionedRequestWrapperDTO requestWrapperDTO;
 	private ListActiveProvisionedServicesResponseWrapper responseWrapper;
+	private  String requestIdentifierCode ;
+	static final String MSISDN = "msisdn";
+	static final String SERVICELIST = "serviceList";
+	static final String REQUESTIDENTIFIER = "requestIdentifier";
 	private final String NUMERIC_REGEX = "[0-9]+";
 
 	{
@@ -216,7 +220,9 @@ public class ListActiveProvisionedServices extends
 			responseWrapper.setHttpStatus(Status.BAD_REQUEST);
 			return responseWrapper;
 
-		} 
+		}
+		APITypes apiTypes = dao.getAPIType(extendedRequestDTO.getRequestType().toString().toLowerCase());
+		APIServiceCalls apiServiceCalls = dao.getServiceCall(apiTypes.getId(), ServiceName.ListService.toString().toLowerCase());
 		
 		User user = extendedRequestDTO.getUser();
 
@@ -256,6 +262,15 @@ public class ListActiveProvisionedServices extends
 					return responseWrapper;
 				} else {
 					phoneNumber = number.getNumber();
+				}
+				String	duplicateRequestId = checkDuplicateRequestCode(extendedRequestDTO.getUser().getId(),apiServiceCalls.getApiServiceCallId(),MessageProcessStatus.Success, MessageType.Response,extendedRequestDTO.getRequestIdentifier());
+				if(duplicateRequestId != null)
+				{
+					LOG.error("###CUSTOMERINFO### Already used requestIdentifier code is entered");
+					responseWrapper.setRequestError(constructRequestError(SERVICEEXCEPTION,
+							ServiceError.INVALID_INPUT_VALUE, "An already used requestIdentifier code is entered"));
+					responseWrapper.setHttpStatus(Response.Status.BAD_REQUEST);
+					return responseWrapper;
 				}
 
 				List<ListProvisionedDTO> provisionedServices = provisioningDao
@@ -308,6 +323,7 @@ public class ListActiveProvisionedServices extends
 				ServiceListProvisionedDTO serviceListDTO = new ServiceListProvisionedDTO();
 				serviceListDTO.setServiceList(serviceList);
 				responseWrapper.setServiceListDTO(serviceListDTO);
+				saveResponse(extendedRequestDTO.getMsisdn(), serviceListDTO, apiServiceCalls, MessageProcessStatus.Success);
 
 			} catch (Exception ex) {
 				LOG.error("###PROVISION### Error Occured in List Provisioned Service. "
@@ -350,6 +366,70 @@ public class ListActiveProvisionedServices extends
 		}
 
 		return false;
+	}
+	private void saveResponse(String endUserId, ServiceListProvisionedDTO listCustomerInfoDTO, APIServiceCalls serviceCalls, MessageProcessStatus status) throws Exception {
+		ObjectMapper mapper = new ObjectMapper();
+		String jsonRequestString = null;
+		try {
+			jsonRequestString = mapper.writeValueAsString(listCustomerInfoDTO);
+		} catch (JsonProcessingException e) {
+			LOG.error("an error occurred while converting JsonNode to string"+e);
+			responseWrapper.setHttpStatus(Response.Status.BAD_REQUEST);
+		}
+		MessageLog messageLog = new MessageLog();
+		messageLog.setRequest(jsonRequestString);
+		messageLog.setUserid(user.getId());
+		messageLog.setStatus(status.getValue());
+		messageLog.setType(MessageType.Response.getValue());
+		messageLog.setReference(MSISDN);
+		messageLog.setValue(endUserId);
+		messageLog.setServicenameid(serviceCalls.getApiServiceCallId());
+		try {
+			loggingDAO.saveMessageLog(messageLog);
+		} catch (Exception e) {
+			LOG.error("An error occured while saving the response"+e);
+			throw e;
+		}
+
+	}
+
+	private String checkDuplicateRequestCode(int userId, int serviceNameId, MessageProcessStatus status, MessageType type, String requestIdentityCode) throws Exception {
+		List<Integer> serviceNameIdList = new ArrayList();
+		serviceNameIdList.add(serviceNameId);
+		String requestCode = null;
+		try {
+			List<MessageLog> messageLogs = loggingDAO.getMessageLogs(userId,serviceNameIdList,null,null,null,null);
+			for(int i=0;i<messageLogs.size();i++)
+			{
+				if(messageLogs!=null)
+				{
+					int logStatus =  messageLogs.get(i).getStatus();
+					int logType = messageLogs.get(i).getType();
+					if(logStatus == status.getValue() && logType == type.getValue())
+					{
+						String logRequest = messageLogs.get(i).getRequest();
+
+
+						JSONObject jsonObject = new JSONObject(logRequest);
+						org.json.JSONObject childJsonObject = jsonObject.getJSONObject(SERVICELIST);
+
+						requestIdentifierCode = childJsonObject.getString(REQUESTIDENTIFIER);
+						int logUserId = messageLogs.get(i).getUserid();
+
+						if (logUserId == userId && requestIdentifierCode.equals(requestIdentityCode)) {
+
+							requestCode = requestIdentifierCode;
+							break;
+						}
+					}
+				}
+			}
+
+		} catch (Exception e) {
+			LOG.error("an Error occurred while retrieving messagelog table values "+e);
+			throw e;
+		}
+		return requestCode;
 	}
 
 }
