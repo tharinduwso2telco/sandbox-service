@@ -304,7 +304,7 @@ public class RemoveProvisionedServices extends
 						clientReferenceCode, notifyURL, callbackData, statusMap);
 				// create json body from updated service object
 				buildJsonResponseBody(deletedServiceList);
-				responseWrapper.setHttpStatus(Response.Status.OK);
+				responseWrapper.setHttpStatus(Response.Status.CREATED);
 				return responseWrapper;
 			} else {
 				// check for already removed provisioned service for request
