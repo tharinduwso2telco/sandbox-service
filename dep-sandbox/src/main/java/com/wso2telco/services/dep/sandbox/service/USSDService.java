@@ -44,7 +44,7 @@ public class USSDService {
     Log LOG = LogFactory.getLog(USSDService.class);
 
     @POST
-    @Path("/ussd/v1/outbound/{endUserId}")
+    @Path("/outbound/{endUserId}")
     @ApiOperation(value = "ussdSession", notes = "initiate ussd session with endUser", response = Response.class)
     @ApiImplicitParams({
             @ApiImplicitParam(name = "sandbox", value = "Authorization token", required = true, dataType = "string", paramType = "header")})
